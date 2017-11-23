@@ -1,8 +1,11 @@
 .\obj\main.o: ..\App\src\main.c
+.\obj\main.o: ..\App\inc\app.h
 .\obj\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+.\obj\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
+.\obj\main.o: ..\Bsp\bsp.h
+.\obj\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
 .\obj\main.o: ..\Library\Device\Nuvoton\Mini58Series\Include\Mini58Series.h
 .\obj\main.o: ..\Library\CMSIS\Include\core_cm0.h
-.\obj\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
 .\obj\main.o: ..\Library\CMSIS\Include\core_cmInstr.h
 .\obj\main.o: ..\Library\CMSIS\Include\cmsis_armcc.h
 .\obj\main.o: ..\Library\CMSIS\Include\core_cmFunc.h
@@ -20,3 +23,10 @@
 .\obj\main.o: ..\Library\StdDriver\inc\uart.h
 .\obj\main.o: ..\Library\StdDriver\inc\wdt.h
 .\obj\main.o: ..\Library\StdDriver\inc\wwdt.h
+.\obj\main.o: ..\Bsp\inc\bsp_uart.h
+.\obj\main.o: ..\Bsp\inc\bsp_relay.h
+.\obj\main.o: ..\Bsp\inc\bsp_key.h
+.\obj\main.o: ..\App\inc\app_uart.h
+.\obj\main.o: ..\App\inc\app_crc.h
+.\obj\main.o: ..\utils\inc\lite-log.h
+.\obj\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h

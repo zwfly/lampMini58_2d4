@@ -10,6 +10,19 @@
 
 
  
+#line 1 "..\\App\\inc\\app.h"
+
+
+
+
+
+ 
+
+
+
+
+
+
 #line 1 "C:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\stdio.h"
  
  
@@ -909,50 +922,18 @@ extern __declspec(__nothrow) void __use_no_semihosting(void);
 
  
 
-#line 13 "..\\App\\src\\main.c"
-#line 1 "..\\Library\\Device\\Nuvoton\\Mini58Series\\Include\\Mini58Series.h"
+#line 14 "..\\App\\inc\\app.h"
+
+#line 1 "C:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
+ 
+ 
+ 
  
 
 
 
 
-
-
-
-
-
-
  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -974,56 +955,31 @@ extern __declspec(__nothrow) void __use_no_semihosting(void);
 
 
 
+#line 38 "C:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
+
+
+  
+
+
+
+    typedef unsigned int size_t;    
+#line 54 "C:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
+
+
+
+
+extern __declspec(__nothrow) void *memcpy(void * __restrict  ,
+                    const void * __restrict  , size_t  ) __attribute__((__nonnull__(1,2)));
+   
 
 
 
 
  
+extern __declspec(__nothrow) void *memmove(void *  ,
+                    const void *  , size_t  ) __attribute__((__nonnull__(1,2)));
+   
 
- 
- 
- 
-
-
-
- 
-
-
-
- 
-typedef enum IRQn {
-     
-
-    NonMaskableInt_IRQn   = -14,     
-    HardFault_IRQn        = -13,     
-    SVCall_IRQn           = -5,      
-    PendSV_IRQn           = -2,      
-    SysTick_IRQn          = -1,      
-
-     
-
-    BOD_IRQn              = 0,       
-    WDT_IRQn              = 1,       
-    EINT0_IRQn            = 2,       
-    EINT1_IRQn            = 3,       
-    GPIO01_IRQn           = 4,       
-    GPIO234_IRQn          = 5,       
-    PWM_IRQn              = 6,       
-    FB_IRQn               = 7,       
-    TMR0_IRQn             = 8,       
-    TMR1_IRQn             = 9,       
-    UART0_IRQn            = 12,      
-    UART1_IRQn            = 13,      
-    SPI_IRQn              = 14,      
-    GPIO5_IRQn            = 16,      
-    HIRC_IRQn             = 17,      
-    I2C0_IRQn             = 18,      
-    I2C1_IRQn             = 19,      
-    ACMP_IRQn             = 25,      
-    PDWU_IRQn             = 28,      
-    ADC_IRQn              = 29       
-
-} IRQn_Type;
 
 
 
@@ -1031,6 +987,35 @@ typedef enum IRQn {
 
 
  
+extern __declspec(__nothrow) char *strcpy(char * __restrict  , const char * __restrict  ) __attribute__((__nonnull__(1,2)));
+   
+
+
+
+
+ 
+extern __declspec(__nothrow) char *strncpy(char * __restrict  , const char * __restrict  , size_t  ) __attribute__((__nonnull__(1,2)));
+   
+
+
+
+
+
+ 
+
+extern __declspec(__nothrow) char *strcat(char * __restrict  , const char * __restrict  ) __attribute__((__nonnull__(1,2)));
+   
+
+
+
+
+ 
+extern __declspec(__nothrow) char *strncat(char * __restrict  , const char * __restrict  , size_t  ) __attribute__((__nonnull__(1,2)));
+   
+
+
+
+
 
 
  
@@ -1039,44 +1024,153 @@ typedef enum IRQn {
 
 
 
+
+ 
+
+extern __declspec(__nothrow) int memcmp(const void *  , const void *  , size_t  ) __attribute__((__nonnull__(1,2)));
+   
+
+
+
+
+
+ 
+extern __declspec(__nothrow) int strcmp(const char *  , const char *  ) __attribute__((__nonnull__(1,2)));
+   
+
+
+
+
+ 
+extern __declspec(__nothrow) int strncmp(const char *  , const char *  , size_t  ) __attribute__((__nonnull__(1,2)));
+   
+
+
+
+
+
+
+ 
+extern __declspec(__nothrow) int strcasecmp(const char *  , const char *  ) __attribute__((__nonnull__(1,2)));
+   
+
+
+
+
+
+ 
+extern __declspec(__nothrow) int strncasecmp(const char *  , const char *  , size_t  ) __attribute__((__nonnull__(1,2)));
+   
+
+
+
+
+
+
+ 
+extern __declspec(__nothrow) int strcoll(const char *  , const char *  ) __attribute__((__nonnull__(1,2)));
+   
+
+
+
+
+
+
+
+ 
+
+extern __declspec(__nothrow) size_t strxfrm(char * __restrict  , const char * __restrict  , size_t  ) __attribute__((__nonnull__(2)));
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+#line 193 "C:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
+extern __declspec(__nothrow) void *memchr(const void *  , int  , size_t  ) __attribute__((__nonnull__(1)));
 
    
 
 
-#line 1 "..\\Library\\CMSIS\\Include\\core_cm0.h"
- 
-
 
 
 
  
 
+#line 209 "C:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
+extern __declspec(__nothrow) char *strchr(const char *  , int  ) __attribute__((__nonnull__(1)));
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+   
 
 
 
 
  
 
+extern __declspec(__nothrow) size_t strcspn(const char *  , const char *  ) __attribute__((__nonnull__(1,2)));
+   
+
+
+
+
+ 
+
+#line 232 "C:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
+extern __declspec(__nothrow) char *strpbrk(const char *  , const char *  ) __attribute__((__nonnull__(1,2)));
+
+   
+
+
+
+
+ 
+
+#line 247 "C:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
+extern __declspec(__nothrow) char *strrchr(const char *  , int  ) __attribute__((__nonnull__(1)));
+
+   
+
+
+
+
+
+ 
+
+extern __declspec(__nothrow) size_t strspn(const char *  , const char *  ) __attribute__((__nonnull__(1,2)));
+   
+
+
+
+ 
+
+#line 270 "C:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
+extern __declspec(__nothrow) char *strstr(const char *  , const char *  ) __attribute__((__nonnull__(1,2)));
+
+   
+
+
+
+
+
+ 
+
+extern __declspec(__nothrow) char *strtok(char * __restrict  , const char * __restrict  ) __attribute__((__nonnull__(2)));
+extern __declspec(__nothrow) char *_strtok_r(char *  , const char *  , char **  ) __attribute__((__nonnull__(2,3)));
+
+extern __declspec(__nothrow) char *strtok_r(char *  , const char *  , char **  ) __attribute__((__nonnull__(2,3)));
+
+   
 
 
 
@@ -1087,6 +1181,178 @@ typedef enum IRQn {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+extern __declspec(__nothrow) void *memset(void *  , int  , size_t  ) __attribute__((__nonnull__(1)));
+   
+
+
+
+ 
+extern __declspec(__nothrow) char *strerror(int  );
+   
+
+
+
+
+
+ 
+extern __declspec(__nothrow) size_t strlen(const char *  ) __attribute__((__nonnull__(1)));
+   
+
+
+
+ 
+
+extern __declspec(__nothrow) size_t strlcpy(char *  , const char *  , size_t  ) __attribute__((__nonnull__(1,2)));
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+extern __declspec(__nothrow) size_t strlcat(char *  , const char *  , size_t  ) __attribute__((__nonnull__(1,2)));
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+extern __declspec(__nothrow) void _membitcpybl(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+extern __declspec(__nothrow) void _membitcpybb(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+extern __declspec(__nothrow) void _membitcpyhl(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+extern __declspec(__nothrow) void _membitcpyhb(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+extern __declspec(__nothrow) void _membitcpywl(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+extern __declspec(__nothrow) void _membitcpywb(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+extern __declspec(__nothrow) void _membitmovebl(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+extern __declspec(__nothrow) void _membitmovebb(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+extern __declspec(__nothrow) void _membitmovehl(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+extern __declspec(__nothrow) void _membitmovehb(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+extern __declspec(__nothrow) void _membitmovewl(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+extern __declspec(__nothrow) void _membitmovewb(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+#line 502 "C:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
+
+
+
+ 
+
+#line 16 "..\\App\\inc\\app.h"
+
+#line 1 "..\\Bsp\\bsp.h"
+
+
+
+#line 5 "..\\Bsp\\bsp.h"
 #line 1 "C:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\stdint.h"
  
  
@@ -1343,6 +1609,184 @@ typedef unsigned     long long uintmax_t;
 
 
  
+#line 6 "..\\Bsp\\bsp.h"
+#line 1 "..\\Library\\Device\\Nuvoton\\Mini58Series\\Include\\Mini58Series.h"
+ 
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+ 
+ 
+ 
+
+
+
+ 
+
+
+
+ 
+typedef enum IRQn {
+     
+
+    NonMaskableInt_IRQn   = -14,     
+    HardFault_IRQn        = -13,     
+    SVCall_IRQn           = -5,      
+    PendSV_IRQn           = -2,      
+    SysTick_IRQn          = -1,      
+
+     
+
+    BOD_IRQn              = 0,       
+    WDT_IRQn              = 1,       
+    EINT0_IRQn            = 2,       
+    EINT1_IRQn            = 3,       
+    GPIO01_IRQn           = 4,       
+    GPIO234_IRQn          = 5,       
+    PWM_IRQn              = 6,       
+    FB_IRQn               = 7,       
+    TMR0_IRQn             = 8,       
+    TMR1_IRQn             = 9,       
+    UART0_IRQn            = 12,      
+    UART1_IRQn            = 13,      
+    SPI_IRQn              = 14,      
+    GPIO5_IRQn            = 16,      
+    HIRC_IRQn             = 17,      
+    I2C0_IRQn             = 18,      
+    I2C1_IRQn             = 19,      
+    ACMP_IRQn             = 25,      
+    PDWU_IRQn             = 28,      
+    ADC_IRQn              = 29       
+
+} IRQn_Type;
+
+
+
+
+
+
+ 
+
+
+ 
+
+
+
+
+
+
+   
+
+
+#line 1 "..\\Library\\CMSIS\\Include\\core_cm0.h"
+ 
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
 #line 45 "..\\Library\\CMSIS\\Include\\core_cm0.h"
 
 
@@ -17480,8 +17924,64 @@ void WWDT_Open(uint32_t u32PreScale, uint32_t u32CmpValue, uint32_t u32EnableInt
 
  
 
-#line 14 "..\\App\\src\\main.c"
-#line 15 "..\\App\\src\\main.c"
+#line 7 "..\\Bsp\\bsp.h"
+#line 8 "..\\Bsp\\bsp.h"
+#line 9 "..\\Bsp\\bsp.h"
+#line 10 "..\\Bsp\\bsp.h"
+#line 11 "..\\Bsp\\bsp.h"
+
+
+#line 1 "..\\Bsp\\inc\\bsp_uart.h"
+
+
+
+
+
+ 
+
+
+
+
+
+
+typedef struct _RCV_T {
+
+	uint8_t rxBuf[160];
+	uint8_t pWrite;
+	uint8_t pRead;
+
+} RCV_T;
+
+extern RCV_T rcv_T;
+extern uint8_t riflag;
+
+void Uart_InitHard(void);
+
+#line 14 "..\\Bsp\\bsp.h"
+
+
+
+#line 1 "..\\Bsp\\inc\\bsp_relay.h"
+
+
+
+
+
+ 
+
+
+
+
+void Relay_InitHard(void);
+void Relay_on(void);
+void Relay_off(void);
+void Relay_toggle(void);
+uint8_t Relay_IsOn(void);
+void Relay_set(uint8_t s);
+
+#line 18 "..\\Bsp\\bsp.h"
+
+#line 1 "..\\Bsp\\inc\\bsp_key.h"
 
 
 
@@ -17492,21 +17992,129 @@ void WWDT_Open(uint32_t u32PreScale, uint32_t u32CmpValue, uint32_t u32EnableInt
 
 
  
-void GPIO01_IRQHandler(void)
-{
-     
-    if (((GPIO_T *) (((uint32_t)0x50000000) + 0x04040))->INTSRC & (0x00000020)) {
-        ((GPIO_T *) (((uint32_t)0x50000000) + 0x04040))->INTSRC = (0x00000020);
-        (*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(3))) + ((0)<<2)))) = (*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(3))) + ((0)<<2)))) ^ 1;
-        printf("P1.5 INT occurred. \r\n");
 
-    } else {
-         
-        ((GPIO_T *) (((uint32_t)0x50000000) + 0x04000))->INTSRC = ((GPIO_T *) (((uint32_t)0x50000000) + 0x04000))->INTSRC;
-        ((GPIO_T *) (((uint32_t)0x50000000) + 0x04040))->INTSRC = ((GPIO_T *) (((uint32_t)0x50000000) + 0x04040))->INTSRC;
-        printf("Un-expected interrupts. \r\n");
-    }
-}
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+ 
+typedef enum {
+	KID_K1 = 0,
+	KID_K2,
+} KEY_ID_E;
+
+
+
+
+
+ 
+
+
+
+
+
+ 
+typedef struct {
+	 
+	uint8_t (*IsKeyDownFunc)(void);  
+
+	uint8_t Count;  
+	uint16_t LongCount;  
+	uint16_t LongTime;  
+	uint8_t State;  
+	uint8_t RepeatSpeed;  
+	uint8_t RepeatCount;  
+} KEY_T;
+
+
+
+
+
+
+
+ 
+typedef enum {
+	KEY_NONE = 0,  
+
+	KEY_1_DOWN,  
+	KEY_1_UP,  
+	KEY_1_LONG,  
+
+	KEY_2_DOWN,  
+	KEY_2_UP,  
+	KEY_2_LONG,  
+} KEY_ENUM;
+
+ 
+
+typedef struct {
+	uint8_t Buf[10];  
+	uint8_t Read;  
+	uint8_t Write;  
+	uint8_t Read2;  
+} KEY_FIFO_T;
+
+ 
+void bsp_InitKey(void);
+void bsp_KeyScan(void);
+void bsp_PutKey(uint8_t _KeyCode);
+uint8_t bsp_GetKey(void);
+uint8_t bsp_GetKey2(void);
+uint8_t bsp_GetKeyState(KEY_ID_E _ucKeyID);
+void bsp_SetKeyParam(uint8_t _ucKeyID, uint16_t _LongTime, uint8_t _RepeatSpeed);
+void bsp_ClearKey(void);
+
+
+
+ 
+#line 20 "..\\Bsp\\bsp.h"
+
+
+
+
+
+
+
+
+
+void bsp_Init(void);
+
+
+
+ 
+#line 18 "..\\App\\inc\\app.h"
+
+
+
+#line 1 "..\\App\\inc\\app_uart.h"
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -17518,21 +18126,37 @@ void GPIO01_IRQHandler(void)
 
 
  
-void GPIO234_IRQHandler(void)
-{
-     
-    if (((GPIO_T *) (((uint32_t)0x50000000) + 0x04080))->INTSRC & (0x00000004)) {
-        ((GPIO_T *) (((uint32_t)0x50000000) + 0x04080))->INTSRC = (0x00000004);
-        (*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(3))) + ((0)<<2)))) = (*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(3))) + ((0)<<2)))) ^ 1;
-        printf("P2.2 INT occurred. \r\n");
-    } else {
-         
-        ((GPIO_T *) (((uint32_t)0x50000000) + 0x04080))->INTSRC = ((GPIO_T *) (((uint32_t)0x50000000) + 0x04080))->INTSRC;
-        ((GPIO_T *) (((uint32_t)0x50000000) + 0x040C0))->INTSRC = ((GPIO_T *) (((uint32_t)0x50000000) + 0x040C0))->INTSRC;
-        ((GPIO_T *) (((uint32_t)0x50000000) + 0x04100))->INTSRC = ((GPIO_T *) (((uint32_t)0x50000000) + 0x04100))->INTSRC;
-        printf("Un-expected interrupts. \r\n");
-    }
-}
+void app_uart_Init(void);
+void app_uart_send(uint8_t cmd, uint8_t *ptr, uint8_t len);
+void app_uart_pro(void);
+
+#line 22 "..\\App\\inc\\app.h"
+#line 1 "..\\App\\inc\\app_crc.h"
+
+
+
+
+
+ 
+
+
+
+
+uint8_t app_CalcCRC8(uint8_t *ptr, uint8_t len);
+uint8_t app_CalcCRC8_cycle(uint8_t *ptr, uint8_t len, uint8_t pos,
+		uint8_t bufLen);
+
+#line 23 "..\\App\\inc\\app.h"
+
+
+
+#line 1 "..\\utils\\inc\\lite-log.h"
+
+
+
+
+
+
 
 
 
@@ -17544,13 +18168,165 @@ void GPIO234_IRQHandler(void)
 
 
  
-void EINT0_IRQHandler(void)
-{
-     
-    ((GPIO_T *) (((uint32_t)0x50000000) + 0x040C0))->INTSRC = (0x00000004);
-    (*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(3))) + ((0)<<2)))) = (*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(3))) + ((0)<<2)))) ^ 1;
-    printf("P3.2 EINT0 occurred. \r\n");
-}
+
+
+
+
+
+
+
+#line 26 "..\\utils\\inc\\lite-log.h"
+#line 1 "C:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\stdlib.h"
+ 
+ 
+ 
+
+
+
+
+ 
+ 
+
+
+
+ 
+
+
+
+
+
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+ 
+
+
+
+
+
+
+
+
+#line 54 "C:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\stdlib.h"
+
+
+  
+
+
+
+    typedef unsigned int size_t;    
+#line 70 "C:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\stdlib.h"
+
+
+
+
+
+
+    
+
+
+
+    typedef unsigned short wchar_t;  
+#line 91 "C:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\stdlib.h"
+
+typedef struct div_t { int quot, rem; } div_t;
+    
+typedef struct ldiv_t { long int quot, rem; } ldiv_t;
+    
+
+typedef struct lldiv_t { long long quot, rem; } lldiv_t;
+    
+
+
+#line 112 "C:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\stdlib.h"
+   
+
+
+
+ 
+
+   
+
+
+
+
+ 
+#line 131 "C:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\stdlib.h"
+   
+
+
+ 
+extern __declspec(__nothrow) int __aeabi_MB_CUR_MAX(void);
+
+   
+
+
+
+
+ 
+
+   
+
+
+
+
+ 
+
+
+
+
+extern __declspec(__nothrow) double atof(const char *  ) __attribute__((__nonnull__(1)));
+   
+
+
+
+ 
+extern __declspec(__nothrow) int atoi(const char *  ) __attribute__((__nonnull__(1)));
+   
+
+
+
+ 
+extern __declspec(__nothrow) long int atol(const char *  ) __attribute__((__nonnull__(1)));
+   
+
+
+
+ 
+
+extern __declspec(__nothrow) long long atoll(const char *  ) __attribute__((__nonnull__(1)));
+   
+
+
+
+ 
+
+
+extern __declspec(__nothrow) double strtod(const char * __restrict  , char ** __restrict  ) __attribute__((__nonnull__(1)));
+   
+
+
+
+
+
+
+
 
 
 
@@ -17562,168 +18338,708 @@ void EINT0_IRQHandler(void)
 
 
  
-void EINT1_IRQHandler(void)
-{
-     
-    ((GPIO_T *) (((uint32_t)0x50000000) + 0x04140))->INTSRC = (0x00000004);
-    (*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(3))) + ((0)<<2)))) = (*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(3))) + ((0)<<2)))) ^ 1;
-    printf("P5.2 EINT1 occurred. \r\n");
-}
 
-void SYS_Init(void)
-{
-     
-    SYS_UnlockReg();
+extern __declspec(__nothrow) float strtof(const char * __restrict  , char ** __restrict  ) __attribute__((__nonnull__(1)));
+extern __declspec(__nothrow) long double strtold(const char * __restrict  , char ** __restrict  ) __attribute__((__nonnull__(1)));
+   
 
-     
-    ((SYS_T *) (((uint32_t)0x50000000) + 0x00000))->P5_MFP &= ~(0x00000101UL | 0x00000202UL);
-    ((SYS_T *) (((uint32_t)0x50000000) + 0x00000))->P5_MFP |= (0x00000001UL | 0x00000002UL);
+ 
 
-     
-     
-     
+extern __declspec(__nothrow) long int strtol(const char * __restrict  ,
+                        char ** __restrict  , int  ) __attribute__((__nonnull__(1)));
+   
 
-     
-    ((CLK_T *) (((uint32_t)0x50000000) + 0x00200))->PWRCTL |= 0x01UL | (0x1ul << (2));
 
-     
-    CLK_WaitClockReady((0x1ul << (0)) | (0x1ul << (4)));
 
-     
-    CLK_SetHCLK(0x00UL,((1)-1));
 
-     
-    CLK_SetSysTickClockSrc(0x00UL);
 
-     
-    CLK_EnableModuleClock((( 1UL<<31)|( 1<<29)|( 3<<25)|(24<<20)|( 0<<18)|( 0xF<<10)|( 8<<5)|(16<<0)));
 
-     
-    CLK_SetModuleClock((( 1UL<<31)|( 1<<29)|( 3<<25)|(24<<20)|( 0<<18)|( 0xF<<10)|( 8<<5)|(16<<0)),0x00000000UL,(((1)-1) << 8));
 
-     
-     
-     
-     
-    ((SYS_T *) (((uint32_t)0x50000000) + 0x00000))->P1_MFP = 0x00000400UL | 0x00000800UL;
 
-     
-    ((SYS_T *) (((uint32_t)0x50000000) + 0x00000))->P3_MFP = 0x00004000UL;
 
-     
-    SystemCoreClockUpdate();
 
-     
-    SYS_LockReg();
-}
 
-void UART_Init(void)
-{
-     
-     
-     
-     
-    SYS_ResetModule((0x1ul << (16)));
 
-     
-    UART_Open(((UART_T *) (((uint32_t)0x40000000) + 0x50000)), 115200);
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+extern __declspec(__nothrow) unsigned long int strtoul(const char * __restrict  ,
+                                       char ** __restrict  , int  ) __attribute__((__nonnull__(1)));
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+ 
+extern __declspec(__nothrow) long long strtoll(const char * __restrict  ,
+                                  char ** __restrict  , int  )
+                          __attribute__((__nonnull__(1)));
+   
+
+
+
+
+ 
+extern __declspec(__nothrow) unsigned long long strtoull(const char * __restrict  ,
+                                            char ** __restrict  , int  )
+                                   __attribute__((__nonnull__(1)));
+   
+
+
+
+ 
+
+extern __declspec(__nothrow) int rand(void);
+   
+
+
+
+
+
+
+
+ 
+extern __declspec(__nothrow) void srand(unsigned int  );
+   
+
+
+
+
+
+
+ 
+
+struct _rand_state { int __x[57]; };
+extern __declspec(__nothrow) int _rand_r(struct _rand_state *);
+extern __declspec(__nothrow) void _srand_r(struct _rand_state *, unsigned int);
+struct _ANSI_rand_state { int __x[1]; };
+extern __declspec(__nothrow) int _ANSI_rand_r(struct _ANSI_rand_state *);
+extern __declspec(__nothrow) void _ANSI_srand_r(struct _ANSI_rand_state *, unsigned int);
+   
+
+
+ 
+
+extern __declspec(__nothrow) void *calloc(size_t  , size_t  );
+   
+
+
+
+ 
+extern __declspec(__nothrow) void free(void *  );
+   
+
+
+
+
+
+ 
+extern __declspec(__nothrow) void *malloc(size_t  );
+   
+
+
+
+ 
+extern __declspec(__nothrow) void *realloc(void *  , size_t  );
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+extern __declspec(__nothrow) int posix_memalign(void **  , size_t  , size_t  );
+   
+
+
+
+
+
+
+
+
+
+ 
+
+typedef int (*__heapprt)(void *, char const *, ...);
+extern __declspec(__nothrow) void __heapstats(int (*  )(void *  ,
+                                           char const *  , ...),
+                        void *  ) __attribute__((__nonnull__(1)));
+   
+
+
+
+
+
+
+
+
+
+
+ 
+extern __declspec(__nothrow) int __heapvalid(int (*  )(void *  ,
+                                           char const *  , ...),
+                       void *  , int  ) __attribute__((__nonnull__(1)));
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+extern __declspec(__nothrow) __declspec(__noreturn) void abort(void);
+   
+
+
+
+
+
+
+
+ 
+
+extern __declspec(__nothrow) int atexit(void (*  )(void)) __attribute__((__nonnull__(1)));
+   
+
+
+
+
+ 
+#line 436 "C:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\stdlib.h"
+
+
+extern __declspec(__nothrow) __declspec(__noreturn) void exit(int  );
+   
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+extern __declspec(__nothrow) __declspec(__noreturn) void _Exit(int  );
+   
+
+
+
+
+
+
+
+      
+
+extern __declspec(__nothrow) char *getenv(const char *  ) __attribute__((__nonnull__(1)));
+   
+
+
+
+
+
+
+
+
+
+ 
+
+extern __declspec(__nothrow) int  system(const char *  );
+   
+
+
+
+
+
+
+
+
+
+ 
+
+extern  void *bsearch(const void *  , const void *  ,
+              size_t  , size_t  ,
+              int (*  )(const void *, const void *)) __attribute__((__nonnull__(1,2,5)));
+   
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+#line 524 "C:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\stdlib.h"
+
+
+extern  void qsort(void *  , size_t  , size_t  ,
+           int (*  )(const void *, const void *)) __attribute__((__nonnull__(1,4)));
+   
+
+
+
+
+
+
+
+
+
+ 
+
+#line 553 "C:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\stdlib.h"
+
+extern __declspec(__nothrow) __attribute__((const)) int abs(int  );
+   
+
+
+
+ 
+
+extern __declspec(__nothrow) __attribute__((const)) div_t div(int  , int  );
+   
+
+
+
+
+
+
+
+
+
+ 
+extern __declspec(__nothrow) __attribute__((const)) long int labs(long int  );
+   
+
+
+
+ 
+
+
+
+
+extern __declspec(__nothrow) __attribute__((const)) ldiv_t ldiv(long int  , long int  );
+   
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+extern __declspec(__nothrow) __attribute__((const)) long long llabs(long long  );
+   
+
+
+
+ 
+
+
+
+
+extern __declspec(__nothrow) __attribute__((const)) lldiv_t lldiv(long long  , long long  );
+   
+
+
+
+
+
+
+
+
+
+
+
+ 
+#line 634 "C:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\stdlib.h"
+
+
+
+
+ 
+typedef struct __sdiv32by16 { int quot, rem; } __sdiv32by16;
+typedef struct __udiv32by16 { unsigned int quot, rem; } __udiv32by16;
+    
+typedef struct __sdiv64by32 { int rem, quot; } __sdiv64by32;
+
+__value_in_regs extern __declspec(__nothrow) __attribute__((const)) __sdiv32by16 __rt_sdiv32by16(
+     int  ,
+     short int  );
+   
+
+ 
+__value_in_regs extern __declspec(__nothrow) __attribute__((const)) __udiv32by16 __rt_udiv32by16(
+     unsigned int  ,
+     unsigned short  );
+   
+
+ 
+__value_in_regs extern __declspec(__nothrow) __attribute__((const)) __sdiv64by32 __rt_sdiv64by32(
+     int  , unsigned int  ,
+     int  );
+   
+
+ 
+
+
+
+
+ 
+extern __declspec(__nothrow) unsigned int __fp_status(unsigned int  , unsigned int  );
+   
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+extern __declspec(__nothrow) int mblen(const char *  , size_t  );
+   
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+extern __declspec(__nothrow) int mbtowc(wchar_t * __restrict  ,
+                   const char * __restrict  , size_t  );
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+extern __declspec(__nothrow) int wctomb(char *  , wchar_t  );
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+ 
+extern __declspec(__nothrow) size_t mbstowcs(wchar_t * __restrict  ,
+                      const char * __restrict  , size_t  ) __attribute__((__nonnull__(2)));
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+extern __declspec(__nothrow) size_t wcstombs(char * __restrict  ,
+                      const wchar_t * __restrict  , size_t  ) __attribute__((__nonnull__(2)));
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+extern __declspec(__nothrow) void __use_realtime_heap(void);
+extern __declspec(__nothrow) void __use_realtime_division(void);
+extern __declspec(__nothrow) void __use_two_region_memory(void);
+extern __declspec(__nothrow) void __use_no_heap(void);
+extern __declspec(__nothrow) void __use_no_heap_region(void);
+
+extern __declspec(__nothrow) char const *__C_library_version_string(void);
+extern __declspec(__nothrow) int __C_library_version_number(void);
+
+
+
+
+
+
+
+
+
+
+
+#line 892 "C:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\stdlib.h"
+
+
+
+
+
+ 
+#line 27 "..\\utils\\inc\\lite-log.h"
+#line 28 "..\\utils\\inc\\lite-log.h"
+#line 29 "..\\utils\\inc\\lite-log.h"
+
+
+
+
+
+typedef enum _LOGLEVEL {
+	LOG_EMERG_LEVEL = 0,  
+	LOG_CRIT_LEVEL,  
+	LOG_ERR_LEVEL,  
+	LOG_WARNING_LEVEL,  
+	LOG_INFO_LEVEL,  
+	LOG_DEBUG_LEVEL,  
+} LOGLEVEL;
+
+void LITE_openlog(const char *ident);
+void LITE_closelog(void);
+int LITE_log_enabled(void);
+char *LITE_get_logname(void);
+int LITE_get_loglevel(void);
+void LITE_set_loglevel(int level);
+int LITE_hexdump(const char *title, const void *buf, const int len);
+
+void LITE_syslog(const char *f, const int l, const int level, const char *fmt,
+		...);
+#line 59 "..\\utils\\inc\\lite-log.h"
+
+int log_multi_line_internal(const char *f, const int l, const char *title,
+		int level, char *payload, const char *mark);
+
+
+
+void LITE_rich_hexdump(const char *f, const int l, const int level,
+		const char *buf_str, const void *buf_ptr, const int buf_len);
+
+#line 77 "..\\utils\\inc\\lite-log.h"
+
+
+
+
+
+#line 27 "..\\App\\inc\\app.h"
+
+
+
+#line 13 "..\\App\\src\\main.c"
+
+
+
+void SYS_Init(void) {
+	 
+	SYS_UnlockReg();
+#line 40 "..\\App\\src\\main.c"
+
+	 
+	CLK_EnableXtalRC((0x1ul << (2)));
+
+	 
+	CLK_WaitClockReady((0x1ul << (4)));
+
+	 
+	CLK_SetHCLK(0x07UL, ((1)-1));
+
+	 
+	CLK_SetCoreClock(50000000);
+
+
+
+	 
+	SystemCoreClockUpdate();
+
+	 
+	SYS_LockReg();
 }
 
  
  
  
-int main (void)
-{
-    int32_t i32Err;
-
-     
-    SYS_Init(); 
-
-     
-    UART_Init();
-
-    printf("\r\n\r\nCPU @ %dHz\r\n", SystemCoreClock);
-
-    printf("+-------------------------------------+ \r\n");
-    printf("|    Mini58 GPIO Driver Sample Code  | \r\n");
-    printf("+-------------------------------------+ \r\n");
-
-     
-     
-     
-    printf("  >> Please connect P1.0 and P3.4 first << \r\n");
-    printf("     Press any key to start test by using [Pin Data Input/Output Control] \r\n\r\n");
-    getc((& __stdin));
-
-     
-    GPIO_SetMode(((GPIO_T *) (((uint32_t)0x50000000) + 0x04040)), (0x00000001), 0x1UL);
-    GPIO_SetMode(((GPIO_T *) (((uint32_t)0x50000000) + 0x040C0)), (0x00000010), 0x0UL);
-
-    i32Err = 0;
-    printf("  GPIO Output/Input test ...... \r\n");
-
-     
-    (*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(1))) + ((0)<<2)))) = 0;
-    if ((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(3))) + ((4)<<2)))) != 0) {
-        i32Err = 1;
-    }
-
-    (*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(1))) + ((0)<<2)))) = 1;
-    if ((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(3))) + ((4)<<2)))) != 1) {
-        i32Err = 1;
-    }
-
-    if ( i32Err ) {
-        printf("  [FAIL] --- Please make sure P1.0 and P3.4 are connected. \r\n");
-    } else {
-        printf("  [OK] \r\n");
-    }
-
-     
-    GPIO_SetMode(((GPIO_T *) (((uint32_t)0x50000000) + 0x04040)), (0x00000001), 0x3UL);
-    GPIO_SetMode(((GPIO_T *) (((uint32_t)0x50000000) + 0x040C0)), (0x00000010), 0x3UL);
+int main(void) {
+	uint8_t ucKeyCode;
 
 
-     
-     
-     
-    printf("\r\n  P15, P22, P32(INT0) and P52(INT1) are used to test interrupt\r\n  and control LEDs(P30)\r\n");
+	 
+	SYS_Init();
 
-     
-    GPIO_SetMode(((GPIO_T *) (((uint32_t)0x50000000) + 0x040C0)), (0x00000001), 0x1UL);
-
-     
-    GPIO_SetMode(((GPIO_T *) (((uint32_t)0x50000000) + 0x04040)), (0x00000020), 0x0UL);
-    GPIO_EnableInt(((GPIO_T *) (((uint32_t)0x50000000) + 0x04040)), 5, 0x00010000UL);
-    NVIC_EnableIRQ(GPIO01_IRQn);
+	bsp_Init();
 
 
-     
-    GPIO_SetMode(((GPIO_T *) (((uint32_t)0x50000000) + 0x04080)), (0x00000004), 0x3UL);
-    GPIO_EnableInt(((GPIO_T *) (((uint32_t)0x50000000) + 0x04080)), 2, 0x00000001UL);
-    NVIC_EnableIRQ(GPIO234_IRQn);
+	LITE_openlog("lamp");
+	LITE_set_loglevel(LOG_DEBUG_LEVEL);
 
-     
-    GPIO_SetMode(((GPIO_T *) (((uint32_t)0x50000000) + 0x040C0)), (0x00000004), 0x0UL);
-    GPIO_EnableInt(((GPIO_T *) (((uint32_t)0x50000000) + 0x040C0)), 2, 0x00000001UL);
-    NVIC_EnableIRQ(EINT0_IRQn);
 
-     
-    GPIO_SetMode(((GPIO_T *) (((uint32_t)0x50000000) + 0x04140)), (0x00000004), 0x0UL);
-    GPIO_EnableInt(((GPIO_T *) (((uint32_t)0x50000000) + 0x04140)), 2, 0x00010001UL);
-    NVIC_EnableIRQ(EINT1_IRQn);
 
-     
-    (((GPIO_DB_T *) (((uint32_t)0x50000000) + 0x04180))->DBCTL = ((0x1ul << (5)) | 0x00000000UL | 0x00000000UL));
-    ((((GPIO_T *) (((uint32_t)0x50000000) + 0x04040)))->DBEN |= (0x00000020));
-    ((((GPIO_T *) (((uint32_t)0x50000000) + 0x04080)))->DBEN |= (0x00000004));
-    ((((GPIO_T *) (((uint32_t)0x50000000) + 0x040C0)))->DBEN |= (0x00000004));
-    ((((GPIO_T *) (((uint32_t)0x50000000) + 0x04140)))->DBEN |= (0x00000004));
 
-     
-    while (1);
+	LITE_syslog(__FUNCTION__, 81, LOG_DEBUG_LEVEL, " CPU @ %dHz\r\n", SystemCoreClock);
+
+	printf("+-------------------------------------+ \r\n");
+	printf("+-------------------------------------+ \r\n");
+
+	while (1) {
+
+		ucKeyCode = bsp_GetKey();
+		if (ucKeyCode != KEY_NONE) {
+			switch (ucKeyCode) {
+			case KEY_1_UP:   
+				break;
+			case KEY_1_DOWN: {
+
+
+			}
+				break;
+			case KEY_1_LONG:
+				break;
+			case KEY_2_UP:   
+				break;
+			case KEY_2_DOWN:
+
+
+				break;
+			case KEY_2_LONG:
+				break;
+			}
+		}
+
+	}
 
 }
-
 

@@ -1,5 +1,11 @@
 --cpu Cortex-M0
 ".\obj\main.o"
+".\obj\app_crc.o"
+".\obj\bsp.o"
+".\obj\bsp_uart.o"
+".\obj\bsp_key.o"
+".\obj\bsp_relay.o"
+".\obj\lite-log.o"
 ".\obj\system_mini58series.o"
 ".\obj\startup_mini58series.o"
 ".\obj\acmp.o"

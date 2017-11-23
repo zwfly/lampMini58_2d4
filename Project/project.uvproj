@@ -172,11 +172,11 @@
             <RunIndependent>0</RunIndependent>
             <UpdateFlashBeforeDebugging>1</UpdateFlashBeforeDebugging>
             <Capability>1</Capability>
-            <DriverSelection>4107</DriverSelection>
+            <DriverSelection>4106</DriverSelection>
           </Flash1>
-          <bUseTDR>0</bUseTDR>
+          <bUseTDR>1</bUseTDR>
           <Flash2>Bin\Nu_Link.dll</Flash2>
-          <Flash3></Flash3>
+          <Flash3>"" ()</Flash3>
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
           <pFcarmGrp></pFcarmGrp>
@@ -374,7 +374,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>..\Library\StdDriver\inc;..\Library\CMSIS\Include;..\Library\Device\Nuvoton\Mini58Series\Include</IncludePath>
+              <IncludePath>..\Library\StdDriver\inc;..\Library\CMSIS\Include;..\Library\Device\Nuvoton\Mini58Series\Include;..\Bsp;..\Bsp\inc;..\utils\inc;..\App\inc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -423,10 +423,47 @@
               <FileType>1</FileType>
               <FilePath>..\App\src\main.c</FilePath>
             </File>
+            <File>
+              <FileName>app_crc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\App\src\app_crc.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
           <GroupName>Bsp</GroupName>
+          <Files>
+            <File>
+              <FileName>bsp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Bsp\bsp.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Bsp\src\bsp_uart.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_key.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Bsp\src\bsp_key.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_relay.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Bsp\src\bsp_relay.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Utils</GroupName>
+          <Files>
+            <File>
+              <FileName>lite-log.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\utils\src\lite-log.c</FilePath>
+            </File>
+          </Files>
         </Group>
         <Group>
           <GroupName>CMSIS</GroupName>

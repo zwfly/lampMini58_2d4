@@ -8,22 +8,21 @@
 
 void Relay_InitHard(void) {
 
-	clr_P1M1_4;
-	P1M2 |= SET_BIT4;
+	GPIO_SetMode(P1, BIT0, GPIO_MODE_OUTPUT);
 
 	Relay_off();
 }
 void Relay_on(void) {
-	P14 = 1;
+	P10 = 1;
 }
 void Relay_off(void) {
-	P14 = 0;
+	P10 = 0;
 }
 void Relay_toggle(void) {
-	P14 = ~P14;
+	P10 = ~P10;
 }
 uint8_t Relay_IsOn(void) {
-	return P14;
+	return P10;
 }
 void Relay_set(uint8_t s) {
 	if (s) {

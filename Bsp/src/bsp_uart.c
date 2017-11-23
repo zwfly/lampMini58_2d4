@@ -4,36 +4,85 @@
  *  Created on: 2017Äê6ÔÂ27ÈÕ
  *      Author: fly
  */
-
-#include "bsp.h"
 #include <string.h>
+#include "bsp.h"
+#include <stdint.h>
 
- RCV_T rcv_T;
-
-uint8_t riflag = 0;
+RCV_T rcv_T;
 
 void Uart_InitHard(void) {
-	riflag = 0;
 
-	memset((uint8_t *) &rcv_T, 0, sizeof(RCV_T));
+	/* Enable IP clock */
+	CLK_EnableModuleClock(UART0_MODULE);
 
-//	InitialUART0_Timer1(115200);
-	InitialUART0_Timer3(19200);
+	/* Select IP clock source */
+	CLK_SetModuleClock(UART0_MODULE, CLK_CLKSEL1_UARTSEL_HIRC,
+			CLK_CLKDIV_UART(1));
+
+	/*---------------------------------------------------------------------------------------------------------*/
+	/* Init I/O Multi-function                                                                                 */
+	/*---------------------------------------------------------------------------------------------------------*/
+	/* Set P1 multi-function pins for UART RXD, TXD */
+	SYS->P1_MFP = SYS_MFP_P12_UART0_RXD | SYS_MFP_P13_UART0_TXD;
+
+	/* Reset IP */
+	SYS_ResetModule(SYS_IPRST1_UART0RST_Msk);
+
+	/* Configure UART and set UART Baudrate */
+	UART_Open(UART0, 115200);
+
+///////////
+	/* Init UART1 */
+
+	/* Enable IP clock */
+	CLK_EnableModuleClock(UART1_MODULE);
+
+	/* Select IP clock source */
+	CLK_SetModuleClock(UART1_MODULE, CLK_CLKSEL1_UARTSEL_HIRC,
+			CLK_CLKDIV_UART(1));
+
+	/*---------------------------------------------------------------------------------------------------------*/
+	/* Init I/O Multi-function                                                                                 */
+	/*---------------------------------------------------------------------------------------------------------*/
+	/* Set P1 multi-function pins for UART RXD, TXD */
+	SYS->P2_MFP = SYS_MFP_P24_UART1_RXD | SYS_MFP_P25_UART1_TXD;
+
+	/* Reset IP */
+	SYS_ResetModule(SYS_IPRST1_UART1RST_Msk);
+
+	/* Configure UART and set UART Baudrate */
+	UART_Open(UART1, 19200);
+
+    /* Enable Interrupt and install the call back function */
+    UART_ENABLE_INT(UART1, (UART_INTEN_RDAIEN_Msk | UART_INTEN_THREIEN_Msk | UART_INTEN_RXTOIEN_Msk));
+    NVIC_EnableIRQ(UART1_IRQn);
 }
 
-void SerialPort0_ISR(void)
-interrupt 4
-{
-	if (RI == 1) { /* if reception occur */
-		clr_RI; /* clear reception flag for next reception */
-		rcv_T.rxBuf[rcv_T.pWrite++] = SBUF;
-		if (rcv_T.pWrite >= RCV_BUFSIZE) {
-			rcv_T.pWrite = 0;
+/*---------------------------------------------------------------------------------------------------------*/
+/* ISR to handle UART Channel 0 interrupt event                                                            */
+/*---------------------------------------------------------------------------------------------------------*/
+void UART1_IRQHandler(void) {
+
+	uint8_t u8InChar = 0xFF;
+	uint32_t u32IntSts = UART1->INTSTS;
+
+	if (u32IntSts & UART_INTSTS_RDAINT_Msk) {
+
+		/* Get all the input characters */
+		while (UART_IS_RX_READY(UART1)) {
+			/* Get the character from UART Buffer */
+			u8InChar = UART_READ(UART1); /* Rx trigger level is 1 byte*/
+
 		}
-		riflag++;
 	}
-	if (TI == 1) {
-		clr_TI; /* if emission occur */
+
+	if (u32IntSts & UART_INTSTS_THREINT_Msk) {
+
+
+			UART_WRITE(UART1, u8InChar);
+
+		
 	}
+
 }
 

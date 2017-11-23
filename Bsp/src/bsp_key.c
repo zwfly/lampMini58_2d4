@@ -15,8 +15,8 @@
 
 #include "bsp.h"
 
-static idata KEY_T s_tBtn[KEY_COUNT];
-static idata KEY_FIFO_T s_tKey; /* 按键FIFO变量,结构体 */
+static  KEY_T s_tBtn[KEY_COUNT];
+static  KEY_FIFO_T s_tKey; /* 按键FIFO变量,结构体 */
 
 static void bsp_InitKeyVar(void);
 static void bsp_InitKeyHard(void);
@@ -32,11 +32,11 @@ static void bsp_DetectKey(uint8_t i);
  */
 
 static uint8_t IsKeyDown1(void) {
-	return ~P30;
+	return ~P31;
 }
 
 static uint8_t IsKeyDown2(void) {
-	return ~P17;
+	return ~P32;
 }
 /*
  *********************************************************************************************************
@@ -163,14 +163,8 @@ void bsp_ClearKey(void) {
  */
 static void bsp_InitKeyHard(void) {
 
-	set_P3M1_0;
-	clr_P3M2_0;
-
-	set_P1M1_7;
-	P1M1 &= ~0x80;
-
-
-
+	GPIO_SetMode(P3, BIT1, GPIO_MODE_INPUT);
+	GPIO_SetMode(P3, BIT2, GPIO_MODE_INPUT);
 
 }
 
@@ -229,7 +223,7 @@ static void bsp_DetectKey(uint8_t i) {
 				pBtn->State = 1;
 
 				/* 发送按钮按下的消息 */
-				bsp_PutKey((uint8_t) (3 * i + 1));
+				bsp_PutKey((uint8_t)(3 * i + 1));
 			}
 
 			if (pBtn->LongTime > 0) {
@@ -237,14 +231,14 @@ static void bsp_DetectKey(uint8_t i) {
 					/* 发送按钮持续按下的消息 */
 					if (++pBtn->LongCount == pBtn->LongTime) {
 						/* 键值放入按键FIFO */
-						bsp_PutKey((uint8_t) (3 * i + 3));
+						bsp_PutKey((uint8_t)(3 * i + 3));
 					}
 				} else {
 					if (pBtn->RepeatSpeed > 0) {
 						if (++pBtn->RepeatCount >= pBtn->RepeatSpeed) {
 							pBtn->RepeatCount = 0;
 							/* 常按键后，每隔10ms发送1个按键 */
-							bsp_PutKey((uint8_t) (3 * i + 1));
+							bsp_PutKey((uint8_t)(3 * i + 1));
 						}
 					}
 				}
@@ -260,7 +254,7 @@ static void bsp_DetectKey(uint8_t i) {
 				pBtn->State = 0;
 
 				/* 发送按钮弹起的消息 */
-				bsp_PutKey((uint8_t) (3 * i + 2));
+				bsp_PutKey((uint8_t)(3 * i + 2));
 			}
 		}
 		pBtn->LongCount = 0;

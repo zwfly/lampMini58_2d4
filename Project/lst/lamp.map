@@ -1,0 +1,166 @@
+Component: ARM Compiler 5.06 update 4 (build 422) Tool: armlink [4d35d2]
+
+==============================================================================
+
+Small function inlining results
+
+Inlined total of 0 calls.
+
+==============================================================================
+
+Memory Map of the image
+
+  Image Entry point : 0x000000f1
+
+  Load Region LR_1 (Base: 0x00000000, Size: 0x00000e3c, Max: 0xffffffff, ABSOLUTE)
+
+    Execution Region ER_RO (Base: 0x00000000, Size: 0x00000e24, Max: 0xffffffff, ABSOLUTE)
+
+    Base Addr    Size         Type   Attr      Idx    E Section Name        Object
+
+    0x00000000   0x000000c0   Data   RO          189    RESET               startup_mini58series.o
+    0x000000c0   0x00000000   Code   RO         1407  * .ARM.Collect$$$$00000000  mc_p.l(entry.o)
+    0x000000c0   0x00000004   Code   RO         1681    .ARM.Collect$$$$00000001  mc_p.l(entry2.o)
+    0x000000c4   0x00000004   Code   RO         1684    .ARM.Collect$$$$00000004  mc_p.l(entry5.o)
+    0x000000c8   0x00000000   Code   RO         1686    .ARM.Collect$$$$00000008  mc_p.l(entry7b.o)
+    0x000000c8   0x00000000   Code   RO         1688    .ARM.Collect$$$$0000000A  mc_p.l(entry8b.o)
+    0x000000c8   0x00000008   Code   RO         1689    .ARM.Collect$$$$0000000B  mc_p.l(entry9a.o)
+    0x000000d0   0x00000000   Code   RO         1691    .ARM.Collect$$$$0000000D  mc_p.l(entry10a.o)
+    0x000000d0   0x00000000   Code   RO         1693    .ARM.Collect$$$$0000000F  mc_p.l(entry11a.o)
+    0x000000d0   0x00000004   Code   RO         1682    .ARM.Collect$$$$00002712  mc_p.l(entry2.o)
+    0x000000d4   0x0000001c   Code   RO          918    .emb_text           retarget.o
+    0x000000f0   0x00000014   Code   RO          190  * .text               startup_mini58series.o
+    0x00000104   0x0000002c   Code   RO         1410    .text               mc_p.l(uidiv.o)
+    0x00000130   0x00000060   Code   RO         1695    .text               mc_p.l(uldiv.o)
+    0x00000190   0x00000024   Code   RO         1710    .text               mc_p.l(init.o)
+    0x000001b4   0x00000020   Code   RO         1712    .text               mc_p.l(llshl.o)
+    0x000001d4   0x00000022   Code   RO         1714    .text               mc_p.l(llushr.o)
+    0x000001f6   0x00000002   PAD
+    0x000001f8   0x0000001c   Code   RO          296    i.CLK_EnableModuleClock  clk.o
+    0x00000214   0x00000058   Code   RO         1238    i.CLK_GetPLLClockFreq  uart.o
+    0x0000026c   0x00000024   Code   RO          307    i.CLK_SetHCLK       clk.o
+    0x00000290   0x00000050   Code   RO          308    i.CLK_SetModuleClock  clk.o
+    0x000002e0   0x00000014   Code   RO          309    i.CLK_SetSysTickClockSrc  clk.o
+    0x000002f4   0x0000002c   Code   RO          311    i.CLK_WaitClockReady  clk.o
+    0x00000320   0x0000003c   Code   RO            3    i.EINT0_IRQHandler  main.o
+    0x0000035c   0x0000003c   Code   RO            4    i.EINT1_IRQHandler  main.o
+    0x00000398   0x0000006c   Code   RO            5    i.GPIO01_IRQHandler  main.o
+    0x00000404   0x00000074   Code   RO            6    i.GPIO234_IRQHandler  main.o
+    0x00000478   0x0000001a   Code   RO          547    i.GPIO_EnableInt    gpio.o
+    0x00000492   0x00000028   Code   RO          548    i.GPIO_SetMode      gpio.o
+    0x000004ba   0x00000002   PAD
+    0x000004bc   0x00000014   Code   RO          919    i.GetChar           retarget.o
+    0x000004d0   0x00000028   Code   RO          920    i.Hard_Fault_Handler  retarget.o
+    0x000004f8   0x00000014   Code   RO            7    i.NVIC_EnableIRQ    main.o
+    0x0000050c   0x00000084   Code   RO            8    i.SYS_Init          main.o
+    0x00000590   0x0000001c   Code   RO         1111    i.SYS_ResetModule   sys.o
+    0x000005ac   0x00000020   Code   RO          923    i.SendChar_ToUART   retarget.o
+    0x000005cc   0x000000a8   Code   RO          134    i.SystemCoreClockUpdate  system_mini58series.o
+    0x00000674   0x0000001c   Code   RO            9    i.UART_Init         main.o
+    0x00000690   0x00000080   Code   RO         1245    i.UART_Open         uart.o
+    0x00000710   0x00000020   Code   RO         1545    i.__0printf$5       mc_p.l(printf5.o)
+    0x00000730   0x0000000e   Code   RO         1724    i.__scatterload_copy  mc_p.l(handlers.o)
+    0x0000073e   0x00000002   Code   RO         1725    i.__scatterload_null  mc_p.l(handlers.o)
+    0x00000740   0x0000000e   Code   RO         1726    i.__scatterload_zeroinit  mc_p.l(handlers.o)
+    0x0000074e   0x00000002   PAD
+    0x00000750   0x000002dc   Code   RO         1552    i._printf_core      mc_p.l(printf5.o)
+    0x00000a2c   0x00000008   Code   RO          926    i.fgetc             retarget.o
+    0x00000a34   0x0000000c   Code   RO          927    i.fputc             retarget.o
+    0x00000a40   0x00000008   Code   RO         1408    i.getc              mc_p.l(getc.o)
+    0x00000a48   0x00000268   Code   RO           10    i.main              main.o
+    0x00000cb0   0x000000a8   Code   RO          929    i.stackDump         retarget.o
+    0x00000d58   0x000000ac   Data   RO           11    .conststring        main.o
+    0x00000e04   0x00000020   Data   RO         1722    Region$$Table       anon$$obj.o
+
+
+    Execution Region ER_RW (Base: 0x20000000, Size: 0x00000018, Max: 0xffffffff, ABSOLUTE)
+
+    Base Addr    Size         Type   Attr      Idx    E Section Name        Object
+
+    0x20000000   0x00000004   Data   RW          136    .data               system_mini58series.o
+    0x20000004   0x0000000c   Data   RW          137    .data               system_mini58series.o
+    0x20000010   0x00000004   Data   RW          930    .data               retarget.o
+    0x20000014   0x00000004   Data   RW          931    .data               retarget.o
+
+
+    Execution Region ER_ZI (Base: 0x20000018, Size: 0x00000200, Max: 0xffffffff, ABSOLUTE)
+
+    Base Addr    Size         Type   Attr      Idx    E Section Name        Object
+
+    0x20000018   0x00000200   Zero   RW          187    STACK               startup_mini58series.o
+
+
+==============================================================================
+
+Image component sizes
+
+
+      Code (inc. data)   RO Data    RW Data    ZI Data      Debug   Object Name
+
+       208         32          0          0          0       3230   clk.o
+        66          0          0          0          0       1496   gpio.o
+      1140        514        172          0          0     145425   main.o
+       308        138          0          8          0       5350   retarget.o
+        20          4        192          0        512        684   startup_mini58series.o
+        28          0          0          0          0        470   sys.o
+       168         30          0         16          0     130477   system_mini58series.o
+       216         34          0          0          0       1960   uart.o
+
+    ----------------------------------------------------------------------
+      2156        752        396         24        512     289092   Object Totals
+         0          0         32          0          0          0   (incl. Generated)
+         2          0          0          0          0          0   (incl. Padding)
+
+    ----------------------------------------------------------------------
+
+      Code (inc. data)   RO Data    RW Data    ZI Data      Debug   Library Member Name
+
+         0          0          0          0          0          0   entry.o
+         0          0          0          0          0          0   entry10a.o
+         0          0          0          0          0          0   entry11a.o
+         8          4          0          0          0          0   entry2.o
+         4          0          0          0          0          0   entry5.o
+         0          0          0          0          0          0   entry7b.o
+         0          0          0          0          0          0   entry8b.o
+         8          4          0          0          0          0   entry9a.o
+         8          0          0          0          0         68   getc.o
+        30          0          0          0          0          0   handlers.o
+        36          8          0          0          0         68   init.o
+        32          0          0          0          0         68   llshl.o
+        34          0          0          0          0         68   llushr.o
+       764         52          0          0          0        168   printf5.o
+        44          0          0          0          0         72   uidiv.o
+        96          0          0          0          0         84   uldiv.o
+
+    ----------------------------------------------------------------------
+      1068         68          0          0          0        596   Library Totals
+         4          0          0          0          0          0   (incl. Padding)
+
+    ----------------------------------------------------------------------
+
+      Code (inc. data)   RO Data    RW Data    ZI Data      Debug   Library Name
+
+      1064         68          0          0          0        596   mc_p.l
+
+    ----------------------------------------------------------------------
+      1068         68          0          0          0        596   Library Totals
+
+    ----------------------------------------------------------------------
+
+==============================================================================
+
+
+      Code (inc. data)   RO Data    RW Data    ZI Data      Debug   
+
+      3224        820        396         24        512     288600   Grand Totals
+      3224        820        396         24        512     288600   ELF Image Totals
+      3224        820        396         24          0          0   ROM Totals
+
+==============================================================================
+
+    Total RO  Size (Code + RO Data)                 3620 (   3.54kB)
+    Total RW  Size (RW Data + ZI Data)               536 (   0.52kB)
+    Total ROM Size (Code + RO Data + RW Data)       3644 (   3.56kB)
+
+==============================================================================
+

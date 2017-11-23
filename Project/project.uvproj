@@ -7,19 +7,20 @@
 
   <Targets>
     <Target>
-      <TargetName>meter</TargetName>
-      <ToolsetNumber>0x0</ToolsetNumber>
-      <ToolsetName>MCS-51</ToolsetName>
+      <TargetName>lamp</TargetName>
+      <ToolsetNumber>0x4</ToolsetNumber>
+      <ToolsetName>ARM-ADS</ToolsetName>
+      <pCCUsed>5060422::V5.06 update 4 (build 422)::ARMCC</pCCUsed>
       <TargetOption>
         <TargetCommonOption>
-          <Device>N76E003</Device>
+          <Device>Mini58FDE</Device>
           <Vendor>Nuvoton</Vendor>
-          <Cpu>IRAM(0 - 0xFF) IROM(0 - 0x47FF)  XRAM(0 - 0x2FF) CLOCK(16000000)</Cpu>
+          <Cpu>IRAM(0x20000000-0x20000FFF) IROM(0-0x7FFF) CLOCK(50000000) CPUTYPE("Cortex-M0")</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
-          <StartupFile>"LIB\STARTUP.A51" ("Standard 8051 Startup Code")</StartupFile>
+          <StartupFile>undefined</StartupFile>
           <FlashDriverDll></FlashDriverDll>
           <DeviceId>0</DeviceId>
-          <RegisterFile>N76E003.H</RegisterFile>
+          <RegisterFile></RegisterFile>
           <MemoryEnv></MemoryEnv>
           <Cmp></Cmp>
           <Asm></Asm>
@@ -29,14 +30,14 @@
           <SLE66CMisc></SLE66CMisc>
           <SLE66AMisc></SLE66AMisc>
           <SLE66LinkerMisc></SLE66LinkerMisc>
-          <SFDFile></SFDFile>
-          <bCustSvd>0</bCustSvd>
+          <SFDFile>undefined</SFDFile>
+          <bCustSvd>1</bCustSvd>
           <UseEnv>0</UseEnv>
           <BinPath></BinPath>
           <IncludePath></IncludePath>
           <LibPath></LibPath>
-          <RegisterFilePath>Nuvoton\</RegisterFilePath>
-          <DBRegisterFilePath>Nuvoton\</DBRegisterFilePath>
+          <RegisterFilePath>ST\STM32F10x\</RegisterFilePath>
+          <DBRegisterFilePath>ST\STM32F10x\</DBRegisterFilePath>
           <TargetStatus>
             <Error>0</Error>
             <ExitCodeStop>0</ExitCodeStop>
@@ -44,15 +45,15 @@
             <NotGenerated>0</NotGenerated>
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
-          <OutputDirectory>.\Out\Objects\</OutputDirectory>
-          <OutputName>project</OutputName>
+          <OutputDirectory>.\obj\</OutputDirectory>
+          <OutputName>lamp</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>1</CreateHexFile>
           <DebugInformation>1</DebugInformation>
           <BrowseInformation>1</BrowseInformation>
-          <ListingPath>.\Out\Listings\</ListingPath>
-          <HexFormatSelection>0</HexFormatSelection>
+          <ListingPath>.\lst\</ListingPath>
+          <HexFormatSelection>1</HexFormatSelection>
           <Merge32K>0</Merge32K>
           <CreateBatchFile>0</CreateBatchFile>
           <BeforeCompile>
@@ -78,14 +79,14 @@
           <AfterMake>
             <RunUserProg1>0</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name></UserProg1Name>
-            <UserProg2Name></UserProg2Name>
+            <UserProg1Name>fromelf --bin ".\obj\@L.axf" --output ".\obj\@L.bin"</UserProg1Name>
+            <UserProg2Name>fromelf --text -c ".\obj\@L.axf" --output ".\obj\@L.txt"</UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
             <nStopA1X>0</nStopA1X>
             <nStopA2X>0</nStopA2X>
           </AfterMake>
-          <SelectedForBatchBuild>0</SelectedForBatchBuild>
+          <SelectedForBatchBuild>1</SelectedForBatchBuild>
           <SVCSIdString></SVCSIdString>
         </TargetCommonOption>
         <CommonProperty>
@@ -103,21 +104,20 @@
           <CustomArgument></CustomArgument>
           <IncludeLibraryModules></IncludeLibraryModules>
           <ComprImg>1</ComprImg>
-          <BankNo>65535</BankNo>
         </CommonProperty>
         <DllOption>
-          <SimDllName>S8051.DLL</SimDllName>
+          <SimDllName>SARMCM3.DLL</SimDllName>
           <SimDllArguments></SimDllArguments>
-          <SimDlgDll>DP51.DLL</SimDlgDll>
+          <SimDlgDll>DARMCM1.DLL</SimDlgDll>
           <SimDlgDllArguments></SimDlgDllArguments>
-          <TargetDllName>S8051.DLL</TargetDllName>
+          <TargetDllName>SARMCM3.DLL</TargetDllName>
           <TargetDllArguments></TargetDllArguments>
-          <TargetDlgDll>TP51.DLL</TargetDlgDll>
+          <TargetDlgDll>TARMCM1.DLL</TargetDlgDll>
           <TargetDlgDllArguments></TargetDlgDllArguments>
         </DllOption>
         <DebugOption>
           <OPTHX>
-            <HexSelection>0</HexSelection>
+            <HexSelection>1</HexSelection>
             <HexRangeLowAddress>0</HexRangeLowAddress>
             <HexRangeHighAddress>0</HexRangeHighAddress>
             <HexOffset>0</HexOffset>
@@ -139,16 +139,16 @@
             <UseTarget>1</UseTarget>
             <LoadApplicationAtStartup>1</LoadApplicationAtStartup>
             <RunToMain>1</RunToMain>
-            <RestoreBreakpoints>0</RestoreBreakpoints>
-            <RestoreWatchpoints>0</RestoreWatchpoints>
-            <RestoreMemoryDisplay>0</RestoreMemoryDisplay>
+            <RestoreBreakpoints>1</RestoreBreakpoints>
+            <RestoreWatchpoints>1</RestoreWatchpoints>
+            <RestoreMemoryDisplay>1</RestoreMemoryDisplay>
             <RestoreFunctions>0</RestoreFunctions>
-            <RestoreToolbox>0</RestoreToolbox>
-            <RestoreTracepoints>1</RestoreTracepoints>
+            <RestoreToolbox>1</RestoreToolbox>
+            <RestoreTracepoints>0</RestoreTracepoints>
             <RestoreSysVw>1</RestoreSysVw>
           </Target>
           <RunDebugAfterBuild>0</RunDebugAfterBuild>
-          <TargetSelection>0</TargetSelection>
+          <TargetSelection>19</TargetSelection>
           <SimDlls>
             <CpuDll></CpuDll>
             <CpuDllArguments></CpuDllArguments>
@@ -162,7 +162,7 @@
             <PeripheralDll></PeripheralDll>
             <PeripheralDllArguments></PeripheralDllArguments>
             <InitializationFile></InitializationFile>
-            <Driver>BIN\Nuvoton_8051_Keil_uVision_Driver.dll</Driver>
+            <Driver>Bin\Nu_Link.dll</Driver>
           </TargetDlls>
         </DebugOption>
         <Utilities>
@@ -172,71 +172,83 @@
             <RunIndependent>0</RunIndependent>
             <UpdateFlashBeforeDebugging>1</UpdateFlashBeforeDebugging>
             <Capability>1</Capability>
-            <DriverSelection>4102</DriverSelection>
+            <DriverSelection>4107</DriverSelection>
           </Flash1>
-          <bUseTDR>1</bUseTDR>
-          <Flash2>BIN\Nuvoton_8051_Keil_uVision_Driver.dll</Flash2>
-          <Flash3>"" ()</Flash3>
+          <bUseTDR>0</bUseTDR>
+          <Flash2>Bin\Nu_Link.dll</Flash2>
+          <Flash3></Flash3>
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
           <pFcarmGrp></pFcarmGrp>
           <pFcArmRoot></pFcArmRoot>
           <FcArmLst>0</FcArmLst>
         </Utilities>
-        <Target51>
-          <Target51Misc>
-            <MemoryModel>2</MemoryModel>
-            <RTOS>0</RTOS>
-            <RomSize>2</RomSize>
-            <DataHold>0</DataHold>
-            <XDataHold>0</XDataHold>
-            <UseOnchipRom>0</UseOnchipRom>
-            <UseOnchipArithmetic>0</UseOnchipArithmetic>
-            <UseMultipleDPTR>0</UseMultipleDPTR>
-            <UseOnchipXram>0</UseOnchipXram>
-            <HadIRAM>1</HadIRAM>
-            <HadXRAM>1</HadXRAM>
-            <HadIROM>1</HadIROM>
-            <Moda2>0</Moda2>
-            <Moddp2>0</Moddp2>
-            <Modp2>0</Modp2>
-            <Mod517dp>0</Mod517dp>
-            <Mod517au>0</Mod517au>
-            <Mode2>0</Mode2>
-            <useCB>0</useCB>
-            <useXB>0</useXB>
-            <useL251>0</useL251>
-            <useA251>0</useA251>
-            <Mx51>0</Mx51>
-            <ModC812>0</ModC812>
-            <ModCont>0</ModCont>
-            <Lp51>0</Lp51>
-            <useXBS>0</useXBS>
-            <ModDA>0</ModDA>
-            <ModAB2>0</ModAB2>
-            <Mx51P>0</Mx51P>
-            <hadXRAM2>0</hadXRAM2>
-            <uocXram2>0</uocXram2>
-            <ModC2>0</ModC2>
-            <ModH2>0</ModH2>
-            <Mdu_R515>0</Mdu_R515>
-            <Mdu_F120>0</Mdu_F120>
-            <Psoc>0</Psoc>
+        <TargetArmAds>
+          <ArmAdsMisc>
+            <GenerateListings>0</GenerateListings>
+            <asHll>1</asHll>
+            <asAsm>1</asAsm>
+            <asMacX>1</asMacX>
+            <asSyms>1</asSyms>
+            <asFals>1</asFals>
+            <asDbgD>1</asDbgD>
+            <asForm>1</asForm>
+            <ldLst>0</ldLst>
+            <ldmm>1</ldmm>
+            <ldXref>1</ldXref>
+            <BigEnd>0</BigEnd>
+            <AdsALst>1</AdsALst>
+            <AdsACrf>1</AdsACrf>
+            <AdsANop>0</AdsANop>
+            <AdsANot>0</AdsANot>
+            <AdsLLst>1</AdsLLst>
+            <AdsLmap>1</AdsLmap>
+            <AdsLcgr>0</AdsLcgr>
+            <AdsLsym>0</AdsLsym>
+            <AdsLszi>1</AdsLszi>
+            <AdsLtoi>1</AdsLtoi>
+            <AdsLsun>0</AdsLsun>
+            <AdsLven>0</AdsLven>
+            <AdsLsxf>0</AdsLsxf>
+            <RvctClst>1</RvctClst>
+            <GenPPlst>1</GenPPlst>
+            <AdsCpuType>"Cortex-M0"</AdsCpuType>
+            <RvctDeviceName></RvctDeviceName>
+            <mOS>0</mOS>
+            <uocRom>0</uocRom>
+            <uocRam>0</uocRam>
+            <hadIROM>1</hadIROM>
+            <hadIRAM>1</hadIRAM>
+            <hadXRAM>0</hadXRAM>
+            <uocXRam>0</uocXRam>
+            <RvdsVP>0</RvdsVP>
+            <hadIRAM2>0</hadIRAM2>
             <hadIROM2>0</hadIROM2>
-            <ModSmx2>0</ModSmx2>
-            <cBanks>0</cBanks>
-            <xBanks>0</xBanks>
+            <StupSel>8</StupSel>
+            <useUlib>1</useUlib>
+            <EndSel>0</EndSel>
+            <uLtcg>0</uLtcg>
+            <nSecure>0</nSecure>
+            <RoSelD>3</RoSelD>
+            <RwSelD>3</RwSelD>
+            <CodeSel>0</CodeSel>
+            <OptFeed>0</OptFeed>
+            <NoZi1>0</NoZi1>
+            <NoZi2>0</NoZi2>
+            <NoZi3>0</NoZi3>
+            <NoZi4>0</NoZi4>
+            <NoZi5>0</NoZi5>
+            <Ro1Chk>0</Ro1Chk>
+            <Ro2Chk>0</Ro2Chk>
+            <Ro3Chk>0</Ro3Chk>
+            <Ir1Chk>1</Ir1Chk>
+            <Ir2Chk>0</Ir2Chk>
+            <Ra1Chk>0</Ra1Chk>
+            <Ra2Chk>0</Ra2Chk>
+            <Ra3Chk>0</Ra3Chk>
+            <Im1Chk>1</Im1Chk>
+            <Im2Chk>0</Im2Chk>
             <OnChipMemories>
-              <RCB>
-                <Type>0</Type>
-                <StartAddress>0x0</StartAddress>
-                <Size>0xffff</Size>
-              </RCB>
-              <RXB>
-                <Type>0</Type>
-                <StartAddress>0x0</StartAddress>
-                <Size>0x0</Size>
-              </RXB>
               <Ocm1>
                 <Type>0</Type>
                 <StartAddress>0x0</StartAddress>
@@ -252,112 +264,155 @@
                 <StartAddress>0x0</StartAddress>
                 <Size>0x0</Size>
               </Ocm3>
-              <Ocr1>
+              <Ocm4>
                 <Type>0</Type>
                 <StartAddress>0x0</StartAddress>
                 <Size>0x0</Size>
-              </Ocr1>
-              <Ocr2>
+              </Ocm4>
+              <Ocm5>
                 <Type>0</Type>
                 <StartAddress>0x0</StartAddress>
                 <Size>0x0</Size>
-              </Ocr2>
-              <Ocr3>
+              </Ocm5>
+              <Ocm6>
                 <Type>0</Type>
                 <StartAddress>0x0</StartAddress>
                 <Size>0x0</Size>
-              </Ocr3>
-              <IRO>
+              </Ocm6>
+              <IRAM>
+                <Type>0</Type>
+                <StartAddress>0x20000000</StartAddress>
+                <Size>0x1000</Size>
+              </IRAM>
+              <IROM>
                 <Type>1</Type>
                 <StartAddress>0x0</StartAddress>
-                <Size>0x4800</Size>
-              </IRO>
-              <IRA>
-                <Type>0</Type>
-                <StartAddress>0x0</StartAddress>
-                <Size>0x100</Size>
-              </IRA>
-              <XRA>
-                <Type>0</Type>
-                <StartAddress>0x0</StartAddress>
-                <Size>0x300</Size>
-              </XRA>
-              <XRA512>
+                <Size>0x8000</Size>
+              </IROM>
+              <XRAM>
                 <Type>0</Type>
                 <StartAddress>0x0</StartAddress>
                 <Size>0x0</Size>
-              </XRA512>
-              <IROM512>
+              </XRAM>
+              <OCR_RVCT1>
+                <Type>1</Type>
+                <StartAddress>0x0</StartAddress>
+                <Size>0x0</Size>
+              </OCR_RVCT1>
+              <OCR_RVCT2>
+                <Type>1</Type>
+                <StartAddress>0x0</StartAddress>
+                <Size>0x0</Size>
+              </OCR_RVCT2>
+              <OCR_RVCT3>
+                <Type>1</Type>
+                <StartAddress>0x0</StartAddress>
+                <Size>0x0</Size>
+              </OCR_RVCT3>
+              <OCR_RVCT4>
+                <Type>1</Type>
+                <StartAddress>0x0</StartAddress>
+                <Size>0x8000</Size>
+              </OCR_RVCT4>
+              <OCR_RVCT5>
+                <Type>1</Type>
+                <StartAddress>0x0</StartAddress>
+                <Size>0x0</Size>
+              </OCR_RVCT5>
+              <OCR_RVCT6>
                 <Type>0</Type>
                 <StartAddress>0x0</StartAddress>
                 <Size>0x0</Size>
-              </IROM512>
+              </OCR_RVCT6>
+              <OCR_RVCT7>
+                <Type>0</Type>
+                <StartAddress>0x0</StartAddress>
+                <Size>0x0</Size>
+              </OCR_RVCT7>
+              <OCR_RVCT8>
+                <Type>0</Type>
+                <StartAddress>0x0</StartAddress>
+                <Size>0x0</Size>
+              </OCR_RVCT8>
+              <OCR_RVCT9>
+                <Type>0</Type>
+                <StartAddress>0x20000000</StartAddress>
+                <Size>0x1000</Size>
+              </OCR_RVCT9>
+              <OCR_RVCT10>
+                <Type>0</Type>
+                <StartAddress>0x0</StartAddress>
+                <Size>0x0</Size>
+              </OCR_RVCT10>
             </OnChipMemories>
-          </Target51Misc>
-          <C51>
-            <RegisterColoring>0</RegisterColoring>
-            <VariablesInOrder>0</VariablesInOrder>
-            <IntegerPromotion>1</IntegerPromotion>
-            <uAregs>0</uAregs>
-            <UseInterruptVector>1</UseInterruptVector>
-            <Fuzzy>3</Fuzzy>
-            <Optimize>8</Optimize>
-            <WarningLevel>2</WarningLevel>
-            <SizeSpeed>0</SizeSpeed>
-            <ObjectExtend>1</ObjectExtend>
-            <ACallAJmp>0</ACallAJmp>
-            <InterruptVectorAddress>0</InterruptVectorAddress>
-            <VariousControls>
-              <MiscControls></MiscControls>
-              <Define>FOSC_160000</Define>
-              <Undefine></Undefine>
-              <IncludePath>..\Common\inc;..\App\inc;..\Bsp\inc;..\Startup;..\Bsp</IncludePath>
-            </VariousControls>
-          </C51>
-          <Ax51>
-            <UseMpl>0</UseMpl>
-            <UseStandard>1</UseStandard>
-            <UseCase>0</UseCase>
-            <UseMod51>0</UseMod51>
+            <RvctStartVector></RvctStartVector>
+          </ArmAdsMisc>
+          <Cads>
+            <interw>1</interw>
+            <Optim>3</Optim>
+            <oTime>0</oTime>
+            <SplitLS>0</SplitLS>
+            <OneElfS>1</OneElfS>
+            <Strict>0</Strict>
+            <EnumInt>0</EnumInt>
+            <PlainCh>0</PlainCh>
+            <Ropi>0</Ropi>
+            <Rwpi>0</Rwpi>
+            <wLevel>0</wLevel>
+            <uThumb>0</uThumb>
+            <uSurpInc>0</uSurpInc>
+            <uC99>1</uC99>
+            <useXO>0</useXO>
+            <v6Lang>1</v6Lang>
+            <v6LangP>1</v6LangP>
+            <vShortEn>1</vShortEn>
+            <vShortWch>1</vShortWch>
+            <v6Lto>0</v6Lto>
+            <v6WtE>0</v6WtE>
+            <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>..\Common\inc</IncludePath>
+              <IncludePath>..\Library\StdDriver\inc;..\Library\CMSIS\Include;..\Library\Device\Nuvoton\Mini58Series\Include</IncludePath>
             </VariousControls>
-          </Ax51>
-          <Lx51>
+          </Cads>
+          <Aads>
+            <interw>1</interw>
+            <Ropi>0</Ropi>
+            <Rwpi>0</Rwpi>
+            <thumb>1</thumb>
+            <SplitLS>0</SplitLS>
+            <SwStkChk>0</SwStkChk>
+            <NoWarn>0</NoWarn>
+            <uSurpInc>0</uSurpInc>
+            <useXO>0</useXO>
+            <uClangAs>0</uClangAs>
+            <VariousControls>
+              <MiscControls></MiscControls>
+              <Define></Define>
+              <Undefine></Undefine>
+              <IncludePath></IncludePath>
+            </VariousControls>
+          </Aads>
+          <LDads>
+            <umfTarg>0</umfTarg>
+            <Ropi>0</Ropi>
+            <Rwpi>0</Rwpi>
+            <noStLib>0</noStLib>
+            <RepFail>1</RepFail>
             <useFile>0</useFile>
-            <linkonly>0</linkonly>
-            <UseMemoryFromTarget>1</UseMemoryFromTarget>
-            <CaseSensitiveSymbols>0</CaseSensitiveSymbols>
-            <WarningLevel>2</WarningLevel>
-            <DataOverlaying>1</DataOverlaying>
-            <OverlayString></OverlayString>
-            <MiscControls></MiscControls>
-            <DisableWarningNumbers>16</DisableWarningNumbers>
-            <LinkerCmdFile></LinkerCmdFile>
-            <Assign></Assign>
-            <ReserveString></ReserveString>
-            <CClasses></CClasses>
-            <UserClasses></UserClasses>
-            <CSection></CSection>
-            <UserSection></UserSection>
-            <CodeBaseAddress></CodeBaseAddress>
-            <XDataBaseAddress></XDataBaseAddress>
-            <PDataBaseAddress></PDataBaseAddress>
-            <BitBaseAddress></BitBaseAddress>
-            <DataBaseAddress></DataBaseAddress>
-            <IDataBaseAddress></IDataBaseAddress>
-            <Precede></Precede>
-            <Stack></Stack>
-            <CodeSegmentName></CodeSegmentName>
-            <XDataSegmentName></XDataSegmentName>
-            <BitSegmentName></BitSegmentName>
-            <DataSegmentName></DataSegmentName>
-            <IDataSegmentName></IDataSegmentName>
-          </Lx51>
-        </Target51>
+            <TextAddressRange>0x00000000</TextAddressRange>
+            <DataAddressRange>0x20000000</DataAddressRange>
+            <pXoBase></pXoBase>
+            <ScatterFile></ScatterFile>
+            <IncludeLibs></IncludeLibs>
+            <IncludeLibsPath></IncludeLibsPath>
+            <Misc>--map --first='startup_Mini58Series.o(RESET)' --datacompressor=off --info=inline --entry Reset_Handler</Misc>
+            <LinkerInputFile></LinkerInputFile>
+            <DisabledWarnings></DisabledWarnings>
+          </LDads>
+        </TargetArmAds>
       </TargetOption>
       <Groups>
         <Group>
@@ -368,130 +423,98 @@
               <FileType>1</FileType>
               <FilePath>..\App\src\main.c</FilePath>
             </File>
-            <File>
-              <FileName>app_work.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\App\src\app_work.c</FilePath>
-            </File>
-            <File>
-              <FileName>app_repeat_exe.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\App\src\app_repeat_exe.c</FilePath>
-            </File>
-            <File>
-              <FileName>app.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\App\inc\app.h</FilePath>
-            </File>
-            <File>
-              <FileName>app_2d4.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\App\src\app_2d4.c</FilePath>
-            </File>
-            <File>
-              <FileName>app_uart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\App\src\app_uart.c</FilePath>
-            </File>
-            <File>
-              <FileName>app_crc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\App\src\app_crc.c</FilePath>
-            </File>
-            <File>
-              <FileName>app_dome.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\App\src\app_dome.c</FilePath>
-            </File>
-            <File>
-              <FileName>app_eeprom.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\App\src\app_eeprom.c</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>
           <GroupName>Bsp</GroupName>
-          <Files>
-            <File>
-              <FileName>bsp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Bsp\bsp.c</FilePath>
-            </File>
-            <File>
-              <FileName>bsp_uart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Bsp\src\bsp_uart.c</FilePath>
-            </File>
-            <File>
-              <FileName>bsp_timer0.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Bsp\src\bsp_timer0.c</FilePath>
-            </File>
-            <File>
-              <FileName>bsp_2d4.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Bsp\src\bsp_2d4.c</FilePath>
-            </File>
-            <File>
-              <FileName>bsp_light.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Bsp\src\bsp_light.c</FilePath>
-            </File>
-            <File>
-              <FileName>bsp_relay.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Bsp\src\bsp_relay.c</FilePath>
-            </File>
-            <File>
-              <FileName>bsp_eeprom.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Bsp\src\bsp_eeprom.c</FilePath>
-            </File>
-            <File>
-              <FileName>bsp_key.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Bsp\src\bsp_key.c</FilePath>
-            </File>
-          </Files>
         </Group>
         <Group>
-          <GroupName>Common</GroupName>
+          <GroupName>CMSIS</GroupName>
           <Files>
             <File>
-              <FileName>Common.c</FileName>
+              <FileName>system_Mini58Series.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Common\src\Common.c</FilePath>
+              <FilePath>..\Library\Device\Nuvoton\Mini58Series\Source\system_Mini58Series.c</FilePath>
             </File>
             <File>
-              <FileName>Delay.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Common\src\Delay.c</FilePath>
-            </File>
-            <File>
-              <FileName>Version.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Common\src\Version.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Startup</GroupName>
-          <Files>
-            <File>
-              <FileName>STARTUP.A51</FileName>
+              <FileName>startup_Mini58Series.s</FileName>
               <FileType>2</FileType>
-              <FilePath>..\Startup\STARTUP.A51</FilePath>
+              <FilePath>..\Library\Device\Nuvoton\Mini58Series\Source\ARM\startup_Mini58Series.s</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>Doc</GroupName>
+          <GroupName>Library</GroupName>
           <Files>
             <File>
-              <FileName>readme.txt</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\Doc\readme.txt</FilePath>
+              <FileName>acmp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Library\StdDriver\src\acmp.c</FilePath>
+            </File>
+            <File>
+              <FileName>adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Library\StdDriver\src\adc.c</FilePath>
+            </File>
+            <File>
+              <FileName>clk.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Library\StdDriver\src\clk.c</FilePath>
+            </File>
+            <File>
+              <FileName>fmc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Library\StdDriver\src\fmc.c</FilePath>
+            </File>
+            <File>
+              <FileName>gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Library\StdDriver\src\gpio.c</FilePath>
+            </File>
+            <File>
+              <FileName>i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Library\StdDriver\src\i2c.c</FilePath>
+            </File>
+            <File>
+              <FileName>pwm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Library\StdDriver\src\pwm.c</FilePath>
+            </File>
+            <File>
+              <FileName>retarget.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Library\StdDriver\src\retarget.c</FilePath>
+            </File>
+            <File>
+              <FileName>spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Library\StdDriver\src\spi.c</FilePath>
+            </File>
+            <File>
+              <FileName>sys.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Library\StdDriver\src\sys.c</FilePath>
+            </File>
+            <File>
+              <FileName>timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Library\StdDriver\src\timer.c</FilePath>
+            </File>
+            <File>
+              <FileName>uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Library\StdDriver\src\uart.c</FilePath>
+            </File>
+            <File>
+              <FileName>wdt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Library\StdDriver\src\wdt.c</FilePath>
+            </File>
+            <File>
+              <FileName>wwdt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Library\StdDriver\src\wwdt.c</FilePath>
             </File>
           </Files>
         </Group>

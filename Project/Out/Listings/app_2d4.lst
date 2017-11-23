@@ -1,0 +1,483 @@
+C51 COMPILER V9.52.0.0   APP_2D4                                                           11/20/2017 00:30:10 PAGE 1   
+
+
+C51 COMPILER V9.52.0.0, COMPILATION OF MODULE APP_2D4
+OBJECT MODULE PLACED IN .\Out\Objects\app_2d4.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE ..\App\src\app_2d4.c LARGE OPTIMIZE(8,SIZE) BROWSE INCDIR(..\Common\inc;
+                    -..\App\inc;..\Bsp\inc;..\Startup;..\Bsp) DEFINE(FOSC_160000) DEBUG OBJECTEXTEND PRINT(.\Out\Listings\app_2d4.lst) TABS(2
+                    -) OBJECT(.\Out\Objects\app_2d4.obj)
+
+line level    source
+
+   1          /*
+   2           * app_2d4.c
+   3           *
+   4           *  Created on: 2017年8月16日
+   5           *      Author: fly
+   6           */
+   7          #include "app.h"
+   8          #include <string.h>
+   9          #include <ctype.h>
+  10          
+  11          #include "app_2d4.h"
+  12          
+  13          static uint8_t sendRcv_flag = 0; //0 rcv， 1 send
+  14          static uint8_t rcvBuf[PAYLOAD_WIDTH] = { 0 };
+  15          uint8_t sendBuf[PAYLOAD_WIDTH] = { 0 };
+  16          
+  17          uint8_t tmpBuf[8] = { 0 };
+  18          
+  19          //static uint8_t test_vol = 0;
+  20          //static uint8_t test_yinxiang_status = 0;
+  21          
+  22          void app_2d4_init(void) {
+  23   1      
+  24   1        sendRcv_flag = 0;
+  25   1        memset(rcvBuf, 0, sizeof(rcvBuf));
+  26   1        memset(sendBuf, 0, sizeof(sendBuf));
+  27   1      
+  28   1        RF_Init();
+  29   1      #if 1
+  30   1      
+  31   1        RF_RxMode();
+  32   1      #else
+                RF_TxMode();
+                sendRcv_flag = 1;
+              #endif
+  36   1      
+  37   1      //  RF_Carrier(1);
+  38   1      
+  39   1      }
+  40          
+  41          void app_2d4_send(uint8_t *d, uint8_t len) {
+  42   1      //  if (len > PAYLOAD_WIDTH) {
+  43   1      //    return;
+  44   1      //  }
+  45   1        uint16_t i = 0;
+  46   1        for (i = 0; i < 20; i++) {
+  47   2          nop
+  48   2          nop
+  49   2          nop
+  50   2      //    nop
+  51   2        }
+  52   1        RF_TxMode();
+  53   1        sendRcv_flag = 1;
+C51 COMPILER V9.52.0.0   APP_2D4                                                           11/20/2017 00:30:10 PAGE 2   
+
+  54   1      
+  55   1        for (i = 0; i < 200; i++) {
+  56   2          nop
+  57   2          nop
+  58   2          nop
+  59   2          nop
+  60   2        }
+  61   1      
+  62   1        if (sendBuf != d) {
+  63   2          memset(sendBuf, 0, PAYLOAD_WIDTH);
+  64   2          memcpy(sendBuf, d, len);
+  65   2        }
+  66   1      }
+  67          #if DEBUG
+              idata char sss[32] = {0};
+              #endif
+  70          static void app_2d4_Rcv(uint8_t *buf) {
+  71   1        uint8_t tmp = 0;
+  72   1        uint8_t i = 0;
+  73   1        uint8_t index = 0;
+  74   1        uint8_t check = 0;
+  75   1      #if DEBUG
+                sprintf(sss, "rcv %02X %02X %02X %02X %02X %02X\r\n", (uint16_t) buf[0],
+                    (uint16_t) buf[1], (uint16_t) buf[2], (uint16_t) buf[3],
+                    (uint16_t) buf[4], (uint16_t) buf[5]);
+                printf(sss);
+              #endif
+  81   1        if (buf[0] != LCD2LAMP_HEADER) {
+  82   2          return;
+  83   2        }
+  84   1        if (buf[1] > sizeof(rcvBuf)) {
+  85   2          return;
+  86   2        }
+  87   1        for (i = 0; i < (buf[1] + 1); i++) {
+  88   2          check += buf[i + 1];
+  89   2        }
+  90   1        if (check != buf[buf[1] + 2]) {
+  91   2          return;
+  92   2        }
+  93   1      
+  94   1        memset(sendBuf, 0, PAYLOAD_WIDTH);
+  95   1        index = 0;
+  96   1        switch (buf[2]) {
+  97   2        case KEY_POWER_SHORT_CMD:
+  98   2      //    if (g_tWork.status.bits.DOME) {
+  99   2      //      if (g_tWork.status.bits.pause) {
+ 100   2      //        g_tWork.status.bits.pause = 0;
+ 101   2      //        app_dome_start_current();
+ 102   2      //      } else {
+ 103   2      //        g_tWork.status.bits.pause = 1;
+ 104   2      //        app_dome_stop_current();
+ 105   2      //      }
+ 106   2      //      sendBuf[index++] = LAMP2LCD_HEADER;
+ 107   2      //      sendBuf[index++] = 10;
+ 108   2      //      sendBuf[index++] = KEY_POWER_SHORT_CMD;
+ 109   2      //      sendBuf[index++] = g_tWork.status.bits.pause;
+ 110   2      //      app_dome_get_current_Name(sendBuf + index, 8);
+ 111   2      //      index += 8;
+ 112   2      //      for (i = 0; i < (sendBuf[1] + 1); i++) {
+ 113   2      //        sendBuf[index] += sendBuf[i + 1];
+ 114   2      //      }
+ 115   2      //      index++;
+C51 COMPILER V9.52.0.0   APP_2D4                                                           11/20/2017 00:30:10 PAGE 3   
+
+ 116   2      //      app_2d4_send(sendBuf, index);
+ 117   2      //
+ 118   2      //    } else {
+ 119   2          app_uart_send(KEY_POWER_SHORT_CMD, 0, 0);
+ 120   2      //    }
+ 121   2          break;
+ 122   2      #if 0
+                  case POWER_LONG_CMD:
+              #if 0
+                  if (buf[3] == 1) {
+                    test_yinxiang_status = 1;
+                  } else if (buf[3] == 2) {
+                    test_yinxiang_status = 0;
+                  } else if (buf[3] == 3) {
+                    if (test_yinxiang_status) {
+                      test_yinxiang_status = 0;
+                    } else {
+                      test_yinxiang_status = 1;
+                    }
+                  }
+                  sendBuf[index++] = LAMP2LCD_HEADER;
+                  sendBuf[index++] = 0x02;
+                  sendBuf[index++] = buf[2];
+                  sendBuf[index++] = test_yinxiang_status;
+                  for (i = 0; i < (sendBuf[1] + 1); i++) {
+                    sendBuf[index] += sendBuf[i + 1];
+                  }
+              #else
+                  //  tmp = 0x03;
+                  //  app_uart_send(POWER_LONG_UART_CMD, &tmp, 1);
+              
+              #endif
+                  break;
+              #endif
+ 150   2        case KEY_ACC_CMD:
+ 151   2          if (buf[3] == 1) {
+ 152   3            Relay_on();
+ 153   3          } else if (buf[3] == 2) {
+ 154   3            Relay_off();
+ 155   3          } else if (buf[3] == 3) {
+ 156   3            Relay_toggle();
+ 157   3          }
+ 158   2          sendBuf[index++] = LAMP2LCD_HEADER;
+ 159   2          sendBuf[index++] = 0x02;
+ 160   2          sendBuf[index++] = buf[2];
+ 161   2          if (Relay_IsOn()) {
+ 162   3            sendBuf[index++] = 0x01;
+ 163   3          } else {
+ 164   3            sendBuf[index++] = 0x02;
+ 165   3          }
+ 166   2          for (i = 0; i < (sendBuf[1] + 1); i++) {
+ 167   3            sendBuf[index] += sendBuf[i + 1];
+ 168   3          }
+ 169   2          break;
+ 170   2        case KEY_UP_CMD:
+ 171   2          if (g_tWork.status.bits.DOME) {
+ 172   3            app_dome_start_current();
+ 173   3            g_tWork.status.bits.DEMO = 0;
+ 174   3            if (g_tWork.status.bits.blinkEnable) {
+ 175   4              app_dome_previous();
+ 176   4              sendBuf[index++] = LAMP2LCD_HEADER;
+ 177   4              sendBuf[index++] = 9;
+C51 COMPILER V9.52.0.0   APP_2D4                                                           11/20/2017 00:30:10 PAGE 4   
+
+ 178   4              sendBuf[index++] = KEY_UP_CMD;
+ 179   4              app_dome_get_current_Name(sendBuf + index, 8);
+ 180   4              index += 8;
+ 181   4              for (i = 0; i < (sendBuf[1] + 1); i++) {
+ 182   5                sendBuf[index] += sendBuf[i + 1];
+ 183   5              }
+ 184   4              index++;
+ 185   4              app_2d4_send(sendBuf, index);
+ 186   4            }
+ 187   3          } else {
+ 188   3            app_uart_send(KEY_UP_CMD, 0, 0);
+ 189   3          }
+ 190   2          break;
+ 191   2        case KEY_DOWN_CMD:
+ 192   2          if (g_tWork.status.bits.DOME) {
+ 193   3            app_dome_start_current();
+ 194   3            g_tWork.status.bits.DEMO = 0;
+ 195   3            if (g_tWork.status.bits.blinkEnable) {
+ 196   4              app_dome_next();
+ 197   4              sendBuf[index++] = LAMP2LCD_HEADER;
+ 198   4              sendBuf[index++] = 9;
+ 199   4              sendBuf[index++] = KEY_DOWN_CMD;
+ 200   4              app_dome_get_current_Name(sendBuf + index, 8);
+ 201   4              index += 8;
+ 202   4              for (i = 0; i < (sendBuf[1] + 1); i++) {
+ 203   5                sendBuf[index] += sendBuf[i + 1];
+ 204   5              }
+ 205   4              index++;
+ 206   4              app_2d4_send(sendBuf, index);
+ 207   4            }
+ 208   3          } else {
+ 209   3            app_uart_send(KEY_DOWN_CMD, 0, 0);
+ 210   3          }
+ 211   2          break;
+ 212   2        case RCV_PREV_NEXT_CMD:
+ 213   2      
+ 214   2          break;
+ 215   2        case KEY_DOME_CMD:
+ 216   2      
+ 217   2      //    tmp = 0x03;
+ 218   2      //    app_uart_send(DOME_UART_CMD, &tmp, 1);
+ 219   2      
+ 220   2          if (g_tWork.status.bits.DOME) {
+ 221   3            g_tWork.status.bits.DOME = 0;
+ 222   3          } else {
+ 223   3            g_tWork.status.bits.DOME = 1;
+ 224   3          }
+ 225   2          sendBuf[index++] = LAMP2LCD_HEADER;
+ 226   2          sendBuf[index++] = 11;
+ 227   2          sendBuf[index++] = KEY_DOME_CMD;
+ 228   2          sendBuf[index++] = g_tWork.status.bits.DOME;
+ 229   2          sendBuf[index++] = g_tWork.status.bits.blinkEnable;
+ 230   2          app_dome_get_current_Name(sendBuf + index, 8);
+ 231   2          for (i = 0; i < 8; i++) {
+ 232   3            if ((*(sendBuf + index + i) == 0)
+ 233   3                || (*(sendBuf + index + i) == 0xFF)) {
+ 234   4              *(sendBuf + index + i) = ' ';
+ 235   4            }
+ 236   3          }
+ 237   2          index += 8;
+ 238   2          for (i = 0; i < (sendBuf[1] + 1); i++) {
+ 239   3            sendBuf[index] += sendBuf[i + 1];
+C51 COMPILER V9.52.0.0   APP_2D4                                                           11/20/2017 00:30:10 PAGE 5   
+
+ 240   3          }
+ 241   2          index++;
+ 242   2          app_2d4_send(sendBuf, index);
+ 243   2          break;
+ 244   2        case KEY_VOL_ADD_CMD:
+ 245   2          app_uart_send(KEY_VOL_ADD_CMD, 0, 0);
+ 246   2          break;
+ 247   2        case KEY_VOL_MINUS_CMD:
+ 248   2          app_uart_send(KEY_VOL_MINUS_CMD, 0, 0);
+ 249   2          break;
+ 250   2        case KEY_PLAY_SHORT_CMD:
+ 251   2          app_uart_send(KEY_PLAY_SHORT_CMD, 0, 0);
+ 252   2          break;
+ 253   2        case KEY_PLAY_LONG_CMD:
+ 254   2          app_uart_send(KEY_PLAY_LONG_CMD, 0, 0);
+ 255   2          break;
+ 256   2        case KEY_MODE_CMD:
+ 257   2          app_uart_send(KEY_MODE_CMD, 0, 0);
+ 258   2          break;
+ 259   2          /// card --start
+ 260   2        case KEY_CARD_MODE_POWER_CMD:
+ 261   2          app_uart_send(KEY_MODE_CMD, 0, 0);
+ 262   2          break;
+ 263   2        case KEY_CARD_MODE_POWER_LONG_CMD:
+ 264   2          app_uart_send(KEY_POWER_SHORT_CMD, 0, 0);
+ 265   2          break;
+ 266   2        case KEY_CARD_PREV_VOL_MINUS_CMD:
+ 267   2          app_uart_send(KEY_UP_CMD, 0, 0);
+ 268   2          break;
+ 269   2        case KEY_CARD_PREV_VOL_MINUS_LONG_CMD:
+ 270   2          app_uart_send(KEY_VOL_MINUS_CMD, 0, 0);
+ 271   2          break;
+ 272   2        case KEY_CARD_PLAY_BT_CALL_CMD:
+ 273   2          app_uart_send(KEY_PLAY_SHORT_CMD, 0, 0);
+ 274   2          break;
+ 275   2        case KEY_CARD_PLAY_BT_CALL_LONG_CMD:
+ 276   2      
+ 277   2          break;
+ 278   2        case KEY_CARD_NEXT_VOL_ADD_CMD:
+ 279   2          app_uart_send(KEY_DOWN_CMD, 0, 0);
+ 280   2          break;
+ 281   2        case KEY_CARD_NEXT_VOL_ADD_LONG_CMD:
+ 282   2          app_uart_send(KEY_VOL_ADD_CMD, 0, 0);
+ 283   2          break;
+ 284   2        case KEY_CARD_POWER_CMD:
+ 285   2          if (g_tWork.status.bits.blinkEnable == 0) {
+ 286   3            g_tWork.status.bits.blinkEnable = 1;
+ 287   3            g_tWork.status.bits.DEMO = 1;
+ 288   3      
+ 289   3            app_dome_start(0, 0);
+ 290   3      //      app_dome_start_current();
+ 291   3          } else {
+ 292   3            g_tWork.status.bits.blinkEnable = 0;
+ 293   3            g_tWork.status.bits.DEMO = 0;
+ 294   3      
+ 295   3            g_tWork.status.bits.blinkEnable = 1;
+ 296   3            app_dome_stop_current();
+ 297   3          }
+ 298   2          sendBuf[index++] = LAMP2LCD_HEADER;
+ 299   2          sendBuf[index++] = 10;
+ 300   2          sendBuf[index++] = KEY_POWER_SHORT_CMD;
+ 301   2          sendBuf[index++] = g_tWork.status.bits.blinkEnable;
+C51 COMPILER V9.52.0.0   APP_2D4                                                           11/20/2017 00:30:10 PAGE 6   
+
+ 302   2          app_dome_get_current_Name(sendBuf + index, 8);
+ 303   2          for (i = 0; i < 8; i++) {
+ 304   3            if ((*(sendBuf + index + i) == 0)
+ 305   3                || (*(sendBuf + index + i) == 0xFF)) {
+ 306   4              *(sendBuf + index + i) = ' ';
+ 307   4            }
+ 308   3          }
+ 309   2          index += 8;
+ 310   2          for (i = 0; i < (sendBuf[1] + 1); i++) {
+ 311   3            sendBuf[index] += sendBuf[i + 1];
+ 312   3          }
+ 313   2          index++;
+ 314   2          app_2d4_send(sendBuf, index);
+ 315   2          break;
+ 316   2        case KEY_CARD_MODE_ADD_CMD:
+ 317   2          g_tWork.status.bits.DEMO = 0;
+ 318   2          app_dome_start_current();
+ 319   2          app_dome_next();
+ 320   2          break;
+ 321   2        case KEY_CARD_SPEED_ADD_CMD:
+ 322   2          if (dome_running_param.speed <= 100) {
+ 323   3            dome_running_param.speed += 10;
+ 324   3            if (dome_running_param.speed >= 100) {
+ 325   4              dome_running_param.speed = 100;
+ 326   4            }
+ 327   3          }
+ 328   2          break;
+ 329   2        case KEY_CARD_DEMO_CMD:
+ 330   2      //    if (g_tWork.status.bits.DEMO) {
+ 331   2      //      g_tWork.status.bits.DEMO = 0;
+ 332   2      //    } else {
+ 333   2          g_tWork.status.bits.DEMO = 1;
+ 334   2      //    }
+ 335   2          app_dome_start(0, 0);
+ 336   2          break;
+ 337   2        case KEY_CARD_SPEED_MINUS_CMD:
+ 338   2          if (dome_running_param.speed >= 10) {
+ 339   3            dome_running_param.speed -= 10;
+ 340   3          }
+ 341   2          break;
+ 342   2        case KEY_CARD_COLOR_ADD_CMD:
+ 343   2          app_color_blink_next();
+ 344   2          break;
+ 345   2        case KEY_CARD_MODE_CMD:
+ 346   2      
+ 347   2          g_tWork.status.bits.DEMO = 0;
+ 348   2          app_dome_start_current();
+ 349   2          app_dome_previous();
+ 350   2          break;
+ 351   2        case KEY_CARD_BRIGHT_ADD_CMD:
+ 352   2          if (dome_running_param.bright <= 100) {
+ 353   3            dome_running_param.bright += 10;
+ 354   3            if (dome_running_param.bright >= 100) {
+ 355   4              dome_running_param.bright = 100;
+ 356   4            }
+ 357   3          }
+ 358   2          Light_bright_set(dome_running_param.bright);
+ 359   2          break;
+ 360   2        case KEY_CARD_COLOR_MINUS_CMD:
+ 361   2          app_color_blink_previous();
+ 362   2          break;
+ 363   2        case KEY_CARD_BRIGHT_MINUS_CMD:
+C51 COMPILER V9.52.0.0   APP_2D4                                                           11/20/2017 00:30:10 PAGE 7   
+
+ 364   2          if (dome_running_param.bright >= 10) {
+ 365   3            dome_running_param.bright -= 10;
+ 366   3          }
+ 367   2          Light_bright_set(dome_running_param.bright);
+ 368   2      
+ 369   2          break;
+ 370   2        case KEY_CARD_NUM_1_CMD:
+ 371   2          Relay_toggle();
+ 372   2          sendBuf[index++] = LAMP2LCD_HEADER;
+ 373   2          sendBuf[index++] = 0x02;
+ 374   2          sendBuf[index++] = KEY_ACC_CMD;
+ 375   2          if (Relay_IsOn()) {
+ 376   3            sendBuf[index++] = 0x01;
+ 377   3          } else {
+ 378   3            sendBuf[index++] = 0x02;
+ 379   3          }
+ 380   2          for (i = 0; i < (sendBuf[1] + 1); i++) {
+ 381   3            sendBuf[index] += sendBuf[i + 1];
+ 382   3          }
+ 383   2          break;
+ 384   2        case KEY_CARD_NUM_1_LONG_CMD:
+ 385   2          break;
+ 386   2        case KEY_CARD_NUM_2_CMD:
+ 387   2      
+ 388   2      //    Repeat_Start(5,1,1);
+ 389   2      
+ 390   2          break;
+ 391   2        case KEY_CARD_NUM_3_CMD:
+ 392   2          break;
+ 393   2        case KEY_CARD_NUM_4_CMD:
+ 394   2          break;
+ 395   2      
+ 396   2          /// card --end
+ 397   2        }
+ 398   1        if (index) {
+ 399   2          index++;
+ 400   2          app_2d4_send(sendBuf, index);
+ 401   2        }
+ 402   1      
+ 403   1      }
+ 404          
+ 405          void app_2d4_pro(void) {
+ 406   1      
+ 407   1        if (sendRcv_flag) {
+ 408   2      
+ 409   2          switch (ucRF_GetStatus()) {
+ 410   3          case TX_DS_FLAG:    // 普通型发送完成 或 增强型发送成功
+ 411   3      
+ 412   3            RF_ClearFIFO();
+ 413   3            RF_ClearStatus();
+ 414   3      
+ 415   3            sendRcv_flag = 0;
+ 416   3            RF_RxMode();
+ 417   3      
+ 418   3      //      Relay_toggle();
+ 419   3      
+ 420   3            break;
+ 421   3          case RX_DR_FLAG:    //发送成功且收到payload
+ 422   3      
+ 423   3            RF_ClearFIFO();
+ 424   3            RF_ClearStatus();
+ 425   3            break;
+C51 COMPILER V9.52.0.0   APP_2D4                                                           11/20/2017 00:30:10 PAGE 8   
+
+ 426   3          case MAX_RT_FLAG:   // 增强型发送超时失败
+ 427   3      
+ 428   3            RF_ClearFIFO();
+ 429   3            RF_ClearStatus();
+ 430   3            break;
+ 431   3          default:    // rf 处于空闲状态才发送数据
+ 432   3      
+ 433   3            RF_TxData(sendBuf, sizeof(sendBuf));
+ 434   3      
+ 435   3            break;
+ 436   3          }
+ 437   2      
+ 438   2        } else {
+ 439   2          if (ucRF_DumpRxData(rcvBuf, sizeof(rcvBuf))) {
+ 440   3            app_2d4_Rcv(rcvBuf);
+ 441   3          }
+ 442   2        }
+ 443   1      }
+ 444          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   2258    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =     41      11
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

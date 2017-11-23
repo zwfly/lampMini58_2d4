@@ -1,0 +1,56 @@
+C51 COMPILER V9.52.0.0   BSP                                                               11/20/2017 00:30:11 PAGE 1   
+
+
+C51 COMPILER V9.52.0.0, COMPILATION OF MODULE BSP
+OBJECT MODULE PLACED IN .\Out\Objects\bsp.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE ..\Bsp\bsp.c LARGE OPTIMIZE(8,SIZE) BROWSE INCDIR(..\Common\inc;..\App\i
+                    -nc;..\Bsp\inc;..\Startup;..\Bsp) DEFINE(FOSC_160000) DEBUG OBJECTEXTEND PRINT(.\Out\Listings\bsp.lst) TABS(2) OBJECT(.\O
+                    -ut\Objects\bsp.obj)
+
+line level    source
+
+   1          #include "bsp.h"
+   2          
+   3          BIT BIT_TMP;  //WTF
+   4          
+   5          void bsp_Init(void) {
+   6   1      
+   7   1      //  clr_BODEN;
+   8   1      
+   9   1      
+  10   1      //  Set_All_GPIO_Quasi_Mode();
+  11   1      //  Set_All_GPIO_Input_Mode();
+  12   1      
+  13   1        Wireless2d4_InitHard();
+  14   1        Relay_InitHard();
+  15   1      
+  16   1        bsp_InitKey();
+  17   1      
+  18   1      //  Timer1_InitHard();
+  19   1      
+  20   1      //  InitialUART0_Timer1(115200);
+  21   1      
+  22   1        Light_InitHard();
+  23   1        Timer0_InitHard();
+  24   1      
+  25   1      
+  26   1        Uart_InitHard();
+  27   1      
+  28   1        set_EA;         //enable interrupts
+  29   1      
+  30   1      }
+  31          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     21    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      1    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

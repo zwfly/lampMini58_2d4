@@ -1,0 +1,837 @@
+C51 COMPILER V9.52.0.0   APP_DOME                                                          11/20/2017 00:30:11 PAGE 1   
+
+
+C51 COMPILER V9.52.0.0, COMPILATION OF MODULE APP_DOME
+OBJECT MODULE PLACED IN .\Out\Objects\app_dome.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE ..\App\src\app_dome.c LARGE OPTIMIZE(8,SIZE) BROWSE INCDIR(..\Common\inc
+                    -;..\App\inc;..\Bsp\inc;..\Startup;..\Bsp) DEFINE(FOSC_160000) DEBUG OBJECTEXTEND PRINT(.\Out\Listings\app_dome.lst) TABS
+                    -(2) OBJECT(.\Out\Objects\app_dome.obj)
+
+line level    source
+
+   1          /*
+   2           * app_dome.c
+   3           *
+   4           *  Created on: 2017年9月8日
+   5           *      Author: fly
+   6           */
+   7          
+   8          #include "app.h"
+   9          #include <stdlib.h>
+  10          
+  11          static SUBDOME_T subDome;
+  12          static DOME_HEADER_T domeHeader;
+  13          static SUBDOME_ASSIST_T subDome_Assist;
+  14          static DOME_PRO_T domePro;
+  15          DOME_DEFAULT_T dome_blink;
+  16          
+  17          DOME_RUNNING_T dome_running_param;
+  18          ///////////////////
+  19          #define COLOR_BLINK_NUMBER  10
+  20          static uint8_t color_blink_index = 0;
+  21          code const uint8_t color_blink_buffer[COLOR_BLINK_NUMBER][3] = {
+  22              { 255, 255, 255 },  //white
+  23              { 0, 255, 0 },   //green
+  24              { 0, 0, 255 },   //blue
+  25              { 255, 0, 0 },   //red
+  26              { 0, 255, 255 }, //blue:green = 1:1
+  27              { 255, 0, 255 }, //red:blue = 1:1
+  28              { 255, 255, 0 }, //red:green = 1:1
+  29              { 0, 255, 128 }, //blue:green = 1:2
+  30              { 0, 128, 255 }, //blue:green = 2:1
+  31              { 255, 128, 0 } //red:green = 2:1
+  32          };
+  33          
+  34          //DOME_DEFAULT_T dome_blink_buffers[DEFAULT_DOME_NUM];
+  35          #if 0
+              code const DOME_DEFAULT_T dome_default[DEFAULT_DOME_NUM] = {  //
+                { //start big dome0
+                  {  //start header0
+                    "    DOME", 0, 0x01//header0 body
+                  },  //end header0
+                  {  //start dome0
+                    { 0x05, {255, 255, 255}, {0, 0, 0}, 1, 200,
+                      100, 0}, //subdome0
+                    { 0x14, {255, 0, 0}, {0, 0, 0}, 1, 200, 100,
+                      0},  //subdome1
+                    { 0x24, {0, 255, 0}, {0, 0, 0}, 1, 200, 100,
+                      0},  //subdome2
+                    { 0x34, {0, 255, 0}, {0, 0, 0}, 1, 200, 100,
+                      0},   //subdome3
+                    { 0x44, {0, 255, 0}, {0, 0, 0}, 1, 200, 100,
+                      0},  //subdome4
+                    { 0x54, {0, 255, 0}, {0, 0, 0}, 1, 200, 100,
+                      0},  //subdome5
+C51 COMPILER V9.52.0.0   APP_DOME                                                          11/20/2017 00:30:11 PAGE 2   
+
+                    { 0x64, {0, 255, 0}, {0, 0, 0}, 1, 200, 100,
+                      0},  //subdome6
+                    { 0x74, {0, 255, 0}, {0, 0, 0}, 1, 200, 100,
+                      0}    //subdome7
+                  }  //end dome0
+                },  // end big dome0
+                { //start big dome1
+                  {  //start header0
+                    "     LSU", 0, 0x02}, //end header0
+                  {  //start dome0
+                    { 0x03, {160, 32, 240}, {255, 165, 0}, 1, 200, 100,
+                      0}, //subdome0
+                    { 0x13, {255, 165, 0}, {160, 32, 240}, 1,
+                      200, 100, 0},  //subdome1
+                    { 0x04, {0, 0, 255}, {0, 0, 0}, 1, 200, 100,
+                      0},  //subdome2
+                    { 0x04, {0, 0, 255}, {0, 0, 0}, 1, 200, 100,
+                      0},   //subdome3
+                    { 0x04, {0, 0, 255}, {0, 0, 0}, 1, 200, 100,
+                      0},  //subdome4
+                    { 0x04, {0, 0, 255}, {0, 0, 0}, 1, 200, 100,
+                      0},  //subdome5
+                    { 0x04, {0, 0, 255}, {0, 0, 0}, 1, 200, 100,
+                      0},  //subdome6
+                    { 0x04, {0, 0, 255}, {0, 0, 0}, 1, 200, 100,
+                      0}    //subdome7
+              
+                  }  //end dome0
+                },  // end big dome1
+                { //start big dome2
+                  {  //start header0
+                    "    XMAS", 0, 0x03}, //end header0
+                  {  //start dome0
+                    { 0x03, {255, 0, 0}, {0, 255, 0}, 1, 200, 100, 0}, //subdome0
+                    { 0x13, {0, 255, 0}, {255, 255, 255}, 1,
+                      200, 100, 0},  //subdome1
+                    { 0x23, {255, 255, 255}, {255, 0, 0}, 1,
+                      200, 100, 0},  //subdome2
+                    { 0x04, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
+                      0},   //subdome3
+                    { 0x04, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
+                      0},  //subdome4
+                    { 0x04, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
+                      0},  //subdome5
+                    { 0x04, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
+                      0},  //subdome6
+                    { 0x04, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
+                      0}    //subdome7
+              
+                  }  //end dome0
+                },  // end big dome2
+                { //start big dome3
+                  {  //start header0
+                    "   MARDI", 0, 0x04}, //end header0
+                  {  //start dome0
+                    { 0x03, {255, 0, 0}, {0, 255, 0}, 1, 100, 100, 0}, //subdome0
+                    { 0x13, {0, 255, 0}, {160, 32, 240}, 1, 100,
+                      100, 0},  //subdome1
+                    { 0x23, {160, 32, 240}, {255, 255, 0}, 1,
+                      100, 100, 0},  //subdome2
+                    { 0x33, {255, 255, 0}, {255, 0, 0}, 1, 100,
+                      100, 0},   //subdome3
+C51 COMPILER V9.52.0.0   APP_DOME                                                          11/20/2017 00:30:11 PAGE 3   
+
+                    { 0x44, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
+                      0},  //subdome4
+                    { 0x54, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
+                      0},  //subdome5
+                    { 0x64, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
+                      0},  //subdome6
+                    { 0x74, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
+                      0}    //subdome7
+              
+                  }  //end dome0
+                },  // end big dome3
+                { //start big dome4
+                  {  //start header0
+                    "   FADE1", 0, 0x01}, //end header0
+                  {  //start dome0
+                    { 0x04, {255, 0, 0}, {0, 0, 0}, 1, 200, 100, 0}, //subdome0
+                    { 0x13, {0, 255, 0}, {160, 32, 240}, 1, 100,
+                      100, 0},  //subdome1
+                    { 0x23, {160, 32, 240}, {255, 255, 0}, 1,
+                      100, 100, 0},  //subdome2
+                    { 0x33, {255, 255, 0}, {255, 0, 0}, 1, 100,
+                      100, 0},   //subdome3
+                    { 0x44, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
+                      0},  //subdome4
+                    { 0x54, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
+                      0},  //subdome5
+                    { 0x64, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
+                      0},  //subdome6
+                    { 0x74, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
+                      0}    //subdome7
+              
+                  }  //end dome0
+                },  // end big dome4
+                { //start big dome4
+                  {  //start header0
+                    "   FADE2", 0, 0x01}, //end header0
+                  {  //start dome0
+                    { 0x04, {0, 255, 0}, {0, 0, 0}, 1, 200, 100, 0}, //subdome0
+                    { 0x13, {0, 255, 0}, {160, 32, 240}, 1, 100,
+                      100, 0},  //subdome1
+                    { 0x23, {160, 32, 240}, {255, 255, 0}, 1,
+                      100, 100, 0},  //subdome2
+                    { 0x33, {255, 255, 0}, {255, 0, 0}, 1, 100,
+                      100, 0},   //subdome3
+                    { 0x44, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
+                      0},  //subdome4
+                    { 0x54, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
+                      0},  //subdome5
+                    { 0x64, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
+                      0},  //subdome6
+                    { 0x74, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
+                      0}    //subdome7
+              
+                  }  //end dome0
+                }, // end big dome4
+                { //start big dome4
+                  {  //start header0
+                    "   FADE3", 0, 0x01}, //end header0
+                  {  //start dome0
+                    { 0x04, {0, 0, 255}, {0, 0, 0}, 1, 200, 100, 0}, //subdome0
+                    { 0x13, {0, 255, 0}, {160, 32, 240}, 1, 100,
+                      100, 0},  //subdome1
+C51 COMPILER V9.52.0.0   APP_DOME                                                          11/20/2017 00:30:11 PAGE 4   
+
+                    { 0x23, {160, 32, 240}, {255, 255, 0}, 1,
+                      100, 100, 0},  //subdome2
+                    { 0x33, {255, 255, 0}, {255, 0, 0}, 1, 100,
+                      100, 0},   //subdome3
+                    { 0x44, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
+                      0},  //subdome4
+                    { 0x54, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
+                      0},  //subdome5
+                    { 0x64, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
+                      0},  //subdome6
+                    { 0x74, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
+                      0}    //subdome7
+              
+                  }  //end dome0
+                },  // end big dome4
+                { //start big dome4
+                  {  //start header0
+                    "   FADE4", 0, 0x01}, //end header0
+                  {  //start dome0
+                    { 0x04, {160, 32, 240}, {0, 0, 0}, 1, 200, 100, 0}, //subdome0
+                    { 0x13, {0, 255, 0}, {160, 32, 240}, 1, 100,
+                      100, 0},  //subdome1
+                    { 0x23, {160, 32, 240}, {255, 255, 0}, 1,
+                      100, 100, 0},  //subdome2
+                    { 0x33, {255, 255, 0}, {255, 0, 0}, 1, 100,
+                      100, 0},   //subdome3
+                    { 0x44, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
+                      0},  //subdome4
+                    { 0x54, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
+                      0},  //subdome5
+                    { 0x64, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
+                      0},  //subdome6
+                    { 0x74, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
+                      0}    //subdome7
+              
+                  }  //end dome0
+                },  // end big dome4
+                { //start big dome4
+                  {  //start header0
+                    "   FADE5", 0, 0x01}, //end header0
+                  {  //start dome0
+                    { 0x04, {255, 165, 0}, {0, 0, 0}, 1, 200, 100, 0}, //subdome0
+                    { 0x13, {0, 255, 0}, {160, 32, 240}, 1, 100,
+                      100, 0},  //subdome1
+                    { 0x23, {160, 32, 240}, {255, 255, 0}, 1,
+                      100, 100, 0},  //subdome2
+                    { 0x33, {255, 255, 0}, {255, 0, 0}, 1, 100,
+                      100, 0},   //subdome3
+                    { 0x44, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
+                      0},  //subdome4
+                    { 0x54, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
+                      0},  //subdome5
+                    { 0x64, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
+                      0},  //subdome6
+                    { 0x74, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
+                      0}    //subdome7
+              
+                  }  //end dome0
+                },  // end big dome4
+                { //start big dome4
+                  {  //start header0
+                    "  SHARP1", 0, 0x01}, //end header0
+C51 COMPILER V9.52.0.0   APP_DOME                                                          11/20/2017 00:30:11 PAGE 5   
+
+                  {  //start dome0
+                    { 0x05, {255, 0, 0}, {0, 0, 0}, 1, 100, 100, 100}, //subdome0
+                    { 0x13, {0, 255, 0}, {160, 32, 240}, 1, 100,
+                      100, 0},  //subdome1
+                    { 0x23, {160, 32, 240}, {255, 255, 0}, 1,
+                      100, 100, 0},  //subdome2
+                    { 0x33, {255, 255, 0}, {255, 0, 0}, 1, 100,
+                      100, 0},   //subdome3
+                    { 0x44, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
+                      0},  //subdome4
+                    { 0x54, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
+                      0},  //subdome5
+                    { 0x64, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
+                      0},  //subdome6
+                    { 0x74, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
+                      0}    //subdome7
+              
+                  }  //end dome0
+                },  // end big dome4
+                { //start big dome4
+                  {  //start header0
+                    "  SHARP2", 0, 0x01}, //end header0
+                  {  //start dome0
+                    { 0x05, {0, 255, 0}, {0, 0, 0}, 1, 100, 100, 100}, //subdome0
+                    { 0x13, {0, 255, 0}, {160, 32, 240}, 1, 100,
+                      100, 0},  //subdome1
+                    { 0x23, {160, 32, 240}, {255, 255, 0}, 1,
+                      100, 100, 0},  //subdome2
+                    { 0x33, {255, 255, 0}, {255, 0, 0}, 1, 100,
+                      100, 0},   //subdome3
+                    { 0x44, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
+                      0},  //subdome4
+                    { 0x54, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
+                      0},  //subdome5
+                    { 0x64, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
+                      0},  //subdome6
+                    { 0x74, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
+                      0}    //subdome7
+              
+                  }  //end dome0
+                }, // end big dome4
+                { //start big dome4
+                  {  //start header0
+                    "  SHARP3", 0, 0x01}, //end header0
+                  {  //start dome0
+                    { 0x05, {0, 0, 255}, {0, 0, 0}, 1, 100, 100, 100}, //subdome0
+                    { 0x13, {0, 255, 0}, {160, 32, 240}, 1, 100,
+                      100, 0},  //subdome1
+                    { 0x23, {160, 32, 240}, {255, 255, 0}, 1,
+                      100, 100, 0},  //subdome2
+                    { 0x33, {255, 255, 0}, {255, 0, 0}, 1, 100,
+                      100, 0},   //subdome3
+                    { 0x44, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
+                      0},  //subdome4
+                    { 0x54, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
+                      0},  //subdome5
+                    { 0x64, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
+                      0},  //subdome6
+                    { 0x74, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
+                      0}    //subdome7
+              
+                  }  //end dome0
+C51 COMPILER V9.52.0.0   APP_DOME                                                          11/20/2017 00:30:11 PAGE 6   
+
+                },  // end big dome4
+                { //start big dome4
+                  {  //start header0
+                    "  SHARP4", 0, 0x01}, //end header0
+                  {  //start dome0
+                    { 0x05, {160, 32, 240}, {0, 0, 0}, 1, 100,
+                      100, 100}, //subdome0
+                    { 0x13, {0, 255, 0}, {160, 32, 240}, 1, 100,
+                      100, 0},  //subdome1
+                    { 0x23, {160, 32, 240}, {255, 255, 0}, 1,
+                      100, 100, 0},  //subdome2
+                    { 0x33, {255, 255, 0}, {255, 0, 0}, 1, 100,
+                      100, 0},   //subdome3
+                    { 0x44, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
+                      0},  //subdome4
+                    { 0x54, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
+                      0},  //subdome5
+                    { 0x64, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
+                      0},  //subdome6
+                    { 0x74, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
+                      0}    //subdome7
+              
+                  }  //end dome0
+                },  // end big dome4
+                { //start big dome4
+                  {  //start header0
+                    "  SHARP5", 0, 0x01}, //end header0
+                  {  //start dome0
+                    { 0x05, {255, 165, 0}, {0, 0, 0}, 1, 100,
+                      100, 100}, //subdome0
+                    { 0x13, {0, 255, 0}, {160, 32, 240}, 1, 100,
+                      100, 100},  //subdome1
+                    { 0x23, {160, 32, 240}, {255, 255, 0}, 1,
+                      100, 100, 100},  //subdome2
+                    { 0x33, {255, 255, 0}, {255, 0, 0}, 1, 100,
+                      100, 0},   //subdome3
+                    { 0x44, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
+                      0},  //subdome4
+                    { 0x54, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
+                      0},  //subdome5
+                    { 0x64, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
+                      0},  //subdome6
+                    { 0x74, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
+                      0}    //subdome7
+              
+                  }  //end dome0
+                }, // end big dome4
+                { //start big dome4
+                  {  //start header0
+                    " GRADIEN", 0, 0x07}, //end header0
+                  {  //start dome0
+                    { 0x03, {255, 0, 0}, {255, 0x7F, 0}, 1, 100,
+                      100, 0}, //subdome0
+                    { 0x13, {255, 0x7F, 0}, {255, 255, 0}, 1,
+                      100, 100, 0},  //subdome1
+                    { 0x23, {255, 255, 0}, {0, 255, 0}, 1, 100,
+                      100, 0},  //subdome2
+                    { 0x33, {0, 255, 0}, {0, 255, 255}, 1, 100,
+                      100, 0},   //subdome3
+                    { 0x43, {0, 255, 255}, {0, 0, 255}, 1, 100,
+                      100, 0},  //subdome4
+                    { 0x53, {0, 0, 255}, {0x8B, 0, 255}, 1, 100,
+C51 COMPILER V9.52.0.0   APP_DOME                                                          11/20/2017 00:30:11 PAGE 7   
+
+                      100, 0},  //subdome5
+                    { 0x63, {0x8B, 0, 255}, {255, 0, 0}, 1, 100,
+                      100, 0},  //subdome6
+                    { 0x73, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
+                      0}    //subdome7
+              
+                  }  //end dome0
+                }  // end big dome4
+              };
+              #endif
+ 374          //////////////////
+ 375          
+ 376          void app_dome_Init(void) {
+ 377   1        color_blink_index = COLOR_BLINK_NUMBER - 1;
+ 378   1      //  g_tWork.status.bits.blinkEnable = 1;
+ 379   1      
+ 380   1        memset((uint8_t *) &subDome_Assist, 0, sizeof(subDome_Assist));
+ 381   1      
+ 382   1        memset((uint8_t *) &domePro, 0, sizeof(domePro));
+ 383   1        memset((uint8_t *) &dome_blink, 0, sizeof(dome_blink));
+ 384   1        memset((uint8_t *) &dome_running_param, 0, sizeof(dome_running_param));
+ 385   1      
+ 386   1        dome_running_param.bright = 100;
+ 387   1        dome_running_param.speed = 50;
+ 388   1      //  app_dome_start(0, 0);
+ 389   1        app_dome_stop_current();
+ 390   1      
+ 391   1      }
+ 392          void app_color_blink_previous(void) {
+ 393   1        if (color_blink_index) {
+ 394   2          color_blink_index--;
+ 395   2        } else {
+ 396   2          color_blink_index = COLOR_BLINK_NUMBER - 1;
+ 397   2        }
+ 398   1        app_dome_rgb(color_blink_buffer[color_blink_index][0],
+ 399   1            color_blink_buffer[color_blink_index][1],
+ 400   1            color_blink_buffer[color_blink_index][2]);
+ 401   1      }
+ 402          void app_color_blink_next(void) {
+ 403   1        color_blink_index++;
+ 404   1        if (color_blink_index >= COLOR_BLINK_NUMBER) {
+ 405   2          color_blink_index = 0;
+ 406   2        }
+ 407   1        app_dome_rgb(color_blink_buffer[color_blink_index][0],
+ 408   1            color_blink_buffer[color_blink_index][1],
+ 409   1            color_blink_buffer[color_blink_index][2]);
+ 410   1      }
+ 411          
+ 412          void app_dome_previous(void) {
+ 413   1        if (domePro.currentDomeIndex) {
+ 414   2          domePro.currentDomeIndex--;
+ 415   2        } else {
+ 416   2          domePro.currentDomeIndex = DEFAULT_DOME_NUM - 1;
+ 417   2        }
+ 418   1        app_dome_start(domePro.currentDomeIndex, 2);
+ 419   1      }
+ 420          void app_dome_next(void) {
+ 421   1        domePro.currentDomeIndex++;
+ 422   1        if (domePro.currentDomeIndex >= DEFAULT_DOME_NUM) {
+ 423   2          domePro.currentDomeIndex = 0;
+ 424   2        }
+ 425   1      
+C51 COMPILER V9.52.0.0   APP_DOME                                                          11/20/2017 00:30:11 PAGE 8   
+
+ 426   1        app_dome_start(domePro.currentDomeIndex, 1);
+ 427   1      }
+ 428          
+ 429          void app_dome_get_current_Name(char *name, uint8_t len) {
+ 430   1        if (len > sizeof(dome_blink.header.name)) {
+ 431   2          name = 0;
+ 432   2          return;
+ 433   2        }
+ 434   1        memcpy((uint8_t *) name, (uint8_t *) dome_blink.header.name, len);
+ 435   1      }
+ 436          void app_dome_start_current(void) {
+ 437   1        color_blink_index = COLOR_BLINK_NUMBER - 1;
+ 438   1      
+ 439   1        g_tWork.status.bits.blinkEnable = 1;
+ 440   1        app_dome_start(domePro.currentDomeIndex, 0);
+ 441   1      }
+ 442          void app_dome_stop_current(void) {
+ 443   1        g_tWork.status.bits.blinkEnable = 0;
+ 444   1      
+ 445   1        subDome.repeate = 0;
+ 446   1        subDome.offtime = 0;
+ 447   1        Light_RGB_set(0, 0, 0);
+ 448   1      }
+ 449          void app_dome_single_cycle(uint8_t subIndex) {
+ 450   1        if ((dome_blink.header.repeat_number & 0x0F) == (subIndex+1)) {
+ 451   2          subIndex = 0;
+ 452   2          memcpy((uint8_t*) &subDome, (uint8_t*) &dome_blink.subdome[subIndex],
+ 453   2              sizeof(subDome));
+ 454   2        } else {
+ 455   2          memcpy((uint8_t*) &subDome,
+ 456   2              (uint8_t*) &dome_blink.subdome[subIndex + 1], sizeof(subDome));
+ 457   2        }
+ 458   1        memcpy((uint8_t*) &domeHeader, (uint8_t*) &dome_blink.header,
+ 459   1            sizeof(domeHeader));
+ 460   1      }
+ 461          
+ 462          /*
+ 463           dir 方向，0：不变，1：向前next，2：后退prev
+ 464           */
+ 465          void app_dome_start(uint8_t domeIndex, uint8_t dir) {
+ 466   1        subDome_Assist.switch_flag = 0;
+ 467   1        subDome_Assist.msCnt = 0;
+ 468   1        subDome_Assist.stopTime = 0;
+ 469   1      
+ 470   1      //  app_dome_single_cycle(domeIndex);
+ 471   1        if (domeIndex > (DEFAULT_DOME_NUM - 1)) {
+ 472   2          domePro.currentDomeIndex = DEFAULT_DOME_NUM - 1;
+ 473   2          domeIndex = DEFAULT_DOME_NUM - 1;
+ 474   2        } else {
+ 475   2          domePro.currentDomeIndex = domeIndex;
+ 476   2        }
+ 477   1        if (dir == 0) {
+ 478   2          app_eeprom_get_dome_with_index(&dome_blink, domeIndex);
+ 479   2          if (*((uint8_t *) &dome_blink) == 0xFF) {
+ 480   3            Light_RGB_set(0, 0, 0);
+ 481   3          }
+ 482   2        } else if (dir == 1) {
+ 483   2          uint8_t i = 0;
+ 484   2          for (i = 0; i < DEFAULT_DOME_NUM; i++) {
+ 485   3            app_eeprom_get_dome_with_index(&dome_blink, domeIndex);
+ 486   3            if (*((uint8_t *) &dome_blink) == 0xFF) {
+ 487   4              if (domeIndex == 0) {
+C51 COMPILER V9.52.0.0   APP_DOME                                                          11/20/2017 00:30:11 PAGE 9   
+
+ 488   5                Light_RGB_set(0, 0, 0);
+ 489   5                break;
+ 490   5              }
+ 491   4              domeIndex++;
+ 492   4              if (domeIndex >= DEFAULT_DOME_NUM) {
+ 493   5                domeIndex = 0;
+ 494   5      //          break;
+ 495   5              }
+ 496   4            } else {
+ 497   4              break;
+ 498   4            }
+ 499   3          }
+ 500   2        } else if (dir == 2) {
+ 501   2          uint8_t i = 0;
+ 502   2          for (i = 0; i < DEFAULT_DOME_NUM; i++) {
+ 503   3            app_eeprom_get_dome_with_index(&dome_blink, domeIndex);
+ 504   3            if (*((uint8_t *) &dome_blink) == 0xFF) {
+ 505   4              if (domeIndex) {
+ 506   5                domeIndex--;
+ 507   5              } else {
+ 508   5                Light_RGB_set(0, 0, 0);
+ 509   5                break;
+ 510   5              }
+ 511   4            } else {
+ 512   4              break;
+ 513   4            }
+ 514   3          }
+ 515   2        }
+ 516   1      //  domePro.currentDomeIndex = domeIndex;
+ 517   1      //  if (dome_blink.header.index == 0) {
+ 518   1      //    app_eeprom_get_dome_with_index(&dome_blink, 0);
+ 519   1      //    app_dome_stop_current();
+ 520   1      //  }
+ 521   1      
+ 522   1      
+ 523   1        memcpy((uint8_t*) &subDome, (uint8_t*) &dome_blink.subdome[0],
+ 524   1            sizeof(subDome));
+ 525   1      
+ 526   1        memcpy((uint8_t*) &domeHeader, (uint8_t*) &dome_blink.header,
+ 527   1            sizeof(domeHeader));
+ 528   1      
+ 529   1      }
+ 530          static uint8_t cyc = 0;
+ 531          static void app_dome_subDome_pro(uint8_t subIndex) {
+ 532   1      
+ 533   1        subDome_Assist.switch_flag = 0;
+ 534   1        subDome_Assist.msCnt = 0;
+ 535   1        subDome_Assist.stopTime = 50;
+ 536   1      
+ 537   1        if (g_tWork.status.bits.DEMO) {
+ 538   2          cyc++;
+ 539   2          if (cyc <= 4) {
+ 540   3            app_dome_single_cycle(subIndex);
+ 541   3          } else {
+ 542   3            cyc = 0;
+ 543   3            app_dome_next();
+ 544   3          }
+ 545   2        } else {
+ 546   2          cyc = 0;
+ 547   2          app_dome_single_cycle(subIndex);
+ 548   2        }
+ 549   1      }
+C51 COMPILER V9.52.0.0   APP_DOME                                                          11/20/2017 00:30:11 PAGE 10  
+
+ 550          
+ 551          void app_dome_rgb(uint8_t r, uint8_t g, uint8_t b) {
+ 552   1        app_dome_stop_current();
+ 553   1        dome_running_param.color.R = r << 8;
+ 554   1        dome_running_param.color.G = g << 8;
+ 555   1        dome_running_param.color.B = b << 8;
+ 556   1      #if 1
+ 557   1        Light_RGB_set(dome_running_param.color.R, dome_running_param.color.G,
+ 558   1            dome_running_param.color.B);
+ 559   1      #else
+                Light_RGB_set(0xFFFF, 0xFFFF, 0xFFFF);
+              #endif
+ 562   1      }
+ 563          
+ 564          static uint32_t tmp = 0;
+ 565          //static uint8_t tmp_color = 0;
+ 566          
+ 567          void app_dome_interrupter(void) {
+ 568   1      
+ 569   1      #if 1
+ 570   1      
+ 571   1        if (g_tWork.status.bits.blinkEnable == 0) {
+ 572   2          return;
+ 573   2        }
+ 574   1      
+ 575   1        if (subDome_Assist.stopTime) {
+ 576   2          subDome_Assist.stopTime--;
+ 577   2          return;
+ 578   2        }
+ 579   1      
+ 580   1        if ((subDome.repeate == 0) && (subDome.offtime == 0)) {
+ 581   2          return;
+ 582   2        }
+ 583   1      
+ 584   1        switch (subDome.mode & 0x0F) {
+ 585   2        case 0x03:  //shadow
+ 586   2        {
+ 587   3          subDome_Assist.msCnt++;
+ 588   3      
+ 589   3          if (subDome.color1.R < subDome.color2.R) {
+ 590   4            tmp = subDome.color1.R * 256
+ 591   4                + subDome_Assist.msCnt * 256
+ 592   4                    * abs(subDome.color2.R - subDome.color1.R)
+ 593   4                    / subDome.speed;
+ 594   4            tmp = subDome.bright * tmp / 100;
+ 595   4          } else {
+ 596   4            tmp = subDome.color1.R * 256
+ 597   4                - subDome_Assist.msCnt * 256
+ 598   4                    * abs(subDome.color2.R - subDome.color1.R)
+ 599   4                    / subDome.speed;
+ 600   4            tmp = subDome.bright * tmp / 100;
+ 601   4          }
+ 602   3          dome_running_param.color.R = tmp & 0xFFFF;
+ 603   3          //////
+ 604   3          if (subDome.color1.G < subDome.color2.G) {
+ 605   4            tmp = subDome.color1.G * 256
+ 606   4                + subDome_Assist.msCnt * 256
+ 607   4                    * abs(subDome.color2.G - subDome.color1.G)
+ 608   4                    / subDome.speed;
+ 609   4            tmp = subDome.bright * tmp / 100;
+ 610   4      //      Light_Green_set(tmp);
+ 611   4          } else {
+C51 COMPILER V9.52.0.0   APP_DOME                                                          11/20/2017 00:30:11 PAGE 11  
+
+ 612   4            tmp = subDome.color1.G * 256
+ 613   4                - subDome_Assist.msCnt * 256
+ 614   4                    * abs(subDome.color2.G - subDome.color1.G)
+ 615   4                    / subDome.speed;
+ 616   4            tmp = subDome.bright * tmp / 100;
+ 617   4      //      Light_Green_set(tmp);
+ 618   4          }
+ 619   3          dome_running_param.color.G = tmp & 0xFFFF;
+ 620   3          //////
+ 621   3          if (subDome.color1.B < subDome.color2.B) {
+ 622   4            tmp = subDome.color1.B * 256
+ 623   4                + subDome_Assist.msCnt * 256
+ 624   4                    * abs(subDome.color2.B - subDome.color1.B)
+ 625   4                    / subDome.speed;
+ 626   4            tmp = subDome.bright * tmp / 100;
+ 627   4      //      Light_Blue_set(tmp);
+ 628   4          } else {
+ 629   4            tmp = subDome.color1.B * 256
+ 630   4                - subDome_Assist.msCnt * 256
+ 631   4                    * abs(subDome.color2.B - subDome.color1.B)
+ 632   4                    / subDome.speed;
+ 633   4            tmp = subDome.bright * tmp / 100;
+ 634   4      //      Light_Blue_set(tmp);
+ 635   4          }
+ 636   3          dome_running_param.color.B = tmp & 0xFFFF;
+ 637   3          Light_RGB_set(dome_running_param.color.R, dome_running_param.color.G,
+ 638   3              dome_running_param.color.B);
+ 639   3      
+ 640   3          if (subDome_Assist.msCnt >= subDome.speed) {
+ 641   4            subDome_Assist.msCnt = 0;
+ 642   4      #if 0
+                    tmp_color = subDome.color2.R;
+                    subDome.color2.R = subDome.color1.R;
+                    subDome.color1.R = tmp_color;
+              
+                    tmp_color = subDome.color2.G;
+                    subDome.color2.G = subDome.color1.G;
+                    subDome.color1.G = tmp_color;
+              
+                    tmp_color = subDome.color2.B;
+                    subDome.color2.B = subDome.color1.B;
+                    subDome.color1.B = tmp_color;
+              
+                    if (subDome_Assist.switch_flag == 0) {
+                      subDome_Assist.switch_flag = 1;
+              
+                    } else {
+                      subDome_Assist.switch_flag = 0;
+              
+                      if (subDome.repeate) {
+                        subDome.repeate--;
+                      }
+                    }
+              #else
+ 666   4      
+ 667   4            if (subDome.repeate) {
+ 668   5              subDome.repeate--;
+ 669   5            }
+ 670   4      
+ 671   4      #endif
+ 672   4          }
+ 673   3          if (subDome.repeate == 0) {
+C51 COMPILER V9.52.0.0   APP_DOME                                                          11/20/2017 00:30:11 PAGE 12  
+
+ 674   4      //      Light_RGB_set(0, 0, 0);
+ 675   4      
+ 676   4      //      if (subDome.offtime) {
+ 677   4      //        subDome.offtime--;
+ 678   4      //      }
+ 679   4      //      if (subDome.offtime == 0) {
+ 680   4            app_dome_subDome_pro(subDome.mode >> 4);
+ 681   4      //      }
+ 682   4      
+ 683   4          }
+ 684   3        }
+ 685   2          break;
+ 686   2        case 0x04:  //breath
+ 687   2        {
+ 688   3          if (subDome_Assist.switch_flag == 0) {
+ 689   4            subDome_Assist.msCnt++;
+ 690   4          } else {
+ 691   4            if (subDome_Assist.msCnt) {
+ 692   5              subDome_Assist.msCnt--;
+ 693   5            }
+ 694   4          }
+ 695   3      
+ 696   3          tmp = subDome_Assist.msCnt * 0xFF * subDome.color1.R / subDome.speed;
+ 697   3          tmp = tmp * subDome.bright / 100;
+ 698   3          dome_running_param.color.R = tmp & 0xFFFF;
+ 699   3      
+ 700   3          tmp = subDome_Assist.msCnt * 0xFF * subDome.color1.G / subDome.speed;
+ 701   3          tmp = tmp * subDome.bright / 100;
+ 702   3          dome_running_param.color.G = tmp & 0xFFFF;
+ 703   3      
+ 704   3          tmp = subDome_Assist.msCnt * 0xFF * subDome.color1.B / subDome.speed;
+ 705   3          tmp = tmp * subDome.bright / 100;
+ 706   3          dome_running_param.color.B = tmp & 0xFFFF;
+ 707   3          Light_RGB_set(dome_running_param.color.R, dome_running_param.color.G,
+ 708   3              dome_running_param.color.B);
+ 709   3      
+ 710   3          if ((subDome_Assist.msCnt >= subDome.speed)
+ 711   3              || (subDome_Assist.msCnt == 0)) {
+ 712   4            if (subDome_Assist.switch_flag == 0) {
+ 713   5              subDome_Assist.switch_flag = 1;
+ 714   5            } else {
+ 715   5              subDome_Assist.switch_flag = 0;
+ 716   5              if (subDome.repeate) {
+ 717   6                subDome.repeate--;
+ 718   6              }
+ 719   5            }
+ 720   4          }
+ 721   3          if (subDome.repeate == 0) {
+ 722   4      //      Light_RGB_set(0, 0, 0);
+ 723   4      //      if (subDome.offtime) {
+ 724   4      //        subDome.offtime--;
+ 725   4      //      }
+ 726   4      //      if (subDome.offtime == 0) {
+ 727   4            app_dome_subDome_pro(subDome.mode >> 4);
+ 728   4      //      }
+ 729   4          }
+ 730   3        }
+ 731   2          break;
+ 732   2        case 0x05:  //blink flash
+ 733   2        {
+ 734   3          uint32_t tt = 0xFF;
+ 735   3          if (subDome_Assist.msCnt == 0) {
+C51 COMPILER V9.52.0.0   APP_DOME                                                          11/20/2017 00:30:11 PAGE 13  
+
+ 736   4            tmp = tt * subDome.color1.R * subDome.bright / 100;
+ 737   4            dome_running_param.color.R = tmp & 0xFFFF;
+ 738   4      
+ 739   4            tmp = tt * subDome.color1.G * subDome.bright / 100;
+ 740   4            dome_running_param.color.G = tmp & 0xFFFF;
+ 741   4      
+ 742   4            tmp = tt * subDome.color1.B * subDome.bright / 100;
+ 743   4            dome_running_param.color.B = tmp & 0xFFFF;
+ 744   4            Light_RGB_set(dome_running_param.color.R,
+ 745   4                dome_running_param.color.G, dome_running_param.color.B);
+ 746   4          }
+ 747   3          tmp = subDome.speed;
+ 748   3          if (subDome_Assist.msCnt == tmp) {
+ 749   4            tmp = tt * subDome.color2.R * subDome.bright / 100;
+ 750   4            dome_running_param.color.R = tmp & 0xFFFF;
+ 751   4      
+ 752   4            tmp = tt * subDome.color2.G * subDome.bright / 100;
+ 753   4            dome_running_param.color.G = tmp & 0xFFFF;
+ 754   4      
+ 755   4            tmp = tt * subDome.color2.B * subDome.bright / 100;
+ 756   4            dome_running_param.color.B = tmp & 0xFFFF;
+ 757   4            Light_RGB_set(dome_running_param.color.R,
+ 758   4                dome_running_param.color.G, dome_running_param.color.B);
+ 759   4          }
+ 760   3          subDome_Assist.msCnt++;
+ 761   3          tmp = 0;
+ 762   3          tmp = tmp + subDome.speed + subDome.offtime;
+ 763   3          if (subDome_Assist.msCnt >= tmp) {
+ 764   4            subDome_Assist.msCnt = 0;
+ 765   4            if (subDome.repeate) {
+ 766   5              subDome.repeate--;
+ 767   5            }
+ 768   4          }
+ 769   3          if (subDome.repeate == 0) {
+ 770   4      //      Light_RGB_set(0, 0, 0);
+ 771   4      //      if (subDome.offtime) {
+ 772   4      //        subDome.offtime--;
+ 773   4      //      }
+ 774   4      //      if (subDome.offtime == 0) {
+ 775   4            app_dome_subDome_pro(subDome.mode >> 4);
+ 776   4      //      }
+ 777   4          }
+ 778   3        }
+ 779   2          break;
+ 780   2        default:
+ 781   2      
+ 782   2          break;
+ 783   2        }
+ 784   1      
+ 785   1      #endif
+ 786   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   2978    ----
+   CONSTANT SIZE    =     30    ----
+   XDATA SIZE       =    158      15
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+C51 COMPILER V9.52.0.0   APP_DOME                                                          11/20/2017 00:30:11 PAGE 14  
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

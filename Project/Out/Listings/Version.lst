@@ -1,0 +1,74 @@
+C51 COMPILER V9.52.0.0   VERSION                                                           11/20/2017 00:30:12 PAGE 1   
+
+
+C51 COMPILER V9.52.0.0, COMPILATION OF MODULE VERSION
+OBJECT MODULE PLACED IN .\Out\Objects\Version.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE ..\Common\src\Version.c LARGE OPTIMIZE(8,SIZE) BROWSE INCDIR(..\Common\i
+                    -nc;..\App\inc;..\Bsp\inc;..\Startup;..\Bsp) DEFINE(FOSC_160000) DEBUG OBJECTEXTEND PRINT(.\Out\Listings\Version.lst) TAB
+                    -S(2) OBJECT(.\Out\Objects\Version.obj)
+
+line level    source
+
+   1          /*--------------------------------------------------------------------------------------------------------
+             --*/
+   2          /*                                                                                                        
+             - */
+   3          /* Copyright(c) 2015 Nuvoton Technology Corp. All rights reserved.                                        
+             - */
+   4          /*                                                                                                        
+             - */
+   5          /*--------------------------------------------------------------------------------------------------------
+             --*/
+   6          
+   7          //********************************************************************************************************
+             -***
+   8          //  Nuvoton Technoledge Corp. 
+   9          //  Website: http://www.nuvoton.com
+  10          //  E-Mail : MicroC-8bit@nuvoton.com
+  11          //  Date   : Sep/1/2015
+  12          //********************************************************************************************************
+             -***
+  13          
+  14          #include <stdio.h>
+  15          #include <N76E003.h>
+  16          #include "Version.h"
+  17          #include "Function_Define.h"
+  18          #include "Common.h"
+  19          #include "Delay.h"
+  20          
+  21          #define FW_Version_Major                    0x01
+  22          #define FW_Version_Minor                    0x00
+  23          #define FW_Version_Modifi                   0x00
+  24          
+  25          #define Date_Y                              2015
+  26          #define Date_M                              5
+  27          #define Date_D                              31
+  28          
+  29          //--------------------------------------------------------------------------------------------------------
+             ----
+  30          void Show_FW_Version_Number_To_PC(void)
+  31          {
+  32   1          printf ("\n====================================================================");
+  33   1          printf ("\n*  Copyright(c) 2015 Nuvoton Technology Corp. All rights reserved.  ");
+  34   1          printf ("\n*  Contact E-Mail: MicroC-8bit@nuvoton.com                          ");
+  35   1          printf ("\n*  Demo Version  : %2d.%2d.%2d",(uint16_t)FW_Version_Major,(uint16_t)FW_Version_Minor,(uint
+             -16_t)FW_Version_Modifi);
+  36   1          printf ("\n*  Finished Date : %2d.%2d.%2d",(uint16_t)Date_Y,(uint16_t)Date_M,(uint16_t)Date_D);
+  37   1          printf ("\n====================================================================");
+  38   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     95    ----
+   CONSTANT SIZE    =    274    ----
+   XDATA SIZE       =   ----    ----
+C51 COMPILER V9.52.0.0   VERSION                                                           11/20/2017 00:30:12 PAGE 2   
+
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -18,7 +18,7 @@ DOME_RUNNING_T dome_running_param;
 ///////////////////
 #define COLOR_BLINK_NUMBER  10
 static uint8_t color_blink_index = 0;
-code const uint8_t color_blink_buffer[COLOR_BLINK_NUMBER][3] = {
+const uint8_t color_blink_buffer[COLOR_BLINK_NUMBER][3] = {
 		{ 255, 255, 255 },  //white
 		{ 0, 255, 0 },   //green
 		{ 0, 0, 255 },   //blue
@@ -436,11 +436,11 @@ void app_dome_get_current_Name(char *name, uint8_t len) {
 void app_dome_start_current(void) {
 	color_blink_index = COLOR_BLINK_NUMBER - 1;
 
-	g_tWork.status.bits.blinkEnable = 1;
+//	g_tWork.status.bits.blinkEnable = 1;
 	app_dome_start(domePro.currentDomeIndex, 0);
 }
 void app_dome_stop_current(void) {
-	g_tWork.status.bits.blinkEnable = 0;
+//	g_tWork.status.bits.blinkEnable = 0;
 
 	subDome.repeate = 0;
 	subDome.offtime = 0;
@@ -475,14 +475,14 @@ void app_dome_start(uint8_t domeIndex, uint8_t dir) {
 		domePro.currentDomeIndex = domeIndex;
 	}
 	if (dir == 0) {
-		app_eeprom_get_dome_with_index(&dome_blink, domeIndex);
+//		app_eeprom_get_dome_with_index(&dome_blink, domeIndex);
 		if (*((uint8_t *) &dome_blink) == 0xFF) {
 			Light_RGB_set(0, 0, 0);
 		}
 	} else if (dir == 1) {
 		uint8_t i = 0;
 		for (i = 0; i < DEFAULT_DOME_NUM; i++) {
-			app_eeprom_get_dome_with_index(&dome_blink, domeIndex);
+//			app_eeprom_get_dome_with_index(&dome_blink, domeIndex);
 			if (*((uint8_t *) &dome_blink) == 0xFF) {
 				if (domeIndex == 0) {
 					Light_RGB_set(0, 0, 0);
@@ -500,7 +500,7 @@ void app_dome_start(uint8_t domeIndex, uint8_t dir) {
 	} else if (dir == 2) {
 		uint8_t i = 0;
 		for (i = 0; i < DEFAULT_DOME_NUM; i++) {
-			app_eeprom_get_dome_with_index(&dome_blink, domeIndex);
+//			app_eeprom_get_dome_with_index(&dome_blink, domeIndex);
 			if (*((uint8_t *) &dome_blink) == 0xFF) {
 				if (domeIndex) {
 					domeIndex--;
@@ -533,7 +533,7 @@ static void app_dome_subDome_pro(uint8_t subIndex) {
 	subDome_Assist.switch_flag = 0;
 	subDome_Assist.msCnt = 0;
 	subDome_Assist.stopTime = 50;
-
+#if 0
 	if (g_tWork.status.bits.DEMO) {
 		cyc++;
 		if (cyc <= 4) {
@@ -546,6 +546,7 @@ static void app_dome_subDome_pro(uint8_t subIndex) {
 		cyc = 0;
 		app_dome_single_cycle(subIndex);
 	}
+	#endif
 }
 
 void app_dome_rgb(uint8_t r, uint8_t g, uint8_t b) {
@@ -568,9 +569,9 @@ void app_dome_interrupter(void) {
 
 #if 1
 
-	if (g_tWork.status.bits.blinkEnable == 0) {
-		return;
-	}
+//	if (g_tWork.status.bits.blinkEnable == 0) {
+//		return;
+//	}
 
 	if (subDome_Assist.stopTime) {
 		subDome_Assist.stopTime--;

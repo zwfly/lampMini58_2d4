@@ -10,199 +10,122 @@ Inlined total of 0 calls.
 
 Memory Map of the image
 
-  Image Entry point : 0x000000f1
+  Image Entry point : 0x00000000
 
-  Load Region LR_1 (Base: 0x00000000, Size: 0x000019b0, Max: 0xffffffff, ABSOLUTE)
+  Load Region LR_1 (Base: 0x00000000, Size: 0x00001e5c, Max: 0xffffffff, ABSOLUTE)
 
-    Execution Region ER_RO (Base: 0x00000000, Size: 0x00001984, Max: 0xffffffff, ABSOLUTE)
+    Execution Region ER_RO (Base: 0x00000000, Size: 0x00001e28, Max: 0xffffffff, ABSOLUTE)
 
     Base Addr    Size         Type   Attr      Idx    E Section Name        Object
 
-    0x00000000   0x000000c0   Data   RO          490    RESET               startup_mini58series.o
-    0x000000c0   0x00000000   Code   RO         1705  * .ARM.Collect$$$$00000000  mc_p.l(entry.o)
-    0x000000c0   0x00000004   Code   RO         1985    .ARM.Collect$$$$00000001  mc_p.l(entry2.o)
-    0x000000c4   0x00000004   Code   RO         1988    .ARM.Collect$$$$00000004  mc_p.l(entry5.o)
-    0x000000c8   0x00000000   Code   RO         1990    .ARM.Collect$$$$00000008  mc_p.l(entry7b.o)
-    0x000000c8   0x00000000   Code   RO         1992    .ARM.Collect$$$$0000000A  mc_p.l(entry8b.o)
-    0x000000c8   0x00000008   Code   RO         1993    .ARM.Collect$$$$0000000B  mc_p.l(entry9a.o)
-    0x000000d0   0x00000000   Code   RO         1995    .ARM.Collect$$$$0000000D  mc_p.l(entry10a.o)
-    0x000000d0   0x00000000   Code   RO         1997    .ARM.Collect$$$$0000000F  mc_p.l(entry11a.o)
-    0x000000d0   0x00000004   Code   RO         1986    .ARM.Collect$$$$00002712  mc_p.l(entry2.o)
-    0x000000d4   0x0000001c   Code   RO         1216    .emb_text           retarget.o
-    0x000000f0   0x00000014   Code   RO          491  * .text               startup_mini58series.o
-    0x00000104   0x0000002c   Code   RO         1706    .text               mc_p.l(uidiv.o)
-    0x00000130   0x00000024   Code   RO         1708    .text               mc_p.l(memseta.o)
-    0x00000154   0x0000001a   Code   RO         1710    .text               mc_p.l(strncpy.o)
-    0x0000016e   0x0000000e   Code   RO         1714    .text               mc_p.l(strlen.o)
-    0x0000017c   0x00000060   Code   RO         1999    .text               mc_p.l(uldiv.o)
-    0x000001dc   0x00000000   Code   RO         2001    .text               mc_p.l(iusefp.o)
-    0x000001dc   0x00000164   Code   RO         2004    .text               mf_p.l(dadd.o)
-    0x00000340   0x000000d0   Code   RO         2006    .text               mf_p.l(dmul.o)
-    0x00000410   0x000000f0   Code   RO         2008    .text               mf_p.l(ddiv.o)
-    0x00000500   0x00000040   Code   RO         2010    .text               mf_p.l(dfixul.o)
-    0x00000540   0x00000028   Code   RO         2012    .text               mf_p.l(cdrcmple.o)
-    0x00000568   0x00000024   Code   RO         2014    .text               mc_p.l(init.o)
-    0x0000058c   0x00000020   Code   RO         2016    .text               mc_p.l(llshl.o)
-    0x000005ac   0x00000022   Code   RO         2018    .text               mc_p.l(llushr.o)
-    0x000005ce   0x00000026   Code   RO         2020    .text               mc_p.l(llsshr.o)
-    0x000005f4   0x000000be   Code   RO         2022    .text               mf_p.l(depilogue.o)
+    0x00000000   0x000000c0   Data   RO          764    RESET               startup_mini58series.o
+    0x000000c0   0x00000000   Code   RO         1979  * .ARM.Collect$$$$00000000  mc_p.l(entry.o)
+    0x000000c0   0x00000004   Code   RO         2263    .ARM.Collect$$$$00000001  mc_p.l(entry2.o)
+    0x000000c4   0x00000004   Code   RO         2266    .ARM.Collect$$$$00000004  mc_p.l(entry5.o)
+    0x000000c8   0x00000000   Code   RO         2268    .ARM.Collect$$$$00000008  mc_p.l(entry7b.o)
+    0x000000c8   0x00000000   Code   RO         2270    .ARM.Collect$$$$0000000A  mc_p.l(entry8b.o)
+    0x000000c8   0x00000008   Code   RO         2271    .ARM.Collect$$$$0000000B  mc_p.l(entry9a.o)
+    0x000000d0   0x00000000   Code   RO         2273    .ARM.Collect$$$$0000000D  mc_p.l(entry10a.o)
+    0x000000d0   0x00000000   Code   RO         2275    .ARM.Collect$$$$0000000F  mc_p.l(entry11a.o)
+    0x000000d0   0x00000004   Code   RO         2264    .ARM.Collect$$$$00002712  mc_p.l(entry2.o)
+    0x000000d4   0x0000001c   Code   RO         1490    .emb_text           retarget.o
+    0x000000f0   0x00000014   Code   RO          765  * .text               startup_mini58series.o
+    0x00000104   0x0000002c   Code   RO         1980    .text               mc_p.l(uidiv.o)
+    0x00000130   0x00000024   Code   RO         1984    .text               mc_p.l(memseta.o)
+    0x00000154   0x0000001a   Code   RO         1986    .text               mc_p.l(strncpy.o)
+    0x0000016e   0x0000000e   Code   RO         1990    .text               mc_p.l(strlen.o)
+    0x0000017c   0x00000060   Code   RO         2277    .text               mc_p.l(uldiv.o)
+    0x000001dc   0x00000000   Code   RO         2279    .text               mc_p.l(iusefp.o)
+    0x000001dc   0x00000164   Code   RO         2282    .text               mf_p.l(dadd.o)
+    0x00000340   0x000000d0   Code   RO         2284    .text               mf_p.l(dmul.o)
+    0x00000410   0x000000f0   Code   RO         2286    .text               mf_p.l(ddiv.o)
+    0x00000500   0x00000040   Code   RO         2288    .text               mf_p.l(dfixul.o)
+    0x00000540   0x00000028   Code   RO         2290    .text               mf_p.l(cdrcmple.o)
+    0x00000568   0x00000024   Code   RO         2292    .text               mc_p.l(init.o)
+    0x0000058c   0x00000020   Code   RO         2294    .text               mc_p.l(llshl.o)
+    0x000005ac   0x00000022   Code   RO         2296    .text               mc_p.l(llushr.o)
+    0x000005ce   0x00000026   Code   RO         2298    .text               mc_p.l(llsshr.o)
+    0x000005f4   0x000000be   Code   RO         2300    .text               mf_p.l(depilogue.o)
     0x000006b2   0x00000002   PAD
-    0x000006b4   0x00000010   Code   RO          593    i.CLK_DisablePLL    clk.o
-    0x000006c4   0x0000001c   Code   RO          597    i.CLK_EnableModuleClock  clk.o
-    0x000006e0   0x00000208   Code   RO          598    i.CLK_EnablePLL     clk.o
-    0x000008e8   0x00000018   Code   RO          600    i.CLK_EnableXtalRC  clk.o
-    0x00000900   0x00000058   Code   RO         1536    i.CLK_GetPLLClockFreq  uart.o
-    0x00000958   0x00000080   Code   RO          607    i.CLK_SetCoreClock  clk.o
-    0x000009d8   0x00000024   Code   RO          608    i.CLK_SetHCLK       clk.o
-    0x000009fc   0x00000050   Code   RO          609    i.CLK_SetModuleClock  clk.o
-    0x00000a4c   0x0000002c   Code   RO          612    i.CLK_WaitClockReady  clk.o
-    0x00000a78   0x00000028   Code   RO          846    i.GPIO_SetMode      gpio.o
-    0x00000aa0   0x00000028   Code   RO         1218    i.Hard_Fault_Handler  retarget.o
-    0x00000ac8   0x00000010   Code   RO          224    i.IsKeyDown1        bsp_key.o
-    0x00000ad8   0x00000010   Code   RO          225    i.IsKeyDown2        bsp_key.o
-    0x00000ae8   0x0000001c   Code   RO          362    i.LITE_openlog      lite-log.o
-    0x00000b04   0x0000000c   Code   RO          364    i.LITE_set_loglevel  lite-log.o
-    0x00000b10   0x000000b0   Code   RO          365    i.LITE_syslog       lite-log.o
-    0x00000bc0   0x0000001c   Code   RO          310    i.Relay_InitHard    bsp_relay.o
-    0x00000bdc   0x00000044   Code   RO            3    i.SYS_Init          main.o
-    0x00000c20   0x0000001c   Code   RO         1409    i.SYS_ResetModule   sys.o
-    0x00000c3c   0x00000020   Code   RO         1221    i.SendChar_ToUART   retarget.o
-    0x00000c5c   0x000000a8   Code   RO          438    i.SystemCoreClockUpdate  system_mini58series.o
-    0x00000d04   0x00000024   Code   RO          181    i.UART1_IRQHandler  bsp_uart.o
-    0x00000d28   0x00000080   Code   RO         1543    i.UART_Open         uart.o
-    0x00000da8   0x0000007c   Code   RO          182    i.Uart_InitHard     bsp_uart.o
-    0x00000e24   0x00000020   Code   RO         1949    i.__0printf         mc_p.l(printfa.o)
-    0x00000e44   0x00000024   Code   RO         1955    i.__0vsprintf       mc_p.l(printfa.o)
-    0x00000e68   0x0000002e   Code   RO         2024    i.__ARM_clz         mf_p.l(depilogue.o)
-    0x00000e96   0x0000000e   Code   RO         2028    i.__scatterload_copy  mc_p.l(handlers.o)
-    0x00000ea4   0x00000002   Code   RO         2029    i.__scatterload_null  mc_p.l(handlers.o)
-    0x00000ea6   0x0000000e   Code   RO         2030    i.__scatterload_zeroinit  mc_p.l(handlers.o)
-    0x00000eb4   0x00000174   Code   RO         1956    i._fp_digits        mc_p.l(printfa.o)
-    0x00001028   0x000006ec   Code   RO         1957    i._printf_core      mc_p.l(printfa.o)
-    0x00001714   0x00000020   Code   RO         1958    i._printf_post_padding  mc_p.l(printfa.o)
-    0x00001734   0x0000002c   Code   RO         1959    i._printf_pre_padding  mc_p.l(printfa.o)
-    0x00001760   0x0000000a   Code   RO         1961    i._sputc            mc_p.l(printfa.o)
-    0x0000176a   0x00000002   PAD
-    0x0000176c   0x00000024   Code   RO          228    i.bsp_GetKey        bsp_key.o
-    0x00001790   0x00000010   Code   RO          161    i.bsp_Init          bsp.o
-    0x000017a0   0x00000024   Code   RO          231    i.bsp_InitKey       bsp_key.o
-    0x000017c4   0x00000044   Code   RO          232    i.bsp_InitKeyVar    bsp_key.o
-    0x00001808   0x0000000c   Code   RO         1225    i.fputc             retarget.o
-    0x00001814   0x00000088   Code   RO            4    i.main              main.o
-    0x0000189c   0x000000a8   Code   RO         1227    i.stackDump         retarget.o
-    0x00001944   0x00000005   Data   RO            5    .constdata          main.o
-    0x00001949   0x00000003   PAD
-    0x0000194c   0x00000018   Data   RO          368    .conststring        lite-log.o
-    0x00001964   0x00000020   Data   RO         2026    Region$$Table       anon$$obj.o
+    0x000006b4   0x00000010   Code   RO          867    i.CLK_DisablePLL    clk.o
+    0x000006c4   0x0000001c   Code   RO          871    i.CLK_EnableModuleClock  clk.o
+    0x000006e0   0x00000208   Code   RO          872    i.CLK_EnablePLL     clk.o
+    0x000008e8   0x00000018   Code   RO          874    i.CLK_EnableXtalRC  clk.o
+    0x00000900   0x00000058   Code   RO         1810    i.CLK_GetPLLClockFreq  uart.o
+    0x00000958   0x00000080   Code   RO          881    i.CLK_SetCoreClock  clk.o
+    0x000009d8   0x00000024   Code   RO          882    i.CLK_SetHCLK       clk.o
+    0x000009fc   0x00000050   Code   RO          883    i.CLK_SetModuleClock  clk.o
+    0x00000a4c   0x0000002c   Code   RO          886    i.CLK_WaitClockReady  clk.o
+    0x00000a78   0x00000028   Code   RO         1120    i.GPIO_SetMode      gpio.o
+    0x00000aa0   0x00000028   Code   RO         1492    i.Hard_Fault_Handler  retarget.o
+    0x00000ac8   0x00000010   Code   RO          390    i.IsKeyDown1        bsp_key.o
+    0x00000ad8   0x00000010   Code   RO          391    i.IsKeyDown2        bsp_key.o
+    0x00000ae8   0x0000001c   Code   RO          636    i.LITE_openlog      lite-log.o
+    0x00000b04   0x0000000c   Code   RO          638    i.LITE_set_loglevel  lite-log.o
+    0x00000b10   0x000000b0   Code   RO          639    i.LITE_syslog       lite-log.o
+    0x00000bc0   0x00000108   Code   RO          562    i.Light_InitHard    bsp_light.o
+    0x00000cc8   0x00000010   Code   RO         1294    i.PWM_EnableOutput  pwm.o
+    0x00000cd8   0x0000002c   Code   RO         1304    i.PWM_Start         pwm.o
+    0x00000d04   0x0000001c   Code   RO          476    i.Relay_InitHard    bsp_relay.o
+    0x00000d20   0x00000044   Code   RO            3    i.SYS_Init          main.o
+    0x00000d64   0x0000001c   Code   RO         1683    i.SYS_ResetModule   sys.o
+    0x00000d80   0x00000020   Code   RO         1495    i.SendChar_ToUART   retarget.o
+    0x00000da0   0x000000a8   Code   RO          712    i.SystemCoreClockUpdate  system_mini58series.o
+    0x00000e48   0x00000058   Code   RO         1754    i.TIMER_GetModuleClock  timer.o
+    0x00000ea0   0x00000050   Code   RO         1755    i.TIMER_Open        timer.o
+    0x00000ef0   0x00000060   Code   RO          525    i.TMR0_IRQHandler   bsp_timer0.o
+    0x00000f50   0x00000060   Code   RO          526    i.Timer0_InitHard   bsp_timer0.o
+    0x00000fb0   0x00000024   Code   RO          347    i.UART1_IRQHandler  bsp_uart.o
+    0x00000fd4   0x00000080   Code   RO         1817    i.UART_Open         uart.o
+    0x00001054   0x00000084   Code   RO          348    i.Uart_InitHard     bsp_uart.o
+    0x000010d8   0x00000020   Code   RO         2227    i.__0printf         mc_p.l(printfa.o)
+    0x000010f8   0x00000024   Code   RO         2233    i.__0vsprintf       mc_p.l(printfa.o)
+    0x0000111c   0x0000002e   Code   RO         2302    i.__ARM_clz         mf_p.l(depilogue.o)
+    0x0000114a   0x00000002   PAD
+    0x0000114c   0x00000174   Code   RO         2234    i._fp_digits        mc_p.l(printfa.o)
+    0x000012c0   0x000006ec   Code   RO         2235    i._printf_core      mc_p.l(printfa.o)
+    0x000019ac   0x00000020   Code   RO         2236    i._printf_post_padding  mc_p.l(printfa.o)
+    0x000019cc   0x0000002c   Code   RO         2237    i._printf_pre_padding  mc_p.l(printfa.o)
+    0x000019f8   0x0000000a   Code   RO         2239    i._sputc            mc_p.l(printfa.o)
+    0x00001a02   0x00000002   PAD
+    0x00001a04   0x000000b8   Code   RO          393    i.bsp_DetectKey     bsp_key.o
+    0x00001abc   0x00000024   Code   RO          394    i.bsp_GetKey        bsp_key.o
+    0x00001ae0   0x00000018   Code   RO          327    i.bsp_Init          bsp.o
+    0x00001af8   0x00000024   Code   RO          397    i.bsp_InitKey       bsp_key.o
+    0x00001b1c   0x00000044   Code   RO          398    i.bsp_InitKeyVar    bsp_key.o
+    0x00001b60   0x00000014   Code   RO          399    i.bsp_KeyScan       bsp_key.o
+    0x00001b74   0x0000001c   Code   RO          400    i.bsp_PutKey        bsp_key.o
+    0x00001b90   0x0000000c   Code   RO         1499    i.fputc             retarget.o
+    0x00001b9c   0x000001bc   Code   RO            4    i.main              main.o
+    0x00001d58   0x000000a8   Code   RO         1501    i.stackDump         retarget.o
+    0x00001e00   0x00000008   Code   RO          527    i.timer0_taskTimer_get  bsp_timer0.o
+    0x00001e08   0x00000005   Data   RO            5    .constdata          main.o
+    0x00001e0d   0x00000003   PAD
+    0x00001e10   0x00000018   Data   RO          642    .conststring        lite-log.o
+    0x00001e28   0x00000000   Data   RO         2304    Region$$Table       anon$$obj.o
 
 
-    Execution Region ER_RW (Base: 0x20000000, Size: 0x0000002c, Max: 0xffffffff, ABSOLUTE)
+    Execution Region ER_RW (Base: 0x20000000, Size: 0x00000034, Max: 0xffffffff, ABSOLUTE)
 
     Base Addr    Size         Type   Attr      Idx    E Section Name        Object
 
-    0x20000000   0x00000018   Data   RW          369    .data               lite-log.o
-    0x20000018   0x00000004   Data   RW          440    .data               system_mini58series.o
-    0x2000001c   0x0000000c   Data   RW          441    .data               system_mini58series.o
-    0x20000028   0x00000004   Data   RW         1228    .data               retarget.o
+    0x20000000   0x00000004   Data   RW            6    .data               main.o
+    0x20000004   0x00000004   Data   RW          403    .data               bsp_key.o
+    0x20000008   0x00000018   Data   RW          643    .data               lite-log.o
+    0x20000020   0x00000004   Data   RW          714    .data               system_mini58series.o
+    0x20000024   0x0000000c   Data   RW          715    .data               system_mini58series.o
+    0x20000030   0x00000004   Data   RW         1502    .data               retarget.o
 
 
-    Execution Region ER_ZI (Base: 0x2000002c, Size: 0x0000033c, Max: 0xffffffff, ABSOLUTE)
+    Execution Region ER_ZI (Base: 0x20000034, Size: 0x0000034c, Max: 0xffffffff, ABSOLUTE)
 
     Base Addr    Size         Type   Attr      Idx    E Section Name        Object
 
-    0x2000002c   0x0000002d   Zero   RW          236    .bss                bsp_key.o
-    0x20000059   0x00000003   PAD
-    0x2000005c   0x0000010c   Zero   RW          367    .bss                lite-log.o
-    0x20000168   0x00000200   Zero   RW          488    STACK               startup_mini58series.o
-
-
-==============================================================================
-
-Image component sizes
-
-
-      Code (inc. data)   RO Data    RW Data    ZI Data      Debug   Object Name
-
-        16          0          0          0          0        403   bsp.o
-       172         36          0          0         45       2835   bsp_key.o
-        28          8          0          0          0        810   bsp_relay.o
-       160         22          0          0          0       7491   bsp_uart.o
-       876         98          0          0          0       6379   clk.o
-        40          0          0          0          0        935   gpio.o
-       216         52         24         24        268       4034   lite-log.o
-       204         88          5          0          0     136770   main.o
-       280        132          0          4          0       4462   retarget.o
-        20          4        192          0        512        684   startup_mini58series.o
-        28          0          0          0          0        470   sys.o
-       168         30          0         16          0     130477   system_mini58series.o
-       216         34          0          0          0       1960   uart.o
-
-    ----------------------------------------------------------------------
-      2424        504        256         44        828     297710   Object Totals
-         0          0         32          0          0          0   (incl. Generated)
-         0          0          3          0          3          0   (incl. Padding)
-
-    ----------------------------------------------------------------------
-
-      Code (inc. data)   RO Data    RW Data    ZI Data      Debug   Library Member Name
-
-         0          0          0          0          0          0   entry.o
-         0          0          0          0          0          0   entry10a.o
-         0          0          0          0          0          0   entry11a.o
-         8          4          0          0          0          0   entry2.o
-         4          0          0          0          0          0   entry5.o
-         0          0          0          0          0          0   entry7b.o
-         0          0          0          0          0          0   entry8b.o
-         8          4          0          0          0          0   entry9a.o
-        30          0          0          0          0          0   handlers.o
-        36          8          0          0          0         68   init.o
-         0          0          0          0          0          0   iusefp.o
-        32          0          0          0          0         68   llshl.o
-        38          0          0          0          0         68   llsshr.o
-        34          0          0          0          0         68   llushr.o
-        36          0          0          0          0        100   memseta.o
-      2298        104          0          0          0        544   printfa.o
-        14          0          0          0          0         60   strlen.o
-        26          0          0          0          0         68   strncpy.o
-        44          0          0          0          0         72   uidiv.o
-        96          0          0          0          0         84   uldiv.o
-        40          2          0          0          0         68   cdrcmple.o
-       356          4          0          0          0        140   dadd.o
-       240          6          0          0          0         84   ddiv.o
-       236          0          0          0          0        216   depilogue.o
-        64         10          0          0          0         68   dfixul.o
-       208          6          0          0          0         88   dmul.o
-
-    ----------------------------------------------------------------------
-      3852        148          0          0          0       1864   Library Totals
-         4          0          0          0          0          0   (incl. Padding)
-
-    ----------------------------------------------------------------------
-
-      Code (inc. data)   RO Data    RW Data    ZI Data      Debug   Library Name
-
-      2704        120          0          0          0       1200   mc_p.l
-      1144         28          0          0          0        664   mf_p.l
-
-    ----------------------------------------------------------------------
-      3852        148          0          0          0       1864   Library Totals
-
-    ----------------------------------------------------------------------
-
-==============================================================================
-
-
-      Code (inc. data)   RO Data    RW Data    ZI Data      Debug   
-
-      6276        652        256         44        828     297466   Grand Totals
-      6276        652        256         44        828     297466   ELF Image Totals
-      6276        652        256         44          0          0   ROM Totals
-
-==============================================================================
-
-    Total RO  Size (Code + RO Data)                 6532 (   6.38kB)
-    Total RW  Size (RW Data + ZI Data)               872 (   0.85kB)
-    Total ROM Size (Code + RO Data + RW Data)       6576 (   6.42kB)
-
-==============================================================================
+    0x20000034   0x0000002d   Zero   RW          402    .bss                bsp_key.o
+    0x20000061   0x00000001   PAD
+    0x20000062   0x0000000c   Zero   RW          528    .bss                bsp_timer0.o
+    0x2000006e   0x00000002   PAD
+    0x20000070   0x0000010c   Zero   RW          641    .bss                lite-log.o
+    0x2000017c   0x00000004   PAD
+    0x20000180   0x00000200   Zero   RW          762    STACK               startup_mini58series.o
 

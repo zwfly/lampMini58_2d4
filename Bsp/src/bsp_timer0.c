@@ -7,73 +7,69 @@
 
 #include "bsp.h"
 #include "app_dome.h"
+#include "string.h"
 
-#define TH0_INIT        1340
-#define TL0_INIT        1340
-
-static uint8_t u8TH0_tmp = 0, u8TL0_tmp = 0;
-
-_Task_time Task_time;
+static Task_time taskTime;
 
 static void timer0_ParamInit(void);
 void Timer0_InitHard(void) {
 
 	timer0_ParamInit();
-	TIMER0_MODE1_ENABLE
-	;
 
-	clr_T0M;
+	SYS_ResetModule(TMR0_RST);
 
-	u8TH0_tmp = (65536 - TH0_INIT) / 256;
-	u8TL0_tmp = (65536 - TL0_INIT) % 256;
+	/* Enable IP clock */
+	CLK_EnableModuleClock(TMR0_MODULE);
 
-	TH0 = u8TH0_tmp;            //initial counter values
-	TL0 = u8TL0_tmp;
+	/* Select IP clock source */
+	CLK_SetModuleClock(TMR0_MODULE, CLK_CLKSEL1_TMR0SEL_HIRC, 0);
 
-	set_ET0;                                    //enable Timer0 interrupt
-	set_TR0;                                    //Timer0 run
+	// Set timer 0 working 1Hz in periodic mode
+	TIMER_Open(TIMER0, TIMER_PERIODIC_MODE, 1000);
 
+	// Enable timer interrupt
+	TIMER_EnableInt(TIMER0);
+	NVIC_EnableIRQ(TMR0_IRQn);
+
+	// Start Timer 0
+	TIMER_Start(TIMER0);
+}
+
+Task_time* timer0_taskTimer_get(void) {
+	return &taskTime;
 }
 
 static void timer0_ParamInit(void) {
 
-	Task_time.cnt_10ms = 0;
-	Task_time.cnt_100ms = 0;
-	Task_time.cnt_1s = 0;
-
-	Task_time.flag_10ms = 0;
-	Task_time.flag_100ms = 0;
-	Task_time.flag_1s = 0;
+	memset((uint8_t *) &taskTime, 0, sizeof(Task_time));
 
 }
 
-void Timer0_ISR(void)
-interrupt 1              //interrupt address is 0x000B
-{
-	TH0 = u8TH0_tmp;
-	TL0 = u8TL0_tmp;
+void TMR0_IRQHandler(void) {
 
-	Task_time.flag_1ms = 1;
+	taskTime.flag_1ms = 1;
 
-	if (++Task_time.cnt_10ms >= 10) {
-		Task_time.cnt_10ms = 0;
-		Task_time.flag_10ms = 1;
+	if (++taskTime.cnt_10ms >= 10) {
+		taskTime.cnt_10ms = 0;
+		taskTime.flag_10ms = 1;
 	}
-	if (++Task_time.cnt_100ms >= 100) {
-		Task_time.cnt_100ms = 0;
-		Task_time.flag_100ms = 1;
+	if (++taskTime.cnt_100ms >= 100) {
+		taskTime.cnt_100ms = 0;
+		taskTime.flag_100ms = 1;
 
 	}
-	if (++Task_time.cnt_500ms >= 500) {
-		Task_time.cnt_500ms = 0;
-		Task_time.flag_500ms = 1;
+	if (++taskTime.cnt_500ms >= 500) {
+		taskTime.cnt_500ms = 0;
+		taskTime.flag_500ms = 1;
 	}
 
-	if (++Task_time.cnt_1s >= 1000) {
-		Task_time.cnt_1s = 0;
-		Task_time.flag_1s = 1;
+	if (++taskTime.cnt_1s >= 1000) {
+		taskTime.cnt_1s = 0;
+		taskTime.flag_1s = 1;
 
 	}
 
+	// clear timer interrupt flag
+	TIMER_ClearIntFlag(TIMER0);
 }
 

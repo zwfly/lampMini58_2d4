@@ -65,17 +65,17 @@
 ;;;14     
 ;;;15     	/* Enable IP clock */
 ;;;16     	CLK_EnableModuleClock(UART0_MODULE);
-000002  4c1a              LDR      r4,|L2.108|
-000004  4620              MOV      r0,r4
+000002  4d1a              LDR      r5,|L2.108|
+000004  4628              MOV      r0,r5
 000006  f7fffffe          BL       CLK_EnableModuleClock
 ;;;17     
 ;;;18     	/* Select IP clock source */
 ;;;19     	CLK_SetModuleClock(UART0_MODULE, CLK_CLKSEL1_UARTSEL_HIRC,
-00000a  2501              MOVS     r5,#1
-00000c  066d              LSLS     r5,r5,#25
+00000a  2401              MOVS     r4,#1
+00000c  0664              LSLS     r4,r4,#25
 00000e  2200              MOVS     r2,#0
-000010  4629              MOV      r1,r5
-000012  4620              MOV      r0,r4
+000010  4621              MOV      r1,r4
+000012  4628              MOV      r0,r5
 000014  f7fffffe          BL       CLK_SetModuleClock
 ;;;20     			CLK_CLKDIV_UART(1));
 ;;;21     
@@ -83,41 +83,38 @@
 ;;;23     	/* Init I/O Multi-function                                                                                 */
 ;;;24     	/*---------------------------------------------------------------------------------------------------------*/
 ;;;25     	/* Set P1 multi-function pins for UART RXD, TXD */
-;;;26     	SYS->P1_MFP = SYS_MFP_P12_UART0_RXD | SYS_MFP_P13_UART0_TXD;
-000018  2003              MOVS     r0,#3
-00001a  0280              LSLS     r0,r0,#10
-00001c  2405              MOVS     r4,#5
-00001e  0724              LSLS     r4,r4,#28
-000020  6360              STR      r0,[r4,#0x34]
+;;;26     	SYS->P5_MFP = SYS_MFP_P51_UART0_RXD | SYS_MFP_P50_UART0_TXD;
+000018  4a16              LDR      r2,|L2.116|
+00001a  4815              LDR      r0,|L2.112|
+00001c  6050              STR      r0,[r2,#4]
 ;;;27     
 ;;;28     	/* Reset IP */
 ;;;29     	SYS_ResetModule(SYS_IPRST1_UART0RST_Msk);
-000022  1268              ASRS     r0,r5,#9
-000024  f7fffffe          BL       SYS_ResetModule
+00001e  0290              LSLS     r0,r2,#10
+000020  f7fffffe          BL       SYS_ResetModule
 ;;;30     
 ;;;31     	/* Configure UART and set UART Baudrate */
 ;;;32     	UART_Open(UART0, 115200);
-000028  21e1              MOVS     r1,#0xe1
-00002a  0249              LSLS     r1,r1,#9
-00002c  4810              LDR      r0,|L2.112|
-00002e  f7fffffe          BL       UART_Open
+000024  21e1              MOVS     r1,#0xe1
+000026  0249              LSLS     r1,r1,#9
+000028  4813              LDR      r0,|L2.120|
+00002a  f7fffffe          BL       UART_Open
 ;;;33     
 ;;;34     ///////////
 ;;;35     	/* Init UART1 */
 ;;;36     
 ;;;37     	/* Enable IP clock */
 ;;;38     	CLK_EnableModuleClock(UART1_MODULE);
-000032  4e0e              LDR      r6,|L2.108|
-000034  1c76              ADDS     r6,r6,#1
-000036  4630              MOV      r0,r6
-000038  f7fffffe          BL       CLK_EnableModuleClock
+00002e  1c6d              ADDS     r5,r5,#1
+000030  4628              MOV      r0,r5
+000032  f7fffffe          BL       CLK_EnableModuleClock
 ;;;39     
 ;;;40     	/* Select IP clock source */
 ;;;41     	CLK_SetModuleClock(UART1_MODULE, CLK_CLKSEL1_UARTSEL_HIRC,
-00003c  2200              MOVS     r2,#0
-00003e  4629              MOV      r1,r5
-000040  4630              MOV      r0,r6
-000042  f7fffffe          BL       CLK_SetModuleClock
+000036  2200              MOVS     r2,#0
+000038  4621              MOV      r1,r4
+00003a  4628              MOV      r0,r5
+00003c  f7fffffe          BL       CLK_SetModuleClock
 ;;;42     			CLK_CLKDIV_UART(1));
 ;;;43     
 ;;;44     	/*---------------------------------------------------------------------------------------------------------*/
@@ -125,30 +122,33 @@
 ;;;46     	/*---------------------------------------------------------------------------------------------------------*/
 ;;;47     	/* Set P1 multi-function pins for UART RXD, TXD */
 ;;;48     	SYS->P2_MFP = SYS_MFP_P24_UART1_RXD | SYS_MFP_P25_UART1_TXD;
-000046  2030              MOVS     r0,#0x30
-000048  63a0              STR      r0,[r4,#0x38]
+000040  2030              MOVS     r0,#0x30
+000042  2105              MOVS     r1,#5
+000044  0709              LSLS     r1,r1,#28
+000046  6388              STR      r0,[r1,#0x38]
 ;;;49     
 ;;;50     	/* Reset IP */
 ;;;51     	SYS_ResetModule(SYS_IPRST1_UART1RST_Msk);
-00004a  1228              ASRS     r0,r5,#8
-00004c  f7fffffe          BL       SYS_ResetModule
+000048  1220              ASRS     r0,r4,#8
+00004a  f7fffffe          BL       SYS_ResetModule
 ;;;52     
 ;;;53     	/* Configure UART and set UART Baudrate */
 ;;;54     	UART_Open(UART1, 19200);
-000050  4c08              LDR      r4,|L2.116|
-000052  214b              MOVS     r1,#0x4b
-000054  0209              LSLS     r1,r1,#8
-000056  4620              MOV      r0,r4
-000058  f7fffffe          BL       UART_Open
+00004e  4c0b              LDR      r4,|L2.124|
+000050  214b              MOVS     r1,#0x4b
+000052  0209              LSLS     r1,r1,#8
+000054  4620              MOV      r0,r4
+000056  f7fffffe          BL       UART_Open
 ;;;55     
 ;;;56         /* Enable Interrupt and install the call back function */
 ;;;57         UART_ENABLE_INT(UART1, (UART_INTEN_RDAIEN_Msk | UART_INTEN_THREIEN_Msk | UART_INTEN_RXTOIEN_Msk));
-00005c  6861              LDR      r1,[r4,#4]
-00005e  2213              MOVS     r2,#0x13
-000060  4311              ORRS     r1,r1,r2
-000062  6061              STR      r1,[r4,#4]
-000064  4904              LDR      r1,|L2.120|
-000066  1328              ASRS     r0,r5,#12
+00005a  6861              LDR      r1,[r4,#4]
+00005c  2213              MOVS     r2,#0x13
+00005e  4311              ORRS     r1,r1,r2
+000060  6061              STR      r1,[r4,#4]
+000062  2001              MOVS     r0,#1
+000064  4906              LDR      r1,|L2.128|
+000066  0340              LSLS     r0,r0,#13
 000068  6008              STR      r0,[r1,#0]
 ;;;58         NVIC_EnableIRQ(UART1_IRQn);
 ;;;59     }
@@ -159,10 +159,14 @@
                   |L2.108|
                           DCD      0xa7803d10
                   |L2.112|
-                          DCD      0x40050000
+                          DCD      0x00000303
                   |L2.116|
-                          DCD      0x40150000
+                          DCD      0x50000040
                   |L2.120|
+                          DCD      0x40050000
+                  |L2.124|
+                          DCD      0x40150000
+                  |L2.128|
                           DCD      0xe000e100
 
                           AREA ||.bss||, DATA, NOINIT, ALIGN=0

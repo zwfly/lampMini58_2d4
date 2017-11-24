@@ -19685,6 +19685,9 @@ N#include "gpio.h"
 N#include "clk.h"
 N#include "sys.h"
 N#include "uart.h"
+N#include "timer.h"
+N#include "pwm.h"
+N#include "fmc.h"
 N
 N//#include "bsp_2d4.h"
 N#include "bsp_uart.h"
@@ -19716,10 +19719,66 @@ N
 Nvoid Uart_InitHard(void);
 N
 N#endif /* BSP_INC_BSP_UART_H_ */
-L 14 "..\Bsp\bsp.h" 2
-N//#include "bsp_timer0.h"
-N//#include "bsp_timer1.h"
-N//#include "bsp_light.h"
+L 17 "..\Bsp\bsp.h" 2
+N#include "bsp_timer0.h"
+L 1 "..\Bsp\inc\bsp_timer0.h" 1
+N/*
+N * bsp_timer0.h
+N *
+N *  Created on: 2017年6月28日
+N *      Author: fly
+N */
+N
+N#ifndef BSP_INC_BSP_TIMER0_H_
+N#define BSP_INC_BSP_TIMER0_H_
+N
+Ntypedef struct {
+N
+N//	uint8_t cnt_1ms;
+N	uint8_t flag_1ms;
+N
+N	uint8_t cnt_10ms;
+N	uint8_t flag_10ms;
+N
+N	uint8_t cnt_100ms;
+N	uint8_t flag_100ms;
+N
+N	uint8_t cnt_500ms;
+N	uint8_t flag_500ms;
+N
+N	uint16_t cnt_1s;
+N	uint8_t flag_1s;
+N
+N} Task_time;
+N
+N//extern _Task_time Task_time;
+N
+Nvoid Timer0_InitHard(void);
+NTask_time* timer0_taskTimer_get(void);
+N
+N#endif /* BSP_INC_BSP_TIMER0_H_ */
+L 18 "..\Bsp\bsp.h" 2
+N#include "bsp_light.h"
+L 1 "..\Bsp\inc\bsp_light.h" 1
+N/*
+N * bsp_light.h
+N *
+N *  Created on: 2017年8月18日
+N *      Author: fly
+N */
+N
+N#ifndef BSP_INC_BSP_LIGHT_H_
+N#define BSP_INC_BSP_LIGHT_H_
+N
+Nvoid Light_InitHard(void);
+N//void Light_Red_set(uint16_t duty);
+N//void Light_Green_set(uint16_t duty);
+N//void Light_Blue_set(uint16_t duty);
+Nvoid Light_RGB_set(uint16_t r, uint16_t g, uint16_t b);
+Nvoid Light_bright_set(uint8_t br);
+N
+N#endif /* BSP_INC_BSP_LIGHT_H_ */
+L 19 "..\Bsp\bsp.h" 2
 N#include "bsp_relay.h"
 L 1 "..\Bsp\inc\bsp_relay.h" 1
 N/*
@@ -19740,8 +19799,27 @@ Nuint8_t Relay_IsOn(void);
 Nvoid Relay_set(uint8_t s);
 N
 N#endif /* BSP_INC_BSP_RELAY_H_ */
-L 18 "..\Bsp\bsp.h" 2
-N//#include "bsp_eeprom.h"
+L 20 "..\Bsp\bsp.h" 2
+N#include "bsp_eeprom.h"
+L 1 "..\Bsp\inc\bsp_eeprom.h" 1
+N/*
+N * bsp_eeprom.h
+N *
+N *  Created on: 2017年9月8日
+N *      Author: fly
+N */
+N
+N#ifndef BSP_INC_BSP_EEPROM_H_
+N#define BSP_INC_BSP_EEPROM_H_
+N
+Nvoid EEPROM_InitHard(void);
+N
+Nvoid bsp_eeprom_write_byte(uint32_t u32addr, uint32_t u32data);
+Nint32_t bsp_eeprom_erase(uint32_t u32addr);
+Nuint32_t bsp_eeprom_read_byte(uint32_t u32Addr);
+N
+N#endif /* BSP_INC_BSP_EEPROM_H_ */
+L 21 "..\Bsp\bsp.h" 2
 N#include "bsp_key.h"
 L 1 "..\Bsp\inc\bsp_key.h" 1
 N/*
@@ -19841,15 +19919,8 @@ N
 N#endif
 N
 N/*****************************(END OF FILE) *********************************/
-L 20 "..\Bsp\bsp.h" 2
+L 22 "..\Bsp\bsp.h" 2
 N
-N#ifndef TRUE
-S#define TRUE  1
-N#endif
-N
-N#ifndef FALSE
-S#define FALSE 0
-N#endif
 N
 Nvoid bsp_Init(void);
 N
@@ -19914,8 +19985,137 @@ N		uint8_t bufLen);
 N
 N#endif /* APP_INC_APP_CRC_H_ */
 L 23 "..\App\inc\app.h" 2
-N//#include "app_dome.h"
-N//#include "app_eeprom.h"
+N#include "app_dome.h"
+L 1 "..\App\inc\app_dome.h" 1
+N/*
+N * app_dome.h
+N *
+N *  Created on: 2017年9月8日
+N *      Author: fly
+N */
+N
+N#ifndef APP_INC_APP_DOME_H_
+N#define APP_INC_APP_DOME_H_
+N
+N//#define DOME_SPEED_MULTIPLE   2
+N//#define DEFAULT_DOME_NUM   22  //use 2.5KB
+N//#define DEFAULT_DOME_NUM   26  //use 3KB
+N#define DEFAULT_DOME_NUM   17  //use 2KB
+N
+N#pragma pack(4)
+Ntypedef struct _DOME_PRO_T {
+N	uint8_t currentDomeIndex;
+N//	uint8_t currentSubDomeIndex;
+N
+N} DOME_PRO_T;
+N#pragma pack()
+N
+N#pragma pack(4)
+Ntypedef struct _SUBDOME_ASSIST_T {
+N	uint8_t switch_flag;
+N	uint32_t msCnt;
+N	uint8_t stopTime;
+N} SUBDOME_ASSIST_T;
+N#pragma pack()
+N///////
+N#pragma pack(4)
+Ntypedef struct _COLOR_T {
+N	uint8_t R;
+N	uint8_t G;
+N	uint8_t B;
+N} COLOR_T;
+N#pragma pack()
+N
+N#pragma pack(4)
+Ntypedef struct _SUBDOME_T {
+N	uint8_t mode;
+N	COLOR_T color1;
+N	COLOR_T color2;
+N	uint8_t repeate;
+N	uint8_t bright;
+N	uint16_t speed;
+N	uint16_t offtime;
+N} SUBDOME_T;
+N#pragma pack()
+N//typedef union _REPEAT_NUMBER_T {
+N//	uint8_t datas;
+N//	struct {
+N//		unsigned repeat :4;
+N//		unsigned number :4;
+N//	} bits;
+N//} REPEAT_NUMBER_T;
+N
+N#pragma pack(4)
+Ntypedef struct _DOME_HEADER_T {
+N	char name[8];
+N	uint8_t index;  //刚加的
+N	uint8_t repeat_number;  //闪法重复的次数，单元模式的数量
+N} DOME_HEADER_T;
+N#pragma pack()
+N
+N#pragma pack(4)
+Ntypedef struct _DOME_DEFAULT_T {
+N	DOME_HEADER_T header;
+N	SUBDOME_T subdome[8];
+N} DOME_DEFAULT_T;
+N#pragma pack()
+N
+N#pragma pack(4)
+Ntypedef struct _DOME_RUNNING_T {
+N	uint8_t bright;
+N	uint8_t speed;
+N	struct {
+N		uint16_t R;
+N		uint16_t G;
+N		uint16_t B;
+N	} color;
+N} DOME_RUNNING_T;
+N#pragma pack()
+N
+Nextern DOME_DEFAULT_T dome_blink;
+Nextern DOME_RUNNING_T dome_running_param;
+N
+Nvoid app_dome_Init(void);
+N
+Nvoid app_color_blink_previous(void);
+Nvoid app_color_blink_next(void);
+N
+Nvoid app_dome_start(uint8_t index, uint8_t dir);
+Nvoid app_dome_previous(void);
+Nvoid app_dome_next(void);
+Nvoid app_dome_get_current_Name(char *name, uint8_t len);
+Nvoid app_dome_start_current(void);
+Nvoid app_dome_stop_current(void);
+Nvoid app_dome_rgb(uint8_t r, uint8_t g, uint8_t b);
+Nvoid app_dome_interrupter(void);
+N
+N#endif /* APP_INC_APP_DOME_H_ */
+L 24 "..\App\inc\app.h" 2
+N#include "app_eeprom.h"
+L 1 "..\App\inc\app_eeprom.h" 1
+N/*
+N * app_eeprom.h
+N *
+N *  Created on: 2017年9月8日
+N *      Author: fly
+N */
+N
+N#ifndef APP_INC_APP_EEPROM_H_
+N#define APP_INC_APP_EEPROM_H_
+N
+N//#define DOME_START_ADDR   0x3C00  //use 3KB
+N//#define DOME_START_ADDR   0x3E00  //use 2.5KB
+N#define DOME_START_ADDR   0x4000  //use 2KB
+N
+Nvoid app_eeprom_Init(void);
+Nvoid app_eeprom_get_dome_with_index(DOME_DEFAULT_T* dd, uint8_t index);
+N
+Nvoid app_eeprom_erase(uint16_t addr);
+Nvoid app_eeprom_write_byte(uint16_t addr, uint8_t d);
+Nvoid app_eeprom_write_buf(uint16_t addr, uint8_t *pt, uint8_t len);
+N
+N#endif /* APP_INC_APP_EEPROM_H_ */
+L 25 "..\App\inc\app.h" 2
 N
 N#include "lite-log.h"
 L 1 "..\utils\inc\lite-log.h" 1
@@ -21017,6 +21217,8 @@ S	/* STCLK to XTL STCLK to XTL */
 S	CLK_SetSysTickClockSrc(CLK_CLKSEL0_STCLKSEL_XTAL);
 N#else
 N
+N	/* Enable  HIRC */
+N//	CLK->PWRCTL |= CLK_PWRCTL_HIRCEN_Msk;
 N	/* Enable HIRC clock (Internal RC 22.1184MHz) */
 N	CLK_EnableXtalRC(CLK_PWRCTL_HIRCEN_Msk);
 X	CLK_EnableXtalRC((0x1ul << (2)));
@@ -21029,12 +21231,11 @@ N	/* Select HCLK clock source as HIRC and and HCLK source divider as 1 */
 N	CLK_SetHCLK(CLK_CLKSEL0_HCLKSEL_HIRC, CLK_CLKDIV_HCLK(1));
 X	CLK_SetHCLK(0x07UL, ((1)-1));
 N
+N#endif
+N
 N	/* Set core clock as PLL_CLOCK from PLL */
 N	CLK_SetCoreClock(PLL_CLOCK);
 X	CLK_SetCoreClock(50000000);
-N
-N#endif
-N
 N	/* To update the variable SystemCoreClock */
 N	SystemCoreClockUpdate();
 N
@@ -21047,7 +21248,7 @@ N/* MAIN function                                                               
 N/*---------------------------------------------------------------------------------------------------------*/
 Nint main(void) {
 N	uint8_t ucKeyCode;
-N//	int32_t i32Err;
+N	uint8_t dome_cnt = 0;
 N
 N	/* Init System */
 N	SYS_Init();
@@ -21062,13 +21263,76 @@ S	LITE_closelog();
 N#endif
 N
 N	log_debug(" CPU @ %dHz\r\n", SystemCoreClock);
-X	LITE_syslog(__FUNCTION__, 81, LOG_DEBUG_LEVEL, " CPU @ %dHz\r\n", SystemCoreClock);
+X	LITE_syslog(__FUNCTION__, 82, LOG_DEBUG_LEVEL, " CPU @ %dHz\r\n", SystemCoreClock);
 N
-N	printf("+-------------------------------------+ \r\n");
-N	printf("+-------------------------------------+ \r\n");
+N	log_debug("+-------------------------------------+ ");
+X	LITE_syslog(__FUNCTION__, 84, LOG_DEBUG_LEVEL, "+-------------------------------------+ ");
+N	log_debug("+-------------------------------------+ ");
+X	LITE_syslog(__FUNCTION__, 85, LOG_DEBUG_LEVEL, "+-------------------------------------+ ");
 N
+N	log_debug("default size: %d", sizeof(DOME_DEFAULT_T));
+X	LITE_syslog(__FUNCTION__, 87, LOG_DEBUG_LEVEL, "default size: %d", sizeof(DOME_DEFAULT_T));
+N	log_debug("dome size: %d", sizeof(DOME_RUNNING_T));
+X	LITE_syslog(__FUNCTION__, 88, LOG_DEBUG_LEVEL, "dome size: %d", sizeof(DOME_RUNNING_T));
+N	log_debug("header size: %d", sizeof(DOME_HEADER_T));
+X	LITE_syslog(__FUNCTION__, 89, LOG_DEBUG_LEVEL, "header size: %d", sizeof(DOME_HEADER_T));
+N	log_debug("submode size: %d", sizeof(SUBDOME_T));
+X	LITE_syslog(__FUNCTION__, 90, LOG_DEBUG_LEVEL, "submode size: %d", sizeof(SUBDOME_T));
+Nlog_debug("color size: %d", sizeof(COLOR_T));
+XLITE_syslog(__FUNCTION__, 91, LOG_DEBUG_LEVEL, "color size: %d", sizeof(COLOR_T));
 N	while (1) {
+N		if (timer0_taskTimer_get()->flag_1ms) {
+N			timer0_taskTimer_get()->flag_1ms = 0;
+N			//////////////////
+N#if 0
+S			dome_cnt++;
+S			if (dome_running_param.speed >= 50) {
+S				if (dome_cnt > (10 + (dome_running_param.speed - 50) / 3)) {
+S					dome_cnt = 0;
+S					app_dome_interrupter();
+S				}
+S			} else {
+S				if (dome_cnt > (10 - (50 - dome_running_param.speed) / 6)) {
+S					dome_cnt = 0;
+S					app_dome_interrupter();
+S				}
+S			}
+N#endif
+N		}
 N
+N		if (timer0_taskTimer_get()->flag_10ms) {
+N			timer0_taskTimer_get()->flag_10ms = 0;
+N			//////////////////
+N			bsp_KeyScan();
+N
+N		}
+N		if (timer0_taskTimer_get()->flag_100ms) {
+N			timer0_taskTimer_get()->flag_100ms = 0;
+N			//////////////////
+N//			app_uart_pro();
+N//			app_2d4_pro();
+N			//			app_work_100ms_pro();
+N			//			Repeat_Pro();
+N
+N		}
+N		if (timer0_taskTimer_get()->flag_500ms) {
+N			timer0_taskTimer_get()->flag_500ms = 0;
+N			//////////////////
+N
+N		}
+N		if (timer0_taskTimer_get()->flag_1s) {
+N			timer0_taskTimer_get()->flag_1s = 0;
+N			//////////////////
+N			static uint32_t cnt = 0;
+N			cnt++;
+N			log_debug("I am alive %d", cnt);
+X			LITE_syslog(__FUNCTION__, 137, LOG_DEBUG_LEVEL, "I am alive %d", cnt);
+N
+N			//			app_work_1s_pro();
+N
+N		}
+N
+N		//////
 N		ucKeyCode = bsp_GetKey();
 N		if (ucKeyCode != KEY_NONE) {
 N			switch (ucKeyCode) {
@@ -21077,7 +21341,6 @@ X			case KEY_1_UP:
 N				break;
 N			case KEY_DOWN_K1: {
 X			case KEY_1_DOWN: {
-N
 N
 N			}
 N				break;
@@ -21100,5 +21363,6 @@ N		}
 N
 N	}
 N
+W "..\App\src\main.c" 68 10 variable "dome_cnt"  was declared but never referenced
 N}
 N

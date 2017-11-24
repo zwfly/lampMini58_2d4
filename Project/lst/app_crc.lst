@@ -19680,6 +19680,9 @@ N#include "gpio.h"
 N#include "clk.h"
 N#include "sys.h"
 N#include "uart.h"
+N#include "timer.h"
+N#include "pwm.h"
+N#include "fmc.h"
 N
 N//#include "bsp_2d4.h"
 N#include "bsp_uart.h"
@@ -19711,10 +19714,66 @@ N
 Nvoid Uart_InitHard(void);
 N
 N#endif /* BSP_INC_BSP_UART_H_ */
-L 14 "..\Bsp\bsp.h" 2
-N//#include "bsp_timer0.h"
-N//#include "bsp_timer1.h"
-N//#include "bsp_light.h"
+L 17 "..\Bsp\bsp.h" 2
+N#include "bsp_timer0.h"
+L 1 "..\Bsp\inc\bsp_timer0.h" 1
+N/*
+N * bsp_timer0.h
+N *
+N *  Created on: 2017年6月28日
+N *      Author: fly
+N */
+N
+N#ifndef BSP_INC_BSP_TIMER0_H_
+N#define BSP_INC_BSP_TIMER0_H_
+N
+Ntypedef struct {
+N
+N//	uint8_t cnt_1ms;
+N	uint8_t flag_1ms;
+N
+N	uint8_t cnt_10ms;
+N	uint8_t flag_10ms;
+N
+N	uint8_t cnt_100ms;
+N	uint8_t flag_100ms;
+N
+N	uint8_t cnt_500ms;
+N	uint8_t flag_500ms;
+N
+N	uint16_t cnt_1s;
+N	uint8_t flag_1s;
+N
+N} Task_time;
+N
+N//extern _Task_time Task_time;
+N
+Nvoid Timer0_InitHard(void);
+NTask_time* timer0_taskTimer_get(void);
+N
+N#endif /* BSP_INC_BSP_TIMER0_H_ */
+L 18 "..\Bsp\bsp.h" 2
+N#include "bsp_light.h"
+L 1 "..\Bsp\inc\bsp_light.h" 1
+N/*
+N * bsp_light.h
+N *
+N *  Created on: 2017年8月18日
+N *      Author: fly
+N */
+N
+N#ifndef BSP_INC_BSP_LIGHT_H_
+N#define BSP_INC_BSP_LIGHT_H_
+N
+Nvoid Light_InitHard(void);
+N//void Light_Red_set(uint16_t duty);
+N//void Light_Green_set(uint16_t duty);
+N//void Light_Blue_set(uint16_t duty);
+Nvoid Light_RGB_set(uint16_t r, uint16_t g, uint16_t b);
+Nvoid Light_bright_set(uint8_t br);
+N
+N#endif /* BSP_INC_BSP_LIGHT_H_ */
+L 19 "..\Bsp\bsp.h" 2
 N#include "bsp_relay.h"
 L 1 "..\Bsp\inc\bsp_relay.h" 1
 N/*
@@ -19735,8 +19794,27 @@ Nuint8_t Relay_IsOn(void);
 Nvoid Relay_set(uint8_t s);
 N
 N#endif /* BSP_INC_BSP_RELAY_H_ */
-L 18 "..\Bsp\bsp.h" 2
-N//#include "bsp_eeprom.h"
+L 20 "..\Bsp\bsp.h" 2
+N#include "bsp_eeprom.h"
+L 1 "..\Bsp\inc\bsp_eeprom.h" 1
+N/*
+N * bsp_eeprom.h
+N *
+N *  Created on: 2017年9月8日
+N *      Author: fly
+N */
+N
+N#ifndef BSP_INC_BSP_EEPROM_H_
+N#define BSP_INC_BSP_EEPROM_H_
+N
+Nvoid EEPROM_InitHard(void);
+N
+Nvoid bsp_eeprom_write_byte(uint32_t u32addr, uint32_t u32data);
+Nint32_t bsp_eeprom_erase(uint32_t u32addr);
+Nuint32_t bsp_eeprom_read_byte(uint32_t u32Addr);
+N
+N#endif /* BSP_INC_BSP_EEPROM_H_ */
+L 21 "..\Bsp\bsp.h" 2
 N#include "bsp_key.h"
 L 1 "..\Bsp\inc\bsp_key.h" 1
 N/*
@@ -19836,15 +19914,8 @@ N
 N#endif
 N
 N/*****************************(END OF FILE) *********************************/
-L 20 "..\Bsp\bsp.h" 2
+L 22 "..\Bsp\bsp.h" 2
 N
-N#ifndef TRUE
-S#define TRUE  1
-N#endif
-N
-N#ifndef FALSE
-S#define FALSE 0
-N#endif
 N
 Nvoid bsp_Init(void);
 N
@@ -19909,8 +19980,137 @@ N		uint8_t bufLen);
 N
 N#endif /* APP_INC_APP_CRC_H_ */
 L 23 "..\App\inc\app.h" 2
-N//#include "app_dome.h"
-N//#include "app_eeprom.h"
+N#include "app_dome.h"
+L 1 "..\App\inc\app_dome.h" 1
+N/*
+N * app_dome.h
+N *
+N *  Created on: 2017年9月8日
+N *      Author: fly
+N */
+N
+N#ifndef APP_INC_APP_DOME_H_
+N#define APP_INC_APP_DOME_H_
+N
+N//#define DOME_SPEED_MULTIPLE   2
+N//#define DEFAULT_DOME_NUM   22  //use 2.5KB
+N//#define DEFAULT_DOME_NUM   26  //use 3KB
+N#define DEFAULT_DOME_NUM   17  //use 2KB
+N
+N#pragma pack(4)
+Ntypedef struct _DOME_PRO_T {
+N	uint8_t currentDomeIndex;
+N//	uint8_t currentSubDomeIndex;
+N
+N} DOME_PRO_T;
+N#pragma pack()
+N
+N#pragma pack(4)
+Ntypedef struct _SUBDOME_ASSIST_T {
+N	uint8_t switch_flag;
+N	uint32_t msCnt;
+N	uint8_t stopTime;
+N} SUBDOME_ASSIST_T;
+N#pragma pack()
+N///////
+N#pragma pack(4)
+Ntypedef struct _COLOR_T {
+N	uint8_t R;
+N	uint8_t G;
+N	uint8_t B;
+N} COLOR_T;
+N#pragma pack()
+N
+N#pragma pack(4)
+Ntypedef struct _SUBDOME_T {
+N	uint8_t mode;
+N	COLOR_T color1;
+N	COLOR_T color2;
+N	uint8_t repeate;
+N	uint8_t bright;
+N	uint16_t speed;
+N	uint16_t offtime;
+N} SUBDOME_T;
+N#pragma pack()
+N//typedef union _REPEAT_NUMBER_T {
+N//	uint8_t datas;
+N//	struct {
+N//		unsigned repeat :4;
+N//		unsigned number :4;
+N//	} bits;
+N//} REPEAT_NUMBER_T;
+N
+N#pragma pack(4)
+Ntypedef struct _DOME_HEADER_T {
+N	char name[8];
+N	uint8_t index;  //刚加的
+N	uint8_t repeat_number;  //闪法重复的次数，单元模式的数量
+N} DOME_HEADER_T;
+N#pragma pack()
+N
+N#pragma pack(4)
+Ntypedef struct _DOME_DEFAULT_T {
+N	DOME_HEADER_T header;
+N	SUBDOME_T subdome[8];
+N} DOME_DEFAULT_T;
+N#pragma pack()
+N
+N#pragma pack(4)
+Ntypedef struct _DOME_RUNNING_T {
+N	uint8_t bright;
+N	uint8_t speed;
+N	struct {
+N		uint16_t R;
+N		uint16_t G;
+N		uint16_t B;
+N	} color;
+N} DOME_RUNNING_T;
+N#pragma pack()
+N
+Nextern DOME_DEFAULT_T dome_blink;
+Nextern DOME_RUNNING_T dome_running_param;
+N
+Nvoid app_dome_Init(void);
+N
+Nvoid app_color_blink_previous(void);
+Nvoid app_color_blink_next(void);
+N
+Nvoid app_dome_start(uint8_t index, uint8_t dir);
+Nvoid app_dome_previous(void);
+Nvoid app_dome_next(void);
+Nvoid app_dome_get_current_Name(char *name, uint8_t len);
+Nvoid app_dome_start_current(void);
+Nvoid app_dome_stop_current(void);
+Nvoid app_dome_rgb(uint8_t r, uint8_t g, uint8_t b);
+Nvoid app_dome_interrupter(void);
+N
+N#endif /* APP_INC_APP_DOME_H_ */
+L 24 "..\App\inc\app.h" 2
+N#include "app_eeprom.h"
+L 1 "..\App\inc\app_eeprom.h" 1
+N/*
+N * app_eeprom.h
+N *
+N *  Created on: 2017年9月8日
+N *      Author: fly
+N */
+N
+N#ifndef APP_INC_APP_EEPROM_H_
+N#define APP_INC_APP_EEPROM_H_
+N
+N//#define DOME_START_ADDR   0x3C00  //use 3KB
+N//#define DOME_START_ADDR   0x3E00  //use 2.5KB
+N#define DOME_START_ADDR   0x4000  //use 2KB
+N
+Nvoid app_eeprom_Init(void);
+Nvoid app_eeprom_get_dome_with_index(DOME_DEFAULT_T* dd, uint8_t index);
+N
+Nvoid app_eeprom_erase(uint16_t addr);
+Nvoid app_eeprom_write_byte(uint16_t addr, uint8_t d);
+Nvoid app_eeprom_write_buf(uint16_t addr, uint8_t *pt, uint8_t len);
+N
+N#endif /* APP_INC_APP_EEPROM_H_ */
+L 25 "..\App\inc\app.h" 2
 N
 N#include "lite-log.h"
 L 1 "..\utils\inc\lite-log.h" 1

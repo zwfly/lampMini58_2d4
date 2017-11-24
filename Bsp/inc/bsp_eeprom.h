@@ -10,10 +10,8 @@
 
 void EEPROM_InitHard(void);
 
-void write_DATAFLASH_BYTE(UINT16 u16_addr, UINT8 u8_data);
-void erase_DATAFLASH(UINT16 u16_addr);
-void write_DATAFLASH_BUF(UINT16 u16_addr, UINT8 *pt, uint8_t len);
-
-uint8_t read_APROM_BYTE(uint16_t  code *u16_addr);
+void bsp_eeprom_write_byte(uint32_t u32addr, uint32_t u32data);
+int32_t bsp_eeprom_erase(uint32_t u32addr);
+uint32_t bsp_eeprom_read_byte(uint32_t u32Addr);
 
 #endif /* BSP_INC_BSP_EEPROM_H_ */

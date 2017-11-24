@@ -19663,6 +19663,9 @@ N#include "gpio.h"
 N#include "clk.h"
 N#include "sys.h"
 N#include "uart.h"
+N#include "timer.h"
+N#include "pwm.h"
+N#include "fmc.h"
 N
 N//#include "bsp_2d4.h"
 N#include "bsp_uart.h"
@@ -19694,10 +19697,66 @@ N
 Nvoid Uart_InitHard(void);
 N
 N#endif /* BSP_INC_BSP_UART_H_ */
-L 14 "..\Bsp\bsp.h" 2
-N//#include "bsp_timer0.h"
-N//#include "bsp_timer1.h"
-N//#include "bsp_light.h"
+L 17 "..\Bsp\bsp.h" 2
+N#include "bsp_timer0.h"
+L 1 "..\Bsp\inc\bsp_timer0.h" 1
+N/*
+N * bsp_timer0.h
+N *
+N *  Created on: 2017年6月28日
+N *      Author: fly
+N */
+N
+N#ifndef BSP_INC_BSP_TIMER0_H_
+N#define BSP_INC_BSP_TIMER0_H_
+N
+Ntypedef struct {
+N
+N//	uint8_t cnt_1ms;
+N	uint8_t flag_1ms;
+N
+N	uint8_t cnt_10ms;
+N	uint8_t flag_10ms;
+N
+N	uint8_t cnt_100ms;
+N	uint8_t flag_100ms;
+N
+N	uint8_t cnt_500ms;
+N	uint8_t flag_500ms;
+N
+N	uint16_t cnt_1s;
+N	uint8_t flag_1s;
+N
+N} Task_time;
+N
+N//extern _Task_time Task_time;
+N
+Nvoid Timer0_InitHard(void);
+NTask_time* timer0_taskTimer_get(void);
+N
+N#endif /* BSP_INC_BSP_TIMER0_H_ */
+L 18 "..\Bsp\bsp.h" 2
+N#include "bsp_light.h"
+L 1 "..\Bsp\inc\bsp_light.h" 1
+N/*
+N * bsp_light.h
+N *
+N *  Created on: 2017年8月18日
+N *      Author: fly
+N */
+N
+N#ifndef BSP_INC_BSP_LIGHT_H_
+N#define BSP_INC_BSP_LIGHT_H_
+N
+Nvoid Light_InitHard(void);
+N//void Light_Red_set(uint16_t duty);
+N//void Light_Green_set(uint16_t duty);
+N//void Light_Blue_set(uint16_t duty);
+Nvoid Light_RGB_set(uint16_t r, uint16_t g, uint16_t b);
+Nvoid Light_bright_set(uint8_t br);
+N
+N#endif /* BSP_INC_BSP_LIGHT_H_ */
+L 19 "..\Bsp\bsp.h" 2
 N#include "bsp_relay.h"
 L 1 "..\Bsp\inc\bsp_relay.h" 1
 N/*
@@ -19718,8 +19777,27 @@ Nuint8_t Relay_IsOn(void);
 Nvoid Relay_set(uint8_t s);
 N
 N#endif /* BSP_INC_BSP_RELAY_H_ */
-L 18 "..\Bsp\bsp.h" 2
-N//#include "bsp_eeprom.h"
+L 20 "..\Bsp\bsp.h" 2
+N#include "bsp_eeprom.h"
+L 1 "..\Bsp\inc\bsp_eeprom.h" 1
+N/*
+N * bsp_eeprom.h
+N *
+N *  Created on: 2017年9月8日
+N *      Author: fly
+N */
+N
+N#ifndef BSP_INC_BSP_EEPROM_H_
+N#define BSP_INC_BSP_EEPROM_H_
+N
+Nvoid EEPROM_InitHard(void);
+N
+Nvoid bsp_eeprom_write_byte(uint32_t u32addr, uint32_t u32data);
+Nint32_t bsp_eeprom_erase(uint32_t u32addr);
+Nuint32_t bsp_eeprom_read_byte(uint32_t u32Addr);
+N
+N#endif /* BSP_INC_BSP_EEPROM_H_ */
+L 21 "..\Bsp\bsp.h" 2
 N#include "bsp_key.h"
 L 1 "..\Bsp\inc\bsp_key.h" 1
 N/*
@@ -19819,15 +19897,8 @@ N
 N#endif
 N
 N/*****************************(END OF FILE) *********************************/
-L 20 "..\Bsp\bsp.h" 2
+L 22 "..\Bsp\bsp.h" 2
 N
-N#ifndef TRUE
-S#define TRUE  1
-N#endif
-N
-N#ifndef FALSE
-S#define FALSE 0
-N#endif
 N
 Nvoid bsp_Init(void);
 N
@@ -19855,8 +19926,8 @@ N	/*----------------------------------------------------------------------------
 N	/* Init I/O Multi-function                                                                                 */
 N	/*---------------------------------------------------------------------------------------------------------*/
 N	/* Set P1 multi-function pins for UART RXD, TXD */
-N	SYS->P1_MFP = SYS_MFP_P12_UART0_RXD | SYS_MFP_P13_UART0_TXD;
-X	((SYS_T *) (((uint32_t)0x50000000) + 0x00000))->P1_MFP = 0x00000400UL | 0x00000800UL;
+N	SYS->P5_MFP = SYS_MFP_P51_UART0_RXD | SYS_MFP_P50_UART0_TXD;
+X	((SYS_T *) (((uint32_t)0x50000000) + 0x00000))->P5_MFP = 0x00000202UL | 0x00000101UL;
 N
 N	/* Reset IP */
 N	SYS_ResetModule(SYS_IPRST1_UART0RST_Msk);

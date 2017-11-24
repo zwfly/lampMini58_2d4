@@ -23,7 +23,7 @@ void Uart_InitHard(void) {
 	/* Init I/O Multi-function                                                                                 */
 	/*---------------------------------------------------------------------------------------------------------*/
 	/* Set P1 multi-function pins for UART RXD, TXD */
-	SYS->P1_MFP = SYS_MFP_P12_UART0_RXD | SYS_MFP_P13_UART0_TXD;
+	SYS->P5_MFP = SYS_MFP_P51_UART0_RXD | SYS_MFP_P50_UART0_TXD;
 
 	/* Reset IP */
 	SYS_ResetModule(SYS_IPRST1_UART0RST_Msk);

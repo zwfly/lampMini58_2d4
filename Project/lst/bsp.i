@@ -17479,6 +17479,9 @@ void WWDT_Open(uint32_t u32PreScale, uint32_t u32CmpValue, uint32_t u32EnableInt
 #line 9 "..\\Bsp\\bsp.h"
 #line 10 "..\\Bsp\\bsp.h"
 #line 11 "..\\Bsp\\bsp.h"
+#line 12 "..\\Bsp\\bsp.h"
+#line 13 "..\\Bsp\\bsp.h"
+#line 14 "..\\Bsp\\bsp.h"
 
 
 #line 1 "..\\Bsp\\inc\\bsp_uart.h"
@@ -17507,10 +17510,62 @@ extern uint8_t riflag;
 
 void Uart_InitHard(void);
 
-#line 14 "..\\Bsp\\bsp.h"
+#line 17 "..\\Bsp\\bsp.h"
+#line 1 "..\\Bsp\\inc\\bsp_timer0.h"
 
 
 
+
+
+ 
+
+
+
+
+typedef struct {
+
+
+	uint8_t flag_1ms;
+
+	uint8_t cnt_10ms;
+	uint8_t flag_10ms;
+
+	uint8_t cnt_100ms;
+	uint8_t flag_100ms;
+
+	uint8_t cnt_500ms;
+	uint8_t flag_500ms;
+
+	uint16_t cnt_1s;
+	uint8_t flag_1s;
+
+} Task_time;
+
+
+
+void Timer0_InitHard(void);
+Task_time* timer0_taskTimer_get(void);
+
+#line 18 "..\\Bsp\\bsp.h"
+#line 1 "..\\Bsp\\inc\\bsp_light.h"
+
+
+
+
+
+ 
+
+
+
+
+void Light_InitHard(void);
+
+
+
+void Light_RGB_set(uint16_t r, uint16_t g, uint16_t b);
+void Light_bright_set(uint8_t br);
+
+#line 19 "..\\Bsp\\bsp.h"
 #line 1 "..\\Bsp\\inc\\bsp_relay.h"
 
 
@@ -17529,8 +17584,25 @@ void Relay_toggle(void);
 uint8_t Relay_IsOn(void);
 void Relay_set(uint8_t s);
 
-#line 18 "..\\Bsp\\bsp.h"
+#line 20 "..\\Bsp\\bsp.h"
+#line 1 "..\\Bsp\\inc\\bsp_eeprom.h"
 
+
+
+
+
+ 
+
+
+
+
+void EEPROM_InitHard(void);
+
+void bsp_eeprom_write_byte(uint32_t u32addr, uint32_t u32data);
+int32_t bsp_eeprom_erase(uint32_t u32addr);
+uint32_t bsp_eeprom_read_byte(uint32_t u32Addr);
+
+#line 21 "..\\Bsp\\bsp.h"
 #line 1 "..\\Bsp\\inc\\bsp_key.h"
 
 
@@ -17628,14 +17700,7 @@ void bsp_ClearKey(void);
 
 
  
-#line 20 "..\\Bsp\\bsp.h"
-
-
-
-
-
-
-
+#line 22 "..\\Bsp\\bsp.h"
 
 
 void bsp_Init(void);
@@ -17648,20 +17713,16 @@ void bsp_Init(void);
 void bsp_Init(void) {
 
 
+	
 	Relay_InitHard();
 
 	bsp_InitKey();
 
-
-
-
-
-
-
+	Light_InitHard();
+	
+	Timer0_InitHard();
 
 	Uart_InitHard();
-
-
 
 }
 

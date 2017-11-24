@@ -24,9 +24,14 @@
 .\obj\main.o: ..\Library\StdDriver\inc\wdt.h
 .\obj\main.o: ..\Library\StdDriver\inc\wwdt.h
 .\obj\main.o: ..\Bsp\inc\bsp_uart.h
+.\obj\main.o: ..\Bsp\inc\bsp_timer0.h
+.\obj\main.o: ..\Bsp\inc\bsp_light.h
 .\obj\main.o: ..\Bsp\inc\bsp_relay.h
+.\obj\main.o: ..\Bsp\inc\bsp_eeprom.h
 .\obj\main.o: ..\Bsp\inc\bsp_key.h
 .\obj\main.o: ..\App\inc\app_uart.h
 .\obj\main.o: ..\App\inc\app_crc.h
+.\obj\main.o: ..\App\inc\app_dome.h
+.\obj\main.o: ..\App\inc\app_eeprom.h
 .\obj\main.o: ..\utils\inc\lite-log.h
 .\obj\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h

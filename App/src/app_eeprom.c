@@ -17,7 +17,7 @@ void app_eeprom_get_dome_with_index(DOME_DEFAULT_T *dd, uint8_t index) {
 	uint8_t i = 0;
 	uint8_t n = 0;
 	n = index;
-
+#if 0
 	if (n >= DEFAULT_DOME_NUM) {
 		n = 0;
 	}
@@ -25,6 +25,7 @@ void app_eeprom_get_dome_with_index(DOME_DEFAULT_T *dd, uint8_t index) {
 		*((uint8_t*) dd + i) = read_APROM_BYTE(
 		DOME_START_ADDR + index * sizeof(DOME_DEFAULT_T) + i);
 	}
+#endif
 }
 void app_eeprom_erase(uint16_t addr) {
 	erase_DATAFLASH(DOME_START_ADDR + addr);

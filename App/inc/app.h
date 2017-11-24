@@ -20,8 +20,8 @@
 //#include "app_2d4.h"
 #include "app_uart.h"
 #include "app_crc.h"
-//#include "app_dome.h"
-//#include "app_eeprom.h"
+#include "app_dome.h"
+#include "app_eeprom.h"
 
 #include "lite-log.h"
 

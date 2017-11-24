@@ -25,10 +25,11 @@ typedef struct {
 	uint16_t cnt_1s;
 	uint8_t flag_1s;
 
-} _Task_time;
+} Task_time;
 
-extern _Task_time Task_time;
+//extern _Task_time Task_time;
 
 void Timer0_InitHard(void);
+Task_time* timer0_taskTimer_get(void);
 
 #endif /* BSP_INC_BSP_TIMER0_H_ */

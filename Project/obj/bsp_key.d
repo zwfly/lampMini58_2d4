@@ -22,5 +22,8 @@
 .\obj\bsp_key.o: ..\Library\StdDriver\inc\wdt.h
 .\obj\bsp_key.o: ..\Library\StdDriver\inc\wwdt.h
 .\obj\bsp_key.o: ..\Bsp\inc\bsp_uart.h
+.\obj\bsp_key.o: ..\Bsp\inc\bsp_timer0.h
+.\obj\bsp_key.o: ..\Bsp\inc\bsp_light.h
 .\obj\bsp_key.o: ..\Bsp\inc\bsp_relay.h
+.\obj\bsp_key.o: ..\Bsp\inc\bsp_eeprom.h
 .\obj\bsp_key.o: ..\Bsp\inc\bsp_key.h

@@ -428,6 +428,16 @@
               <FileType>1</FileType>
               <FilePath>..\App\src\app_crc.c</FilePath>
             </File>
+            <File>
+              <FileName>app_dome.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\App\src\app_dome.c</FilePath>
+            </File>
+            <File>
+              <FileName>app_eeprom.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\App\src\app_eeprom.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -452,6 +462,21 @@
               <FileName>bsp_relay.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Bsp\src\bsp_relay.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_timer0.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Bsp\src\bsp_timer0.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_light.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Bsp\src\bsp_light.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_eeprom.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Bsp\src\bsp_eeprom.c</FilePath>
             </File>
           </Files>
         </Group>

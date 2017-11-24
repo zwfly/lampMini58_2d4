@@ -17929,6 +17929,9 @@ void WWDT_Open(uint32_t u32PreScale, uint32_t u32CmpValue, uint32_t u32EnableInt
 #line 9 "..\\Bsp\\bsp.h"
 #line 10 "..\\Bsp\\bsp.h"
 #line 11 "..\\Bsp\\bsp.h"
+#line 12 "..\\Bsp\\bsp.h"
+#line 13 "..\\Bsp\\bsp.h"
+#line 14 "..\\Bsp\\bsp.h"
 
 
 #line 1 "..\\Bsp\\inc\\bsp_uart.h"
@@ -17957,10 +17960,62 @@ extern uint8_t riflag;
 
 void Uart_InitHard(void);
 
-#line 14 "..\\Bsp\\bsp.h"
+#line 17 "..\\Bsp\\bsp.h"
+#line 1 "..\\Bsp\\inc\\bsp_timer0.h"
 
 
 
+
+
+ 
+
+
+
+
+typedef struct {
+
+
+	uint8_t flag_1ms;
+
+	uint8_t cnt_10ms;
+	uint8_t flag_10ms;
+
+	uint8_t cnt_100ms;
+	uint8_t flag_100ms;
+
+	uint8_t cnt_500ms;
+	uint8_t flag_500ms;
+
+	uint16_t cnt_1s;
+	uint8_t flag_1s;
+
+} Task_time;
+
+
+
+void Timer0_InitHard(void);
+Task_time* timer0_taskTimer_get(void);
+
+#line 18 "..\\Bsp\\bsp.h"
+#line 1 "..\\Bsp\\inc\\bsp_light.h"
+
+
+
+
+
+ 
+
+
+
+
+void Light_InitHard(void);
+
+
+
+void Light_RGB_set(uint16_t r, uint16_t g, uint16_t b);
+void Light_bright_set(uint8_t br);
+
+#line 19 "..\\Bsp\\bsp.h"
 #line 1 "..\\Bsp\\inc\\bsp_relay.h"
 
 
@@ -17979,8 +18034,25 @@ void Relay_toggle(void);
 uint8_t Relay_IsOn(void);
 void Relay_set(uint8_t s);
 
-#line 18 "..\\Bsp\\bsp.h"
+#line 20 "..\\Bsp\\bsp.h"
+#line 1 "..\\Bsp\\inc\\bsp_eeprom.h"
 
+
+
+
+
+ 
+
+
+
+
+void EEPROM_InitHard(void);
+
+void bsp_eeprom_write_byte(uint32_t u32addr, uint32_t u32data);
+int32_t bsp_eeprom_erase(uint32_t u32addr);
+uint32_t bsp_eeprom_read_byte(uint32_t u32Addr);
+
+#line 21 "..\\Bsp\\bsp.h"
 #line 1 "..\\Bsp\\inc\\bsp_key.h"
 
 
@@ -18078,14 +18150,7 @@ void bsp_ClearKey(void);
 
 
  
-#line 20 "..\\Bsp\\bsp.h"
-
-
-
-
-
-
-
+#line 22 "..\\Bsp\\bsp.h"
 
 
 void bsp_Init(void);
@@ -18147,8 +18212,133 @@ uint8_t app_CalcCRC8_cycle(uint8_t *ptr, uint8_t len, uint8_t pos,
 		uint8_t bufLen);
 
 #line 23 "..\\App\\inc\\app.h"
+#line 1 "..\\App\\inc\\app_dome.h"
 
 
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+#pragma pack(4)
+typedef struct _DOME_PRO_T {
+	uint8_t currentDomeIndex;
+
+
+} DOME_PRO_T;
+#pragma pack()
+
+#pragma pack(4)
+typedef struct _SUBDOME_ASSIST_T {
+	uint8_t switch_flag;
+	uint32_t msCnt;
+	uint8_t stopTime;
+} SUBDOME_ASSIST_T;
+#pragma pack()
+
+#pragma pack(4)
+typedef struct _COLOR_T {
+	uint8_t R;
+	uint8_t G;
+	uint8_t B;
+} COLOR_T;
+#pragma pack()
+
+#pragma pack(4)
+typedef struct _SUBDOME_T {
+	uint8_t mode;
+	COLOR_T color1;
+	COLOR_T color2;
+	uint8_t repeate;
+	uint8_t bright;
+	uint16_t speed;
+	uint16_t offtime;
+} SUBDOME_T;
+#pragma pack()
+
+
+
+
+
+
+
+
+#pragma pack(4)
+typedef struct _DOME_HEADER_T {
+	char name[8];
+	uint8_t index;  
+	uint8_t repeat_number;  
+} DOME_HEADER_T;
+#pragma pack()
+
+#pragma pack(4)
+typedef struct _DOME_DEFAULT_T {
+	DOME_HEADER_T header;
+	SUBDOME_T subdome[8];
+} DOME_DEFAULT_T;
+#pragma pack()
+
+#pragma pack(4)
+typedef struct _DOME_RUNNING_T {
+	uint8_t bright;
+	uint8_t speed;
+	struct {
+		uint16_t R;
+		uint16_t G;
+		uint16_t B;
+	} color;
+} DOME_RUNNING_T;
+#pragma pack()
+
+extern DOME_DEFAULT_T dome_blink;
+extern DOME_RUNNING_T dome_running_param;
+
+void app_dome_Init(void);
+
+void app_color_blink_previous(void);
+void app_color_blink_next(void);
+
+void app_dome_start(uint8_t index, uint8_t dir);
+void app_dome_previous(void);
+void app_dome_next(void);
+void app_dome_get_current_Name(char *name, uint8_t len);
+void app_dome_start_current(void);
+void app_dome_stop_current(void);
+void app_dome_rgb(uint8_t r, uint8_t g, uint8_t b);
+void app_dome_interrupter(void);
+
+#line 24 "..\\App\\inc\\app.h"
+#line 1 "..\\App\\inc\\app_eeprom.h"
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+void app_eeprom_Init(void);
+void app_eeprom_get_dome_with_index(DOME_DEFAULT_T* dd, uint8_t index);
+
+void app_eeprom_erase(uint16_t addr);
+void app_eeprom_write_byte(uint16_t addr, uint8_t d);
+void app_eeprom_write_buf(uint16_t addr, uint8_t *pt, uint8_t len);
+
+#line 25 "..\\App\\inc\\app.h"
 
 #line 1 "..\\utils\\inc\\lite-log.h"
 
@@ -18970,6 +19160,8 @@ void SYS_Init(void) {
 #line 40 "..\\App\\src\\main.c"
 
 	 
+
+	 
 	CLK_EnableXtalRC((0x1ul << (2)));
 
 	 
@@ -18978,11 +19170,10 @@ void SYS_Init(void) {
 	 
 	CLK_SetHCLK(0x07UL, ((1)-1));
 
+
+
 	 
 	CLK_SetCoreClock(50000000);
-
-
-
 	 
 	SystemCoreClockUpdate();
 
@@ -18995,7 +19186,7 @@ void SYS_Init(void) {
  
 int main(void) {
 	uint8_t ucKeyCode;
-
+	uint8_t dome_cnt = 0;
 
 	 
 	SYS_Init();
@@ -19009,20 +19200,61 @@ int main(void) {
 
 
 
-	LITE_syslog(__FUNCTION__, 81, LOG_DEBUG_LEVEL, " CPU @ %dHz\r\n", SystemCoreClock);
+	LITE_syslog(__FUNCTION__, 82, LOG_DEBUG_LEVEL, " CPU @ %dHz\r\n", SystemCoreClock);
 
-	printf("+-------------------------------------+ \r\n");
-	printf("+-------------------------------------+ \r\n");
+	LITE_syslog(__FUNCTION__, 84, LOG_DEBUG_LEVEL, "+-------------------------------------+ ");
+	LITE_syslog(__FUNCTION__, 85, LOG_DEBUG_LEVEL, "+-------------------------------------+ ");
 
+	LITE_syslog(__FUNCTION__, 87, LOG_DEBUG_LEVEL, "default size: %d", sizeof(DOME_DEFAULT_T));
+	LITE_syslog(__FUNCTION__, 88, LOG_DEBUG_LEVEL, "dome size: %d", sizeof(DOME_RUNNING_T));
+	LITE_syslog(__FUNCTION__, 89, LOG_DEBUG_LEVEL, "header size: %d", sizeof(DOME_HEADER_T));
+	LITE_syslog(__FUNCTION__, 90, LOG_DEBUG_LEVEL, "submode size: %d", sizeof(SUBDOME_T));
+LITE_syslog(__FUNCTION__, 91, LOG_DEBUG_LEVEL, "color size: %d", sizeof(COLOR_T));
 	while (1) {
+		if (timer0_taskTimer_get()->flag_1ms) {
+			timer0_taskTimer_get()->flag_1ms = 0;
+			
+#line 110 "..\\App\\src\\main.c"
+		}
 
+		if (timer0_taskTimer_get()->flag_10ms) {
+			timer0_taskTimer_get()->flag_10ms = 0;
+			
+			bsp_KeyScan();
+
+		}
+		if (timer0_taskTimer_get()->flag_100ms) {
+			timer0_taskTimer_get()->flag_100ms = 0;
+			
+
+
+			
+			
+
+		}
+		if (timer0_taskTimer_get()->flag_500ms) {
+			timer0_taskTimer_get()->flag_500ms = 0;
+			
+
+		}
+		if (timer0_taskTimer_get()->flag_1s) {
+			timer0_taskTimer_get()->flag_1s = 0;
+			
+			static uint32_t cnt = 0;
+			cnt++;
+			LITE_syslog(__FUNCTION__, 137, LOG_DEBUG_LEVEL, "I am alive %d", cnt);
+
+			
+
+		}
+
+		
 		ucKeyCode = bsp_GetKey();
 		if (ucKeyCode != KEY_NONE) {
 			switch (ucKeyCode) {
 			case KEY_1_UP:   
 				break;
 			case KEY_1_DOWN: {
-
 
 			}
 				break;

@@ -18,8 +18,7 @@ DOME_RUNNING_T dome_running_param;
 ///////////////////
 #define COLOR_BLINK_NUMBER  10
 static uint8_t color_blink_index = 0;
-const uint8_t color_blink_buffer[COLOR_BLINK_NUMBER][3] = {
-		{ 255, 255, 255 },  //white
+const uint8_t color_blink_buffer[COLOR_BLINK_NUMBER][3] = { { 255, 255, 255 }, //white
 		{ 0, 255, 0 },   //green
 		{ 0, 0, 255 },   //blue
 		{ 255, 0, 0 },   //red
@@ -413,13 +412,15 @@ void app_dome_previous(void) {
 	if (domePro.currentDomeIndex) {
 		domePro.currentDomeIndex--;
 	} else {
-		domePro.currentDomeIndex = DEFAULT_DOME_NUM - 1;
+		domePro.currentDomeIndex = (FMC_APROM_END - DOME_START_ADDR)
+				/ sizeof(DOME_DEFAULT_T) - 1;
 	}
 	app_dome_start(domePro.currentDomeIndex, 2);
 }
 void app_dome_next(void) {
 	domePro.currentDomeIndex++;
-	if (domePro.currentDomeIndex >= DEFAULT_DOME_NUM) {
+	if (domePro.currentDomeIndex
+			>= ((FMC_APROM_END - DOME_START_ADDR) / sizeof(DOME_DEFAULT_T))) {
 		domePro.currentDomeIndex = 0;
 	}
 
@@ -447,7 +448,7 @@ void app_dome_stop_current(void) {
 	Light_RGB_set(0, 0, 0);
 }
 void app_dome_single_cycle(uint8_t subIndex) {
-	if ((dome_blink.header.repeat_number & 0x0F) == (subIndex+1)) {
+	if ((dome_blink.header.repeat_number & 0x0F) == (subIndex + 1)) {
 		subIndex = 0;
 		memcpy((uint8_t*) &subDome, (uint8_t*) &dome_blink.subdome[subIndex],
 				sizeof(subDome));
@@ -468,9 +469,12 @@ void app_dome_start(uint8_t domeIndex, uint8_t dir) {
 	subDome_Assist.stopTime = 0;
 
 //	app_dome_single_cycle(domeIndex);
-	if (domeIndex > (DEFAULT_DOME_NUM - 1)) {
-		domePro.currentDomeIndex = DEFAULT_DOME_NUM - 1;
-		domeIndex = DEFAULT_DOME_NUM - 1;
+	if (domeIndex
+			> ((FMC_APROM_END - DOME_START_ADDR) / sizeof(DOME_DEFAULT_T) - 1)) {
+		domePro.currentDomeIndex = (FMC_APROM_END - DOME_START_ADDR)
+				/ sizeof(DOME_DEFAULT_T) - 1;
+		domeIndex = (FMC_APROM_END - DOME_START_ADDR) / sizeof(DOME_DEFAULT_T)
+				- 1;
 	} else {
 		domePro.currentDomeIndex = domeIndex;
 	}
@@ -481,7 +485,9 @@ void app_dome_start(uint8_t domeIndex, uint8_t dir) {
 		}
 	} else if (dir == 1) {
 		uint8_t i = 0;
-		for (i = 0; i < DEFAULT_DOME_NUM; i++) {
+		for (i = 0;
+				i < ((FMC_APROM_END - DOME_START_ADDR) / sizeof(DOME_DEFAULT_T));
+				i++) {
 //			app_eeprom_get_dome_with_index(&dome_blink, domeIndex);
 			if (*((uint8_t *) &dome_blink) == 0xFF) {
 				if (domeIndex == 0) {
@@ -489,7 +495,9 @@ void app_dome_start(uint8_t domeIndex, uint8_t dir) {
 					break;
 				}
 				domeIndex++;
-				if (domeIndex >= DEFAULT_DOME_NUM) {
+				if (domeIndex
+						>= ((FMC_APROM_END - DOME_START_ADDR)
+								/ sizeof(DOME_DEFAULT_T))) {
 					domeIndex = 0;
 //					break;
 				}
@@ -499,7 +507,9 @@ void app_dome_start(uint8_t domeIndex, uint8_t dir) {
 		}
 	} else if (dir == 2) {
 		uint8_t i = 0;
-		for (i = 0; i < DEFAULT_DOME_NUM; i++) {
+		for (i = 0;
+				i < ((FMC_APROM_END - DOME_START_ADDR) / sizeof(DOME_DEFAULT_T));
+				i++) {
 //			app_eeprom_get_dome_with_index(&dome_blink, domeIndex);
 			if (*((uint8_t *) &dome_blink) == 0xFF) {
 				if (domeIndex) {
@@ -518,7 +528,6 @@ void app_dome_start(uint8_t domeIndex, uint8_t dir) {
 //		app_eeprom_get_dome_with_index(&dome_blink, 0);
 //		app_dome_stop_current();
 //	}
-
 
 	memcpy((uint8_t*) &subDome, (uint8_t*) &dome_blink.subdome[0],
 			sizeof(subDome));
@@ -546,7 +555,7 @@ static void app_dome_subDome_pro(uint8_t subIndex) {
 		cyc = 0;
 		app_dome_single_cycle(subIndex);
 	}
-	#endif
+#endif
 }
 
 void app_dome_rgb(uint8_t r, uint8_t g, uint8_t b) {

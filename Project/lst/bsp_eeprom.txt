@@ -168,7 +168,7 @@
 0000f2  a37d              ADR      r3,|L1.744|
 0000f4  2115              MOVS     r1,#0x15              ;21
 0000f6  e7a3              B        |L1.64|
-;;;63     void bsp_eeprom_write_byte(uint32_t u32addr, uint32_t u32data) {
+;;;63     void bsp_eeprom_write_int(uint32_t u32addr, uint32_t u32data) {
                           ENDP
 
                   |L1.248|
@@ -338,11 +338,11 @@
                           ENDP
 
 
-                          AREA ||i.bsp_eeprom_read_byte||, CODE, READONLY, ALIGN=1
+                          AREA ||i.bsp_eeprom_read_int||, CODE, READONLY, ALIGN=1
 
-                  bsp_eeprom_read_byte PROC
+                  bsp_eeprom_read_int PROC
 ;;;69     
-;;;70     uint32_t bsp_eeprom_read_byte(uint32_t u32Addr) {
+;;;70     uint32_t bsp_eeprom_read_int(uint32_t u32Addr) {
 000000  b510              PUSH     {r4,lr}
 ;;;71     	return FMC_Read(u32Addr);
 000002  f7fffffe          BL       FMC_Read
@@ -352,11 +352,11 @@
                           ENDP
 
 
-                          AREA ||i.bsp_eeprom_write_byte||, CODE, READONLY, ALIGN=1
+                          AREA ||i.bsp_eeprom_write_int||, CODE, READONLY, ALIGN=1
 
-                  bsp_eeprom_write_byte PROC
+                  bsp_eeprom_write_int PROC
 ;;;62     }
-;;;63     void bsp_eeprom_write_byte(uint32_t u32addr, uint32_t u32data) {
+;;;63     void bsp_eeprom_write_int(uint32_t u32addr, uint32_t u32data) {
 000000  b510              PUSH     {r4,lr}
 ;;;64     	FMC_Write(u32addr, u32data);
 000002  f7fffffe          BL       FMC_Write

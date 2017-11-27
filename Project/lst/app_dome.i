@@ -18044,9 +18044,9 @@ void Relay_set(uint8_t s);
 
 void EEPROM_InitHard(void);
 
-void bsp_eeprom_write_byte(uint32_t u32addr, uint32_t u32data);
+void bsp_eeprom_write_int(uint32_t u32addr, uint32_t u32data);
 int32_t bsp_eeprom_erase(uint32_t u32addr);
-uint32_t bsp_eeprom_read_byte(uint32_t u32Addr);
+uint32_t bsp_eeprom_read_int(uint32_t u32Addr);
 
 #line 21 "..\\Bsp\\bsp.h"
 #line 1 "..\\Bsp\\inc\\bsp_key.h"
@@ -18224,7 +18224,7 @@ uint8_t app_CalcCRC8_cycle(uint8_t *ptr, uint8_t len, uint8_t pos,
 
 
 
-#pragma pack(4)
+#pragma pack(1)
 typedef struct _DOME_PRO_T {
 	uint8_t currentDomeIndex;
 
@@ -18232,7 +18232,7 @@ typedef struct _DOME_PRO_T {
 } DOME_PRO_T;
 #pragma pack()
 
-#pragma pack(4)
+#pragma pack(1)
 typedef struct _SUBDOME_ASSIST_T {
 	uint8_t switch_flag;
 	uint32_t msCnt;
@@ -18240,7 +18240,7 @@ typedef struct _SUBDOME_ASSIST_T {
 } SUBDOME_ASSIST_T;
 #pragma pack()
 
-#pragma pack(4)
+#pragma pack(1)
 typedef struct _COLOR_T {
 	uint8_t R;
 	uint8_t G;
@@ -18248,7 +18248,7 @@ typedef struct _COLOR_T {
 } COLOR_T;
 #pragma pack()
 
-#pragma pack(4)
+#pragma pack(1)
 typedef struct _SUBDOME_T {
 	uint8_t mode;
 	COLOR_T color1;
@@ -18267,7 +18267,7 @@ typedef struct _SUBDOME_T {
 
 
 
-#pragma pack(4)
+#pragma pack(1)
 typedef struct _DOME_HEADER_T {
 	char name[8];
 	uint8_t index;  
@@ -18275,14 +18275,14 @@ typedef struct _DOME_HEADER_T {
 } DOME_HEADER_T;
 #pragma pack()
 
-#pragma pack(4)
+#pragma pack(1)
 typedef struct _DOME_DEFAULT_T {
 	DOME_HEADER_T header;
 	SUBDOME_T subdome[8];
 } DOME_DEFAULT_T;
 #pragma pack()
 
-#pragma pack(4)
+#pragma pack(1)
 typedef struct _DOME_RUNNING_T {
 	uint8_t bright;
 	uint8_t speed;
@@ -18330,8 +18330,9 @@ void app_dome_interrupter(void);
 void app_eeprom_Init(void);
 void app_eeprom_get_dome_with_index(DOME_DEFAULT_T* dd, uint8_t index);
 
-void app_eeprom_erase(uint16_t addr);
-void app_eeprom_write_byte(uint16_t addr, uint8_t d);
+void app_eeprom_erase(uint32_t addr);
+void app_eeprom_write_int(uint32_t addr, uint32_t d);
+uint32_t app_eeprom_read_int(uint32_t addr);
 void app_eeprom_write_buf(uint16_t addr, uint8_t *pt, uint8_t len);
 
 #line 25 "..\\App\\inc\\app.h"
@@ -19159,8 +19160,7 @@ DOME_RUNNING_T dome_running_param;
 
 
 static uint8_t color_blink_index = 0;
-const uint8_t color_blink_buffer[10][3] = {
-		{ 255, 255, 255 },  
+const uint8_t color_blink_buffer[10][3] = { { 255, 255, 255 }, 
 		{ 0, 255, 0 },   
 		{ 0, 0, 255 },   
 		{ 255, 0, 0 },   
@@ -19173,7 +19173,7 @@ const uint8_t color_blink_buffer[10][3] = {
 };
 
 
-#line 374 "..\\App\\src\\app_dome.c"
+#line 373 "..\\App\\src\\app_dome.c"
 
 
 void app_dome_Init(void) {
@@ -19216,13 +19216,15 @@ void app_dome_previous(void) {
 	if (domePro.currentDomeIndex) {
 		domePro.currentDomeIndex--;
 	} else {
-		domePro.currentDomeIndex = 17 - 1;
+		domePro.currentDomeIndex = (0x00008000UL - 0x6C00)
+				/ sizeof(DOME_DEFAULT_T) - 1;
 	}
 	app_dome_start(domePro.currentDomeIndex, 2);
 }
 void app_dome_next(void) {
 	domePro.currentDomeIndex++;
-	if (domePro.currentDomeIndex >= 17) {
+	if (domePro.currentDomeIndex
+			>= ((0x00008000UL - 0x6C00) / sizeof(DOME_DEFAULT_T))) {
 		domePro.currentDomeIndex = 0;
 	}
 
@@ -19250,7 +19252,7 @@ void app_dome_stop_current(void) {
 	Light_RGB_set(0, 0, 0);
 }
 void app_dome_single_cycle(uint8_t subIndex) {
-	if ((dome_blink.header.repeat_number & 0x0F) == (subIndex+1)) {
+	if ((dome_blink.header.repeat_number & 0x0F) == (subIndex + 1)) {
 		subIndex = 0;
 		memcpy((uint8_t*) &subDome, (uint8_t*) &dome_blink.subdome[subIndex],
 				sizeof(subDome));
@@ -19271,9 +19273,12 @@ void app_dome_start(uint8_t domeIndex, uint8_t dir) {
 	subDome_Assist.stopTime = 0;
 
 
-	if (domeIndex > (17 - 1)) {
-		domePro.currentDomeIndex = 17 - 1;
-		domeIndex = 17 - 1;
+	if (domeIndex
+			> ((0x00008000UL - 0x6C00) / sizeof(DOME_DEFAULT_T) - 1)) {
+		domePro.currentDomeIndex = (0x00008000UL - 0x6C00)
+				/ sizeof(DOME_DEFAULT_T) - 1;
+		domeIndex = (0x00008000UL - 0x6C00) / sizeof(DOME_DEFAULT_T)
+				- 1;
 	} else {
 		domePro.currentDomeIndex = domeIndex;
 	}
@@ -19284,7 +19289,9 @@ void app_dome_start(uint8_t domeIndex, uint8_t dir) {
 		}
 	} else if (dir == 1) {
 		uint8_t i = 0;
-		for (i = 0; i < 17; i++) {
+		for (i = 0;
+				i < ((0x00008000UL - 0x6C00) / sizeof(DOME_DEFAULT_T));
+				i++) {
 
 			if (*((uint8_t *) &dome_blink) == 0xFF) {
 				if (domeIndex == 0) {
@@ -19292,7 +19299,9 @@ void app_dome_start(uint8_t domeIndex, uint8_t dir) {
 					break;
 				}
 				domeIndex++;
-				if (domeIndex >= 17) {
+				if (domeIndex
+						>= ((0x00008000UL - 0x6C00)
+								/ sizeof(DOME_DEFAULT_T))) {
 					domeIndex = 0;
 
 				}
@@ -19302,7 +19311,9 @@ void app_dome_start(uint8_t domeIndex, uint8_t dir) {
 		}
 	} else if (dir == 2) {
 		uint8_t i = 0;
-		for (i = 0; i < 17; i++) {
+		for (i = 0;
+				i < ((0x00008000UL - 0x6C00) / sizeof(DOME_DEFAULT_T));
+				i++) {
 
 			if (*((uint8_t *) &dome_blink) == 0xFF) {
 				if (domeIndex) {
@@ -19322,7 +19333,6 @@ void app_dome_start(uint8_t domeIndex, uint8_t dir) {
 
 
 
-
 	memcpy((uint8_t*) &subDome, (uint8_t*) &dome_blink.subdome[0],
 			sizeof(subDome));
 
@@ -19336,7 +19346,7 @@ static void app_dome_subDome_pro(uint8_t subIndex) {
 	subDome_Assist.switch_flag = 0;
 	subDome_Assist.msCnt = 0;
 	subDome_Assist.stopTime = 50;
-#line 550 "..\\App\\src\\app_dome.c"
+#line 559 "..\\App\\src\\app_dome.c"
 }
 
 void app_dome_rgb(uint8_t r, uint8_t g, uint8_t b) {
@@ -19430,7 +19440,7 @@ void app_dome_interrupter(void) {
 
 		if (subDome_Assist.msCnt >= subDome.speed) {
 			subDome_Assist.msCnt = 0;
-#line 667 "..\\App\\src\\app_dome.c"
+#line 676 "..\\App\\src\\app_dome.c"
 
 			if (subDome.repeate) {
 				subDome.repeate--;

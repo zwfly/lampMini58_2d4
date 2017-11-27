@@ -91,7 +91,7 @@
                   main PROC
 ;;;65     /*---------------------------------------------------------------------------------------------------------*/
 ;;;66     int main(void) {
-000000  b508              PUSH     {r3,lr}
+000000  b09e              SUB      sp,sp,#0x78
 ;;;67     	uint8_t ucKeyCode;
 ;;;68     	uint8_t dome_cnt = 0;
 ;;;69     
@@ -104,7 +104,7 @@
 ;;;74     
 ;;;75     #if 1
 ;;;76     	LITE_openlog("lamp");
-00000a  a03e              ADR      r0,|L2.260|
+00000a  a041              ADR      r0,|L2.272|
 00000c  f7fffffe          BL       LITE_openlog
 ;;;77     	LITE_set_loglevel(LOG_DEBUG_LEVEL);
 000010  2005              MOVS     r0,#5
@@ -114,276 +114,292 @@
 ;;;80     #endif
 ;;;81     
 ;;;82     	log_debug(" CPU @ %dHz\r\n", SystemCoreClock);
-000016  483d              LDR      r0,|L2.268|
-000018  a33d              ADR      r3,|L2.272|
+000016  4840              LDR      r0,|L2.280|
+000018  a340              ADR      r3,|L2.284|
 00001a  6800              LDR      r0,[r0,#0]  ; SystemCoreClock
 00001c  9000              STR      r0,[sp,#0]
 00001e  2205              MOVS     r2,#5
 000020  2152              MOVS     r1,#0x52
-000022  483f              LDR      r0,|L2.288|
+000022  4842              LDR      r0,|L2.300|
 000024  f7fffffe          BL       LITE_syslog
 ;;;83     
 ;;;84     	log_debug("+-------------------------------------+ ");
-000028  a33e              ADR      r3,|L2.292|
+000028  a341              ADR      r3,|L2.304|
 00002a  2205              MOVS     r2,#5
 00002c  2154              MOVS     r1,#0x54
-00002e  483c              LDR      r0,|L2.288|
+00002e  483f              LDR      r0,|L2.300|
 000030  f7fffffe          BL       LITE_syslog
 ;;;85     	log_debug("+-------------------------------------+ ");
-000034  a33b              ADR      r3,|L2.292|
+000034  a33e              ADR      r3,|L2.304|
 000036  2205              MOVS     r2,#5
 000038  2155              MOVS     r1,#0x55
-00003a  4839              LDR      r0,|L2.288|
+00003a  483c              LDR      r0,|L2.300|
 00003c  f7fffffe          BL       LITE_syslog
 ;;;86     
 ;;;87     	log_debug("default size: %d", sizeof(DOME_DEFAULT_T));
-000040  207a              MOVS     r0,#0x7a
+000040  2072              MOVS     r0,#0x72
 000042  9000              STR      r0,[sp,#0]
-000044  a342              ADR      r3,|L2.336|
+000044  a345              ADR      r3,|L2.348|
 000046  2205              MOVS     r2,#5
 000048  2157              MOVS     r1,#0x57
-00004a  4835              LDR      r0,|L2.288|
+00004a  4838              LDR      r0,|L2.300|
 00004c  f7fffffe          BL       LITE_syslog
 ;;;88     	log_debug("dome size: %d", sizeof(DOME_RUNNING_T));
 000050  2008              MOVS     r0,#8
 000052  9000              STR      r0,[sp,#0]
-000054  a343              ADR      r3,|L2.356|
+000054  a346              ADR      r3,|L2.368|
 000056  2205              MOVS     r2,#5
 000058  2158              MOVS     r1,#0x58
-00005a  4831              LDR      r0,|L2.288|
+00005a  4834              LDR      r0,|L2.300|
 00005c  f7fffffe          BL       LITE_syslog
 ;;;89     	log_debug("header size: %d", sizeof(DOME_HEADER_T));
 000060  200a              MOVS     r0,#0xa
 000062  9000              STR      r0,[sp,#0]
-000064  a343              ADR      r3,|L2.372|
+000064  a346              ADR      r3,|L2.384|
 000066  2205              MOVS     r2,#5
 000068  2159              MOVS     r1,#0x59
-00006a  482d              LDR      r0,|L2.288|
+00006a  4830              LDR      r0,|L2.300|
 00006c  f7fffffe          BL       LITE_syslog
 ;;;90     	log_debug("submode size: %d", sizeof(SUBDOME_T));
-000070  200e              MOVS     r0,#0xe
+000070  200d              MOVS     r0,#0xd
 000072  9000              STR      r0,[sp,#0]
-000074  a343              ADR      r3,|L2.388|
+000074  a346              ADR      r3,|L2.400|
 000076  2205              MOVS     r2,#5
 000078  215a              MOVS     r1,#0x5a
-00007a  4829              LDR      r0,|L2.288|
+00007a  482c              LDR      r0,|L2.300|
 00007c  f7fffffe          BL       LITE_syslog
-;;;91     log_debug("color size: %d", sizeof(COLOR_T));
+;;;91     	log_debug("color size: %d", sizeof(COLOR_T));
 000080  2003              MOVS     r0,#3
 000082  9000              STR      r0,[sp,#0]
-000084  a344              ADR      r3,|L2.408|
+000084  a347              ADR      r3,|L2.420|
 000086  2205              MOVS     r2,#5
 000088  215b              MOVS     r1,#0x5b
-00008a  4825              LDR      r0,|L2.288|
+00008a  4828              LDR      r0,|L2.300|
 00008c  f7fffffe          BL       LITE_syslog
-000090  2400              MOVS     r4,#0
-                  |L2.146|
-;;;92     	while (1) {
-;;;93     		if (timer0_taskTimer_get()->flag_1ms) {
-000092  f7fffffe          BL       timer0_taskTimer_get
-000096  7800              LDRB     r0,[r0,#0]
-000098  2800              CMP      r0,#0
-00009a  d002              BEQ      |L2.162|
-;;;94     			timer0_taskTimer_get()->flag_1ms = 0;
-00009c  f7fffffe          BL       timer0_taskTimer_get
-0000a0  7004              STRB     r4,[r0,#0]
-                  |L2.162|
-;;;95     			//////////////////
-;;;96     #if 0
-;;;97     			dome_cnt++;
-;;;98     			if (dome_running_param.speed >= 50) {
-;;;99     				if (dome_cnt > (10 + (dome_running_param.speed - 50) / 3)) {
-;;;100    					dome_cnt = 0;
-;;;101    					app_dome_interrupter();
-;;;102    				}
-;;;103    			} else {
-;;;104    				if (dome_cnt > (10 - (50 - dome_running_param.speed) / 6)) {
-;;;105    					dome_cnt = 0;
-;;;106    					app_dome_interrupter();
-;;;107    				}
-;;;108    			}
-;;;109    #endif
-;;;110    		}
-;;;111    
-;;;112    		if (timer0_taskTimer_get()->flag_10ms) {
-0000a2  f7fffffe          BL       timer0_taskTimer_get
-0000a6  7880              LDRB     r0,[r0,#2]
-0000a8  2800              CMP      r0,#0
-0000aa  d004              BEQ      |L2.182|
-;;;113    			timer0_taskTimer_get()->flag_10ms = 0;
-0000ac  f7fffffe          BL       timer0_taskTimer_get
-0000b0  7084              STRB     r4,[r0,#2]
-;;;114    			//////////////////
-;;;115    			bsp_KeyScan();
-0000b2  f7fffffe          BL       bsp_KeyScan
-                  |L2.182|
-;;;116    
-;;;117    		}
-;;;118    		if (timer0_taskTimer_get()->flag_100ms) {
-0000b6  f7fffffe          BL       timer0_taskTimer_get
-0000ba  7900              LDRB     r0,[r0,#4]
-0000bc  2800              CMP      r0,#0
-0000be  d002              BEQ      |L2.198|
-;;;119    			timer0_taskTimer_get()->flag_100ms = 0;
-0000c0  f7fffffe          BL       timer0_taskTimer_get
-0000c4  7104              STRB     r4,[r0,#4]
-                  |L2.198|
-;;;120    			//////////////////
-;;;121    //			app_uart_pro();
-;;;122    //			app_2d4_pro();
-;;;123    			//			app_work_100ms_pro();
-;;;124    			//			Repeat_Pro();
+;;;92     
+;;;93     	int i = 0;
+000090  2000              MOVS     r0,#0
+;;;94     
+;;;95     	DOME_DEFAULT_T def;
+;;;96     	uint8_t *def_p = (uint8_t *) &def;
+000092  a901              ADD      r1,sp,#4
+000094  4604              MOV      r4,r0
+                  |L2.150|
+;;;97     	for (i = 0; i < sizeof(DOME_DEFAULT_T); ++i) {
+;;;98     		*(def_p + i) = i;
+000096  5408              STRB     r0,[r1,r0]
+000098  1c40              ADDS     r0,r0,#1
+00009a  2872              CMP      r0,#0x72              ;97
+00009c  d3fb              BCC      |L2.150|
+                  |L2.158|
+;;;99     	}
+;;;100    
+;;;101    	while (1) {
+;;;102    		if (timer0_taskTimer_get()->flag_1ms) {
+00009e  f7fffffe          BL       timer0_taskTimer_get
+0000a2  7800              LDRB     r0,[r0,#0]
+0000a4  2800              CMP      r0,#0
+0000a6  d002              BEQ      |L2.174|
+;;;103    			timer0_taskTimer_get()->flag_1ms = 0;
+0000a8  f7fffffe          BL       timer0_taskTimer_get
+0000ac  7004              STRB     r4,[r0,#0]
+                  |L2.174|
+;;;104    			//////////////////
+;;;105    #if 0
+;;;106    			dome_cnt++;
+;;;107    			if (dome_running_param.speed >= 50) {
+;;;108    				if (dome_cnt > (10 + (dome_running_param.speed - 50) / 3)) {
+;;;109    					dome_cnt = 0;
+;;;110    					app_dome_interrupter();
+;;;111    				}
+;;;112    			} else {
+;;;113    				if (dome_cnt > (10 - (50 - dome_running_param.speed) / 6)) {
+;;;114    					dome_cnt = 0;
+;;;115    					app_dome_interrupter();
+;;;116    				}
+;;;117    			}
+;;;118    #endif
+;;;119    		}
+;;;120    
+;;;121    		if (timer0_taskTimer_get()->flag_10ms) {
+0000ae  f7fffffe          BL       timer0_taskTimer_get
+0000b2  7880              LDRB     r0,[r0,#2]
+0000b4  2800              CMP      r0,#0
+0000b6  d004              BEQ      |L2.194|
+;;;122    			timer0_taskTimer_get()->flag_10ms = 0;
+0000b8  f7fffffe          BL       timer0_taskTimer_get
+0000bc  7084              STRB     r4,[r0,#2]
+;;;123    			//////////////////
+;;;124    			bsp_KeyScan();
+0000be  f7fffffe          BL       bsp_KeyScan
+                  |L2.194|
 ;;;125    
 ;;;126    		}
-;;;127    		if (timer0_taskTimer_get()->flag_500ms) {
-0000c6  f7fffffe          BL       timer0_taskTimer_get
-0000ca  7980              LDRB     r0,[r0,#6]
-0000cc  2800              CMP      r0,#0
-0000ce  d002              BEQ      |L2.214|
-;;;128    			timer0_taskTimer_get()->flag_500ms = 0;
-0000d0  f7fffffe          BL       timer0_taskTimer_get
-0000d4  7184              STRB     r4,[r0,#6]
-                  |L2.214|
+;;;127    		if (timer0_taskTimer_get()->flag_100ms) {
+0000c2  f7fffffe          BL       timer0_taskTimer_get
+0000c6  7900              LDRB     r0,[r0,#4]
+0000c8  2800              CMP      r0,#0
+0000ca  d002              BEQ      |L2.210|
+;;;128    			timer0_taskTimer_get()->flag_100ms = 0;
+0000cc  f7fffffe          BL       timer0_taskTimer_get
+0000d0  7104              STRB     r4,[r0,#4]
+                  |L2.210|
 ;;;129    			//////////////////
-;;;130    
-;;;131    		}
-;;;132    		if (timer0_taskTimer_get()->flag_1s) {
-0000d6  f7fffffe          BL       timer0_taskTimer_get
-0000da  7a80              LDRB     r0,[r0,#0xa]
-0000dc  2800              CMP      r0,#0
-0000de  d00d              BEQ      |L2.252|
-;;;133    			timer0_taskTimer_get()->flag_1s = 0;
-0000e0  f7fffffe          BL       timer0_taskTimer_get
-;;;134    			//////////////////
-;;;135    			static uint32_t cnt = 0;
-;;;136    			cnt++;
-0000e4  4930              LDR      r1,|L2.424|
-0000e6  7284              STRB     r4,[r0,#0xa]          ;133
-0000e8  6808              LDR      r0,[r1,#0]  ; cnt
-;;;137    			log_debug("I am alive %d", cnt);
-0000ea  a330              ADR      r3,|L2.428|
-0000ec  1c40              ADDS     r0,r0,#1              ;136
-0000ee  6008              STR      r0,[r1,#0]  ; cnt
-0000f0  9000              STR      r0,[sp,#0]
-0000f2  2205              MOVS     r2,#5
-0000f4  2189              MOVS     r1,#0x89
-0000f6  480a              LDR      r0,|L2.288|
-0000f8  f7fffffe          BL       LITE_syslog
-                  |L2.252|
-;;;138    
-;;;139    			//			app_work_1s_pro();
-;;;140    
-;;;141    		}
-;;;142    
-;;;143    		//////
-;;;144    		ucKeyCode = bsp_GetKey();
-0000fc  f7fffffe          BL       bsp_GetKey
-;;;145    		if (ucKeyCode != KEY_NONE) {
-000100  e7c7              B        |L2.146|
-;;;146    			switch (ucKeyCode) {
-;;;147    			case KEY_UP_K1:   //
-;;;148    				break;
-;;;149    			case KEY_DOWN_K1: {
-;;;150    
-;;;151    			}
-;;;152    				break;
-;;;153    			case KEY_LONG_K1:
-;;;154    				break;
-;;;155    			case KEY_UP_K2:   //
-;;;156    				break;
-;;;157    			case KEY_DOWN_K2:
-;;;158    
-;;;159    //				Relay_toggle();
-;;;160    				break;
-;;;161    			case KEY_LONG_K2:
-;;;162    				break;
-;;;163    			}
-;;;164    		}
-;;;165    
-;;;166    	}
+;;;130    //			app_uart_pro();
+;;;131    //			app_2d4_pro();
+;;;132    			//			app_work_100ms_pro();
+;;;133    			//			Repeat_Pro();
+;;;134    
+;;;135    		}
+;;;136    		if (timer0_taskTimer_get()->flag_500ms) {
+0000d2  f7fffffe          BL       timer0_taskTimer_get
+0000d6  7980              LDRB     r0,[r0,#6]
+0000d8  2800              CMP      r0,#0
+0000da  d002              BEQ      |L2.226|
+;;;137    			timer0_taskTimer_get()->flag_500ms = 0;
+0000dc  f7fffffe          BL       timer0_taskTimer_get
+0000e0  7184              STRB     r4,[r0,#6]
+                  |L2.226|
+;;;138    			//////////////////
+;;;139    
+;;;140    		}
+;;;141    		if (timer0_taskTimer_get()->flag_1s) {
+0000e2  f7fffffe          BL       timer0_taskTimer_get
+0000e6  7a80              LDRB     r0,[r0,#0xa]
+0000e8  2800              CMP      r0,#0
+0000ea  d00d              BEQ      |L2.264|
+;;;142    			timer0_taskTimer_get()->flag_1s = 0;
+0000ec  f7fffffe          BL       timer0_taskTimer_get
+;;;143    			//////////////////
+;;;144    			static uint32_t cnt = 0;
+;;;145    			cnt++;
+0000f0  4930              LDR      r1,|L2.436|
+0000f2  7284              STRB     r4,[r0,#0xa]          ;142
+0000f4  6808              LDR      r0,[r1,#0]  ; cnt
+;;;146    			log_debug("I am alive %d", cnt);
+0000f6  a330              ADR      r3,|L2.440|
+0000f8  1c40              ADDS     r0,r0,#1              ;145
+0000fa  6008              STR      r0,[r1,#0]  ; cnt
+0000fc  9000              STR      r0,[sp,#0]
+0000fe  2205              MOVS     r2,#5
+000100  2192              MOVS     r1,#0x92
+000102  480a              LDR      r0,|L2.300|
+000104  f7fffffe          BL       LITE_syslog
+                  |L2.264|
+;;;147    
+;;;148    			//			app_work_1s_pro();
+;;;149    
+;;;150    		}
+;;;151    
+;;;152    		//////
+;;;153    		ucKeyCode = bsp_GetKey();
+000108  f7fffffe          BL       bsp_GetKey
+;;;154    		if (ucKeyCode != KEY_NONE) {
+00010c  e7c7              B        |L2.158|
+;;;155    			switch (ucKeyCode) {
+;;;156    			case KEY_UP_K1:   //
+;;;157    				break;
+;;;158    			case KEY_DOWN_K1: {
+;;;159    
+;;;160    			}
+;;;161    				break;
+;;;162    			case KEY_LONG_K1:
+;;;163    				break;
+;;;164    			case KEY_UP_K2:   //
+;;;165    				break;
+;;;166    			case KEY_DOWN_K2:
 ;;;167    
-;;;168    }
-;;;169    
+;;;168    //				Relay_toggle();
+;;;169    				break;
+;;;170    			case KEY_LONG_K2:
+;;;171    				break;
+;;;172    			}
+;;;173    		}
+;;;174    
+;;;175    	}
+;;;176    
+;;;177    }
+;;;178    
                           ENDP
 
-000102  0000              DCW      0x0000
-                  |L2.260|
-000104  6c616d70          DCB      "lamp",0
-000108  00      
-000109  00                DCB      0
-00010a  00                DCB      0
-00010b  00                DCB      0
-                  |L2.268|
-                          DCD      SystemCoreClock
+00010e  0000              DCW      0x0000
                   |L2.272|
-000110  20435055          DCB      " CPU @ %dHz\r\n",0
-000114  20402025
-000118  64487a0d
-00011c  0a00    
-00011e  00                DCB      0
-00011f  00                DCB      0
-                  |L2.288|
+000110  6c616d70          DCB      "lamp",0
+000114  00      
+000115  00                DCB      0
+000116  00                DCB      0
+000117  00                DCB      0
+                  |L2.280|
+                          DCD      SystemCoreClock
+                  |L2.284|
+00011c  20435055          DCB      " CPU @ %dHz\r\n",0
+000120  20402025
+000124  64487a0d
+000128  0a00    
+00012a  00                DCB      0
+00012b  00                DCB      0
+                  |L2.300|
                           DCD      ||.constdata||
-                  |L2.292|
-000124  2b2d2d2d          DCB      "+-------------------------------------+ ",0
-000128  2d2d2d2d
-00012c  2d2d2d2d
-000130  2d2d2d2d
+                  |L2.304|
+000130  2b2d2d2d          DCB      "+-------------------------------------+ ",0
 000134  2d2d2d2d
 000138  2d2d2d2d
 00013c  2d2d2d2d
 000140  2d2d2d2d
 000144  2d2d2d2d
-000148  2d2d2b20
-00014c  00      
-00014d  00                DCB      0
-00014e  00                DCB      0
-00014f  00                DCB      0
-                  |L2.336|
-000150  64656661          DCB      "default size: %d",0
-000154  756c7420
-000158  73697a65
-00015c  3a202564
-000160  00      
-000161  00                DCB      0
-000162  00                DCB      0
-000163  00                DCB      0
-                  |L2.356|
-000164  646f6d65          DCB      "dome size: %d",0
-000168  2073697a
-00016c  653a2025
-000170  6400    
-000172  00                DCB      0
-000173  00                DCB      0
-                  |L2.372|
-000174  68656164          DCB      "header size: %d",0
-000178  65722073
-00017c  697a653a
-000180  20256400
-                  |L2.388|
-000184  7375626d          DCB      "submode size: %d",0
-000188  6f646520
-00018c  73697a65
-000190  3a202564
-000194  00      
-000195  00                DCB      0
-000196  00                DCB      0
-000197  00                DCB      0
-                  |L2.408|
-000198  636f6c6f          DCB      "color size: %d",0
-00019c  72207369
-0001a0  7a653a20
-0001a4  256400  
-0001a7  00                DCB      0
-                  |L2.424|
+000148  2d2d2d2d
+00014c  2d2d2d2d
+000150  2d2d2d2d
+000154  2d2d2b20
+000158  00      
+000159  00                DCB      0
+00015a  00                DCB      0
+00015b  00                DCB      0
+                  |L2.348|
+00015c  64656661          DCB      "default size: %d",0
+000160  756c7420
+000164  73697a65
+000168  3a202564
+00016c  00      
+00016d  00                DCB      0
+00016e  00                DCB      0
+00016f  00                DCB      0
+                  |L2.368|
+000170  646f6d65          DCB      "dome size: %d",0
+000174  2073697a
+000178  653a2025
+00017c  6400    
+00017e  00                DCB      0
+00017f  00                DCB      0
+                  |L2.384|
+000180  68656164          DCB      "header size: %d",0
+000184  65722073
+000188  697a653a
+00018c  20256400
+                  |L2.400|
+000190  7375626d          DCB      "submode size: %d",0
+000194  6f646520
+000198  73697a65
+00019c  3a202564
+0001a0  00      
+0001a1  00                DCB      0
+0001a2  00                DCB      0
+0001a3  00                DCB      0
+                  |L2.420|
+0001a4  636f6c6f          DCB      "color size: %d",0
+0001a8  72207369
+0001ac  7a653a20
+0001b0  256400  
+0001b3  00                DCB      0
+                  |L2.436|
                           DCD      ||.data||
-                  |L2.428|
-0001ac  4920616d          DCB      "I am alive %d",0
-0001b0  20616c69
-0001b4  76652025
-0001b8  6400    
-0001ba  00                DCB      0
-0001bb  00                DCB      0
+                  |L2.440|
+0001b8  4920616d          DCB      "I am alive %d",0
+0001bc  20616c69
+0001c0  76652025
+0001c4  6400    
+0001c6  00                DCB      0
+0001c7  00                DCB      0
 
                           AREA ||.constdata||, DATA, READONLY, ALIGN=0
 

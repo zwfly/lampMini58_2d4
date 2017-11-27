@@ -5,24 +5,24 @@
                           AREA ||i.app_color_blink_next||, CODE, READONLY, ALIGN=2
 
                   app_color_blink_next PROC
-;;;401    }
-;;;402    void app_color_blink_next(void) {
+;;;400    }
+;;;401    void app_color_blink_next(void) {
 000000  b510              PUSH     {r4,lr}
-;;;403    	color_blink_index++;
+;;;402    	color_blink_index++;
 000002  490a              LDR      r1,|L1.44|
 000004  7808              LDRB     r0,[r1,#0]  ; color_blink_index
 000006  1c40              ADDS     r0,r0,#1
 000008  b2c0              UXTB     r0,r0
 00000a  7008              STRB     r0,[r1,#0]
-;;;404    	if (color_blink_index >= COLOR_BLINK_NUMBER) {
+;;;403    	if (color_blink_index >= COLOR_BLINK_NUMBER) {
 00000c  280a              CMP      r0,#0xa
 00000e  d301              BCC      |L1.20|
-;;;405    		color_blink_index = 0;
+;;;404    		color_blink_index = 0;
 000010  2000              MOVS     r0,#0
 000012  7008              STRB     r0,[r1,#0]
                   |L1.20|
-;;;406    	}
-;;;407    	app_dome_rgb(color_blink_buffer[color_blink_index][0],
+;;;405    	}
+;;;406    	app_dome_rgb(color_blink_buffer[color_blink_index][0],
 000014  b2c0              UXTB     r0,r0
 000016  0041              LSLS     r1,r0,#1
 000018  4b05              LDR      r3,|L1.48|
@@ -32,11 +32,11 @@
 000020  7849              LDRB     r1,[r1,#1]
 000022  5c18              LDRB     r0,[r3,r0]
 000024  f7fffffe          BL       app_dome_rgb
-;;;408    			color_blink_buffer[color_blink_index][1],
-;;;409    			color_blink_buffer[color_blink_index][2]);
-;;;410    }
+;;;407    			color_blink_buffer[color_blink_index][1],
+;;;408    			color_blink_buffer[color_blink_index][2]);
+;;;409    }
 000028  bd10              POP      {r4,pc}
-;;;411    
+;;;410    
                           ENDP
 
 00002a  0000              DCW      0x0000
@@ -48,25 +48,25 @@
                           AREA ||i.app_color_blink_previous||, CODE, READONLY, ALIGN=2
 
                   app_color_blink_previous PROC
-;;;391    }
-;;;392    void app_color_blink_previous(void) {
+;;;390    }
+;;;391    void app_color_blink_previous(void) {
 000000  b510              PUSH     {r4,lr}
-;;;393    	if (color_blink_index) {
+;;;392    	if (color_blink_index) {
 000002  4909              LDR      r1,|L2.40|
 000004  7808              LDRB     r0,[r1,#0]  ; color_blink_index
 000006  2800              CMP      r0,#0
 000008  d001              BEQ      |L2.14|
-00000a  1e40              SUBS     r0,r0,#1              ;392
-;;;394    		color_blink_index--;
+00000a  1e40              SUBS     r0,r0,#1              ;391
+;;;393    		color_blink_index--;
 00000c  e000              B        |L2.16|
                   |L2.14|
-;;;395    	} else {
-;;;396    		color_blink_index = COLOR_BLINK_NUMBER - 1;
+;;;394    	} else {
+;;;395    		color_blink_index = COLOR_BLINK_NUMBER - 1;
 00000e  2009              MOVS     r0,#9
                   |L2.16|
 000010  7008              STRB     r0,[r1,#0]
-;;;397    	}
-;;;398    	app_dome_rgb(color_blink_buffer[color_blink_index][0],
+;;;396    	}
+;;;397    	app_dome_rgb(color_blink_buffer[color_blink_index][0],
 000012  b2c0              UXTB     r0,r0
 000014  0041              LSLS     r1,r0,#1
 000016  4b05              LDR      r3,|L2.44|
@@ -76,11 +76,11 @@
 00001e  7849              LDRB     r1,[r1,#1]
 000020  5c18              LDRB     r0,[r3,r0]
 000022  f7fffffe          BL       app_dome_rgb
-;;;399    			color_blink_buffer[color_blink_index][1],
-;;;400    			color_blink_buffer[color_blink_index][2]);
-;;;401    }
+;;;398    			color_blink_buffer[color_blink_index][1],
+;;;399    			color_blink_buffer[color_blink_index][2]);
+;;;400    }
 000026  bd10              POP      {r4,pc}
-;;;402    void app_color_blink_next(void) {
+;;;401    void app_color_blink_next(void) {
                           ENDP
 
                   |L2.40|
@@ -91,727 +91,760 @@
                           AREA ||i.app_dome_Init||, CODE, READONLY, ALIGN=2
 
                   app_dome_Init PROC
-;;;375    
-;;;376    void app_dome_Init(void) {
+;;;374    
+;;;375    void app_dome_Init(void) {
 000000  b510              PUSH     {r4,lr}
-;;;377    	color_blink_index = COLOR_BLINK_NUMBER - 1;
-000002  490e              LDR      r1,|L3.60|
+;;;376    	color_blink_index = COLOR_BLINK_NUMBER - 1;
+000002  490d              LDR      r1,|L3.56|
 000004  2009              MOVS     r0,#9
 000006  7008              STRB     r0,[r1,#0]
-;;;378    //	g_tWork.status.bits.blinkEnable = 1;
-;;;379    
-;;;380    	memset((uint8_t *) &subDome_Assist, 0, sizeof(subDome_Assist));
-000008  490d              LDR      r1,|L3.64|
+;;;377    //	g_tWork.status.bits.blinkEnable = 1;
+;;;378    
+;;;379    	memset((uint8_t *) &subDome_Assist, 0, sizeof(subDome_Assist));
+000008  3108              ADDS     r1,r1,#8
 00000a  2000              MOVS     r0,#0
-00000c  6188              STR      r0,[r1,#0x18]  ; subDome_Assist
-00000e  61c8              STR      r0,[r1,#0x1c]  ; subDome_Assist
-;;;381    
-;;;382    	memset((uint8_t *) &domePro, 0, sizeof(domePro));
-000010  6208              STR      r0,[r1,#0x20]  ; subDome_Assist
-000012  490a              LDR      r1,|L3.60|
-000014  7048              STRB     r0,[r1,#1]
-;;;383    	memset((uint8_t *) &dome_blink, 0, sizeof(dome_blink));
-000016  480a              LDR      r0,|L3.64|
-000018  217a              MOVS     r1,#0x7a
-00001a  3024              ADDS     r0,r0,#0x24
-00001c  f7fffffe          BL       __aeabi_memclr
-;;;384    	memset((uint8_t *) &dome_running_param, 0, sizeof(dome_running_param));
-000020  4806              LDR      r0,|L3.60|
-000022  2108              MOVS     r1,#8
-000024  3008              ADDS     r0,r0,#8
-000026  f7fffffe          BL       __aeabi_memclr
-;;;385    
-;;;386    	dome_running_param.bright = 100;
-00002a  4804              LDR      r0,|L3.60|
-00002c  2164              MOVS     r1,#0x64
-00002e  3008              ADDS     r0,r0,#8
-000030  7001              STRB     r1,[r0,#0]
-;;;387    	dome_running_param.speed = 50;
-000032  2132              MOVS     r1,#0x32
-000034  7041              STRB     r1,[r0,#1]
-;;;388    //	app_dome_start(0, 0);
-;;;389    	app_dome_stop_current();
-000036  f7fffffe          BL       app_dome_stop_current
-;;;390    
-;;;391    }
-00003a  bd10              POP      {r4,pc}
-;;;392    void app_color_blink_previous(void) {
+00000c  6008              STR      r0,[r1,#0]
+00000e  8088              STRH     r0,[r1,#4]
+;;;380    
+;;;381    	memset((uint8_t *) &domePro, 0, sizeof(domePro));
+000010  3908              SUBS     r1,r1,#8
+000012  7048              STRB     r0,[r1,#1]
+;;;382    	memset((uint8_t *) &dome_blink, 0, sizeof(dome_blink));
+000014  2172              MOVS     r1,#0x72
+000016  4809              LDR      r0,|L3.60|
+000018  f7fffffe          BL       __aeabi_memclr
+;;;383    	memset((uint8_t *) &dome_running_param, 0, sizeof(dome_running_param));
+00001c  4806              LDR      r0,|L3.56|
+00001e  2108              MOVS     r1,#8
+000020  300e              ADDS     r0,r0,#0xe
+000022  f7fffffe          BL       __aeabi_memclr
+;;;384    
+;;;385    	dome_running_param.bright = 100;
+000026  4804              LDR      r0,|L3.56|
+000028  2164              MOVS     r1,#0x64
+00002a  300e              ADDS     r0,r0,#0xe
+00002c  7001              STRB     r1,[r0,#0]
+;;;386    	dome_running_param.speed = 50;
+00002e  2132              MOVS     r1,#0x32
+000030  7041              STRB     r1,[r0,#1]
+;;;387    //	app_dome_start(0, 0);
+;;;388    	app_dome_stop_current();
+000032  f7fffffe          BL       app_dome_stop_current
+;;;389    
+;;;390    }
+000036  bd10              POP      {r4,pc}
+;;;391    void app_color_blink_previous(void) {
                           ENDP
 
-                  |L3.60|
+                  |L3.56|
                           DCD      ||.data||
-                  |L3.64|
-                          DCD      ||.bss||
+                  |L3.60|
+                          DCD      ||.bss||+0x17
 
                           AREA ||i.app_dome_get_current_Name||, CODE, READONLY, ALIGN=2
 
                   app_dome_get_current_Name PROC
-;;;428    
-;;;429    void app_dome_get_current_Name(char *name, uint8_t len) {
+;;;429    
+;;;430    void app_dome_get_current_Name(char *name, uint8_t len) {
 000000  b510              PUSH     {r4,lr}
-;;;430    	if (len > sizeof(dome_blink.header.name)) {
+;;;431    	if (len > sizeof(dome_blink.header.name)) {
 000002  2908              CMP      r1,#8
 000004  d803              BHI      |L4.14|
-;;;431    		name = 0;
-;;;432    		return;
-;;;433    	}
-;;;434    	memcpy((uint8_t *) name, (uint8_t *) dome_blink.header.name, len);
+;;;432    		name = 0;
+;;;433    		return;
+;;;434    	}
+;;;435    	memcpy((uint8_t *) name, (uint8_t *) dome_blink.header.name, len);
 000006  460a              MOV      r2,r1
 000008  4901              LDR      r1,|L4.16|
 00000a  f7fffffe          BL       __aeabi_memcpy
                   |L4.14|
-;;;435    }
+;;;436    }
 00000e  bd10              POP      {r4,pc}
-;;;436    void app_dome_start_current(void) {
+;;;437    void app_dome_start_current(void) {
                           ENDP
 
                   |L4.16|
-                          DCD      ||.bss||+0x24
+                          DCD      ||.bss||+0x17
 
                           AREA ||i.app_dome_interrupter||, CODE, READONLY, ALIGN=2
 
                   app_dome_interrupter PROC
-;;;567    
-;;;568    void app_dome_interrupter(void) {
-000000  b5fe              PUSH     {r1-r7,lr}
-;;;569    
-;;;570    #if 1
-;;;571    
-;;;572    //	if (g_tWork.status.bits.blinkEnable == 0) {
-;;;573    //		return;
-;;;574    //	}
-;;;575    
-;;;576    	if (subDome_Assist.stopTime) {
-000002  4bc9              LDR      r3,|L5.808|
-000004  7a18              LDRB     r0,[r3,#8]  ; subDome_Assist
-000006  2800              CMP      r0,#0
-000008  d002              BEQ      |L5.16|
-00000a  1e40              SUBS     r0,r0,#1              ;568
-;;;577    		subDome_Assist.stopTime--;
-00000c  7218              STRB     r0,[r3,#8]
-                  |L5.14|
-;;;578    		return;
-;;;579    	}
+;;;576    
+;;;577    void app_dome_interrupter(void) {
+000000  b5f0              PUSH     {r4-r7,lr}
+;;;578    
+;;;579    #if 1
 ;;;580    
-;;;581    	if ((subDome.repeate == 0) && (subDome.offtime == 0)) {
-;;;582    		return;
-;;;583    	}
+;;;581    //	if (g_tWork.status.bits.blinkEnable == 0) {
+;;;582    //		return;
+;;;583    //	}
 ;;;584    
-;;;585    	switch (subDome.mode & 0x0F) {
-;;;586    	case 0x03:  //shadow
-;;;587    	{
-;;;588    		subDome_Assist.msCnt++;
+;;;585    	if (subDome_Assist.stopTime) {
+000002  49e2              LDR      r1,|L5.908|
+000004  b085              SUB      sp,sp,#0x14           ;577
+000006  7948              LDRB     r0,[r1,#5]  ; subDome_Assist
+000008  2800              CMP      r0,#0
+00000a  d003              BEQ      |L5.20|
+00000c  1e40              SUBS     r0,r0,#1              ;577
+;;;586    		subDome_Assist.stopTime--;
+00000e  7148              STRB     r0,[r1,#5]
+                  |L5.16|
+;;;587    		return;
+;;;588    	}
 ;;;589    
-;;;590    		if (subDome.color1.R < subDome.color2.R) {
-;;;591    			tmp = subDome.color1.R * 256
-;;;592    					+ subDome_Assist.msCnt * 256
-;;;593    							* abs(subDome.color2.R - subDome.color1.R)
-;;;594    							/ subDome.speed;
-;;;595    			tmp = subDome.bright * tmp / 100;
-;;;596    		} else {
-;;;597    			tmp = subDome.color1.R * 256
-;;;598    					- subDome_Assist.msCnt * 256
-;;;599    							* abs(subDome.color2.R - subDome.color1.R)
-;;;600    							/ subDome.speed;
-;;;601    			tmp = subDome.bright * tmp / 100;
-;;;602    		}
-;;;603    		dome_running_param.color.R = tmp & 0xFFFF;
-;;;604    		//////
-;;;605    		if (subDome.color1.G < subDome.color2.G) {
-;;;606    			tmp = subDome.color1.G * 256
-;;;607    					+ subDome_Assist.msCnt * 256
-;;;608    							* abs(subDome.color2.G - subDome.color1.G)
+;;;590    	if ((subDome.repeate == 0) && (subDome.offtime == 0)) {
+;;;591    		return;
+;;;592    	}
+;;;593    
+;;;594    	switch (subDome.mode & 0x0F) {
+;;;595    	case 0x03:  //shadow
+;;;596    	{
+;;;597    		subDome_Assist.msCnt++;
+;;;598    
+;;;599    		if (subDome.color1.R < subDome.color2.R) {
+;;;600    			tmp = subDome.color1.R * 256
+;;;601    					+ subDome_Assist.msCnt * 256
+;;;602    							* abs(subDome.color2.R - subDome.color1.R)
+;;;603    							/ subDome.speed;
+;;;604    			tmp = subDome.bright * tmp / 100;
+;;;605    		} else {
+;;;606    			tmp = subDome.color1.R * 256
+;;;607    					- subDome_Assist.msCnt * 256
+;;;608    							* abs(subDome.color2.R - subDome.color1.R)
 ;;;609    							/ subDome.speed;
 ;;;610    			tmp = subDome.bright * tmp / 100;
-;;;611    //			Light_Green_set(tmp);
-;;;612    		} else {
-;;;613    			tmp = subDome.color1.G * 256
-;;;614    					- subDome_Assist.msCnt * 256
-;;;615    							* abs(subDome.color2.G - subDome.color1.G)
-;;;616    							/ subDome.speed;
-;;;617    			tmp = subDome.bright * tmp / 100;
-;;;618    //			Light_Green_set(tmp);
-;;;619    		}
-;;;620    		dome_running_param.color.G = tmp & 0xFFFF;
-;;;621    		//////
-;;;622    		if (subDome.color1.B < subDome.color2.B) {
-;;;623    			tmp = subDome.color1.B * 256
-;;;624    					+ subDome_Assist.msCnt * 256
-;;;625    							* abs(subDome.color2.B - subDome.color1.B)
-;;;626    							/ subDome.speed;
-;;;627    			tmp = subDome.bright * tmp / 100;
-;;;628    //			Light_Blue_set(tmp);
-;;;629    		} else {
-;;;630    			tmp = subDome.color1.B * 256
-;;;631    					- subDome_Assist.msCnt * 256
-;;;632    							* abs(subDome.color2.B - subDome.color1.B)
-;;;633    							/ subDome.speed;
-;;;634    			tmp = subDome.bright * tmp / 100;
-;;;635    //			Light_Blue_set(tmp);
-;;;636    		}
-;;;637    		dome_running_param.color.B = tmp & 0xFFFF;
-;;;638    		Light_RGB_set(dome_running_param.color.R, dome_running_param.color.G,
-;;;639    				dome_running_param.color.B);
-;;;640    
-;;;641    		if (subDome_Assist.msCnt >= subDome.speed) {
-;;;642    			subDome_Assist.msCnt = 0;
-;;;643    #if 0
-;;;644    			tmp_color = subDome.color2.R;
-;;;645    			subDome.color2.R = subDome.color1.R;
-;;;646    			subDome.color1.R = tmp_color;
-;;;647    
-;;;648    			tmp_color = subDome.color2.G;
-;;;649    			subDome.color2.G = subDome.color1.G;
-;;;650    			subDome.color1.G = tmp_color;
-;;;651    
-;;;652    			tmp_color = subDome.color2.B;
-;;;653    			subDome.color2.B = subDome.color1.B;
-;;;654    			subDome.color1.B = tmp_color;
-;;;655    
-;;;656    			if (subDome_Assist.switch_flag == 0) {
-;;;657    				subDome_Assist.switch_flag = 1;
-;;;658    
-;;;659    			} else {
-;;;660    				subDome_Assist.switch_flag = 0;
-;;;661    
-;;;662    				if (subDome.repeate) {
-;;;663    					subDome.repeate--;
-;;;664    				}
-;;;665    			}
-;;;666    #else
+;;;611    		}
+;;;612    		dome_running_param.color.R = tmp & 0xFFFF;
+;;;613    		//////
+;;;614    		if (subDome.color1.G < subDome.color2.G) {
+;;;615    			tmp = subDome.color1.G * 256
+;;;616    					+ subDome_Assist.msCnt * 256
+;;;617    							* abs(subDome.color2.G - subDome.color1.G)
+;;;618    							/ subDome.speed;
+;;;619    			tmp = subDome.bright * tmp / 100;
+;;;620    //			Light_Green_set(tmp);
+;;;621    		} else {
+;;;622    			tmp = subDome.color1.G * 256
+;;;623    					- subDome_Assist.msCnt * 256
+;;;624    							* abs(subDome.color2.G - subDome.color1.G)
+;;;625    							/ subDome.speed;
+;;;626    			tmp = subDome.bright * tmp / 100;
+;;;627    //			Light_Green_set(tmp);
+;;;628    		}
+;;;629    		dome_running_param.color.G = tmp & 0xFFFF;
+;;;630    		//////
+;;;631    		if (subDome.color1.B < subDome.color2.B) {
+;;;632    			tmp = subDome.color1.B * 256
+;;;633    					+ subDome_Assist.msCnt * 256
+;;;634    							* abs(subDome.color2.B - subDome.color1.B)
+;;;635    							/ subDome.speed;
+;;;636    			tmp = subDome.bright * tmp / 100;
+;;;637    //			Light_Blue_set(tmp);
+;;;638    		} else {
+;;;639    			tmp = subDome.color1.B * 256
+;;;640    					- subDome_Assist.msCnt * 256
+;;;641    							* abs(subDome.color2.B - subDome.color1.B)
+;;;642    							/ subDome.speed;
+;;;643    			tmp = subDome.bright * tmp / 100;
+;;;644    //			Light_Blue_set(tmp);
+;;;645    		}
+;;;646    		dome_running_param.color.B = tmp & 0xFFFF;
+;;;647    		Light_RGB_set(dome_running_param.color.R, dome_running_param.color.G,
+;;;648    				dome_running_param.color.B);
+;;;649    
+;;;650    		if (subDome_Assist.msCnt >= subDome.speed) {
+;;;651    			subDome_Assist.msCnt = 0;
+;;;652    #if 0
+;;;653    			tmp_color = subDome.color2.R;
+;;;654    			subDome.color2.R = subDome.color1.R;
+;;;655    			subDome.color1.R = tmp_color;
+;;;656    
+;;;657    			tmp_color = subDome.color2.G;
+;;;658    			subDome.color2.G = subDome.color1.G;
+;;;659    			subDome.color1.G = tmp_color;
+;;;660    
+;;;661    			tmp_color = subDome.color2.B;
+;;;662    			subDome.color2.B = subDome.color1.B;
+;;;663    			subDome.color1.B = tmp_color;
+;;;664    
+;;;665    			if (subDome_Assist.switch_flag == 0) {
+;;;666    				subDome_Assist.switch_flag = 1;
 ;;;667    
-;;;668    			if (subDome.repeate) {
-;;;669    				subDome.repeate--;
-;;;670    			}
-;;;671    
-;;;672    #endif
-;;;673    		}
-;;;674    		if (subDome.repeate == 0) {
-;;;675    //			Light_RGB_set(0, 0, 0);
+;;;668    			} else {
+;;;669    				subDome_Assist.switch_flag = 0;
+;;;670    
+;;;671    				if (subDome.repeate) {
+;;;672    					subDome.repeate--;
+;;;673    				}
+;;;674    			}
+;;;675    #else
 ;;;676    
-;;;677    //			if (subDome.offtime) {
-;;;678    //				subDome.offtime--;
-;;;679    //			}
-;;;680    //			if (subDome.offtime == 0) {
-;;;681    			app_dome_subDome_pro(subDome.mode >> 4);
-;;;682    //			}
-;;;683    
-;;;684    		}
-;;;685    	}
-;;;686    		break;
-;;;687    	case 0x04:  //breath
-;;;688    	{
-;;;689    		if (subDome_Assist.switch_flag == 0) {
-;;;690    			subDome_Assist.msCnt++;
-;;;691    		} else {
-;;;692    			if (subDome_Assist.msCnt) {
-;;;693    				subDome_Assist.msCnt--;
-;;;694    			}
-;;;695    		}
-;;;696    
-;;;697    		tmp = subDome_Assist.msCnt * 0xFF * subDome.color1.R / subDome.speed;
-;;;698    		tmp = tmp * subDome.bright / 100;
-;;;699    		dome_running_param.color.R = tmp & 0xFFFF;
-;;;700    
-;;;701    		tmp = subDome_Assist.msCnt * 0xFF * subDome.color1.G / subDome.speed;
-;;;702    		tmp = tmp * subDome.bright / 100;
-;;;703    		dome_running_param.color.G = tmp & 0xFFFF;
-;;;704    
-;;;705    		tmp = subDome_Assist.msCnt * 0xFF * subDome.color1.B / subDome.speed;
-;;;706    		tmp = tmp * subDome.bright / 100;
-;;;707    		dome_running_param.color.B = tmp & 0xFFFF;
-;;;708    		Light_RGB_set(dome_running_param.color.R, dome_running_param.color.G,
-;;;709    				dome_running_param.color.B);
-;;;710    
-;;;711    		if ((subDome_Assist.msCnt >= subDome.speed)
-;;;712    				|| (subDome_Assist.msCnt == 0)) {
-;;;713    			if (subDome_Assist.switch_flag == 0) {
-;;;714    				subDome_Assist.switch_flag = 1;
-;;;715    			} else {
-;;;716    				subDome_Assist.switch_flag = 0;
-;;;717    				if (subDome.repeate) {
-;;;718    					subDome.repeate--;
-;;;719    				}
-;;;720    			}
-;;;721    		}
-;;;722    		if (subDome.repeate == 0) {
-;;;723    //			Light_RGB_set(0, 0, 0);
-;;;724    //			if (subDome.offtime) {
-;;;725    //				subDome.offtime--;
-;;;726    //			}
-;;;727    //			if (subDome.offtime == 0) {
-;;;728    			app_dome_subDome_pro(subDome.mode >> 4);
-;;;729    //			}
+;;;677    			if (subDome.repeate) {
+;;;678    				subDome.repeate--;
+;;;679    			}
+;;;680    
+;;;681    #endif
+;;;682    		}
+;;;683    		if (subDome.repeate == 0) {
+;;;684    //			Light_RGB_set(0, 0, 0);
+;;;685    
+;;;686    //			if (subDome.offtime) {
+;;;687    //				subDome.offtime--;
+;;;688    //			}
+;;;689    //			if (subDome.offtime == 0) {
+;;;690    			app_dome_subDome_pro(subDome.mode >> 4);
+;;;691    //			}
+;;;692    
+;;;693    		}
+;;;694    	}
+;;;695    		break;
+;;;696    	case 0x04:  //breath
+;;;697    	{
+;;;698    		if (subDome_Assist.switch_flag == 0) {
+;;;699    			subDome_Assist.msCnt++;
+;;;700    		} else {
+;;;701    			if (subDome_Assist.msCnt) {
+;;;702    				subDome_Assist.msCnt--;
+;;;703    			}
+;;;704    		}
+;;;705    
+;;;706    		tmp = subDome_Assist.msCnt * 0xFF * subDome.color1.R / subDome.speed;
+;;;707    		tmp = tmp * subDome.bright / 100;
+;;;708    		dome_running_param.color.R = tmp & 0xFFFF;
+;;;709    
+;;;710    		tmp = subDome_Assist.msCnt * 0xFF * subDome.color1.G / subDome.speed;
+;;;711    		tmp = tmp * subDome.bright / 100;
+;;;712    		dome_running_param.color.G = tmp & 0xFFFF;
+;;;713    
+;;;714    		tmp = subDome_Assist.msCnt * 0xFF * subDome.color1.B / subDome.speed;
+;;;715    		tmp = tmp * subDome.bright / 100;
+;;;716    		dome_running_param.color.B = tmp & 0xFFFF;
+;;;717    		Light_RGB_set(dome_running_param.color.R, dome_running_param.color.G,
+;;;718    				dome_running_param.color.B);
+;;;719    
+;;;720    		if ((subDome_Assist.msCnt >= subDome.speed)
+;;;721    				|| (subDome_Assist.msCnt == 0)) {
+;;;722    			if (subDome_Assist.switch_flag == 0) {
+;;;723    				subDome_Assist.switch_flag = 1;
+;;;724    			} else {
+;;;725    				subDome_Assist.switch_flag = 0;
+;;;726    				if (subDome.repeate) {
+;;;727    					subDome.repeate--;
+;;;728    				}
+;;;729    			}
 ;;;730    		}
-;;;731    	}
-;;;732    		break;
-;;;733    	case 0x05:  //blink flash
-;;;734    	{
-;;;735    		uint32_t tt = 0xFF;
-;;;736    		if (subDome_Assist.msCnt == 0) {
-;;;737    			tmp = tt * subDome.color1.R * subDome.bright / 100;
-;;;738    			dome_running_param.color.R = tmp & 0xFFFF;
-;;;739    
-;;;740    			tmp = tt * subDome.color1.G * subDome.bright / 100;
-;;;741    			dome_running_param.color.G = tmp & 0xFFFF;
-;;;742    
-;;;743    			tmp = tt * subDome.color1.B * subDome.bright / 100;
-;;;744    			dome_running_param.color.B = tmp & 0xFFFF;
-;;;745    			Light_RGB_set(dome_running_param.color.R,
-;;;746    					dome_running_param.color.G, dome_running_param.color.B);
-;;;747    		}
-;;;748    		tmp = subDome.speed;
-;;;749    		if (subDome_Assist.msCnt == tmp) {
-;;;750    			tmp = tt * subDome.color2.R * subDome.bright / 100;
-;;;751    			dome_running_param.color.R = tmp & 0xFFFF;
-;;;752    
-;;;753    			tmp = tt * subDome.color2.G * subDome.bright / 100;
-;;;754    			dome_running_param.color.G = tmp & 0xFFFF;
-;;;755    
-;;;756    			tmp = tt * subDome.color2.B * subDome.bright / 100;
-;;;757    			dome_running_param.color.B = tmp & 0xFFFF;
-;;;758    			Light_RGB_set(dome_running_param.color.R,
-;;;759    					dome_running_param.color.G, dome_running_param.color.B);
-;;;760    		}
-;;;761    		subDome_Assist.msCnt++;
-;;;762    		tmp = 0;
-;;;763    		tmp = tmp + subDome.speed + subDome.offtime;
-;;;764    		if (subDome_Assist.msCnt >= tmp) {
-;;;765    			subDome_Assist.msCnt = 0;
-;;;766    			if (subDome.repeate) {
-;;;767    				subDome.repeate--;
-;;;768    			}
+;;;731    		if (subDome.repeate == 0) {
+;;;732    //			Light_RGB_set(0, 0, 0);
+;;;733    //			if (subDome.offtime) {
+;;;734    //				subDome.offtime--;
+;;;735    //			}
+;;;736    //			if (subDome.offtime == 0) {
+;;;737    			app_dome_subDome_pro(subDome.mode >> 4);
+;;;738    //			}
+;;;739    		}
+;;;740    	}
+;;;741    		break;
+;;;742    	case 0x05:  //blink flash
+;;;743    	{
+;;;744    		uint32_t tt = 0xFF;
+;;;745    		if (subDome_Assist.msCnt == 0) {
+;;;746    			tmp = tt * subDome.color1.R * subDome.bright / 100;
+;;;747    			dome_running_param.color.R = tmp & 0xFFFF;
+;;;748    
+;;;749    			tmp = tt * subDome.color1.G * subDome.bright / 100;
+;;;750    			dome_running_param.color.G = tmp & 0xFFFF;
+;;;751    
+;;;752    			tmp = tt * subDome.color1.B * subDome.bright / 100;
+;;;753    			dome_running_param.color.B = tmp & 0xFFFF;
+;;;754    			Light_RGB_set(dome_running_param.color.R,
+;;;755    					dome_running_param.color.G, dome_running_param.color.B);
+;;;756    		}
+;;;757    		tmp = subDome.speed;
+;;;758    		if (subDome_Assist.msCnt == tmp) {
+;;;759    			tmp = tt * subDome.color2.R * subDome.bright / 100;
+;;;760    			dome_running_param.color.R = tmp & 0xFFFF;
+;;;761    
+;;;762    			tmp = tt * subDome.color2.G * subDome.bright / 100;
+;;;763    			dome_running_param.color.G = tmp & 0xFFFF;
+;;;764    
+;;;765    			tmp = tt * subDome.color2.B * subDome.bright / 100;
+;;;766    			dome_running_param.color.B = tmp & 0xFFFF;
+;;;767    			Light_RGB_set(dome_running_param.color.R,
+;;;768    					dome_running_param.color.G, dome_running_param.color.B);
 ;;;769    		}
-;;;770    		if (subDome.repeate == 0) {
-;;;771    //			Light_RGB_set(0, 0, 0);
-;;;772    //			if (subDome.offtime) {
-;;;773    //				subDome.offtime--;
-;;;774    //			}
-;;;775    //			if (subDome.offtime == 0) {
-;;;776    			app_dome_subDome_pro(subDome.mode >> 4);
-;;;777    //			}
+;;;770    		subDome_Assist.msCnt++;
+;;;771    		tmp = 0;
+;;;772    		tmp = tmp + subDome.speed + subDome.offtime;
+;;;773    		if (subDome_Assist.msCnt >= tmp) {
+;;;774    			subDome_Assist.msCnt = 0;
+;;;775    			if (subDome.repeate) {
+;;;776    				subDome.repeate--;
+;;;777    			}
 ;;;778    		}
-;;;779    	}
-;;;780    		break;
-;;;781    	default:
-;;;782    
-;;;783    		break;
-;;;784    	}
-;;;785    
-;;;786    #endif
-;;;787    }
-00000e  bdfe              POP      {r1-r7,pc}
-                  |L5.16|
-000010  48c5              LDR      r0,|L5.808|
-000012  3818              SUBS     r0,r0,#0x18           ;581
-000014  79c1              LDRB     r1,[r0,#7]            ;581  ; subDome
-000016  2900              CMP      r1,#0                 ;581
-000018  d102              BNE      |L5.32|
-00001a  8981              LDRH     r1,[r0,#0xc]          ;581  ; subDome
-00001c  2900              CMP      r1,#0                 ;581
-00001e  d0f6              BEQ      |L5.14|
-                  |L5.32|
-000020  48c1              LDR      r0,|L5.808|
-000022  4dc1              LDR      r5,|L5.808|
-000024  3818              SUBS     r0,r0,#0x18           ;585
-000026  7800              LDRB     r0,[r0,#0]            ;585  ; subDome
-000028  3d18              SUBS     r5,r5,#0x18           ;581
-00002a  0701              LSLS     r1,r0,#28             ;585
-00002c  48be              LDR      r0,|L5.808|
-00002e  78af              LDRB     r7,[r5,#2]            ;605
-000030  6840              LDR      r0,[r0,#4]            ;588
-000032  78ee              LDRB     r6,[r5,#3]            ;622
-000034  1c42              ADDS     r2,r0,#1              ;588
-000036  4694              MOV      r12,r2                ;588
-000038  786a              LDRB     r2,[r5,#1]            ;590
-00003a  7a2c              LDRB     r4,[r5,#8]            ;595
-00003c  0f09              LSRS     r1,r1,#28             ;585
-00003e  896d              LDRH     r5,[r5,#0xa]          ;591
-000040  9500              STR      r5,[sp,#0]            ;585
-000042  2903              CMP      r1,#3                 ;585
-000044  d006              BEQ      |L5.84|
-000046  2904              CMP      r1,#4                 ;585
-000048  d074              BEQ      |L5.308|
-00004a  2905              CMP      r1,#5                 ;585
-00004c  d1df              BNE      |L5.14|
-00004e  2800              CMP      r0,#0                 ;736
-000050  d071              BEQ      |L5.310|
-000052  e124              B        |L5.670|
-                  |L5.84|
-000054  48b4              LDR      r0,|L5.808|
-000056  4665              MOV      r5,r12                ;588
-000058  6045              STR      r5,[r0,#4]            ;590  ; subDome_Assist
-00005a  3818              SUBS     r0,r0,#0x18           ;590
-00005c  7843              LDRB     r3,[r0,#1]            ;590
-00005e  7901              LDRB     r1,[r0,#4]            ;590  ; subDome
-000060  469e              MOV      lr,r3                 ;590
-000062  1ac8              SUBS     r0,r1,r3              ;591
-000064  4243              RSBS     r3,r0,#0              ;591
-000066  469c              MOV      r12,r3                ;591
-000068  4673              MOV      r3,lr                 ;591
-00006a  021b              LSLS     r3,r3,#8              ;591
-00006c  9301              STR      r3,[sp,#4]            ;590
-00006e  428a              CMP      r2,r1                 ;590
-000070  d20a              BCS      |L5.136|
-000072  2800              CMP      r0,#0                 ;591
-000074  da00              BGE      |L5.120|
-000076  4660              MOV      r0,r12                ;591
-                  |L5.120|
-000078  4368              MULS     r0,r5,r0              ;591
-00007a  0200              LSLS     r0,r0,#8              ;591
-00007c  9900              LDR      r1,[sp,#0]            ;591
-00007e  f7fffffe          BL       __aeabi_uidivmod
-000082  9901              LDR      r1,[sp,#4]            ;591
-000084  1841              ADDS     r1,r0,r1              ;591
-000086  e009              B        |L5.156|
-                  |L5.136|
-000088  2800              CMP      r0,#0                 ;597
-00008a  da00              BGE      |L5.142|
-00008c  4660              MOV      r0,r12                ;597
-                  |L5.142|
-00008e  4368              MULS     r0,r5,r0              ;597
-000090  0200              LSLS     r0,r0,#8              ;597
-000092  9900              LDR      r1,[sp,#0]            ;597
-000094  f7fffffe          BL       __aeabi_uidivmod
-000098  9901              LDR      r1,[sp,#4]            ;597
-00009a  1a09              SUBS     r1,r1,r0              ;597
-                  |L5.156|
-00009c  4620              MOV      r0,r4                 ;597
-00009e  4348              MULS     r0,r1,r0              ;601
-0000a0  2164              MOVS     r1,#0x64              ;601
-0000a2  f7fffffe          BL       __aeabi_uidivmod
-0000a6  49a1              LDR      r1,|L5.812|
-0000a8  463b              MOV      r3,r7                 ;605
-0000aa  6048              STR      r0,[r1,#4]            ;603  ; tmp
-0000ac  4608              MOV      r0,r1                 ;603
-0000ae  8880              LDRH     r0,[r0,#4]            ;603  ; tmp
-0000b0  3108              ADDS     r1,r1,#8              ;603
-0000b2  b280              UXTH     r0,r0                 ;603
-0000b4  8048              STRH     r0,[r1,#2]            ;603
-0000b6  9002              STR      r0,[sp,#8]            ;605
-0000b8  489b              LDR      r0,|L5.808|
-0000ba  3818              SUBS     r0,r0,#0x18           ;605
-0000bc  7942              LDRB     r2,[r0,#5]            ;605  ; subDome
-0000be  7887              LDRB     r7,[r0,#2]            ;605
-0000c0  1bd0              SUBS     r0,r2,r7              ;606
-0000c2  4241              RSBS     r1,r0,#0              ;606
-0000c4  023f              LSLS     r7,r7,#8              ;606
-0000c6  4293              CMP      r3,r2                 ;605
-0000c8  d20a              BCS      |L5.224|
-0000ca  462a              MOV      r2,r5                 ;605
-0000cc  2800              CMP      r0,#0                 ;606
-0000ce  da00              BGE      |L5.210|
-0000d0  4608              MOV      r0,r1                 ;606
-                  |L5.210|
-0000d2  4342              MULS     r2,r0,r2              ;606
-0000d4  0210              LSLS     r0,r2,#8              ;606
-0000d6  9900              LDR      r1,[sp,#0]            ;606
-0000d8  f7fffffe          BL       __aeabi_uidivmod
-0000dc  19c1              ADDS     r1,r0,r7              ;606
-0000de  e008              B        |L5.242|
-                  |L5.224|
-0000e0  2800              CMP      r0,#0                 ;613
-0000e2  da00              BGE      |L5.230|
-0000e4  4608              MOV      r0,r1                 ;613
-                  |L5.230|
-0000e6  4368              MULS     r0,r5,r0              ;613
-0000e8  0200              LSLS     r0,r0,#8              ;613
-0000ea  9900              LDR      r1,[sp,#0]            ;613
-0000ec  f7fffffe          BL       __aeabi_uidivmod
-0000f0  1a39              SUBS     r1,r7,r0              ;613
-                  |L5.242|
-0000f2  4620              MOV      r0,r4                 ;613
-0000f4  4348              MULS     r0,r1,r0              ;617
-0000f6  4f8d              LDR      r7,|L5.812|
-0000f8  2164              MOVS     r1,#0x64              ;617
+;;;779    		if (subDome.repeate == 0) {
+;;;780    //			Light_RGB_set(0, 0, 0);
+;;;781    //			if (subDome.offtime) {
+;;;782    //				subDome.offtime--;
+;;;783    //			}
+;;;784    //			if (subDome.offtime == 0) {
+;;;785    			app_dome_subDome_pro(subDome.mode >> 4);
+;;;786    //			}
+;;;787    		}
+;;;788    	}
+;;;789    		break;
+;;;790    	default:
+;;;791    
+;;;792    		break;
+;;;793    	}
+;;;794    
+;;;795    #endif
+;;;796    }
+000010  b005              ADD      sp,sp,#0x14
+000012  bdf0              POP      {r4-r7,pc}
+                  |L5.20|
+000014  4dde              LDR      r5,|L5.912|
+000016  79ea              LDRB     r2,[r5,#7]            ;590  ; subDome
+000018  1ce8              ADDS     r0,r5,#3              ;590
+00001a  9004              STR      r0,[sp,#0x10]         ;590
+00001c  2a00              CMP      r2,#0                 ;590
+00001e  d104              BNE      |L5.42|
+000020  7a42              LDRB     r2,[r0,#9]            ;590  ; subDome
+000022  7a03              LDRB     r3,[r0,#8]            ;590  ; subDome
+000024  0210              LSLS     r0,r2,#8              ;590
+000026  4318              ORRS     r0,r0,r3              ;590
+000028  d0f2              BEQ      |L5.16|
+                  |L5.42|
+00002a  7828              LDRB     r0,[r5,#0]            ;594  ; subDome
+00002c  4cd8              LDR      r4,|L5.912|
+00002e  0700              LSLS     r0,r0,#28             ;594
+000030  7862              LDRB     r2,[r4,#1]            ;599
+000032  9203              STR      r2,[sp,#0xc]          ;614
+000034  78a2              LDRB     r2,[r4,#2]            ;614
+000036  9202              STR      r2,[sp,#8]            ;631
+000038  7aa2              LDRB     r2,[r4,#0xa]          ;600
+00003a  7a63              LDRB     r3,[r4,#9]            ;600
+00003c  78e7              LDRB     r7,[r4,#3]            ;631
+00003e  7a26              LDRB     r6,[r4,#8]            ;604
+000040  0212              LSLS     r2,r2,#8              ;600
+000042  431a              ORRS     r2,r2,r3              ;600
+000044  0f00              LSRS     r0,r0,#28             ;594
+000046  1c64              ADDS     r4,r4,#1              ;600
+000048  9200              STR      r2,[sp,#0]            ;594
+00004a  2803              CMP      r0,#3                 ;594
+00004c  d00a              BEQ      |L5.100|
+00004e  2804              CMP      r0,#4                 ;594
+000050  d07e              BEQ      |L5.336|
+000052  2805              CMP      r0,#5                 ;594
+000054  d1dc              BNE      |L5.16|
+000056  48cd              LDR      r0,|L5.908|
+000058  1c40              ADDS     r0,r0,#1              ;745
+00005a  f7fffffe          BL       __aeabi_uread4
+00005e  2800              CMP      r0,#0                 ;745
+000060  d077              BEQ      |L5.338|
+000062  e147              B        |L5.756|
+                  |L5.100|
+000064  48c9              LDR      r0,|L5.908|
+000066  1c40              ADDS     r0,r0,#1              ;597
+000068  f7fffffe          BL       __aeabi_uread4
+00006c  49c7              LDR      r1,|L5.908|
+00006e  1c40              ADDS     r0,r0,#1              ;597
+000070  1c49              ADDS     r1,r1,#1              ;597
+000072  f7fffffe          BL       __aeabi_uwrite4
+000076  9001              STR      r0,[sp,#4]            ;599
+000078  48c5              LDR      r0,|L5.912|
+00007a  49c5              LDR      r1,|L5.912|
+00007c  7900              LDRB     r0,[r0,#4]            ;599  ; subDome
+00007e  784b              LDRB     r3,[r1,#1]            ;599
+000080  9d03              LDR      r5,[sp,#0xc]          ;600
+000082  1ac1              SUBS     r1,r0,r3              ;600
+000084  424a              RSBS     r2,r1,#0              ;600
+000086  021b              LSLS     r3,r3,#8              ;600
+000088  4285              CMP      r5,r0                 ;599
+00008a  9801              LDR      r0,[sp,#4]            ;599
+00008c  9303              STR      r3,[sp,#0xc]          ;599
+00008e  d20a              BCS      |L5.166|
+000090  2900              CMP      r1,#0                 ;600
+000092  da00              BGE      |L5.150|
+000094  4611              MOV      r1,r2                 ;600
+                  |L5.150|
+000096  4348              MULS     r0,r1,r0              ;600
+000098  0200              LSLS     r0,r0,#8              ;600
+00009a  9900              LDR      r1,[sp,#0]            ;600
+00009c  f7fffffe          BL       __aeabi_uidivmod
+0000a0  9903              LDR      r1,[sp,#0xc]          ;600
+0000a2  1841              ADDS     r1,r0,r1              ;600
+0000a4  e009              B        |L5.186|
+                  |L5.166|
+0000a6  2900              CMP      r1,#0                 ;606
+0000a8  da00              BGE      |L5.172|
+0000aa  4611              MOV      r1,r2                 ;606
+                  |L5.172|
+0000ac  4348              MULS     r0,r1,r0              ;606
+0000ae  0200              LSLS     r0,r0,#8              ;606
+0000b0  9900              LDR      r1,[sp,#0]            ;606
+0000b2  f7fffffe          BL       __aeabi_uidivmod
+0000b6  9903              LDR      r1,[sp,#0xc]          ;606
+0000b8  1a09              SUBS     r1,r1,r0              ;606
+                  |L5.186|
+0000ba  4db4              LDR      r5,|L5.908|
+0000bc  4630              MOV      r0,r6                 ;606
+0000be  4348              MULS     r0,r1,r0              ;610
+0000c0  3d08              SUBS     r5,r5,#8              ;606
+0000c2  2164              MOVS     r1,#0x64              ;610
+0000c4  f7fffffe          BL       __aeabi_uidivmod
+0000c8  6068              STR      r0,[r5,#4]            ;612  ; tmp
+0000ca  4628              MOV      r0,r5                 ;612
+0000cc  8880              LDRH     r0,[r0,#4]            ;612  ; tmp
+0000ce  4629              MOV      r1,r5                 ;612
+0000d0  b280              UXTH     r0,r0                 ;612
+0000d2  310e              ADDS     r1,r1,#0xe            ;612
+0000d4  8048              STRH     r0,[r1,#2]            ;612
+0000d6  9003              STR      r0,[sp,#0xc]          ;614
+0000d8  48ad              LDR      r0,|L5.912|
+0000da  49ad              LDR      r1,|L5.912|
+0000dc  7940              LDRB     r0,[r0,#5]            ;614  ; subDome
+0000de  788d              LDRB     r5,[r1,#2]            ;614
+0000e0  9b02              LDR      r3,[sp,#8]            ;614
+0000e2  1b41              SUBS     r1,r0,r5              ;615
+0000e4  424a              RSBS     r2,r1,#0              ;615
+0000e6  022d              LSLS     r5,r5,#8              ;615
+0000e8  4283              CMP      r3,r0                 ;614
+0000ea  9801              LDR      r0,[sp,#4]            ;614
+0000ec  d209              BCS      |L5.258|
+0000ee  2900              CMP      r1,#0                 ;615
+0000f0  da00              BGE      |L5.244|
+0000f2  4611              MOV      r1,r2                 ;615
+                  |L5.244|
+0000f4  4348              MULS     r0,r1,r0              ;615
+0000f6  0200              LSLS     r0,r0,#8              ;615
+0000f8  9900              LDR      r1,[sp,#0]            ;615
 0000fa  f7fffffe          BL       __aeabi_uidivmod
-0000fe  6078              STR      r0,[r7,#4]            ;620  ; tmp
-000100  88b8              LDRH     r0,[r7,#4]            ;620  ; tmp
-000102  4639              MOV      r1,r7                 ;620
-000104  b280              UXTH     r0,r0                 ;620
-000106  3108              ADDS     r1,r1,#8              ;620
-000108  8088              STRH     r0,[r1,#4]            ;620
-00010a  9001              STR      r0,[sp,#4]            ;622
-00010c  4886              LDR      r0,|L5.808|
-00010e  4633              MOV      r3,r6                 ;622
-000110  3818              SUBS     r0,r0,#0x18           ;622
-000112  7982              LDRB     r2,[r0,#6]            ;622  ; subDome
-000114  78c6              LDRB     r6,[r0,#3]            ;622
-000116  1b90              SUBS     r0,r2,r6              ;623
-000118  4241              RSBS     r1,r0,#0              ;623
-00011a  0236              LSLS     r6,r6,#8              ;623
-00011c  4293              CMP      r3,r2                 ;622
-00011e  d20b              BCS      |L5.312|
-000120  2800              CMP      r0,#0                 ;623
-000122  da00              BGE      |L5.294|
-000124  4608              MOV      r0,r1                 ;623
-                  |L5.294|
-000126  4345              MULS     r5,r0,r5              ;623
-000128  0228              LSLS     r0,r5,#8              ;623
-00012a  9900              LDR      r1,[sp,#0]            ;623
-00012c  f7fffffe          BL       __aeabi_uidivmod
-000130  1981              ADDS     r1,r0,r6              ;623
-000132  e00a              B        |L5.330|
-                  |L5.308|
-000134  e02c              B        |L5.400|
-                  |L5.310|
-000136  e091              B        |L5.604|
-                  |L5.312|
-000138  2800              CMP      r0,#0                 ;630
-00013a  da00              BGE      |L5.318|
-00013c  4608              MOV      r0,r1                 ;630
-                  |L5.318|
-00013e  4345              MULS     r5,r0,r5              ;630
-000140  0228              LSLS     r0,r5,#8              ;630
-000142  9900              LDR      r1,[sp,#0]            ;630
-000144  f7fffffe          BL       __aeabi_uidivmod
-000148  1a31              SUBS     r1,r6,r0              ;630
-                  |L5.330|
-00014a  4620              MOV      r0,r4                 ;630
-00014c  4348              MULS     r0,r1,r0              ;634
-00014e  2164              MOVS     r1,#0x64              ;634
-000150  f7fffffe          BL       __aeabi_uidivmod
-000154  6078              STR      r0,[r7,#4]            ;637  ; tmp
-000156  88b8              LDRH     r0,[r7,#4]            ;637  ; tmp
-000158  b282              UXTH     r2,r0                 ;637
-00015a  4874              LDR      r0,|L5.812|
-00015c  3008              ADDS     r0,r0,#8              ;637
-00015e  80c2              STRH     r2,[r0,#6]            ;637
-000160  9901              LDR      r1,[sp,#4]            ;638
-000162  9802              LDR      r0,[sp,#8]            ;638
-000164  f7fffffe          BL       Light_RGB_set
-000168  4a6f              LDR      r2,|L5.808|
-00016a  4611              MOV      r1,r2                 ;641
-00016c  3918              SUBS     r1,r1,#0x18           ;641
-00016e  894b              LDRH     r3,[r1,#0xa]          ;641  ; subDome
-000170  6850              LDR      r0,[r2,#4]            ;641  ; subDome_Assist
-000172  4298              CMP      r0,r3                 ;641
-000174  d306              BCC      |L5.388|
-000176  2000              MOVS     r0,#0                 ;642
-000178  6050              STR      r0,[r2,#4]            ;668  ; subDome_Assist
-00017a  79c8              LDRB     r0,[r1,#7]            ;668  ; subDome
-00017c  2800              CMP      r0,#0                 ;668
-00017e  d005              BEQ      |L5.396|
-000180  1e40              SUBS     r0,r0,#1              ;668
-000182  71c8              STRB     r0,[r1,#7]            ;669
-                  |L5.388|
-000184  79c8              LDRB     r0,[r1,#7]            ;674  ; subDome
-000186  2800              CMP      r0,#0                 ;674
-000188  d000              BEQ      |L5.396|
-                  |L5.394|
-00018a  e740              B        |L5.14|
-                  |L5.396|
-00018c  7808              LDRB     r0,[r1,#0]            ;681  ; subDome
-00018e  e05e              B        |L5.590|
-                  |L5.400|
-000190  7819              LDRB     r1,[r3,#0]            ;689  ; subDome_Assist
-000192  2900              CMP      r1,#0                 ;689
-000194  d044              BEQ      |L5.544|
-000196  2800              CMP      r0,#0                 ;692
-000198  d001              BEQ      |L5.414|
-00019a  1e40              SUBS     r0,r0,#1              ;692
-                  |L5.412|
-00019c  6058              STR      r0,[r3,#4]            ;693  ; subDome_Assist
-                  |L5.414|
-00019e  4862              LDR      r0,|L5.808|
-0001a0  6845              LDR      r5,[r0,#4]            ;697  ; subDome_Assist
-0001a2  4628              MOV      r0,r5                 ;697
-0001a4  4350              MULS     r0,r2,r0              ;697
-0001a6  0201              LSLS     r1,r0,#8              ;697
-0001a8  1a08              SUBS     r0,r1,r0              ;697
-0001aa  9900              LDR      r1,[sp,#0]            ;697
-0001ac  f7fffffe          BL       __aeabi_uidivmod
-0001b0  4601              MOV      r1,r0                 ;697
-0001b2  4620              MOV      r0,r4                 ;697
-0001b4  4348              MULS     r0,r1,r0              ;698
-0001b6  2164              MOVS     r1,#0x64              ;698
-0001b8  f7fffffe          BL       __aeabi_uidivmod
-0001bc  495b              LDR      r1,|L5.812|
-0001be  b280              UXTH     r0,r0                 ;699
-0001c0  3108              ADDS     r1,r1,#8              ;699
-0001c2  9001              STR      r0,[sp,#4]            ;699
-0001c4  8048              STRH     r0,[r1,#2]            ;699
-0001c6  4628              MOV      r0,r5                 ;699
-0001c8  4378              MULS     r0,r7,r0              ;701
-0001ca  0201              LSLS     r1,r0,#8              ;701
-0001cc  1a08              SUBS     r0,r1,r0              ;701
-0001ce  9900              LDR      r1,[sp,#0]            ;701
-0001d0  f7fffffe          BL       __aeabi_uidivmod
-0001d4  4360              MULS     r0,r4,r0              ;702
-0001d6  2164              MOVS     r1,#0x64              ;702
-0001d8  f7fffffe          BL       __aeabi_uidivmod
-0001dc  b287              UXTH     r7,r0                 ;703
-0001de  4853              LDR      r0,|L5.812|
-0001e0  4375              MULS     r5,r6,r5              ;705
-0001e2  3008              ADDS     r0,r0,#8              ;703
-0001e4  8087              STRH     r7,[r0,#4]            ;703
-0001e6  0228              LSLS     r0,r5,#8              ;705
-0001e8  1b40              SUBS     r0,r0,r5              ;705
-0001ea  9900              LDR      r1,[sp,#0]            ;705
-0001ec  f7fffffe          BL       __aeabi_uidivmod
-0001f0  4360              MULS     r0,r4,r0              ;706
-0001f2  2164              MOVS     r1,#0x64              ;706
-0001f4  f7fffffe          BL       __aeabi_uidivmod
-0001f8  494c              LDR      r1,|L5.812|
-0001fa  b282              UXTH     r2,r0                 ;707
-0001fc  6048              STR      r0,[r1,#4]            ;707  ; tmp
-0001fe  4608              MOV      r0,r1                 ;707
-000200  3008              ADDS     r0,r0,#8              ;707
-000202  80c2              STRH     r2,[r0,#6]            ;707
-000204  4639              MOV      r1,r7                 ;707
-000206  9801              LDR      r0,[sp,#4]            ;708
-000208  f7fffffe          BL       Light_RGB_set
-00020c  4946              LDR      r1,|L5.808|
-00020e  4846              LDR      r0,|L5.808|
-000210  3918              SUBS     r1,r1,#0x18           ;711
-000212  6840              LDR      r0,[r0,#4]            ;711  ; subDome_Assist
-000214  8949              LDRH     r1,[r1,#0xa]          ;711  ; subDome
-000216  4288              CMP      r0,r1                 ;711
-000218  d204              BCS      |L5.548|
-00021a  2800              CMP      r0,#0                 ;712
-00021c  d002              BEQ      |L5.548|
-00021e  e00e              B        |L5.574|
-                  |L5.544|
-000220  4660              MOV      r0,r12                ;712
-000222  e7bb              B        |L5.412|
-                  |L5.548|
-000224  4840              LDR      r0,|L5.808|
-000226  7801              LDRB     r1,[r0,#0]            ;713  ; subDome_Assist
-000228  2900              CMP      r1,#0                 ;713
-00022a  d014              BEQ      |L5.598|
-00022c  2100              MOVS     r1,#0                 ;716
-00022e  7001              STRB     r1,[r0,#0]            ;716
-000230  4601              MOV      r1,r0                 ;717
-000232  3918              SUBS     r1,r1,#0x18           ;717
-000234  79c8              LDRB     r0,[r1,#7]            ;717  ; subDome
-000236  2800              CMP      r0,#0                 ;717
-000238  d006              BEQ      |L5.584|
-00023a  1e40              SUBS     r0,r0,#1              ;717
-00023c  71c8              STRB     r0,[r1,#7]            ;718
-                  |L5.574|
-00023e  483a              LDR      r0,|L5.808|
-000240  3818              SUBS     r0,r0,#0x18           ;722
-000242  79c0              LDRB     r0,[r0,#7]            ;722  ; subDome
-000244  2800              CMP      r0,#0                 ;722
-000246  d1a0              BNE      |L5.394|
-                  |L5.584|
-000248  4837              LDR      r0,|L5.808|
-00024a  3818              SUBS     r0,r0,#0x18           ;728
-00024c  7800              LDRB     r0,[r0,#0]            ;728  ; subDome
-                  |L5.590|
-00024e  0900              LSRS     r0,r0,#4              ;681
-000250  f7fffffe          BL       app_dome_subDome_pro
-                  |L5.596|
-000254  bdfe              POP      {r1-r7,pc}
-                  |L5.598|
-000256  2101              MOVS     r1,#1                 ;714
-000258  7001              STRB     r1,[r0,#0]            ;714
-00025a  e7f0              B        |L5.574|
-                  |L5.604|
-00025c  4362              MULS     r2,r4,r2              ;737
-00025e  0210              LSLS     r0,r2,#8              ;737
-000260  1a80              SUBS     r0,r0,r2              ;737
-000262  2164              MOVS     r1,#0x64              ;737
-000264  f7fffffe          BL       __aeabi_uidivmod
-000268  4d30              LDR      r5,|L5.812|
-00026a  b280              UXTH     r0,r0                 ;738
-00026c  3508              ADDS     r5,r5,#8              ;738
-00026e  9000              STR      r0,[sp,#0]            ;738
-000270  8068              STRH     r0,[r5,#2]            ;738
-000272  4367              MULS     r7,r4,r7              ;740
-000274  0238              LSLS     r0,r7,#8              ;740
-000276  1bc0              SUBS     r0,r0,r7              ;740
-000278  2164              MOVS     r1,#0x64              ;740
-00027a  f7fffffe          BL       __aeabi_uidivmod
-00027e  b287              UXTH     r7,r0                 ;741
-000280  4366              MULS     r6,r4,r6              ;743
-000282  0230              LSLS     r0,r6,#8              ;743
-000284  80af              STRH     r7,[r5,#4]            ;741
-000286  1b80              SUBS     r0,r0,r6              ;743
-000288  2164              MOVS     r1,#0x64              ;743
-00028a  f7fffffe          BL       __aeabi_uidivmod
-00028e  4927              LDR      r1,|L5.812|
-000290  b282              UXTH     r2,r0                 ;744
-000292  6048              STR      r0,[r1,#4]            ;744  ; tmp
-000294  80ea              STRH     r2,[r5,#6]            ;744
-000296  4639              MOV      r1,r7                 ;744
-000298  9800              LDR      r0,[sp,#0]            ;745
-00029a  f7fffffe          BL       Light_RGB_set
-                  |L5.670|
-00029e  4d22              LDR      r5,|L5.808|
-0002a0  4e22              LDR      r6,|L5.812|
-0002a2  3d18              SUBS     r5,r5,#0x18           ;748
-0002a4  8968              LDRH     r0,[r5,#0xa]          ;748  ; subDome
-0002a6  4920              LDR      r1,|L5.808|
-0002a8  6070              STR      r0,[r6,#4]            ;749  ; tmp
-0002aa  6849              LDR      r1,[r1,#4]            ;749  ; subDome_Assist
-0002ac  4281              CMP      r1,r0                 ;749
-0002ae  d124              BNE      |L5.762|
-0002b0  7928              LDRB     r0,[r5,#4]            ;750  ; subDome
-0002b2  7a2c              LDRB     r4,[r5,#8]            ;750  ; subDome
-0002b4  4360              MULS     r0,r4,r0              ;750
-0002b6  0201              LSLS     r1,r0,#8              ;750
-0002b8  1a08              SUBS     r0,r1,r0              ;750
-0002ba  2164              MOVS     r1,#0x64              ;750
-0002bc  f7fffffe          BL       __aeabi_uidivmod
-0002c0  b280              UXTH     r0,r0                 ;751
-0002c2  4637              MOV      r7,r6                 ;751
-0002c4  3708              ADDS     r7,r7,#8              ;751
-0002c6  9001              STR      r0,[sp,#4]            ;751
-0002c8  8078              STRH     r0,[r7,#2]            ;751
-0002ca  7968              LDRB     r0,[r5,#5]            ;753  ; subDome
-0002cc  4360              MULS     r0,r4,r0              ;753
-0002ce  0201              LSLS     r1,r0,#8              ;753
-0002d0  1a08              SUBS     r0,r1,r0              ;753
-0002d2  2164              MOVS     r1,#0x64              ;753
-0002d4  f7fffffe          BL       __aeabi_uidivmod
-0002d8  b280              UXTH     r0,r0                 ;754
-0002da  9000              STR      r0,[sp,#0]            ;754
-0002dc  80b8              STRH     r0,[r7,#4]            ;754
-0002de  79a8              LDRB     r0,[r5,#6]            ;756  ; subDome
-0002e0  4360              MULS     r0,r4,r0              ;756
-0002e2  0201              LSLS     r1,r0,#8              ;756
-0002e4  1a08              SUBS     r0,r1,r0              ;756
-0002e6  2164              MOVS     r1,#0x64              ;756
-0002e8  f7fffffe          BL       __aeabi_uidivmod
-0002ec  b282              UXTH     r2,r0                 ;757
-0002ee  6070              STR      r0,[r6,#4]            ;757  ; tmp
-0002f0  80fa              STRH     r2,[r7,#6]            ;757
-0002f2  9900              LDR      r1,[sp,#0]            ;758
-0002f4  9801              LDR      r0,[sp,#4]            ;758
-0002f6  f7fffffe          BL       Light_RGB_set
-                  |L5.762|
-0002fa  4a0b              LDR      r2,|L5.808|
-0002fc  2300              MOVS     r3,#0                 ;762
-0002fe  6850              LDR      r0,[r2,#4]            ;761  ; subDome_Assist
-000300  1c40              ADDS     r0,r0,#1              ;761
-000302  6050              STR      r0,[r2,#4]            ;763  ; subDome_Assist
-000304  8969              LDRH     r1,[r5,#0xa]          ;763  ; subDome
-000306  89ac              LDRH     r4,[r5,#0xc]          ;763  ; subDome
-000308  1909              ADDS     r1,r1,r4              ;763
-00030a  6071              STR      r1,[r6,#4]            ;764  ; tmp
-00030c  4288              CMP      r0,r1                 ;764
-00030e  d305              BCC      |L5.796|
-000310  6053              STR      r3,[r2,#4]            ;766  ; subDome_Assist
-000312  79e8              LDRB     r0,[r5,#7]            ;766  ; subDome
-000314  2800              CMP      r0,#0                 ;766
-000316  d004              BEQ      |L5.802|
-000318  1e40              SUBS     r0,r0,#1              ;766
-00031a  71e8              STRB     r0,[r5,#7]            ;767
-                  |L5.796|
-00031c  79e8              LDRB     r0,[r5,#7]            ;770  ; subDome
-00031e  2800              CMP      r0,#0                 ;770
-000320  d198              BNE      |L5.596|
-                  |L5.802|
-000322  7828              LDRB     r0,[r5,#0]            ;776  ; subDome
-000324  e793              B        |L5.590|
+0000fe  1941              ADDS     r1,r0,r5              ;615
+000100  e008              B        |L5.276|
+                  |L5.258|
+000102  2900              CMP      r1,#0                 ;622
+000104  da00              BGE      |L5.264|
+000106  4611              MOV      r1,r2                 ;622
+                  |L5.264|
+000108  4348              MULS     r0,r1,r0              ;622
+00010a  0200              LSLS     r0,r0,#8              ;622
+00010c  9900              LDR      r1,[sp,#0]            ;622
+00010e  f7fffffe          BL       __aeabi_uidivmod
+000112  1a29              SUBS     r1,r5,r0              ;622
+                  |L5.276|
+000114  4d9d              LDR      r5,|L5.908|
+000116  4630              MOV      r0,r6                 ;622
+000118  4348              MULS     r0,r1,r0              ;626
+00011a  3d08              SUBS     r5,r5,#8              ;622
+00011c  2164              MOVS     r1,#0x64              ;626
+00011e  f7fffffe          BL       __aeabi_uidivmod
+000122  6068              STR      r0,[r5,#4]            ;629  ; tmp
+000124  4628              MOV      r0,r5                 ;629
+000126  8880              LDRH     r0,[r0,#4]            ;629  ; tmp
+000128  4629              MOV      r1,r5                 ;629
+00012a  b280              UXTH     r0,r0                 ;629
+00012c  310e              ADDS     r1,r1,#0xe            ;629
+00012e  8088              STRH     r0,[r1,#4]            ;629
+000130  4d97              LDR      r5,|L5.912|
+000132  9002              STR      r0,[sp,#8]            ;631
+000134  463b              MOV      r3,r7                 ;631
+000136  4629              MOV      r1,r5                 ;590
+000138  79a8              LDRB     r0,[r5,#6]            ;631  ; subDome
+00013a  78cf              LDRB     r7,[r1,#3]            ;631
+00013c  1bc1              SUBS     r1,r0,r7              ;632
+00013e  424a              RSBS     r2,r1,#0              ;632
+000140  023f              LSLS     r7,r7,#8              ;632
+000142  4283              CMP      r3,r0                 ;631
+000144  9801              LDR      r0,[sp,#4]            ;631
+000146  d20c              BCS      |L5.354|
+000148  2900              CMP      r1,#0                 ;632
+00014a  da00              BGE      |L5.334|
+00014c  4611              MOV      r1,r2                 ;632
+                  |L5.334|
+00014e  e001              B        |L5.340|
+                  |L5.336|
+000150  e039              B        |L5.454|
+                  |L5.338|
+000152  e0a6              B        |L5.674|
+                  |L5.340|
+000154  4348              MULS     r0,r1,r0              ;632
+000156  0200              LSLS     r0,r0,#8              ;632
+000158  9900              LDR      r1,[sp,#0]            ;632
+00015a  f7fffffe          BL       __aeabi_uidivmod
+00015e  19c1              ADDS     r1,r0,r7              ;632
+000160  e008              B        |L5.372|
+                  |L5.354|
+000162  2900              CMP      r1,#0                 ;639
+000164  da00              BGE      |L5.360|
+000166  4611              MOV      r1,r2                 ;639
+                  |L5.360|
+000168  4348              MULS     r0,r1,r0              ;639
+00016a  0200              LSLS     r0,r0,#8              ;639
+00016c  9900              LDR      r1,[sp,#0]            ;639
+00016e  f7fffffe          BL       __aeabi_uidivmod
+000172  1a39              SUBS     r1,r7,r0              ;639
+                  |L5.372|
+000174  4f85              LDR      r7,|L5.908|
+000176  4630              MOV      r0,r6                 ;639
+000178  4348              MULS     r0,r1,r0              ;643
+00017a  3f08              SUBS     r7,r7,#8              ;639
+00017c  2164              MOVS     r1,#0x64              ;643
+00017e  f7fffffe          BL       __aeabi_uidivmod
+000182  6078              STR      r0,[r7,#4]            ;646  ; tmp
+000184  4638              MOV      r0,r7                 ;646
+000186  8880              LDRH     r0,[r0,#4]            ;646  ; tmp
+000188  b282              UXTH     r2,r0                 ;646
+00018a  4638              MOV      r0,r7                 ;646
+00018c  300e              ADDS     r0,r0,#0xe            ;646
+00018e  80c2              STRH     r2,[r0,#6]            ;646
+000190  9902              LDR      r1,[sp,#8]            ;647
+000192  9803              LDR      r0,[sp,#0xc]          ;647
+000194  f7fffffe          BL       Light_RGB_set
+000198  4e7c              LDR      r6,|L5.908|
+00019a  1c70              ADDS     r0,r6,#1              ;650
+00019c  f7fffffe          BL       __aeabi_uread4
+0001a0  7a61              LDRB     r1,[r4,#9]            ;650  ; subDome
+0001a2  7a22              LDRB     r2,[r4,#8]            ;650  ; subDome
+0001a4  0209              LSLS     r1,r1,#8              ;650
+0001a6  4311              ORRS     r1,r1,r2              ;650
+0001a8  e0ed              B        |L5.902|
+                  |L5.426|
+0001aa  1c71              ADDS     r1,r6,#1              ;651
+0001ac  2000              MOVS     r0,#0                 ;651
+0001ae  f7fffffe          BL       __aeabi_uwrite4
+0001b2  e067              B        |L5.644|
+                  |L5.436|
+0001b4  79e8              LDRB     r0,[r5,#7]            ;683  ; subDome
+0001b6  2800              CMP      r0,#0                 ;683
+0001b8  d000              BEQ      |L5.444|
+0001ba  e729              B        |L5.16|
+                  |L5.444|
+0001bc  7828              LDRB     r0,[r5,#0]            ;690  ; subDome
+0001be  0900              LSRS     r0,r0,#4              ;690
+0001c0  f7fffffe          BL       app_dome_subDome_pro
+0001c4  e724              B        |L5.16|
+                  |L5.454|
+0001c6  4871              LDR      r0,|L5.908|
+0001c8  7800              LDRB     r0,[r0,#0]            ;698  ; subDome_Assist
+0001ca  2800              CMP      r0,#0                 ;698
+0001cc  486f              LDR      r0,|L5.908|
+0001ce  d05f              BEQ      |L5.656|
+0001d0  1c40              ADDS     r0,r0,#1              ;698
+0001d2  f7fffffe          BL       __aeabi_uread4
+0001d6  2800              CMP      r0,#0                 ;701
+0001d8  d004              BEQ      |L5.484|
+0001da  496c              LDR      r1,|L5.908|
+0001dc  1e40              SUBS     r0,r0,#1              ;702
+                  |L5.478|
+0001de  1c49              ADDS     r1,r1,#1              ;702
+0001e0  f7fffffe          BL       __aeabi_uwrite4
+                  |L5.484|
+0001e4  4869              LDR      r0,|L5.908|
+0001e6  1c40              ADDS     r0,r0,#1              ;706
+0001e8  f7fffffe          BL       __aeabi_uread4
+0001ec  9903              LDR      r1,[sp,#0xc]          ;706
+0001ee  9001              STR      r0,[sp,#4]            ;706
+0001f0  4348              MULS     r0,r1,r0              ;706
+0001f2  0201              LSLS     r1,r0,#8              ;706
+0001f4  1a08              SUBS     r0,r1,r0              ;706
+0001f6  9900              LDR      r1,[sp,#0]            ;706
+0001f8  f7fffffe          BL       __aeabi_uidivmod
+0001fc  4601              MOV      r1,r0                 ;706
+0001fe  4630              MOV      r0,r6                 ;706
+000200  4348              MULS     r0,r1,r0              ;707
+000202  2164              MOVS     r1,#0x64              ;707
+000204  f7fffffe          BL       __aeabi_uidivmod
+000208  4960              LDR      r1,|L5.908|
+00020a  b280              UXTH     r0,r0                 ;708
+00020c  1d89              ADDS     r1,r1,#6              ;708
+00020e  9003              STR      r0,[sp,#0xc]          ;708
+000210  8048              STRH     r0,[r1,#2]            ;708
+000212  9902              LDR      r1,[sp,#8]            ;710
+000214  9801              LDR      r0,[sp,#4]            ;710
+000216  4348              MULS     r0,r1,r0              ;710
+000218  0201              LSLS     r1,r0,#8              ;710
+00021a  1a08              SUBS     r0,r1,r0              ;710
+00021c  9900              LDR      r1,[sp,#0]            ;710
+00021e  f7fffffe          BL       __aeabi_uidivmod
+000222  4370              MULS     r0,r6,r0              ;711
+000224  2164              MOVS     r1,#0x64              ;711
+000226  f7fffffe          BL       __aeabi_uidivmod
+00022a  4958              LDR      r1,|L5.908|
+00022c  b280              UXTH     r0,r0                 ;712
+00022e  1d89              ADDS     r1,r1,#6              ;712
+000230  9002              STR      r0,[sp,#8]            ;712
+000232  8088              STRH     r0,[r1,#4]            ;712
+000234  9801              LDR      r0,[sp,#4]            ;714
+000236  4378              MULS     r0,r7,r0              ;714
+000238  0201              LSLS     r1,r0,#8              ;714
+00023a  1a08              SUBS     r0,r1,r0              ;714
+00023c  9900              LDR      r1,[sp,#0]            ;714
+00023e  f7fffffe          BL       __aeabi_uidivmod
+000242  4370              MULS     r0,r6,r0              ;715
+000244  2164              MOVS     r1,#0x64              ;715
+000246  f7fffffe          BL       __aeabi_uidivmod
+00024a  4950              LDR      r1,|L5.908|
+00024c  b282              UXTH     r2,r0                 ;716
+00024e  3908              SUBS     r1,r1,#8              ;715
+000250  6048              STR      r0,[r1,#4]            ;716  ; tmp
+000252  4608              MOV      r0,r1                 ;716
+000254  300e              ADDS     r0,r0,#0xe            ;716
+000256  80c2              STRH     r2,[r0,#6]            ;716
+000258  9902              LDR      r1,[sp,#8]            ;717
+00025a  9803              LDR      r0,[sp,#0xc]          ;717
+00025c  f7fffffe          BL       Light_RGB_set
+000260  484a              LDR      r0,|L5.908|
+000262  1c40              ADDS     r0,r0,#1              ;720
+000264  f7fffffe          BL       __aeabi_uread4
+000268  7a61              LDRB     r1,[r4,#9]            ;720  ; subDome
+00026a  7a22              LDRB     r2,[r4,#8]            ;720  ; subDome
+00026c  0209              LSLS     r1,r1,#8              ;720
+00026e  4311              ORRS     r1,r1,r2              ;720
+000270  4288              CMP      r0,r1                 ;720
+000272  d201              BCS      |L5.632|
+000274  2800              CMP      r0,#0                 ;721
+000276  d19d              BNE      |L5.436|
+                  |L5.632|
+000278  4844              LDR      r0,|L5.908|
+00027a  7801              LDRB     r1,[r0,#0]            ;722  ; subDome_Assist
+00027c  2900              CMP      r1,#0                 ;722
+00027e  d00d              BEQ      |L5.668|
+000280  2100              MOVS     r1,#0                 ;725
+000282  7001              STRB     r1,[r0,#0]            ;725
+                  |L5.644|
+000284  79e8              LDRB     r0,[r5,#7]            ;775  ; subDome
+000286  2800              CMP      r0,#0                 ;775
+000288  d098              BEQ      |L5.444|
+00028a  1e40              SUBS     r0,r0,#1              ;775
+00028c  71e8              STRB     r0,[r5,#7]            ;776
+00028e  e791              B        |L5.436|
+                  |L5.656|
+000290  1c40              ADDS     r0,r0,#1              ;776
+000292  f7fffffe          BL       __aeabi_uread4
+000296  493d              LDR      r1,|L5.908|
+000298  1c40              ADDS     r0,r0,#1              ;699
+00029a  e7a0              B        |L5.478|
+                  |L5.668|
+00029c  2101              MOVS     r1,#1                 ;723
+00029e  7001              STRB     r1,[r0,#0]            ;723
+                  |L5.672|
+0002a0  e788              B        |L5.436|
+                  |L5.674|
+0002a2  9803              LDR      r0,[sp,#0xc]          ;746
+0002a4  4370              MULS     r0,r6,r0              ;746
+0002a6  0201              LSLS     r1,r0,#8              ;746
+0002a8  1a08              SUBS     r0,r1,r0              ;746
+0002aa  2164              MOVS     r1,#0x64              ;746
+0002ac  f7fffffe          BL       __aeabi_uidivmod
+0002b0  4936              LDR      r1,|L5.908|
+0002b2  b280              UXTH     r0,r0                 ;747
+0002b4  1d89              ADDS     r1,r1,#6              ;747
+0002b6  9001              STR      r0,[sp,#4]            ;747
+0002b8  8048              STRH     r0,[r1,#2]            ;747
+0002ba  9802              LDR      r0,[sp,#8]            ;749
+0002bc  4370              MULS     r0,r6,r0              ;749
+0002be  0201              LSLS     r1,r0,#8              ;749
+0002c0  1a08              SUBS     r0,r1,r0              ;749
+0002c2  2164              MOVS     r1,#0x64              ;749
+0002c4  f7fffffe          BL       __aeabi_uidivmod
+0002c8  4930              LDR      r1,|L5.908|
+0002ca  b280              UXTH     r0,r0                 ;750
+0002cc  1d89              ADDS     r1,r1,#6              ;750
+0002ce  9000              STR      r0,[sp,#0]            ;750
+0002d0  8088              STRH     r0,[r1,#4]            ;750
+0002d2  4377              MULS     r7,r6,r7              ;752
+0002d4  0238              LSLS     r0,r7,#8              ;752
+0002d6  1bc0              SUBS     r0,r0,r7              ;752
+0002d8  2164              MOVS     r1,#0x64              ;752
+0002da  f7fffffe          BL       __aeabi_uidivmod
+0002de  492b              LDR      r1,|L5.908|
+0002e0  b282              UXTH     r2,r0                 ;753
+0002e2  3908              SUBS     r1,r1,#8              ;752
+0002e4  6048              STR      r0,[r1,#4]            ;753  ; tmp
+0002e6  4608              MOV      r0,r1                 ;753
+0002e8  300e              ADDS     r0,r0,#0xe            ;753
+0002ea  80c2              STRH     r2,[r0,#6]            ;753
+0002ec  9900              LDR      r1,[sp,#0]            ;754
+0002ee  9801              LDR      r0,[sp,#4]            ;754
+0002f0  f7fffffe          BL       Light_RGB_set
+                  |L5.756|
+0002f4  7a60              LDRB     r0,[r4,#9]            ;757  ; subDome
+0002f6  4f25              LDR      r7,|L5.908|
+0002f8  0206              LSLS     r6,r0,#8              ;757
+0002fa  7a21              LDRB     r1,[r4,#8]            ;757  ; subDome
+0002fc  3f08              SUBS     r7,r7,#8              ;757
+0002fe  430e              ORRS     r6,r6,r1              ;757
+000300  4638              MOV      r0,r7                 ;758
+000302  3009              ADDS     r0,r0,#9              ;758
+000304  607e              STR      r6,[r7,#4]            ;758  ; tmp
+000306  f7fffffe          BL       __aeabi_uread4
+00030a  42b0              CMP      r0,r6                 ;758
+00030c  d128              BNE      |L5.864|
+00030e  7928              LDRB     r0,[r5,#4]            ;759  ; subDome
+000310  7a2e              LDRB     r6,[r5,#8]            ;759  ; subDome
+000312  4370              MULS     r0,r6,r0              ;759
+000314  0201              LSLS     r1,r0,#8              ;759
+000316  1a08              SUBS     r0,r1,r0              ;759
+000318  2164              MOVS     r1,#0x64              ;759
+00031a  f7fffffe          BL       __aeabi_uidivmod
+00031e  b280              UXTH     r0,r0                 ;760
+000320  4639              MOV      r1,r7                 ;760
+000322  310e              ADDS     r1,r1,#0xe            ;760
+000324  9001              STR      r0,[sp,#4]            ;760
+000326  8048              STRH     r0,[r1,#2]            ;760
+000328  7968              LDRB     r0,[r5,#5]            ;762  ; subDome
+00032a  4370              MULS     r0,r6,r0              ;762
+00032c  0201              LSLS     r1,r0,#8              ;762
+00032e  1a08              SUBS     r0,r1,r0              ;762
+000330  2164              MOVS     r1,#0x64              ;762
+000332  f7fffffe          BL       __aeabi_uidivmod
+000336  b280              UXTH     r0,r0                 ;763
+000338  4639              MOV      r1,r7                 ;763
+00033a  310e              ADDS     r1,r1,#0xe            ;763
+00033c  9000              STR      r0,[sp,#0]            ;763
+00033e  8088              STRH     r0,[r1,#4]            ;763
+000340  79a8              LDRB     r0,[r5,#6]            ;765  ; subDome
+000342  4370              MULS     r0,r6,r0              ;765
+000344  0201              LSLS     r1,r0,#8              ;765
+000346  1a08              SUBS     r0,r1,r0              ;765
+000348  2164              MOVS     r1,#0x64              ;765
+00034a  f7fffffe          BL       __aeabi_uidivmod
+00034e  b282              UXTH     r2,r0                 ;766
+000350  6078              STR      r0,[r7,#4]            ;766  ; tmp
+000352  4638              MOV      r0,r7                 ;766
+000354  300e              ADDS     r0,r0,#0xe            ;766
+000356  80c2              STRH     r2,[r0,#6]            ;766
+000358  9900              LDR      r1,[sp,#0]            ;767
+00035a  9801              LDR      r0,[sp,#4]            ;767
+00035c  f7fffffe          BL       Light_RGB_set
+                  |L5.864|
+000360  4e0a              LDR      r6,|L5.908|
+000362  1c70              ADDS     r0,r6,#1              ;770
+000364  f7fffffe          BL       __aeabi_uread4
+000368  1c71              ADDS     r1,r6,#1              ;770
+00036a  1c40              ADDS     r0,r0,#1              ;770
+00036c  f7fffffe          BL       __aeabi_uwrite4
+000370  7a61              LDRB     r1,[r4,#9]            ;772  ; subDome
+000372  7a23              LDRB     r3,[r4,#8]            ;772  ; subDome
+000374  020a              LSLS     r2,r1,#8              ;772
+000376  9904              LDR      r1,[sp,#0x10]         ;772
+000378  431a              ORRS     r2,r2,r3              ;772
+00037a  7a4b              LDRB     r3,[r1,#9]            ;772  ; subDome
+00037c  7a0c              LDRB     r4,[r1,#8]            ;772  ; subDome
+00037e  0219              LSLS     r1,r3,#8              ;772
+000380  4321              ORRS     r1,r1,r4              ;772
+000382  1851              ADDS     r1,r2,r1              ;772
+000384  6079              STR      r1,[r7,#4]            ;772  ; tmp
+                  |L5.902|
+000386  4288              CMP      r0,r1                 ;773
+000388  d38a              BCC      |L5.672|
+00038a  e70e              B        |L5.426|
                           ENDP
 
-000326  0000              DCW      0x0000
-                  |L5.808|
-                          DCD      ||.bss||+0x18
-                  |L5.812|
-                          DCD      ||.data||
+                  |L5.908|
+                          DCD      ||.data||+0x8
+                  |L5.912|
+                          DCD      ||.bss||
 
                           AREA ||i.app_dome_next||, CODE, READONLY, ALIGN=2
 
@@ -825,22 +858,23 @@
 000006  1c40              ADDS     r0,r0,#1
 000008  b2c0              UXTB     r0,r0
 00000a  7008              STRB     r0,[r1,#0]
-;;;422    	if (domePro.currentDomeIndex >= DEFAULT_DOME_NUM) {
-00000c  2811              CMP      r0,#0x11
+;;;422    	if (domePro.currentDomeIndex
+00000c  282c              CMP      r0,#0x2c
 00000e  d301              BCC      |L6.20|
-;;;423    		domePro.currentDomeIndex = 0;
+;;;423    			>= ((FMC_APROM_END - DOME_START_ADDR) / sizeof(DOME_DEFAULT_T))) {
+;;;424    		domePro.currentDomeIndex = 0;
 000010  2000              MOVS     r0,#0
 000012  7008              STRB     r0,[r1,#0]
                   |L6.20|
-;;;424    	}
-;;;425    
-;;;426    	app_dome_start(domePro.currentDomeIndex, 1);
+;;;425    	}
+;;;426    
+;;;427    	app_dome_start(domePro.currentDomeIndex, 1);
 000014  b2c0              UXTB     r0,r0
 000016  2101              MOVS     r1,#1
 000018  f7fffffe          BL       app_dome_start
-;;;427    }
+;;;428    }
 00001c  bd10              POP      {r4,pc}
-;;;428    
+;;;429    
                           ENDP
 
 00001e  0000              DCW      0x0000
@@ -850,23 +884,24 @@
                           AREA ||i.app_dome_previous||, CODE, READONLY, ALIGN=2
 
                   app_dome_previous PROC
-;;;411    
-;;;412    void app_dome_previous(void) {
+;;;410    
+;;;411    void app_dome_previous(void) {
 000000  b510              PUSH     {r4,lr}
-;;;413    	if (domePro.currentDomeIndex) {
+;;;412    	if (domePro.currentDomeIndex) {
 000002  4906              LDR      r1,|L7.28|
 000004  7808              LDRB     r0,[r1,#0]  ; domePro
 000006  2800              CMP      r0,#0
 000008  d001              BEQ      |L7.14|
-00000a  1e40              SUBS     r0,r0,#1              ;412
-;;;414    		domePro.currentDomeIndex--;
+00000a  1e40              SUBS     r0,r0,#1              ;411
+;;;413    		domePro.currentDomeIndex--;
 00000c  e000              B        |L7.16|
                   |L7.14|
-;;;415    	} else {
-;;;416    		domePro.currentDomeIndex = DEFAULT_DOME_NUM - 1;
-00000e  2010              MOVS     r0,#0x10
+;;;414    	} else {
+;;;415    		domePro.currentDomeIndex = (FMC_APROM_END - DOME_START_ADDR)
+00000e  202b              MOVS     r0,#0x2b
                   |L7.16|
 000010  7008              STRB     r0,[r1,#0]
+;;;416    				/ sizeof(DOME_DEFAULT_T) - 1;
 ;;;417    	}
 ;;;418    	app_dome_start(domePro.currentDomeIndex, 2);
 000012  b2c0              UXTB     r0,r0
@@ -883,46 +918,46 @@
                           AREA ||i.app_dome_rgb||, CODE, READONLY, ALIGN=2
 
                   app_dome_rgb PROC
-;;;551    
-;;;552    void app_dome_rgb(uint8_t r, uint8_t g, uint8_t b) {
+;;;560    
+;;;561    void app_dome_rgb(uint8_t r, uint8_t g, uint8_t b) {
 000000  b570              PUSH     {r4-r6,lr}
 000002  4614              MOV      r4,r2
 000004  460d              MOV      r5,r1
 000006  4606              MOV      r6,r0
-;;;553    	app_dome_stop_current();
+;;;562    	app_dome_stop_current();
 000008  f7fffffe          BL       app_dome_stop_current
-;;;554    	dome_running_param.color.R = r << 8;
+;;;563    	dome_running_param.color.R = r << 8;
 00000c  4b04              LDR      r3,|L8.32|
 00000e  0230              LSLS     r0,r6,#8
 000010  8058              STRH     r0,[r3,#2]
-;;;555    	dome_running_param.color.G = g << 8;
+;;;564    	dome_running_param.color.G = g << 8;
 000012  0229              LSLS     r1,r5,#8
 000014  8099              STRH     r1,[r3,#4]
-;;;556    	dome_running_param.color.B = b << 8;
+;;;565    	dome_running_param.color.B = b << 8;
 000016  0222              LSLS     r2,r4,#8
 000018  80da              STRH     r2,[r3,#6]
-;;;557    #if 1
-;;;558    	Light_RGB_set(dome_running_param.color.R, dome_running_param.color.G,
+;;;566    #if 1
+;;;567    	Light_RGB_set(dome_running_param.color.R, dome_running_param.color.G,
 00001a  f7fffffe          BL       Light_RGB_set
-;;;559    			dome_running_param.color.B);
-;;;560    #else
-;;;561    	Light_RGB_set(0xFFFF, 0xFFFF, 0xFFFF);
-;;;562    #endif
-;;;563    }
+;;;568    			dome_running_param.color.B);
+;;;569    #else
+;;;570    	Light_RGB_set(0xFFFF, 0xFFFF, 0xFFFF);
+;;;571    #endif
+;;;572    }
 00001e  bd70              POP      {r4-r6,pc}
-;;;564    
+;;;573    
                           ENDP
 
                   |L8.32|
-                          DCD      ||.data||+0x8
+                          DCD      ||.data||+0xe
 
                           AREA ||i.app_dome_single_cycle||, CODE, READONLY, ALIGN=2
 
                   app_dome_single_cycle PROC
-;;;448    }
-;;;449    void app_dome_single_cycle(uint8_t subIndex) {
+;;;449    }
+;;;450    void app_dome_single_cycle(uint8_t subIndex) {
 000000  b510              PUSH     {r4,lr}
-;;;450    	if ((dome_blink.header.repeat_number & 0x0F) == (subIndex+1)) {
+;;;451    	if ((dome_blink.header.repeat_number & 0x0F) == (subIndex + 1)) {
 000002  490d              LDR      r1,|L9.56|
 000004  7a4a              LDRB     r2,[r1,#9]  ; dome_blink
 000006  0713              LSLS     r3,r2,#28
@@ -930,220 +965,229 @@
 00000a  1c42              ADDS     r2,r0,#1
 00000c  4293              CMP      r3,r2
 00000e  d104              BNE      |L9.26|
-;;;451    		subIndex = 0;
-;;;452    		memcpy((uint8_t*) &subDome, (uint8_t*) &dome_blink.subdome[subIndex],
+;;;452    		subIndex = 0;
+;;;453    		memcpy((uint8_t*) &subDome, (uint8_t*) &dome_blink.subdome[subIndex],
 000010  4608              MOV      r0,r1
-000012  220e              MOVS     r2,#0xe
-000014  3824              SUBS     r0,r0,#0x24
+000012  220d              MOVS     r2,#0xd
+000014  3817              SUBS     r0,r0,#0x17
 000016  310a              ADDS     r1,r1,#0xa
 000018  e005              B        |L9.38|
                   |L9.26|
-;;;453    				sizeof(subDome));
-;;;454    	} else {
-;;;455    		memcpy((uint8_t*) &subDome,
-00001a  220e              MOVS     r2,#0xe
+;;;454    				sizeof(subDome));
+;;;455    	} else {
+;;;456    		memcpy((uint8_t*) &subDome,
+00001a  220d              MOVS     r2,#0xd
 00001c  4350              MULS     r0,r2,r0
 00001e  1841              ADDS     r1,r0,r1
 000020  4805              LDR      r0,|L9.56|
-000022  3118              ADDS     r1,r1,#0x18
-000024  3824              SUBS     r0,r0,#0x24
+000022  3117              ADDS     r1,r1,#0x17
+000024  3817              SUBS     r0,r0,#0x17
                   |L9.38|
 000026  f7fffffe          BL       __aeabi_memcpy
-;;;456    				(uint8_t*) &dome_blink.subdome[subIndex + 1], sizeof(subDome));
-;;;457    	}
-;;;458    	memcpy((uint8_t*) &domeHeader, (uint8_t*) &dome_blink.header,
+;;;457    				(uint8_t*) &dome_blink.subdome[subIndex + 1], sizeof(subDome));
+;;;458    	}
+;;;459    	memcpy((uint8_t*) &domeHeader, (uint8_t*) &dome_blink.header,
 00002a  4903              LDR      r1,|L9.56|
 00002c  220a              MOVS     r2,#0xa
-00002e  4608              MOV      r0,r1
-000030  3816              SUBS     r0,r0,#0x16
-000032  f7fffffe          BL       __aeabi_memcpy
-;;;459    			sizeof(domeHeader));
-;;;460    }
-000036  bd10              POP      {r4,pc}
-;;;461    
+00002e  1a88              SUBS     r0,r1,r2
+000030  f7fffffe          BL       __aeabi_memcpy
+;;;460    			sizeof(domeHeader));
+;;;461    }
+000034  bd10              POP      {r4,pc}
+;;;462    
                           ENDP
 
+000036  0000              DCW      0x0000
                   |L9.56|
-                          DCD      ||.bss||+0x24
+                          DCD      ||.bss||+0x17
 
                           AREA ||i.app_dome_start||, CODE, READONLY, ALIGN=2
 
                   app_dome_start PROC
-;;;464     */
-;;;465    void app_dome_start(uint8_t domeIndex, uint8_t dir) {
-000000  b510              PUSH     {r4,lr}
-;;;466    	subDome_Assist.switch_flag = 0;
-000002  4b24              LDR      r3,|L10.148|
-000004  2200              MOVS     r2,#0
-000006  701a              STRB     r2,[r3,#0]
-;;;467    	subDome_Assist.msCnt = 0;
-;;;468    	subDome_Assist.stopTime = 0;
-000008  605a              STR      r2,[r3,#4]  ; subDome_Assist
-00000a  721a              STRB     r2,[r3,#8]
-;;;469    
-;;;470    //	app_dome_single_cycle(domeIndex);
-;;;471    	if (domeIndex > (DEFAULT_DOME_NUM - 1)) {
-;;;472    		domePro.currentDomeIndex = DEFAULT_DOME_NUM - 1;
-00000c  4a22              LDR      r2,|L10.152|
-00000e  2810              CMP      r0,#0x10              ;471
-000010  d902              BLS      |L10.24|
-000012  2010              MOVS     r0,#0x10
-000014  7010              STRB     r0,[r2,#0]
-;;;473    		domeIndex = DEFAULT_DOME_NUM - 1;
-000016  e000              B        |L10.26|
-                  |L10.24|
-;;;474    	} else {
-;;;475    		domePro.currentDomeIndex = domeIndex;
-000018  7010              STRB     r0,[r2,#0]
-                  |L10.26|
-;;;476    	}
-;;;477    	if (dir == 0) {
-;;;478    //		app_eeprom_get_dome_with_index(&dome_blink, domeIndex);
-;;;479    		if (*((uint8_t *) &dome_blink) == 0xFF) {
-00001a  4a1e              LDR      r2,|L10.148|
-00001c  320c              ADDS     r2,r2,#0xc
-00001e  7812              LDRB     r2,[r2,#0]
-000020  2900              CMP      r1,#0                 ;477
-000022  d004              BEQ      |L10.46|
-;;;480    			Light_RGB_set(0, 0, 0);
-;;;481    		}
-;;;482    	} else if (dir == 1) {
-000024  2901              CMP      r1,#1
-000026  d005              BEQ      |L10.52|
-;;;483    		uint8_t i = 0;
-;;;484    		for (i = 0; i < DEFAULT_DOME_NUM; i++) {
-;;;485    //			app_eeprom_get_dome_with_index(&dome_blink, domeIndex);
-;;;486    			if (*((uint8_t *) &dome_blink) == 0xFF) {
-;;;487    				if (domeIndex == 0) {
-;;;488    					Light_RGB_set(0, 0, 0);
-;;;489    					break;
-;;;490    				}
-;;;491    				domeIndex++;
-;;;492    				if (domeIndex >= DEFAULT_DOME_NUM) {
-;;;493    					domeIndex = 0;
-;;;494    //					break;
-;;;495    				}
-;;;496    			} else {
-;;;497    				break;
-;;;498    			}
-;;;499    		}
-;;;500    	} else if (dir == 2) {
-000028  2902              CMP      r1,#2
-00002a  d012              BEQ      |L10.82|
-00002c  e022              B        |L10.116|
-                  |L10.46|
-00002e  2aff              CMP      r2,#0xff              ;479
-000030  d01b              BEQ      |L10.106|
-000032  e01f              B        |L10.116|
-                  |L10.52|
-000034  2100              MOVS     r1,#0                 ;483
-                  |L10.54|
-000036  2aff              CMP      r2,#0xff              ;486
-000038  d11c              BNE      |L10.116|
-00003a  2800              CMP      r0,#0                 ;487
-00003c  d015              BEQ      |L10.106|
-00003e  1c40              ADDS     r0,r0,#1              ;487
-000040  b2c0              UXTB     r0,r0                 ;491
-000042  2811              CMP      r0,#0x11              ;492
-000044  d300              BCC      |L10.72|
-000046  2000              MOVS     r0,#0                 ;493
-                  |L10.72|
-000048  1c49              ADDS     r1,r1,#1              ;493
-00004a  b2c9              UXTB     r1,r1                 ;484
-00004c  2911              CMP      r1,#0x11              ;484
-00004e  d3f2              BCC      |L10.54|
-000050  e010              B        |L10.116|
+;;;465     */
+;;;466    void app_dome_start(uint8_t domeIndex, uint8_t dir) {
+000000  b5f8              PUSH     {r3-r7,lr}
+;;;467    	subDome_Assist.switch_flag = 0;
+000002  4e25              LDR      r6,|L10.152|
+000004  2700              MOVS     r7,#0
+000006  460d              MOV      r5,r1                 ;466
+000008  4604              MOV      r4,r0                 ;466
+00000a  7037              STRB     r7,[r6,#0]
+;;;468    	subDome_Assist.msCnt = 0;
+00000c  1c71              ADDS     r1,r6,#1
+00000e  4638              MOV      r0,r7
+000010  f7fffffe          BL       __aeabi_uwrite4
+;;;469    	subDome_Assist.stopTime = 0;
+;;;470    
+;;;471    //	app_dome_single_cycle(domeIndex);
+;;;472    	if (domeIndex
+;;;473    			> ((FMC_APROM_END - DOME_START_ADDR) / sizeof(DOME_DEFAULT_T) - 1)) {
+;;;474    		domePro.currentDomeIndex = (FMC_APROM_END - DOME_START_ADDR)
+000014  1ff0              SUBS     r0,r6,#7
+000016  7177              STRB     r7,[r6,#5]            ;469
+000018  2c2b              CMP      r4,#0x2b              ;472
+00001a  d903              BLS      |L10.36|
+00001c  212b              MOVS     r1,#0x2b
+00001e  7001              STRB     r1,[r0,#0]
+;;;475    				/ sizeof(DOME_DEFAULT_T) - 1;
+;;;476    		domeIndex = (FMC_APROM_END - DOME_START_ADDR) / sizeof(DOME_DEFAULT_T)
+000020  460c              MOV      r4,r1
+000022  e000              B        |L10.38|
+                  |L10.36|
+;;;477    				- 1;
+;;;478    	} else {
+;;;479    		domePro.currentDomeIndex = domeIndex;
+000024  7004              STRB     r4,[r0,#0]
+                  |L10.38|
+;;;480    	}
+;;;481    	if (dir == 0) {
+;;;482    //		app_eeprom_get_dome_with_index(&dome_blink, domeIndex);
+;;;483    		if (*((uint8_t *) &dome_blink) == 0xFF) {
+000026  481d              LDR      r0,|L10.156|
+000028  2d00              CMP      r5,#0                 ;481
+00002a  7802              LDRB     r2,[r0,#0]
+00002c  d004              BEQ      |L10.56|
+;;;484    			Light_RGB_set(0, 0, 0);
+;;;485    		}
+;;;486    	} else if (dir == 1) {
+00002e  2d01              CMP      r5,#1
+000030  d005              BEQ      |L10.62|
+;;;487    		uint8_t i = 0;
+;;;488    		for (i = 0;
+;;;489    				i < ((FMC_APROM_END - DOME_START_ADDR) / sizeof(DOME_DEFAULT_T));
+;;;490    				i++) {
+;;;491    //			app_eeprom_get_dome_with_index(&dome_blink, domeIndex);
+;;;492    			if (*((uint8_t *) &dome_blink) == 0xFF) {
+;;;493    				if (domeIndex == 0) {
+;;;494    					Light_RGB_set(0, 0, 0);
+;;;495    					break;
+;;;496    				}
+;;;497    				domeIndex++;
+;;;498    				if (domeIndex
+;;;499    						>= ((FMC_APROM_END - DOME_START_ADDR)
+;;;500    								/ sizeof(DOME_DEFAULT_T))) {
+;;;501    					domeIndex = 0;
+;;;502    //					break;
+;;;503    				}
+;;;504    			} else {
+;;;505    				break;
+;;;506    			}
+;;;507    		}
+;;;508    	} else if (dir == 2) {
+000032  2d02              CMP      r5,#2
+000034  d012              BEQ      |L10.92|
+000036  e022              B        |L10.126|
+                  |L10.56|
+000038  2aff              CMP      r2,#0xff              ;483
+00003a  d01b              BEQ      |L10.116|
+00003c  e01f              B        |L10.126|
+                  |L10.62|
+00003e  2000              MOVS     r0,#0                 ;487
+                  |L10.64|
+000040  2aff              CMP      r2,#0xff              ;492
+000042  d11c              BNE      |L10.126|
+000044  2c00              CMP      r4,#0                 ;493
+000046  d015              BEQ      |L10.116|
+000048  1c64              ADDS     r4,r4,#1              ;493
+00004a  b2e4              UXTB     r4,r4                 ;497
+00004c  2c2c              CMP      r4,#0x2c              ;498
+00004e  d300              BCC      |L10.82|
+000050  2400              MOVS     r4,#0                 ;501
                   |L10.82|
-;;;501    		uint8_t i = 0;
-000052  2100              MOVS     r1,#0
-                  |L10.84|
-;;;502    		for (i = 0; i < DEFAULT_DOME_NUM; i++) {
-;;;503    //			app_eeprom_get_dome_with_index(&dome_blink, domeIndex);
-;;;504    			if (*((uint8_t *) &dome_blink) == 0xFF) {
-000054  2aff              CMP      r2,#0xff
-000056  d10d              BNE      |L10.116|
-;;;505    				if (domeIndex) {
-000058  2800              CMP      r0,#0
-00005a  d006              BEQ      |L10.106|
-00005c  1e40              SUBS     r0,r0,#1
-;;;506    					domeIndex--;
-00005e  1c49              ADDS     r1,r1,#1
-000060  b2c9              UXTB     r1,r1                 ;502
-000062  b2c0              UXTB     r0,r0
-000064  2911              CMP      r1,#0x11              ;502
-000066  d3f5              BCC      |L10.84|
-000068  e004              B        |L10.116|
-                  |L10.106|
-;;;507    				} else {
-;;;508    					Light_RGB_set(0, 0, 0);
-00006a  2200              MOVS     r2,#0
-00006c  4611              MOV      r1,r2
-00006e  4610              MOV      r0,r2
-000070  f7fffffe          BL       Light_RGB_set
+000052  1c40              ADDS     r0,r0,#1              ;501
+000054  b2c0              UXTB     r0,r0                 ;490
+000056  282c              CMP      r0,#0x2c              ;489
+000058  d3f2              BCC      |L10.64|
+00005a  e010              B        |L10.126|
+                  |L10.92|
+;;;509    		uint8_t i = 0;
+00005c  2000              MOVS     r0,#0
+                  |L10.94|
+;;;510    		for (i = 0;
+;;;511    				i < ((FMC_APROM_END - DOME_START_ADDR) / sizeof(DOME_DEFAULT_T));
+;;;512    				i++) {
+;;;513    //			app_eeprom_get_dome_with_index(&dome_blink, domeIndex);
+;;;514    			if (*((uint8_t *) &dome_blink) == 0xFF) {
+00005e  2aff              CMP      r2,#0xff
+000060  d10d              BNE      |L10.126|
+;;;515    				if (domeIndex) {
+000062  2c00              CMP      r4,#0
+000064  d006              BEQ      |L10.116|
+000066  1e64              SUBS     r4,r4,#1
+;;;516    					domeIndex--;
+000068  1c40              ADDS     r0,r0,#1
+00006a  b2c0              UXTB     r0,r0                 ;512
+00006c  b2e4              UXTB     r4,r4
+00006e  282c              CMP      r0,#0x2c              ;511
+000070  d3f5              BCC      |L10.94|
+000072  e004              B        |L10.126|
                   |L10.116|
-;;;509    					break;
-;;;510    				}
-;;;511    			} else {
-;;;512    				break;
-;;;513    			}
-;;;514    		}
-;;;515    	}
-;;;516    //	domePro.currentDomeIndex = domeIndex;
-;;;517    //	if (dome_blink.header.index == 0) {
-;;;518    //		app_eeprom_get_dome_with_index(&dome_blink, 0);
-;;;519    //		app_dome_stop_current();
-;;;520    //	}
-;;;521    
-;;;522    
-;;;523    	memcpy((uint8_t*) &subDome, (uint8_t*) &dome_blink.subdome[0],
-000074  4907              LDR      r1,|L10.148|
-000076  220e              MOVS     r2,#0xe
-000078  3116              ADDS     r1,r1,#0x16
-00007a  4608              MOV      r0,r1
-00007c  382e              SUBS     r0,r0,#0x2e
-00007e  f7fffffe          BL       __aeabi_memcpy
-;;;524    			sizeof(subDome));
-;;;525    
-;;;526    	memcpy((uint8_t*) &domeHeader, (uint8_t*) &dome_blink.header,
-000082  4904              LDR      r1,|L10.148|
-000084  220a              MOVS     r2,#0xa
-000086  310c              ADDS     r1,r1,#0xc
-000088  4608              MOV      r0,r1
-00008a  3816              SUBS     r0,r0,#0x16
-00008c  f7fffffe          BL       __aeabi_memcpy
-;;;527    			sizeof(domeHeader));
-;;;528    
-;;;529    }
-000090  bd10              POP      {r4,pc}
-;;;530    static uint8_t cyc = 0;
+;;;517    				} else {
+;;;518    					Light_RGB_set(0, 0, 0);
+000074  2200              MOVS     r2,#0
+000076  4611              MOV      r1,r2
+000078  4610              MOV      r0,r2
+00007a  f7fffffe          BL       Light_RGB_set
+                  |L10.126|
+;;;519    					break;
+;;;520    				}
+;;;521    			} else {
+;;;522    				break;
+;;;523    			}
+;;;524    		}
+;;;525    	}
+;;;526    //	domePro.currentDomeIndex = domeIndex;
+;;;527    //	if (dome_blink.header.index == 0) {
+;;;528    //		app_eeprom_get_dome_with_index(&dome_blink, 0);
+;;;529    //		app_dome_stop_current();
+;;;530    //	}
+;;;531    
+;;;532    	memcpy((uint8_t*) &subDome, (uint8_t*) &dome_blink.subdome[0],
+00007e  4907              LDR      r1,|L10.156|
+000080  220d              MOVS     r2,#0xd
+000082  310a              ADDS     r1,r1,#0xa
+000084  4608              MOV      r0,r1
+000086  3821              SUBS     r0,r0,#0x21
+000088  f7fffffe          BL       __aeabi_memcpy
+;;;533    			sizeof(subDome));
+;;;534    
+;;;535    	memcpy((uint8_t*) &domeHeader, (uint8_t*) &dome_blink.header,
+00008c  4903              LDR      r1,|L10.156|
+00008e  220a              MOVS     r2,#0xa
+000090  1a88              SUBS     r0,r1,r2
+000092  f7fffffe          BL       __aeabi_memcpy
+;;;536    			sizeof(domeHeader));
+;;;537    
+;;;538    }
+000096  bdf8              POP      {r3-r7,pc}
+;;;539    static uint8_t cyc = 0;
                           ENDP
 
-000092  0000              DCW      0x0000
-                  |L10.148|
-                          DCD      ||.bss||+0x18
                   |L10.152|
-                          DCD      ||.data||+0x1
+                          DCD      ||.data||+0x8
+                  |L10.156|
+                          DCD      ||.bss||+0x17
 
                           AREA ||i.app_dome_start_current||, CODE, READONLY, ALIGN=2
 
                   app_dome_start_current PROC
-;;;435    }
-;;;436    void app_dome_start_current(void) {
+;;;436    }
+;;;437    void app_dome_start_current(void) {
 000000  b510              PUSH     {r4,lr}
-;;;437    	color_blink_index = COLOR_BLINK_NUMBER - 1;
+;;;438    	color_blink_index = COLOR_BLINK_NUMBER - 1;
 000002  4904              LDR      r1,|L11.20|
 000004  2009              MOVS     r0,#9
 000006  7008              STRB     r0,[r1,#0]
-;;;438    
-;;;439    //	g_tWork.status.bits.blinkEnable = 1;
-;;;440    	app_dome_start(domePro.currentDomeIndex, 0);
+;;;439    
+;;;440    //	g_tWork.status.bits.blinkEnable = 1;
+;;;441    	app_dome_start(domePro.currentDomeIndex, 0);
 000008  1c48              ADDS     r0,r1,#1
 00000a  7800              LDRB     r0,[r0,#0]  ; domePro
 00000c  2100              MOVS     r1,#0
 00000e  f7fffffe          BL       app_dome_start
-;;;441    }
+;;;442    }
 000012  bd10              POP      {r4,pc}
-;;;442    void app_dome_stop_current(void) {
+;;;443    void app_dome_stop_current(void) {
                           ENDP
 
                   |L11.20|
@@ -1152,77 +1196,78 @@
                           AREA ||i.app_dome_stop_current||, CODE, READONLY, ALIGN=2
 
                   app_dome_stop_current PROC
-;;;441    }
-;;;442    void app_dome_stop_current(void) {
+;;;442    }
+;;;443    void app_dome_stop_current(void) {
 000000  b510              PUSH     {r4,lr}
-;;;443    //	g_tWork.status.bits.blinkEnable = 0;
-;;;444    
-;;;445    	subDome.repeate = 0;
-000002  2100              MOVS     r1,#0
-000004  4803              LDR      r0,|L12.20|
-;;;446    	subDome.offtime = 0;
-;;;447    	Light_RGB_set(0, 0, 0);
-000006  460a              MOV      r2,r1
-000008  71c1              STRB     r1,[r0,#7]            ;445
-00000a  8181              STRH     r1,[r0,#0xc]          ;446
-00000c  4608              MOV      r0,r1
-00000e  f7fffffe          BL       Light_RGB_set
-;;;448    }
-000012  bd10              POP      {r4,pc}
-;;;449    void app_dome_single_cycle(uint8_t subIndex) {
+;;;444    //	g_tWork.status.bits.blinkEnable = 0;
+;;;445    
+;;;446    	subDome.repeate = 0;
+000002  2000              MOVS     r0,#0
+000004  4904              LDR      r1,|L12.24|
+;;;447    	subDome.offtime = 0;
+;;;448    	Light_RGB_set(0, 0, 0);
+000006  4602              MOV      r2,r0
+000008  71c8              STRB     r0,[r1,#7]            ;446
+00000a  72c8              STRB     r0,[r1,#0xb]          ;447
+00000c  7308              STRB     r0,[r1,#0xc]          ;447
+00000e  4601              MOV      r1,r0
+000010  f7fffffe          BL       Light_RGB_set
+;;;449    }
+000014  bd10              POP      {r4,pc}
+;;;450    void app_dome_single_cycle(uint8_t subIndex) {
                           ENDP
 
-                  |L12.20|
+000016  0000              DCW      0x0000
+                  |L12.24|
                           DCD      ||.bss||
 
                           AREA ||i.app_dome_subDome_pro||, CODE, READONLY, ALIGN=2
 
                   app_dome_subDome_pro PROC
-;;;530    static uint8_t cyc = 0;
-;;;531    static void app_dome_subDome_pro(uint8_t subIndex) {
-000000  4803              LDR      r0,|L13.16|
-;;;532    
-;;;533    	subDome_Assist.switch_flag = 0;
-000002  2100              MOVS     r1,#0
-000004  7001              STRB     r1,[r0,#0]
-;;;534    	subDome_Assist.msCnt = 0;
-;;;535    	subDome_Assist.stopTime = 50;
-000006  6041              STR      r1,[r0,#4]  ; subDome_Assist
-000008  2132              MOVS     r1,#0x32
-00000a  7201              STRB     r1,[r0,#8]
-;;;536    #if 0
-;;;537    	if (g_tWork.status.bits.DEMO) {
-;;;538    		cyc++;
-;;;539    		if (cyc <= 4) {
-;;;540    			app_dome_single_cycle(subIndex);
-;;;541    		} else {
-;;;542    			cyc = 0;
-;;;543    			app_dome_next();
-;;;544    		}
-;;;545    	} else {
-;;;546    		cyc = 0;
-;;;547    		app_dome_single_cycle(subIndex);
-;;;548    	}
-;;;549    	#endif
-;;;550    }
-00000c  4770              BX       lr
-;;;551    
+;;;539    static uint8_t cyc = 0;
+;;;540    static void app_dome_subDome_pro(uint8_t subIndex) {
+000000  b510              PUSH     {r4,lr}
+;;;541    
+;;;542    	subDome_Assist.switch_flag = 0;
+000002  4c04              LDR      r4,|L13.20|
+000004  2000              MOVS     r0,#0
+000006  7020              STRB     r0,[r4,#0]
+;;;543    	subDome_Assist.msCnt = 0;
+000008  1c61              ADDS     r1,r4,#1
+00000a  f7fffffe          BL       __aeabi_uwrite4
+;;;544    	subDome_Assist.stopTime = 50;
+00000e  2032              MOVS     r0,#0x32
+000010  7160              STRB     r0,[r4,#5]
+;;;545    #if 0
+;;;546    	if (g_tWork.status.bits.DEMO) {
+;;;547    		cyc++;
+;;;548    		if (cyc <= 4) {
+;;;549    			app_dome_single_cycle(subIndex);
+;;;550    		} else {
+;;;551    			cyc = 0;
+;;;552    			app_dome_next();
+;;;553    		}
+;;;554    	} else {
+;;;555    		cyc = 0;
+;;;556    		app_dome_single_cycle(subIndex);
+;;;557    	}
+;;;558    #endif
+;;;559    }
+000012  bd10              POP      {r4,pc}
+;;;560    
                           ENDP
 
-00000e  0000              DCW      0x0000
-                  |L13.16|
-                          DCD      ||.bss||+0x18
+                  |L13.20|
+                          DCD      ||.data||+0x8
 
-                          AREA ||.bss||, DATA, NOINIT, ALIGN=2
+                          AREA ||.bss||, DATA, NOINIT, ALIGN=0
 
                   subDome
-                          %        14
+                          %        13
                   domeHeader
                           %        10
-                  subDome_Assist
-                          %        12
                   dome_blink
-                          %        122
+                          %        114
 
                           AREA ||.constdata||, DATA, READONLY, ALIGN=0
 
@@ -1244,8 +1289,13 @@
 000001  000000            DCB      0x00,0x00,0x00
                   tmp
                           DCD      0x00000000
+                  subDome_Assist
+                          DCD      0x00000000
+00000c  0000              DCB      0x00,0x00
                   dome_running_param
-                          %        8
+00000e  0000              DCB      0x00,0x00
+                          DCD      0x00000000
+000014  0000              DCB      0x00,0x00
 
 ;*** Start embedded assembler ***
 

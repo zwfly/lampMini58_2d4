@@ -19250,9 +19250,9 @@ N#define BSP_INC_BSP_EEPROM_H_
 N
 Nvoid EEPROM_InitHard(void);
 N
-Nvoid bsp_eeprom_write_byte(uint32_t u32addr, uint32_t u32data);
+Nvoid bsp_eeprom_write_int(uint32_t u32addr, uint32_t u32data);
 Nint32_t bsp_eeprom_erase(uint32_t u32addr);
-Nuint32_t bsp_eeprom_read_byte(uint32_t u32Addr);
+Nuint32_t bsp_eeprom_read_int(uint32_t u32Addr);
 N
 N#endif /* BSP_INC_BSP_EEPROM_H_ */
 L 21 "..\Bsp\bsp.h" 2

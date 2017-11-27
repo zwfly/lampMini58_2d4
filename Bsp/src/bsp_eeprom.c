@@ -60,14 +60,14 @@ void EEPROM_InitHard(void) {
 	/* Lock protected registers */
 	SYS_LockReg();
 }
-void bsp_eeprom_write_byte(uint32_t u32addr, uint32_t u32data) {
+void bsp_eeprom_write_int(uint32_t u32addr, uint32_t u32data) {
 	FMC_Write(u32addr, u32data);
 }
 int32_t bsp_eeprom_erase(uint32_t u32addr) {
 	return FMC_Erase(u32addr);
 }
 
-uint32_t bsp_eeprom_read_byte(uint32_t u32Addr) {
+uint32_t bsp_eeprom_read_int(uint32_t u32Addr) {
 	return FMC_Read(u32Addr);
 }
 

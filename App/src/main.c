@@ -88,7 +88,16 @@ int main(void) {
 	log_debug("dome size: %d", sizeof(DOME_RUNNING_T));
 	log_debug("header size: %d", sizeof(DOME_HEADER_T));
 	log_debug("submode size: %d", sizeof(SUBDOME_T));
-log_debug("color size: %d", sizeof(COLOR_T));
+	log_debug("color size: %d", sizeof(COLOR_T));
+
+	int i = 0;
+
+	DOME_DEFAULT_T def;
+	uint8_t *def_p = (uint8_t *) &def;
+	for (i = 0; i < sizeof(DOME_DEFAULT_T); ++i) {
+		*(def_p + i) = i;
+	}
+
 	while (1) {
 		if (timer0_taskTimer_get()->flag_1ms) {
 			timer0_taskTimer_get()->flag_1ms = 0;

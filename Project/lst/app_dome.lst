@@ -19810,9 +19810,9 @@ N#define BSP_INC_BSP_EEPROM_H_
 N
 Nvoid EEPROM_InitHard(void);
 N
-Nvoid bsp_eeprom_write_byte(uint32_t u32addr, uint32_t u32data);
+Nvoid bsp_eeprom_write_int(uint32_t u32addr, uint32_t u32data);
 Nint32_t bsp_eeprom_erase(uint32_t u32addr);
-Nuint32_t bsp_eeprom_read_byte(uint32_t u32Addr);
+Nuint32_t bsp_eeprom_read_int(uint32_t u32Addr);
 N
 N#endif /* BSP_INC_BSP_EEPROM_H_ */
 L 21 "..\Bsp\bsp.h" 2
@@ -19996,9 +19996,9 @@ N
 N//#define DOME_SPEED_MULTIPLE   2
 N//#define DEFAULT_DOME_NUM   22  //use 2.5KB
 N//#define DEFAULT_DOME_NUM   26  //use 3KB
-N#define DEFAULT_DOME_NUM   17  //use 2KB
+N//#define DEFAULT_DOME_NUM   44  //use 5KB
 N
-N#pragma pack(4)
+N#pragma pack(1)
 Ntypedef struct _DOME_PRO_T {
 N	uint8_t currentDomeIndex;
 N//	uint8_t currentSubDomeIndex;
@@ -20006,7 +20006,7 @@ N
 N} DOME_PRO_T;
 N#pragma pack()
 N
-N#pragma pack(4)
+N#pragma pack(1)
 Ntypedef struct _SUBDOME_ASSIST_T {
 N	uint8_t switch_flag;
 N	uint32_t msCnt;
@@ -20014,7 +20014,7 @@ N	uint8_t stopTime;
 N} SUBDOME_ASSIST_T;
 N#pragma pack()
 N///////
-N#pragma pack(4)
+N#pragma pack(1)
 Ntypedef struct _COLOR_T {
 N	uint8_t R;
 N	uint8_t G;
@@ -20022,7 +20022,7 @@ N	uint8_t B;
 N} COLOR_T;
 N#pragma pack()
 N
-N#pragma pack(4)
+N#pragma pack(1)
 Ntypedef struct _SUBDOME_T {
 N	uint8_t mode;
 N	COLOR_T color1;
@@ -20041,7 +20041,7 @@ N//		unsigned number :4;
 N//	} bits;
 N//} REPEAT_NUMBER_T;
 N
-N#pragma pack(4)
+N#pragma pack(1)
 Ntypedef struct _DOME_HEADER_T {
 N	char name[8];
 N	uint8_t index;  //刚加的
@@ -20049,14 +20049,14 @@ N	uint8_t repeat_number;  //闪法重复的次数，单元模式的数量
 N} DOME_HEADER_T;
 N#pragma pack()
 N
-N#pragma pack(4)
+N#pragma pack(1)
 Ntypedef struct _DOME_DEFAULT_T {
 N	DOME_HEADER_T header;
 N	SUBDOME_T subdome[8];
 N} DOME_DEFAULT_T;
 N#pragma pack()
 N
-N#pragma pack(4)
+N#pragma pack(1)
 Ntypedef struct _DOME_RUNNING_T {
 N	uint8_t bright;
 N	uint8_t speed;
@@ -20101,13 +20101,14 @@ N#define APP_INC_APP_EEPROM_H_
 N
 N//#define DOME_START_ADDR   0x3C00  //use 3KB
 N//#define DOME_START_ADDR   0x3E00  //use 2.5KB
-N#define DOME_START_ADDR   0x4000  //use 2KB
+N#define DOME_START_ADDR   0x6C00  //use 5KB
 N
 Nvoid app_eeprom_Init(void);
 Nvoid app_eeprom_get_dome_with_index(DOME_DEFAULT_T* dd, uint8_t index);
 N
-Nvoid app_eeprom_erase(uint16_t addr);
-Nvoid app_eeprom_write_byte(uint16_t addr, uint8_t d);
+Nvoid app_eeprom_erase(uint32_t addr);
+Nvoid app_eeprom_write_int(uint32_t addr, uint32_t d);
+Nuint32_t app_eeprom_read_int(uint32_t addr);
 Nvoid app_eeprom_write_buf(uint16_t addr, uint8_t *pt, uint8_t len);
 N
 N#endif /* APP_INC_APP_EEPROM_H_ */
@@ -21197,9 +21198,8 @@ NDOME_RUNNING_T dome_running_param;
 N///////////////////
 N#define COLOR_BLINK_NUMBER  10
 Nstatic uint8_t color_blink_index = 0;
-Nconst uint8_t color_blink_buffer[COLOR_BLINK_NUMBER][3] = {
-Xconst uint8_t color_blink_buffer[10][3] = {
-N		{ 255, 255, 255 },  //white
+Nconst uint8_t color_blink_buffer[COLOR_BLINK_NUMBER][3] = { { 255, 255, 255 }, //white
+Xconst uint8_t color_blink_buffer[10][3] = { { 255, 255, 255 }, 
 N		{ 0, 255, 0 },   //green
 N		{ 0, 0, 255 },   //blue
 N		{ 255, 0, 0 },   //red
@@ -21596,15 +21596,17 @@ Nvoid app_dome_previous(void) {
 N	if (domePro.currentDomeIndex) {
 N		domePro.currentDomeIndex--;
 N	} else {
-N		domePro.currentDomeIndex = DEFAULT_DOME_NUM - 1;
-X		domePro.currentDomeIndex = 17 - 1;
+N		domePro.currentDomeIndex = (FMC_APROM_END - DOME_START_ADDR)
+X		domePro.currentDomeIndex = (0x00008000UL - 0x6C00)
+N				/ sizeof(DOME_DEFAULT_T) - 1;
 N	}
 N	app_dome_start(domePro.currentDomeIndex, 2);
 N}
 Nvoid app_dome_next(void) {
 N	domePro.currentDomeIndex++;
-N	if (domePro.currentDomeIndex >= DEFAULT_DOME_NUM) {
-X	if (domePro.currentDomeIndex >= 17) {
+N	if (domePro.currentDomeIndex
+N			>= ((FMC_APROM_END - DOME_START_ADDR) / sizeof(DOME_DEFAULT_T))) {
+X			>= ((0x00008000UL - 0x6C00) / sizeof(DOME_DEFAULT_T))) {
 N		domePro.currentDomeIndex = 0;
 N	}
 N
@@ -21633,7 +21635,7 @@ N	subDome.offtime = 0;
 N	Light_RGB_set(0, 0, 0);
 N}
 Nvoid app_dome_single_cycle(uint8_t subIndex) {
-N	if ((dome_blink.header.repeat_number & 0x0F) == (subIndex+1)) {
+N	if ((dome_blink.header.repeat_number & 0x0F) == (subIndex + 1)) {
 N		subIndex = 0;
 N		memcpy((uint8_t*) &subDome, (uint8_t*) &dome_blink.subdome[subIndex],
 N				sizeof(subDome));
@@ -21654,12 +21656,15 @@ N	subDome_Assist.msCnt = 0;
 N	subDome_Assist.stopTime = 0;
 N
 N//	app_dome_single_cycle(domeIndex);
-N	if (domeIndex > (DEFAULT_DOME_NUM - 1)) {
-X	if (domeIndex > (17 - 1)) {
-N		domePro.currentDomeIndex = DEFAULT_DOME_NUM - 1;
-X		domePro.currentDomeIndex = 17 - 1;
-N		domeIndex = DEFAULT_DOME_NUM - 1;
-X		domeIndex = 17 - 1;
+N	if (domeIndex
+N			> ((FMC_APROM_END - DOME_START_ADDR) / sizeof(DOME_DEFAULT_T) - 1)) {
+X			> ((0x00008000UL - 0x6C00) / sizeof(DOME_DEFAULT_T) - 1)) {
+N		domePro.currentDomeIndex = (FMC_APROM_END - DOME_START_ADDR)
+X		domePro.currentDomeIndex = (0x00008000UL - 0x6C00)
+N				/ sizeof(DOME_DEFAULT_T) - 1;
+N		domeIndex = (FMC_APROM_END - DOME_START_ADDR) / sizeof(DOME_DEFAULT_T)
+X		domeIndex = (0x00008000UL - 0x6C00) / sizeof(DOME_DEFAULT_T)
+N				- 1;
 N	} else {
 N		domePro.currentDomeIndex = domeIndex;
 N	}
@@ -21670,8 +21675,10 @@ N			Light_RGB_set(0, 0, 0);
 N		}
 N	} else if (dir == 1) {
 N		uint8_t i = 0;
-N		for (i = 0; i < DEFAULT_DOME_NUM; i++) {
-X		for (i = 0; i < 17; i++) {
+N		for (i = 0;
+N				i < ((FMC_APROM_END - DOME_START_ADDR) / sizeof(DOME_DEFAULT_T));
+X				i < ((0x00008000UL - 0x6C00) / sizeof(DOME_DEFAULT_T));
+N				i++) {
 N//			app_eeprom_get_dome_with_index(&dome_blink, domeIndex);
 N			if (*((uint8_t *) &dome_blink) == 0xFF) {
 N				if (domeIndex == 0) {
@@ -21679,8 +21686,10 @@ N					Light_RGB_set(0, 0, 0);
 N					break;
 N				}
 N				domeIndex++;
-N				if (domeIndex >= DEFAULT_DOME_NUM) {
-X				if (domeIndex >= 17) {
+N				if (domeIndex
+N						>= ((FMC_APROM_END - DOME_START_ADDR)
+X						>= ((0x00008000UL - 0x6C00)
+N								/ sizeof(DOME_DEFAULT_T))) {
 N					domeIndex = 0;
 N//					break;
 N				}
@@ -21690,8 +21699,10 @@ N			}
 N		}
 N	} else if (dir == 2) {
 N		uint8_t i = 0;
-N		for (i = 0; i < DEFAULT_DOME_NUM; i++) {
-X		for (i = 0; i < 17; i++) {
+N		for (i = 0;
+N				i < ((FMC_APROM_END - DOME_START_ADDR) / sizeof(DOME_DEFAULT_T));
+X				i < ((0x00008000UL - 0x6C00) / sizeof(DOME_DEFAULT_T));
+N				i++) {
 N//			app_eeprom_get_dome_with_index(&dome_blink, domeIndex);
 N			if (*((uint8_t *) &dome_blink) == 0xFF) {
 N				if (domeIndex) {
@@ -21710,7 +21721,6 @@ N//	if (dome_blink.header.index == 0) {
 N//		app_eeprom_get_dome_with_index(&dome_blink, 0);
 N//		app_dome_stop_current();
 N//	}
-N
 N
 N	memcpy((uint8_t*) &subDome, (uint8_t*) &dome_blink.subdome[0],
 N			sizeof(subDome));
@@ -21738,7 +21748,7 @@ S	} else {
 S		cyc = 0;
 S		app_dome_single_cycle(subIndex);
 S	}
-N	#endif
+N#endif
 N}
 N
 Nvoid app_dome_rgb(uint8_t r, uint8_t g, uint8_t b) {
@@ -21977,4 +21987,3 @@ N	}
 N
 N#endif
 N}
-W "..\App\src\app_dome.c" 530 16 variable "cyc"  was declared but never referenced

@@ -18043,9 +18043,9 @@ void Relay_set(uint8_t s);
 
 void EEPROM_InitHard(void);
 
-void bsp_eeprom_write_byte(uint32_t u32addr, uint32_t u32data);
+void bsp_eeprom_write_int(uint32_t u32addr, uint32_t u32data);
 int32_t bsp_eeprom_erase(uint32_t u32addr);
-uint32_t bsp_eeprom_read_byte(uint32_t u32Addr);
+uint32_t bsp_eeprom_read_int(uint32_t u32Addr);
 
 #line 21 "..\\Bsp\\bsp.h"
 #line 1 "..\\Bsp\\inc\\bsp_key.h"
@@ -18223,7 +18223,7 @@ uint8_t app_CalcCRC8_cycle(uint8_t *ptr, uint8_t len, uint8_t pos,
 
 
 
-#pragma pack(4)
+#pragma pack(1)
 typedef struct _DOME_PRO_T {
 	uint8_t currentDomeIndex;
 
@@ -18231,7 +18231,7 @@ typedef struct _DOME_PRO_T {
 } DOME_PRO_T;
 #pragma pack()
 
-#pragma pack(4)
+#pragma pack(1)
 typedef struct _SUBDOME_ASSIST_T {
 	uint8_t switch_flag;
 	uint32_t msCnt;
@@ -18239,7 +18239,7 @@ typedef struct _SUBDOME_ASSIST_T {
 } SUBDOME_ASSIST_T;
 #pragma pack()
 
-#pragma pack(4)
+#pragma pack(1)
 typedef struct _COLOR_T {
 	uint8_t R;
 	uint8_t G;
@@ -18247,7 +18247,7 @@ typedef struct _COLOR_T {
 } COLOR_T;
 #pragma pack()
 
-#pragma pack(4)
+#pragma pack(1)
 typedef struct _SUBDOME_T {
 	uint8_t mode;
 	COLOR_T color1;
@@ -18266,7 +18266,7 @@ typedef struct _SUBDOME_T {
 
 
 
-#pragma pack(4)
+#pragma pack(1)
 typedef struct _DOME_HEADER_T {
 	char name[8];
 	uint8_t index;  
@@ -18274,14 +18274,14 @@ typedef struct _DOME_HEADER_T {
 } DOME_HEADER_T;
 #pragma pack()
 
-#pragma pack(4)
+#pragma pack(1)
 typedef struct _DOME_DEFAULT_T {
 	DOME_HEADER_T header;
 	SUBDOME_T subdome[8];
 } DOME_DEFAULT_T;
 #pragma pack()
 
-#pragma pack(4)
+#pragma pack(1)
 typedef struct _DOME_RUNNING_T {
 	uint8_t bright;
 	uint8_t speed;
@@ -18329,8 +18329,9 @@ void app_dome_interrupter(void);
 void app_eeprom_Init(void);
 void app_eeprom_get_dome_with_index(DOME_DEFAULT_T* dd, uint8_t index);
 
-void app_eeprom_erase(uint16_t addr);
-void app_eeprom_write_byte(uint16_t addr, uint8_t d);
+void app_eeprom_erase(uint32_t addr);
+void app_eeprom_write_int(uint32_t addr, uint32_t d);
+uint32_t app_eeprom_read_int(uint32_t addr);
 void app_eeprom_write_buf(uint16_t addr, uint8_t *pt, uint8_t len);
 
 #line 25 "..\\App\\inc\\app.h"
@@ -19148,26 +19149,49 @@ void LITE_rich_hexdump(const char *f, const int l, const int level,
 #line 8 "..\\App\\src\\app_eeprom.c"
 #line 9 "..\\App\\src\\app_eeprom.c"
 
-
-
 void app_eeprom_Init(void) {
 
 }
 
 void app_eeprom_get_dome_with_index(DOME_DEFAULT_T *dd, uint8_t index) {
+
+	if (index >= ((0x00008000UL - 0x6C00) / sizeof(DOME_DEFAULT_T))) {
+		index = 0;
+	}
 	uint8_t i = 0;
-	uint8_t n = 0;
-	n = index;
-#line 29 "..\\App\\src\\app_eeprom.c"
+	uint8_t *pt = (uint8_t *) dd;
+	uint8_t n = sizeof(DOME_DEFAULT_T);
+	uint8_t minSpaceBytes = n;
+	if (minSpaceBytes % 4) {
+		minSpaceBytes++;
+	}
+
+	for (i = 0; i < (n / 4); i++) {
+		uint32_t dt = app_eeprom_read_int(index * minSpaceBytes + i * 4);
+
+		uint8_t j = 0;
+		for (j = 0; j < 4; j++) {
+			*(pt + i * 4 + j) = (dt >> (i * 8)) & 0xFF;
+		}
+	}
 }
-void app_eeprom_erase(uint16_t addr) {
-	erase_DATAFLASH(0x4000 + addr);
+
+void app_eeprom_save_dome_with_byte(DOME_DEFAULT_T *dd, uint8_t index) {
+
 }
-void app_eeprom_write_byte(uint16_t addr, uint8_t d) {
-	write_DATAFLASH_BYTE(0x4000 + addr, d);
+
+void app_eeprom_erase(uint32_t addr) {
+	bsp_eeprom_erase(0x6C00 + addr);
+}
+void app_eeprom_write_int(uint32_t addr, uint32_t d) {
+	bsp_eeprom_write_int(0x6C00 + addr, d);
+}
+uint32_t app_eeprom_read_int(uint32_t addr) {
+	return bsp_eeprom_read_int(0x6C00 + addr);
 }
 void app_eeprom_write_buf(uint16_t addr, uint8_t *pt, uint8_t len) {
-	write_DATAFLASH_BUF(0x4000 + addr, pt, len);
+
+
 }
 void app_eeprom_100ms_pro(void) {
 

@@ -19814,9 +19814,9 @@ N#define BSP_INC_BSP_EEPROM_H_
 N
 Nvoid EEPROM_InitHard(void);
 N
-Nvoid bsp_eeprom_write_byte(uint32_t u32addr, uint32_t u32data);
+Nvoid bsp_eeprom_write_int(uint32_t u32addr, uint32_t u32data);
 Nint32_t bsp_eeprom_erase(uint32_t u32addr);
-Nuint32_t bsp_eeprom_read_byte(uint32_t u32Addr);
+Nuint32_t bsp_eeprom_read_int(uint32_t u32Addr);
 N
 N#endif /* BSP_INC_BSP_EEPROM_H_ */
 L 21 "..\Bsp\bsp.h" 2
@@ -20000,9 +20000,9 @@ N
 N//#define DOME_SPEED_MULTIPLE   2
 N//#define DEFAULT_DOME_NUM   22  //use 2.5KB
 N//#define DEFAULT_DOME_NUM   26  //use 3KB
-N#define DEFAULT_DOME_NUM   17  //use 2KB
+N//#define DEFAULT_DOME_NUM   44  //use 5KB
 N
-N#pragma pack(4)
+N#pragma pack(1)
 Ntypedef struct _DOME_PRO_T {
 N	uint8_t currentDomeIndex;
 N//	uint8_t currentSubDomeIndex;
@@ -20010,7 +20010,7 @@ N
 N} DOME_PRO_T;
 N#pragma pack()
 N
-N#pragma pack(4)
+N#pragma pack(1)
 Ntypedef struct _SUBDOME_ASSIST_T {
 N	uint8_t switch_flag;
 N	uint32_t msCnt;
@@ -20018,7 +20018,7 @@ N	uint8_t stopTime;
 N} SUBDOME_ASSIST_T;
 N#pragma pack()
 N///////
-N#pragma pack(4)
+N#pragma pack(1)
 Ntypedef struct _COLOR_T {
 N	uint8_t R;
 N	uint8_t G;
@@ -20026,7 +20026,7 @@ N	uint8_t B;
 N} COLOR_T;
 N#pragma pack()
 N
-N#pragma pack(4)
+N#pragma pack(1)
 Ntypedef struct _SUBDOME_T {
 N	uint8_t mode;
 N	COLOR_T color1;
@@ -20045,7 +20045,7 @@ N//		unsigned number :4;
 N//	} bits;
 N//} REPEAT_NUMBER_T;
 N
-N#pragma pack(4)
+N#pragma pack(1)
 Ntypedef struct _DOME_HEADER_T {
 N	char name[8];
 N	uint8_t index;  //刚加的
@@ -20053,14 +20053,14 @@ N	uint8_t repeat_number;  //闪法重复的次数，单元模式的数量
 N} DOME_HEADER_T;
 N#pragma pack()
 N
-N#pragma pack(4)
+N#pragma pack(1)
 Ntypedef struct _DOME_DEFAULT_T {
 N	DOME_HEADER_T header;
 N	SUBDOME_T subdome[8];
 N} DOME_DEFAULT_T;
 N#pragma pack()
 N
-N#pragma pack(4)
+N#pragma pack(1)
 Ntypedef struct _DOME_RUNNING_T {
 N	uint8_t bright;
 N	uint8_t speed;
@@ -20105,13 +20105,14 @@ N#define APP_INC_APP_EEPROM_H_
 N
 N//#define DOME_START_ADDR   0x3C00  //use 3KB
 N//#define DOME_START_ADDR   0x3E00  //use 2.5KB
-N#define DOME_START_ADDR   0x4000  //use 2KB
+N#define DOME_START_ADDR   0x6C00  //use 5KB
 N
 Nvoid app_eeprom_Init(void);
 Nvoid app_eeprom_get_dome_with_index(DOME_DEFAULT_T* dd, uint8_t index);
 N
-Nvoid app_eeprom_erase(uint16_t addr);
-Nvoid app_eeprom_write_byte(uint16_t addr, uint8_t d);
+Nvoid app_eeprom_erase(uint32_t addr);
+Nvoid app_eeprom_write_int(uint32_t addr, uint32_t d);
+Nuint32_t app_eeprom_read_int(uint32_t addr);
 Nvoid app_eeprom_write_buf(uint16_t addr, uint8_t *pt, uint8_t len);
 N
 N#endif /* APP_INC_APP_EEPROM_H_ */
@@ -21278,8 +21279,17 @@ N	log_debug("header size: %d", sizeof(DOME_HEADER_T));
 X	LITE_syslog(__FUNCTION__, 89, LOG_DEBUG_LEVEL, "header size: %d", sizeof(DOME_HEADER_T));
 N	log_debug("submode size: %d", sizeof(SUBDOME_T));
 X	LITE_syslog(__FUNCTION__, 90, LOG_DEBUG_LEVEL, "submode size: %d", sizeof(SUBDOME_T));
-Nlog_debug("color size: %d", sizeof(COLOR_T));
-XLITE_syslog(__FUNCTION__, 91, LOG_DEBUG_LEVEL, "color size: %d", sizeof(COLOR_T));
+N	log_debug("color size: %d", sizeof(COLOR_T));
+X	LITE_syslog(__FUNCTION__, 91, LOG_DEBUG_LEVEL, "color size: %d", sizeof(COLOR_T));
+N
+N	int i = 0;
+N
+N	DOME_DEFAULT_T def;
+N	uint8_t *def_p = (uint8_t *) &def;
+N	for (i = 0; i < sizeof(DOME_DEFAULT_T); ++i) {
+N		*(def_p + i) = i;
+N	}
+N
 N	while (1) {
 N		if (timer0_taskTimer_get()->flag_1ms) {
 N			timer0_taskTimer_get()->flag_1ms = 0;
@@ -21326,7 +21336,7 @@ N			//////////////////
 N			static uint32_t cnt = 0;
 N			cnt++;
 N			log_debug("I am alive %d", cnt);
-X			LITE_syslog(__FUNCTION__, 137, LOG_DEBUG_LEVEL, "I am alive %d", cnt);
+X			LITE_syslog(__FUNCTION__, 146, LOG_DEBUG_LEVEL, "I am alive %d", cnt);
 N
 N			//			app_work_1s_pro();
 N
@@ -21363,6 +21373,5 @@ N		}
 N
 N	}
 N
-W "..\App\src\main.c" 68 10 variable "dome_cnt"  was declared but never referenced
 N}
 N

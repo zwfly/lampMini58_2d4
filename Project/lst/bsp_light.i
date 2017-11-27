@@ -17605,9 +17605,9 @@ void Relay_set(uint8_t s);
 
 void EEPROM_InitHard(void);
 
-void bsp_eeprom_write_byte(uint32_t u32addr, uint32_t u32data);
+void bsp_eeprom_write_int(uint32_t u32addr, uint32_t u32data);
 int32_t bsp_eeprom_erase(uint32_t u32addr);
-uint32_t bsp_eeprom_read_byte(uint32_t u32Addr);
+uint32_t bsp_eeprom_read_int(uint32_t u32Addr);
 
 #line 21 "..\\Bsp\\bsp.h"
 #line 1 "..\\Bsp\\inc\\bsp_key.h"
@@ -17732,7 +17732,7 @@ void bsp_Init(void);
 
 
 
-#pragma pack(4)
+#pragma pack(1)
 typedef struct _DOME_PRO_T {
 	uint8_t currentDomeIndex;
 
@@ -17740,7 +17740,7 @@ typedef struct _DOME_PRO_T {
 } DOME_PRO_T;
 #pragma pack()
 
-#pragma pack(4)
+#pragma pack(1)
 typedef struct _SUBDOME_ASSIST_T {
 	uint8_t switch_flag;
 	uint32_t msCnt;
@@ -17748,7 +17748,7 @@ typedef struct _SUBDOME_ASSIST_T {
 } SUBDOME_ASSIST_T;
 #pragma pack()
 
-#pragma pack(4)
+#pragma pack(1)
 typedef struct _COLOR_T {
 	uint8_t R;
 	uint8_t G;
@@ -17756,7 +17756,7 @@ typedef struct _COLOR_T {
 } COLOR_T;
 #pragma pack()
 
-#pragma pack(4)
+#pragma pack(1)
 typedef struct _SUBDOME_T {
 	uint8_t mode;
 	COLOR_T color1;
@@ -17775,7 +17775,7 @@ typedef struct _SUBDOME_T {
 
 
 
-#pragma pack(4)
+#pragma pack(1)
 typedef struct _DOME_HEADER_T {
 	char name[8];
 	uint8_t index;  
@@ -17783,14 +17783,14 @@ typedef struct _DOME_HEADER_T {
 } DOME_HEADER_T;
 #pragma pack()
 
-#pragma pack(4)
+#pragma pack(1)
 typedef struct _DOME_DEFAULT_T {
 	DOME_HEADER_T header;
 	SUBDOME_T subdome[8];
 } DOME_DEFAULT_T;
 #pragma pack()
 
-#pragma pack(4)
+#pragma pack(1)
 typedef struct _DOME_RUNNING_T {
 	uint8_t bright;
 	uint8_t speed;

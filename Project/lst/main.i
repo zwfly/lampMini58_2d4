@@ -18048,9 +18048,9 @@ void Relay_set(uint8_t s);
 
 void EEPROM_InitHard(void);
 
-void bsp_eeprom_write_byte(uint32_t u32addr, uint32_t u32data);
+void bsp_eeprom_write_int(uint32_t u32addr, uint32_t u32data);
 int32_t bsp_eeprom_erase(uint32_t u32addr);
-uint32_t bsp_eeprom_read_byte(uint32_t u32Addr);
+uint32_t bsp_eeprom_read_int(uint32_t u32Addr);
 
 #line 21 "..\\Bsp\\bsp.h"
 #line 1 "..\\Bsp\\inc\\bsp_key.h"
@@ -18228,7 +18228,7 @@ uint8_t app_CalcCRC8_cycle(uint8_t *ptr, uint8_t len, uint8_t pos,
 
 
 
-#pragma pack(4)
+#pragma pack(1)
 typedef struct _DOME_PRO_T {
 	uint8_t currentDomeIndex;
 
@@ -18236,7 +18236,7 @@ typedef struct _DOME_PRO_T {
 } DOME_PRO_T;
 #pragma pack()
 
-#pragma pack(4)
+#pragma pack(1)
 typedef struct _SUBDOME_ASSIST_T {
 	uint8_t switch_flag;
 	uint32_t msCnt;
@@ -18244,7 +18244,7 @@ typedef struct _SUBDOME_ASSIST_T {
 } SUBDOME_ASSIST_T;
 #pragma pack()
 
-#pragma pack(4)
+#pragma pack(1)
 typedef struct _COLOR_T {
 	uint8_t R;
 	uint8_t G;
@@ -18252,7 +18252,7 @@ typedef struct _COLOR_T {
 } COLOR_T;
 #pragma pack()
 
-#pragma pack(4)
+#pragma pack(1)
 typedef struct _SUBDOME_T {
 	uint8_t mode;
 	COLOR_T color1;
@@ -18271,7 +18271,7 @@ typedef struct _SUBDOME_T {
 
 
 
-#pragma pack(4)
+#pragma pack(1)
 typedef struct _DOME_HEADER_T {
 	char name[8];
 	uint8_t index;  
@@ -18279,14 +18279,14 @@ typedef struct _DOME_HEADER_T {
 } DOME_HEADER_T;
 #pragma pack()
 
-#pragma pack(4)
+#pragma pack(1)
 typedef struct _DOME_DEFAULT_T {
 	DOME_HEADER_T header;
 	SUBDOME_T subdome[8];
 } DOME_DEFAULT_T;
 #pragma pack()
 
-#pragma pack(4)
+#pragma pack(1)
 typedef struct _DOME_RUNNING_T {
 	uint8_t bright;
 	uint8_t speed;
@@ -18334,8 +18334,9 @@ void app_dome_interrupter(void);
 void app_eeprom_Init(void);
 void app_eeprom_get_dome_with_index(DOME_DEFAULT_T* dd, uint8_t index);
 
-void app_eeprom_erase(uint16_t addr);
-void app_eeprom_write_byte(uint16_t addr, uint8_t d);
+void app_eeprom_erase(uint32_t addr);
+void app_eeprom_write_int(uint32_t addr, uint32_t d);
+uint32_t app_eeprom_read_int(uint32_t addr);
 void app_eeprom_write_buf(uint16_t addr, uint8_t *pt, uint8_t len);
 
 #line 25 "..\\App\\inc\\app.h"
@@ -19209,12 +19210,21 @@ int main(void) {
 	LITE_syslog(__FUNCTION__, 88, LOG_DEBUG_LEVEL, "dome size: %d", sizeof(DOME_RUNNING_T));
 	LITE_syslog(__FUNCTION__, 89, LOG_DEBUG_LEVEL, "header size: %d", sizeof(DOME_HEADER_T));
 	LITE_syslog(__FUNCTION__, 90, LOG_DEBUG_LEVEL, "submode size: %d", sizeof(SUBDOME_T));
-LITE_syslog(__FUNCTION__, 91, LOG_DEBUG_LEVEL, "color size: %d", sizeof(COLOR_T));
+	LITE_syslog(__FUNCTION__, 91, LOG_DEBUG_LEVEL, "color size: %d", sizeof(COLOR_T));
+
+	int i = 0;
+
+	DOME_DEFAULT_T def;
+	uint8_t *def_p = (uint8_t *) &def;
+	for (i = 0; i < sizeof(DOME_DEFAULT_T); ++i) {
+		*(def_p + i) = i;
+	}
+
 	while (1) {
 		if (timer0_taskTimer_get()->flag_1ms) {
 			timer0_taskTimer_get()->flag_1ms = 0;
 			
-#line 110 "..\\App\\src\\main.c"
+#line 119 "..\\App\\src\\main.c"
 		}
 
 		if (timer0_taskTimer_get()->flag_10ms) {
@@ -19242,7 +19252,7 @@ LITE_syslog(__FUNCTION__, 91, LOG_DEBUG_LEVEL, "color size: %d", sizeof(COLOR_T)
 			
 			static uint32_t cnt = 0;
 			cnt++;
-			LITE_syslog(__FUNCTION__, 137, LOG_DEBUG_LEVEL, "I am alive %d", cnt);
+			LITE_syslog(__FUNCTION__, 146, LOG_DEBUG_LEVEL, "I am alive %d", cnt);
 
 			
 

@@ -1,5 +1,5 @@
 Dependencies for Project 'project', Target 'lamp': (DO NOT MODIFY !)
-F (..\App\src\main.c)(0x5A17D441)(--c99 -c --cpu Cortex-M0 -D__MICROLIB -g -O2 --apcs=interwork --split_sections --asm --interleave --asm_dir ".\\lst\\" -I ..\Library\StdDriver\inc -I ..\Library\CMSIS\Include -I ..\Library\Device\Nuvoton\Mini58Series\Include -I ..\Bsp -I ..\Bsp\inc -I ..\utils\inc -I ..\App\inc-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\Inc\ST\STM32F10x-D__UVISION_VERSION="523"-o .\obj\main.o --list_dir ".\\lst\\" --list --omf_browse .\obj\main.crf --depend .\obj\main.d)
+F (..\App\src\main.c)(0x5A1BB52F)(--c99 -c --cpu Cortex-M0 -D__MICROLIB -g -O2 --apcs=interwork --split_sections --asm --interleave --asm_dir ".\\lst\\" -I ..\Library\StdDriver\inc -I ..\Library\CMSIS\Include -I ..\Library\Device\Nuvoton\Mini58Series\Include -I ..\Bsp -I ..\Bsp\inc -I ..\utils\inc -I ..\App\inc-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\Inc\ST\STM32F10x-D__UVISION_VERSION="523"-o .\obj\main.o --list_dir ".\\lst\\" --list --omf_browse .\obj\main.crf --depend .\obj\main.d)
 I (..\App\inc\app.h)(0x5A17DA11)
 I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x57F606B8)
 I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x57F606B8)
@@ -28,12 +28,12 @@ I (..\Bsp\inc\bsp_uart.h)(0x5A00841A)
 I (..\Bsp\inc\bsp_timer0.h)(0x5A178F9F)
 I (..\Bsp\inc\bsp_light.h)(0x5A06CC43)
 I (..\Bsp\inc\bsp_relay.h)(0x59A5316D)
-I (..\Bsp\inc\bsp_eeprom.h)(0x5A17DA46)
+I (..\Bsp\inc\bsp_eeprom.h)(0x5A1B8218)
 I (..\Bsp\inc\bsp_key.h)(0x5A0D7E40)
 I (..\App\inc\app_uart.h)(0x5A008122)
 I (..\App\inc\app_crc.h)(0x59A822DB)
-I (..\App\inc\app_dome.h)(0x5A17D41E)
-I (..\App\inc\app_eeprom.h)(0x5A0E5617)
+I (..\App\inc\app_dome.h)(0x5A1B8E77)
+I (..\App\inc\app_eeprom.h)(0x5A1B8CE1)
 I (..\utils\inc\lite-log.h)(0x5A1686D8)
 I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x57F606B8)
 F (..\App\src\app_crc.c)(0x59A822D4)(--c99 -c --cpu Cortex-M0 -D__MICROLIB -g -O2 --apcs=interwork --split_sections --asm --interleave --asm_dir ".\\lst\\" -I ..\Library\StdDriver\inc -I ..\Library\CMSIS\Include -I ..\Library\Device\Nuvoton\Mini58Series\Include -I ..\Bsp -I ..\Bsp\inc -I ..\utils\inc -I ..\App\inc-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\Inc\ST\STM32F10x-D__UVISION_VERSION="523"-o .\obj\app_crc.o --list_dir ".\\lst\\" --list --omf_browse .\obj\app_crc.crf --depend .\obj\app_crc.d)
@@ -65,15 +65,15 @@ I (..\Bsp\inc\bsp_uart.h)(0x5A00841A)
 I (..\Bsp\inc\bsp_timer0.h)(0x5A178F9F)
 I (..\Bsp\inc\bsp_light.h)(0x5A06CC43)
 I (..\Bsp\inc\bsp_relay.h)(0x59A5316D)
-I (..\Bsp\inc\bsp_eeprom.h)(0x5A17DA46)
+I (..\Bsp\inc\bsp_eeprom.h)(0x5A1B8218)
 I (..\Bsp\inc\bsp_key.h)(0x5A0D7E40)
 I (..\App\inc\app_uart.h)(0x5A008122)
 I (..\App\inc\app_crc.h)(0x59A822DB)
-I (..\App\inc\app_dome.h)(0x5A17D41E)
-I (..\App\inc\app_eeprom.h)(0x5A0E5617)
+I (..\App\inc\app_dome.h)(0x5A1B8E77)
+I (..\App\inc\app_eeprom.h)(0x5A1B8CE1)
 I (..\utils\inc\lite-log.h)(0x5A1686D8)
 I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x57F606B8)
-F (..\App\src\app_dome.c)(0x5A17D085)(--c99 -c --cpu Cortex-M0 -D__MICROLIB -g -O2 --apcs=interwork --split_sections --asm --interleave --asm_dir ".\\lst\\" -I ..\Library\StdDriver\inc -I ..\Library\CMSIS\Include -I ..\Library\Device\Nuvoton\Mini58Series\Include -I ..\Bsp -I ..\Bsp\inc -I ..\utils\inc -I ..\App\inc-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\Inc\ST\STM32F10x-D__UVISION_VERSION="523"-o .\obj\app_dome.o --list_dir ".\\lst\\" --list --omf_browse .\obj\app_dome.crf --depend .\obj\app_dome.d)
+F (..\App\src\app_dome.c)(0x5A1B8F14)(--c99 -c --cpu Cortex-M0 -D__MICROLIB -g -O2 --apcs=interwork --split_sections --asm --interleave --asm_dir ".\\lst\\" -I ..\Library\StdDriver\inc -I ..\Library\CMSIS\Include -I ..\Library\Device\Nuvoton\Mini58Series\Include -I ..\Bsp -I ..\Bsp\inc -I ..\utils\inc -I ..\App\inc-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\Inc\ST\STM32F10x-D__UVISION_VERSION="523"-o .\obj\app_dome.o --list_dir ".\\lst\\" --list --omf_browse .\obj\app_dome.crf --depend .\obj\app_dome.d)
 I (..\App\inc\app.h)(0x5A17DA11)
 I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x57F606B8)
 I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x57F606B8)
@@ -102,15 +102,15 @@ I (..\Bsp\inc\bsp_uart.h)(0x5A00841A)
 I (..\Bsp\inc\bsp_timer0.h)(0x5A178F9F)
 I (..\Bsp\inc\bsp_light.h)(0x5A06CC43)
 I (..\Bsp\inc\bsp_relay.h)(0x59A5316D)
-I (..\Bsp\inc\bsp_eeprom.h)(0x5A17DA46)
+I (..\Bsp\inc\bsp_eeprom.h)(0x5A1B8218)
 I (..\Bsp\inc\bsp_key.h)(0x5A0D7E40)
 I (..\App\inc\app_uart.h)(0x5A008122)
 I (..\App\inc\app_crc.h)(0x59A822DB)
-I (..\App\inc\app_dome.h)(0x5A17D41E)
-I (..\App\inc\app_eeprom.h)(0x5A0E5617)
+I (..\App\inc\app_dome.h)(0x5A1B8E77)
+I (..\App\inc\app_eeprom.h)(0x5A1B8CE1)
 I (..\utils\inc\lite-log.h)(0x5A1686D8)
 I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x57F606B8)
-F (..\App\src\app_eeprom.c)(0x5A17DA5D)(--c99 -c --cpu Cortex-M0 -D__MICROLIB -g -O2 --apcs=interwork --split_sections --asm --interleave --asm_dir ".\\lst\\" -I ..\Library\StdDriver\inc -I ..\Library\CMSIS\Include -I ..\Library\Device\Nuvoton\Mini58Series\Include -I ..\Bsp -I ..\Bsp\inc -I ..\utils\inc -I ..\App\inc-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\Inc\ST\STM32F10x-D__UVISION_VERSION="523"-o .\obj\app_eeprom.o --list_dir ".\\lst\\" --list --omf_browse .\obj\app_eeprom.crf --depend .\obj\app_eeprom.d)
+F (..\App\src\app_eeprom.c)(0x5A1BD5EE)(--c99 -c --cpu Cortex-M0 -D__MICROLIB -g -O2 --apcs=interwork --split_sections --asm --interleave --asm_dir ".\\lst\\" -I ..\Library\StdDriver\inc -I ..\Library\CMSIS\Include -I ..\Library\Device\Nuvoton\Mini58Series\Include -I ..\Bsp -I ..\Bsp\inc -I ..\utils\inc -I ..\App\inc-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\Inc\ST\STM32F10x-D__UVISION_VERSION="523"-o .\obj\app_eeprom.o --list_dir ".\\lst\\" --list --omf_browse .\obj\app_eeprom.crf --depend .\obj\app_eeprom.d)
 I (..\App\inc\app.h)(0x5A17DA11)
 I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x57F606B8)
 I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x57F606B8)
@@ -139,12 +139,12 @@ I (..\Bsp\inc\bsp_uart.h)(0x5A00841A)
 I (..\Bsp\inc\bsp_timer0.h)(0x5A178F9F)
 I (..\Bsp\inc\bsp_light.h)(0x5A06CC43)
 I (..\Bsp\inc\bsp_relay.h)(0x59A5316D)
-I (..\Bsp\inc\bsp_eeprom.h)(0x5A17DA46)
+I (..\Bsp\inc\bsp_eeprom.h)(0x5A1B8218)
 I (..\Bsp\inc\bsp_key.h)(0x5A0D7E40)
 I (..\App\inc\app_uart.h)(0x5A008122)
 I (..\App\inc\app_crc.h)(0x59A822DB)
-I (..\App\inc\app_dome.h)(0x5A17D41E)
-I (..\App\inc\app_eeprom.h)(0x5A0E5617)
+I (..\App\inc\app_dome.h)(0x5A1B8E77)
+I (..\App\inc\app_eeprom.h)(0x5A1B8CE1)
 I (..\utils\inc\lite-log.h)(0x5A1686D8)
 I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x57F606B8)
 F (..\Bsp\bsp.c)(0x5A17A090)(--c99 -c --cpu Cortex-M0 -D__MICROLIB -g -O2 --apcs=interwork --split_sections --asm --interleave --asm_dir ".\\lst\\" -I ..\Library\StdDriver\inc -I ..\Library\CMSIS\Include -I ..\Library\Device\Nuvoton\Mini58Series\Include -I ..\Bsp -I ..\Bsp\inc -I ..\utils\inc -I ..\App\inc-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\Inc\ST\STM32F10x-D__UVISION_VERSION="523"-o .\obj\bsp.o --list_dir ".\\lst\\" --list --omf_browse .\obj\bsp.crf --depend .\obj\bsp.d)
@@ -174,7 +174,7 @@ I (..\Bsp\inc\bsp_uart.h)(0x5A00841A)
 I (..\Bsp\inc\bsp_timer0.h)(0x5A178F9F)
 I (..\Bsp\inc\bsp_light.h)(0x5A06CC43)
 I (..\Bsp\inc\bsp_relay.h)(0x59A5316D)
-I (..\Bsp\inc\bsp_eeprom.h)(0x5A17DA46)
+I (..\Bsp\inc\bsp_eeprom.h)(0x5A1B8218)
 I (..\Bsp\inc\bsp_key.h)(0x5A0D7E40)
 F (..\Bsp\src\bsp_uart.c)(0x5A1796FD)(--c99 -c --cpu Cortex-M0 -D__MICROLIB -g -O2 --apcs=interwork --split_sections --asm --interleave --asm_dir ".\\lst\\" -I ..\Library\StdDriver\inc -I ..\Library\CMSIS\Include -I ..\Library\Device\Nuvoton\Mini58Series\Include -I ..\Bsp -I ..\Bsp\inc -I ..\utils\inc -I ..\App\inc-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\Inc\ST\STM32F10x-D__UVISION_VERSION="523"-o .\obj\bsp_uart.o --list_dir ".\\lst\\" --list --omf_browse .\obj\bsp_uart.crf --depend .\obj\bsp_uart.d)
 I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x57F606B8)
@@ -204,7 +204,7 @@ I (..\Bsp\inc\bsp_uart.h)(0x5A00841A)
 I (..\Bsp\inc\bsp_timer0.h)(0x5A178F9F)
 I (..\Bsp\inc\bsp_light.h)(0x5A06CC43)
 I (..\Bsp\inc\bsp_relay.h)(0x59A5316D)
-I (..\Bsp\inc\bsp_eeprom.h)(0x5A17DA46)
+I (..\Bsp\inc\bsp_eeprom.h)(0x5A1B8218)
 I (..\Bsp\inc\bsp_key.h)(0x5A0D7E40)
 F (..\Bsp\src\bsp_key.c)(0x5A1690CF)(--c99 -c --cpu Cortex-M0 -D__MICROLIB -g -O2 --apcs=interwork --split_sections --asm --interleave --asm_dir ".\\lst\\" -I ..\Library\StdDriver\inc -I ..\Library\CMSIS\Include -I ..\Library\Device\Nuvoton\Mini58Series\Include -I ..\Bsp -I ..\Bsp\inc -I ..\utils\inc -I ..\App\inc-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\Inc\ST\STM32F10x-D__UVISION_VERSION="523"-o .\obj\bsp_key.o --list_dir ".\\lst\\" --list --omf_browse .\obj\bsp_key.crf --depend .\obj\bsp_key.d)
 I (..\Bsp\bsp.h)(0x5A17D73C)
@@ -233,7 +233,7 @@ I (..\Bsp\inc\bsp_uart.h)(0x5A00841A)
 I (..\Bsp\inc\bsp_timer0.h)(0x5A178F9F)
 I (..\Bsp\inc\bsp_light.h)(0x5A06CC43)
 I (..\Bsp\inc\bsp_relay.h)(0x59A5316D)
-I (..\Bsp\inc\bsp_eeprom.h)(0x5A17DA46)
+I (..\Bsp\inc\bsp_eeprom.h)(0x5A1B8218)
 I (..\Bsp\inc\bsp_key.h)(0x5A0D7E40)
 F (..\Bsp\src\bsp_relay.c)(0x5A1690C0)(--c99 -c --cpu Cortex-M0 -D__MICROLIB -g -O2 --apcs=interwork --split_sections --asm --interleave --asm_dir ".\\lst\\" -I ..\Library\StdDriver\inc -I ..\Library\CMSIS\Include -I ..\Library\Device\Nuvoton\Mini58Series\Include -I ..\Bsp -I ..\Bsp\inc -I ..\utils\inc -I ..\App\inc-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\Inc\ST\STM32F10x-D__UVISION_VERSION="523"-o .\obj\bsp_relay.o --list_dir ".\\lst\\" --list --omf_browse .\obj\bsp_relay.crf --depend .\obj\bsp_relay.d)
 I (..\Bsp\bsp.h)(0x5A17D73C)
@@ -262,7 +262,7 @@ I (..\Bsp\inc\bsp_uart.h)(0x5A00841A)
 I (..\Bsp\inc\bsp_timer0.h)(0x5A178F9F)
 I (..\Bsp\inc\bsp_light.h)(0x5A06CC43)
 I (..\Bsp\inc\bsp_relay.h)(0x59A5316D)
-I (..\Bsp\inc\bsp_eeprom.h)(0x5A17DA46)
+I (..\Bsp\inc\bsp_eeprom.h)(0x5A1B8218)
 I (..\Bsp\inc\bsp_key.h)(0x5A0D7E40)
 F (..\Bsp\src\bsp_timer0.c)(0x5A17BBAB)(--c99 -c --cpu Cortex-M0 -D__MICROLIB -g -O2 --apcs=interwork --split_sections --asm --interleave --asm_dir ".\\lst\\" -I ..\Library\StdDriver\inc -I ..\Library\CMSIS\Include -I ..\Library\Device\Nuvoton\Mini58Series\Include -I ..\Bsp -I ..\Bsp\inc -I ..\utils\inc -I ..\App\inc-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\Inc\ST\STM32F10x-D__UVISION_VERSION="523"-o .\obj\bsp_timer0.o --list_dir ".\\lst\\" --list --omf_browse .\obj\bsp_timer0.crf --depend .\obj\bsp_timer0.d)
 I (..\Bsp\bsp.h)(0x5A17D73C)
@@ -291,9 +291,9 @@ I (..\Bsp\inc\bsp_uart.h)(0x5A00841A)
 I (..\Bsp\inc\bsp_timer0.h)(0x5A178F9F)
 I (..\Bsp\inc\bsp_light.h)(0x5A06CC43)
 I (..\Bsp\inc\bsp_relay.h)(0x59A5316D)
-I (..\Bsp\inc\bsp_eeprom.h)(0x5A17DA46)
+I (..\Bsp\inc\bsp_eeprom.h)(0x5A1B8218)
 I (..\Bsp\inc\bsp_key.h)(0x5A0D7E40)
-I (..\App\inc\app_dome.h)(0x5A17D41E)
+I (..\App\inc\app_dome.h)(0x5A1B8E77)
 I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x57F606B8)
 F (..\Bsp\src\bsp_light.c)(0x5A17BB67)(--c99 -c --cpu Cortex-M0 -D__MICROLIB -g -O2 --apcs=interwork --split_sections --asm --interleave --asm_dir ".\\lst\\" -I ..\Library\StdDriver\inc -I ..\Library\CMSIS\Include -I ..\Library\Device\Nuvoton\Mini58Series\Include -I ..\Bsp -I ..\Bsp\inc -I ..\utils\inc -I ..\App\inc-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\Inc\ST\STM32F10x-D__UVISION_VERSION="523"-o .\obj\bsp_light.o --list_dir ".\\lst\\" --list --omf_browse .\obj\bsp_light.crf --depend .\obj\bsp_light.d)
 I (..\Bsp\bsp.h)(0x5A17D73C)
@@ -322,10 +322,10 @@ I (..\Bsp\inc\bsp_uart.h)(0x5A00841A)
 I (..\Bsp\inc\bsp_timer0.h)(0x5A178F9F)
 I (..\Bsp\inc\bsp_light.h)(0x5A06CC43)
 I (..\Bsp\inc\bsp_relay.h)(0x59A5316D)
-I (..\Bsp\inc\bsp_eeprom.h)(0x5A17DA46)
+I (..\Bsp\inc\bsp_eeprom.h)(0x5A1B8218)
 I (..\Bsp\inc\bsp_key.h)(0x5A0D7E40)
-I (..\App\inc\app_dome.h)(0x5A17D41E)
-F (..\Bsp\src\bsp_eeprom.c)(0x5A17DA21)(--c99 -c --cpu Cortex-M0 -D__MICROLIB -g -O2 --apcs=interwork --split_sections --asm --interleave --asm_dir ".\\lst\\" -I ..\Library\StdDriver\inc -I ..\Library\CMSIS\Include -I ..\Library\Device\Nuvoton\Mini58Series\Include -I ..\Bsp -I ..\Bsp\inc -I ..\utils\inc -I ..\App\inc-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\Inc\ST\STM32F10x-D__UVISION_VERSION="523"-o .\obj\bsp_eeprom.o --list_dir ".\\lst\\" --list --omf_browse .\obj\bsp_eeprom.crf --depend .\obj\bsp_eeprom.d)
+I (..\App\inc\app_dome.h)(0x5A1B8E77)
+F (..\Bsp\src\bsp_eeprom.c)(0x5A1B820B)(--c99 -c --cpu Cortex-M0 -D__MICROLIB -g -O2 --apcs=interwork --split_sections --asm --interleave --asm_dir ".\\lst\\" -I ..\Library\StdDriver\inc -I ..\Library\CMSIS\Include -I ..\Library\Device\Nuvoton\Mini58Series\Include -I ..\Bsp -I ..\Bsp\inc -I ..\utils\inc -I ..\App\inc-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\Inc\ST\STM32F10x-D__UVISION_VERSION="523"-o .\obj\bsp_eeprom.o --list_dir ".\\lst\\" --list --omf_browse .\obj\bsp_eeprom.crf --depend .\obj\bsp_eeprom.d)
 I (..\Bsp\bsp.h)(0x5A17D73C)
 I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x57F606B8)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x57F606B8)
@@ -352,7 +352,7 @@ I (..\Bsp\inc\bsp_uart.h)(0x5A00841A)
 I (..\Bsp\inc\bsp_timer0.h)(0x5A178F9F)
 I (..\Bsp\inc\bsp_light.h)(0x5A06CC43)
 I (..\Bsp\inc\bsp_relay.h)(0x59A5316D)
-I (..\Bsp\inc\bsp_eeprom.h)(0x5A17DA46)
+I (..\Bsp\inc\bsp_eeprom.h)(0x5A1B8218)
 I (..\Bsp\inc\bsp_key.h)(0x5A0D7E40)
 I (..\utils\inc\lite-log.h)(0x5A1686D8)
 I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x57F606B8)

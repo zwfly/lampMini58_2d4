@@ -15,23 +15,20 @@
 #define DOME_MODE   0x05
 #define CALL_MODE   0x06
 
-static uint8_t index = 0;
+//static uint8_t index = 0;
 static uint8_t len = 0;
-static uint8_t i = 0, j = 0;
+//static uint8_t i = 0, j = 0;
 static uint16_t tmp = 0;
 static uint8_t u8_tmp = 0;
 static uint8_t uart_sendBuf[16] = { 0 };
 
 void app_uart_Init(void) {
-	index = 0;
-	len = 0;
-	i = 0;
 
 	memset((uint8_t *) &rcv_T, 0, sizeof(RCV_T));
 }
 
 void app_uart_send(uint8_t cmd, uint8_t *ptr, uint8_t len) {
-	index = 0;
+	uint8_t index = 0, i = 0;
 
 	uart_sendBuf[index++] = 0x55;
 	uart_sendBuf[index++] = 0xAA;
@@ -61,22 +58,30 @@ void app_uart_pro(void) {
 									len + 3, rcv_T.pRead, RCV_BUFSIZE)) {
 						rcv_T.pRead++;
 					} else {
-						index = 0;
+						uint8_t index = 0;
 						memset(sendBuf, 0, PAYLOAD_WIDTH);
 						switch (rcv_T.rxBuf[(rcv_T.pRead + 3) % RCV_BUFSIZE]) {
 						case BLINK_METHOD_CMD:  //ÉÁ·¨
 						{
+							uint8_t i = 0;
 							uint16_t index = 0;
 							index =
 									rcv_T.rxBuf[(rcv_T.pRead + 12) % RCV_BUFSIZE];
 
-							if (index >= (DEFAULT_DOME_NUM - 1)) {
+							if (index
+									>= ((FMC_APROM_END - DOME_START_ADDR)
+											/ sizeof(DOME_DEFAULT_T) - 1)) {
 								break;
 							}
+							FMC_ENABLE_AP_UPDATE();
+							SYS_UnlockReg();
+							FMC_Open();
+
 							if (index == 0) {
-								u8_tmp = (0x4800 - DOME_START_ADDR) / 128;
+								u8_tmp = (FMC_APROM_END - DOME_START_ADDR)
+										/ FMC_FLASH_PAGE_SIZE;
 								for (i = 0; i < u8_tmp; i++) {
-									app_eeprom_erase(i * 128);
+									app_eeprom_erase(i * FMC_FLASH_PAGE_SIZE);
 								}
 							}
 #if 0
@@ -90,19 +95,55 @@ void app_uart_pro(void) {
 #endif
 #if 1
 							tmp = rcv_T.rxBuf[(rcv_T.pRead + 13) % RCV_BUFSIZE]
-									& 0x0F;
-							for (i = 0;
-									i
-											< (tmp * sizeof(SUBDOME_T)
-													+ sizeof(DOME_HEADER_T));
-									i++) {
-								uint16_t addr = index * sizeof(DOME_DEFAULT_T)
-										+ i;
-								app_eeprom_write_byte(addr,
-										rcv_T.rxBuf[(rcv_T.pRead + 4 + i)
-												% RCV_BUFSIZE]);
+									& 0x0F;  //sub mode number
+
+							uint8_t n = (tmp * sizeof(SUBDOME_T)
+									+ sizeof(DOME_HEADER_T));
+							uint8_t minSpaceBytes = sizeof(DOME_DEFAULT_T);
+							if (minSpaceBytes % 4) {
+								minSpaceBytes++;
 							}
 
+							for (i = 0; i < (n / 4); i++) {
+								uint32_t addr = index * minSpaceBytes + i * 4;
+								uint32_t dt = rcv_T.rxBuf[(rcv_T.pRead + 4 + i)
+										% RCV_BUFSIZE];
+								dt |= rcv_T.rxBuf[(rcv_T.pRead + 4 + i + 1)
+										% RCV_BUFSIZE] << 8;
+								dt |= rcv_T.rxBuf[(rcv_T.pRead + 4 + i + 2)
+										% RCV_BUFSIZE] << 16;
+								dt |= rcv_T.rxBuf[(rcv_T.pRead + 4 + i + 3)
+										% RCV_BUFSIZE] << 24;
+								app_eeprom_write_int(addr, dt);
+							}
+							for (i = 0; i < (n % 4); i++) {
+								uint32_t addr = index * minSpaceBytes + n / 4
+										+ 4;
+								uint32_t dt = 0;
+								switch (i) {
+								case 0:
+									dt = rcv_T.rxBuf[(rcv_T.pRead + 4 + n / 4)
+											% RCV_BUFSIZE];
+									break;
+								case 1:
+									dt |= rcv_T.rxBuf[(rcv_T.pRead + 4 + n / 4
+											+ i) % RCV_BUFSIZE] << 8;
+									break;
+								case 2:
+									dt |= rcv_T.rxBuf[(rcv_T.pRead + 4 + n / 4
+											+ i) % RCV_BUFSIZE] << 16;
+									break;
+								case 3:
+									dt |= rcv_T.rxBuf[(rcv_T.pRead + 4 + n / 4
+											+ i) % RCV_BUFSIZE] << 24;
+									break;
+								}
+								app_eeprom_write_int(addr, dt);
+							}
+
+							FMC_Close();
+							SYS_LockReg();
+							FMC_DISABLE_AP_UPDATE();
 #endif
 							u8_tmp = index & 0xFF;
 							app_uart_send(BLINK_METHOD_CMD, &u8_tmp, 1);
@@ -234,8 +275,7 @@ void app_uart_pro(void) {
 						case RCV_PLAY_PAUSE_STATUS_CMD:
 							sendBuf[index++] = LAMP2LCD_HEADER;
 							sendBuf[index++] = len;
-							sendBuf[index++] =
-							RCV_PLAY_PAUSE_STATUS_CMD;
+							sendBuf[index++] = RCV_PLAY_PAUSE_STATUS_CMD;
 							for (i = 0; i < (len - 1); i++) {
 								sendBuf[index++] = rcv_T.rxBuf[(rcv_T.pRead + 4
 										+ i) % RCV_BUFSIZE];

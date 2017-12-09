@@ -9,25 +9,26 @@
 ;;;3      void bsp_Init(void) {
 000000  b510              PUSH     {r4,lr}
 ;;;4      
-;;;5      //	Wireless2d4_InitHard();
+;;;5      	Wireless2d4_InitHard();
+000002  f7fffffe          BL       Wireless2d4_InitHard
 ;;;6      	
 ;;;7      	Relay_InitHard();
-000002  f7fffffe          BL       Relay_InitHard
+000006  f7fffffe          BL       Relay_InitHard
 ;;;8      
 ;;;9      	bsp_InitKey();
-000006  f7fffffe          BL       bsp_InitKey
+00000a  f7fffffe          BL       bsp_InitKey
 ;;;10     
 ;;;11     	Light_InitHard();
-00000a  f7fffffe          BL       Light_InitHard
+00000e  f7fffffe          BL       Light_InitHard
 ;;;12     	
 ;;;13     	Timer0_InitHard();
-00000e  f7fffffe          BL       Timer0_InitHard
+000012  f7fffffe          BL       Timer0_InitHard
 ;;;14     
 ;;;15     	Uart_InitHard();
-000012  f7fffffe          BL       Uart_InitHard
+000016  f7fffffe          BL       Uart_InitHard
 ;;;16     
 ;;;17     }
-000016  bd10              POP      {r4,pc}
+00001a  bd10              POP      {r4,pc}
 ;;;18     
                           ENDP
 

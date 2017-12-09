@@ -1,23 +1,4 @@
-#line 1 "..\\Bsp\\src\\bsp_uart.c"
-
-
-
-
-
- 
-#line 1 "C:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
- 
- 
- 
- 
-
-
-
-
- 
-
-
-
+#line 1 "..\\Bsp\\src\\bsp_2d4.c"
 
 
 
@@ -25,409 +6,6 @@
 
  
 
-
-
-
-
-
-
-
-
-
-
-
-#line 38 "C:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
-
-
-  
-
-
-
-    typedef unsigned int size_t;    
-#line 54 "C:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
-
-
-
-
-extern __declspec(__nothrow) void *memcpy(void * __restrict  ,
-                    const void * __restrict  , size_t  ) __attribute__((__nonnull__(1,2)));
-   
-
-
-
-
- 
-extern __declspec(__nothrow) void *memmove(void *  ,
-                    const void *  , size_t  ) __attribute__((__nonnull__(1,2)));
-   
-
-
-
-
-
-
-
- 
-extern __declspec(__nothrow) char *strcpy(char * __restrict  , const char * __restrict  ) __attribute__((__nonnull__(1,2)));
-   
-
-
-
-
- 
-extern __declspec(__nothrow) char *strncpy(char * __restrict  , const char * __restrict  , size_t  ) __attribute__((__nonnull__(1,2)));
-   
-
-
-
-
-
- 
-
-extern __declspec(__nothrow) char *strcat(char * __restrict  , const char * __restrict  ) __attribute__((__nonnull__(1,2)));
-   
-
-
-
-
- 
-extern __declspec(__nothrow) char *strncat(char * __restrict  , const char * __restrict  , size_t  ) __attribute__((__nonnull__(1,2)));
-   
-
-
-
-
-
-
- 
-
-
-
-
-
-
- 
-
-extern __declspec(__nothrow) int memcmp(const void *  , const void *  , size_t  ) __attribute__((__nonnull__(1,2)));
-   
-
-
-
-
-
- 
-extern __declspec(__nothrow) int strcmp(const char *  , const char *  ) __attribute__((__nonnull__(1,2)));
-   
-
-
-
-
- 
-extern __declspec(__nothrow) int strncmp(const char *  , const char *  , size_t  ) __attribute__((__nonnull__(1,2)));
-   
-
-
-
-
-
-
- 
-extern __declspec(__nothrow) int strcasecmp(const char *  , const char *  ) __attribute__((__nonnull__(1,2)));
-   
-
-
-
-
-
- 
-extern __declspec(__nothrow) int strncasecmp(const char *  , const char *  , size_t  ) __attribute__((__nonnull__(1,2)));
-   
-
-
-
-
-
-
- 
-extern __declspec(__nothrow) int strcoll(const char *  , const char *  ) __attribute__((__nonnull__(1,2)));
-   
-
-
-
-
-
-
-
- 
-
-extern __declspec(__nothrow) size_t strxfrm(char * __restrict  , const char * __restrict  , size_t  ) __attribute__((__nonnull__(2)));
-   
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
-
-
-#line 193 "C:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
-extern __declspec(__nothrow) void *memchr(const void *  , int  , size_t  ) __attribute__((__nonnull__(1)));
-
-   
-
-
-
-
-
- 
-
-#line 209 "C:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
-extern __declspec(__nothrow) char *strchr(const char *  , int  ) __attribute__((__nonnull__(1)));
-
-   
-
-
-
-
- 
-
-extern __declspec(__nothrow) size_t strcspn(const char *  , const char *  ) __attribute__((__nonnull__(1,2)));
-   
-
-
-
-
- 
-
-#line 232 "C:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
-extern __declspec(__nothrow) char *strpbrk(const char *  , const char *  ) __attribute__((__nonnull__(1,2)));
-
-   
-
-
-
-
- 
-
-#line 247 "C:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
-extern __declspec(__nothrow) char *strrchr(const char *  , int  ) __attribute__((__nonnull__(1)));
-
-   
-
-
-
-
-
- 
-
-extern __declspec(__nothrow) size_t strspn(const char *  , const char *  ) __attribute__((__nonnull__(1,2)));
-   
-
-
-
- 
-
-#line 270 "C:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
-extern __declspec(__nothrow) char *strstr(const char *  , const char *  ) __attribute__((__nonnull__(1,2)));
-
-   
-
-
-
-
-
- 
-
-extern __declspec(__nothrow) char *strtok(char * __restrict  , const char * __restrict  ) __attribute__((__nonnull__(2)));
-extern __declspec(__nothrow) char *_strtok_r(char *  , const char *  , char **  ) __attribute__((__nonnull__(2,3)));
-
-extern __declspec(__nothrow) char *strtok_r(char *  , const char *  , char **  ) __attribute__((__nonnull__(2,3)));
-
-   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
-
-extern __declspec(__nothrow) void *memset(void *  , int  , size_t  ) __attribute__((__nonnull__(1)));
-   
-
-
-
- 
-extern __declspec(__nothrow) char *strerror(int  );
-   
-
-
-
-
-
- 
-extern __declspec(__nothrow) size_t strlen(const char *  ) __attribute__((__nonnull__(1)));
-   
-
-
-
- 
-
-extern __declspec(__nothrow) size_t strlcpy(char *  , const char *  , size_t  ) __attribute__((__nonnull__(1,2)));
-   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
-
-extern __declspec(__nothrow) size_t strlcat(char *  , const char *  , size_t  ) __attribute__((__nonnull__(1,2)));
-   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
-
-extern __declspec(__nothrow) void _membitcpybl(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
-extern __declspec(__nothrow) void _membitcpybb(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
-extern __declspec(__nothrow) void _membitcpyhl(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
-extern __declspec(__nothrow) void _membitcpyhb(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
-extern __declspec(__nothrow) void _membitcpywl(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
-extern __declspec(__nothrow) void _membitcpywb(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
-extern __declspec(__nothrow) void _membitmovebl(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
-extern __declspec(__nothrow) void _membitmovebb(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
-extern __declspec(__nothrow) void _membitmovehl(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
-extern __declspec(__nothrow) void _membitmovehb(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
-extern __declspec(__nothrow) void _membitmovewl(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
-extern __declspec(__nothrow) void _membitmovewb(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
-
-
-
-
-
-
-
-#line 502 "C:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
-
-
-
- 
-
-#line 8 "..\\Bsp\\src\\bsp_uart.c"
 #line 1 "..\\Bsp\\bsp.h"
 
 
@@ -18202,84 +17780,350 @@ void bsp_Init(void);
 
 
  
-#line 9 "..\\Bsp\\src\\bsp_uart.c"
-#line 10 "..\\Bsp\\src\\bsp_uart.c"
+#line 9 "..\\Bsp\\src\\bsp_2d4.c"
 
-RCV_T rcv_T;
+void Wireless2d4_InitHard(void) {
 
-void Uart_InitHard(void) {
+	
+	GPIO_SetMode(((GPIO_T *) (((uint32_t)0x50000000) + 0x04000)), (0x00000080), 0x1UL);
 
-	 
-	CLK_EnableModuleClock((( 1UL<<31)|( 1<<29)|( 3<<25)|(24<<20)|( 0<<18)|( 0xF<<10)|( 8<<5)|(16<<0)));
+	
+	GPIO_SetMode(((GPIO_T *) (((uint32_t)0x50000000) + 0x04000)), (0x00000010), 0x1UL);
 
-	 
-	CLK_SetModuleClock((( 1UL<<31)|( 1<<29)|( 3<<25)|(24<<20)|( 0<<18)|( 0xF<<10)|( 8<<5)|(16<<0)), 0x02000000UL,
-			(((1)-1) << 8));
+	
+	GPIO_SetMode(((GPIO_T *) (((uint32_t)0x50000000) + 0x04000)), (0x00000020), 0x1UL);
+}
 
-	 
-	 
-	 
-	 
-	((SYS_T *) (((uint32_t)0x50000000) + 0x00000))->P5_MFP = 0x00000202UL | 0x00000101UL;
+const uint8_t TX_ADDRESS_DEF[5] = { 0xCC, 0xCC, 0xCC, 0xCC, 0xAA }; 
 
-	 
-	SYS_ResetModule((0x1ul << (16)));
-
-	 
-	UART_Open(((UART_T *) (((uint32_t)0x40000000) + 0x50000)), 115200);
+ 
 
 
-	 
+ 
+void SPI_init(void) {
 
-	 
-	CLK_EnableModuleClock((( 1UL<<31)|( 1<<29)|( 3<<25)|(24<<20)|( 0<<18)|( 0xF<<10)|( 8<<5)|(17<<0)));
 
-	 
-	CLK_SetModuleClock((( 1UL<<31)|( 1<<29)|( 3<<25)|(24<<20)|( 0<<18)|( 0xF<<10)|( 8<<5)|(17<<0)), 0x02000000UL,
-			(((1)-1) << 8));
 
-	 
-	 
-	 
-	 
-	((SYS_T *) (((uint32_t)0x50000000) + 0x00000))->P2_MFP = 0x00000010UL | 0x00000020UL;
-
-	 
-	SYS_ResetModule((0x1ul << (17)));
-
-	 
-	UART_Open(((UART_T *) (((uint32_t)0x40100000) + 0x50000)), 19200);
-
-     
-    (((UART_T *) (((uint32_t)0x40100000) + 0x50000))->INTEN |= (((0x1ul << (0)) | (0x1ul << (1)) | (0x1ul << (4)))));
-    NVIC_EnableIRQ(UART1_IRQn);
 }
 
  
+
+
  
+void SPI_WW(uint8_t R_REG) {
+	uint8_t i;
+	for (i = 0; i < 8; i++) {
+		((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((7)<<2)))) = 0);
+		if (R_REG & 0x80) {
+			((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((5)<<2)))) = 1);
+		} else {
+			((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((5)<<2)))) = 0);
+		}
+		R_REG <<= 1;
+		((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((7)<<2)))) = 1);
+		__nop;
+	}
+	((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((7)<<2)))) = 0);
+
+}
+
  
-void UART1_IRQHandler(void) {
 
-	uint8_t u8InChar = 0xFF;
-	uint32_t u32IntSts = ((UART_T *) (((uint32_t)0x40100000) + 0x50000))->INTSTS;
 
-	if (u32IntSts & (0x1ul << (8))) {
+ 
+void RF_WriteReg(uint8_t reg, uint8_t wdata) {
+	((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((4)<<2)))) = 0);
+	__nop;
+	SPI_WW( reg);
+	SPI_WW(wdata);
+	__nop; ((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((4)<<2)))) = 1);
+}
 
-		 
-		while (((((UART_T *) (((uint32_t)0x40100000) + 0x50000))->INTSTS & (0x1ul << (0)))>>(0))) {
-			 
-			u8InChar = (((UART_T *) (((uint32_t)0x40100000) + 0x50000))->DAT);  
+ 
 
+
+ 
+void RF_WriteBuf(uint8_t reg, uint8_t *pBuf, uint8_t length) {
+	uint8_t j;
+	((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((4)<<2)))) = 0);
+	j = 0;
+	SPI_WW(reg);
+	for (j = 0; j < length; j++) {
+		SPI_WW(pBuf[j]);
+	}
+	j = 0;
+	((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((4)<<2)))) = 1);
+}
+
+ 
+
+
+ 
+void SPI_WR(uint8_t R_REG) {
+	uint8_t i;
+	for (i = 0; i < 8; i++) {
+		((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((7)<<2)))) = 0);
+		if (R_REG & 0x80) {
+			((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((5)<<2)))) = 1);
+		} else {
+			((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((5)<<2)))) = 0);
+		}
+		R_REG <<= 1;
+		((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((7)<<2)))) = 1);
+		__nop;
+	}
+	GPIO_SetMode(((GPIO_T *) (((uint32_t)0x50000000) + 0x04000)), (0x00000020), 0x0UL);;
+	((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((7)<<2)))) = 0);
+
+}
+
+ 
+
+
+ 
+uint8_t ucSPI_Read(void) {
+	uint8_t i, dt;
+	dt = 0;
+	for (i = 0; i < 8; i++) {
+		((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((7)<<2)))) = 0);
+		dt = dt << 1;
+		((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((7)<<2)))) = 1);
+		if (((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((5)<<2)))))) {
+			dt |= 0x01;
 		}
 	}
+	((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((7)<<2)))) = 0);
+	return dt;
+}
 
-	if (u32IntSts & (0x1ul << (9))) {
+ 
 
 
-			(((UART_T *) (((uint32_t)0x40100000) + 0x50000))->DAT = (u8InChar));
+ 
+uint8_t ucRF_ReadReg(uint8_t reg) {
+	uint8_t dt;
 
-		
+	((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((4)<<2)))) = 0);
+	__nop;
+	SPI_WR( reg);
+	dt = ucSPI_Read();
+	GPIO_SetMode(((GPIO_T *) (((uint32_t)0x50000000) + 0x04000)), (0x00000020), 0x1UL);;
+	__nop;
+	((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((4)<<2)))) = 1);
+
+	return dt;
+}
+
+ 
+
+
+ 
+void RF_ReadBuf(uint8_t reg, unsigned char *pBuf, uint8_t length) {
+	uint8_t byte_ctr;
+
+	((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((4)<<2)))) = 0);
+	SPI_WR(reg);
+	for (byte_ctr = 0; byte_ctr < length; byte_ctr++)
+		pBuf[byte_ctr] = ucSPI_Read();
+	GPIO_SetMode(((GPIO_T *) (((uint32_t)0x50000000) + 0x04000)), (0x00000020), 0x1UL);;
+	((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((4)<<2)))) = 1);
+}
+
+ 
+
+
+ 
+void RF_TxMode(void) {
+	RF_WriteReg(0xFC, 0);
+	RF_WriteReg(0x20 + 0x00, 0X8E);						
+
+	__nop; __nop;
+	__nop;
+}
+
+ 
+
+
+ 
+void RF_RxMode(void) {
+	uint16_t i = 0;
+	RF_WriteReg(0xFC, 0);
+	RF_WriteReg(0x20 + 0x00, 0X8F);						
+	RF_WriteReg(0xFD, 0);										
+
+	for (i = 0; i < 5000; i++) {
+		__nop;
 	}
 
 }
 
+ 
+
+
+ 
+uint8_t ucRF_GetStatus(void) {
+	return ucRF_ReadReg(0x07) & 0x70;								
+}
+ 
+
+
+ 
+uint8_t ucRF_GetRSSI(void) {
+	return (ucRF_ReadReg(0x09));								
+}
+ 
+
+
+ 
+void RF_ClearStatus(void) {
+	RF_WriteReg(0x20 + 0x07, 0x70);							
+}
+
+ 
+
+
+ 
+void RF_ClearFIFO(void) {
+	RF_WriteReg(0xE1, 0);			                        
+	RF_WriteReg(0xE2, 0);                                   
+}
+
+ 
+
+
+ 
+void RF_SetChannel(uint8_t Channel) {
+	RF_WriteReg(0xFC, 0);
+	RF_WriteReg(0x20 + 0x05, Channel);
+}
+
+ 
+
+
+
+
+
+ 
+void RF_TxData(uint8_t *ucPayload, uint8_t length) {
+	if (0 == ucRF_GetStatus()) {                             
+		uint16_t i = 0;
+		RF_WriteBuf(0xA0, ucPayload, length);
+		RF_WriteReg(0xFD, 0);                             
+
+		for (i = 0; i < 200; i++) {
+			__nop;
+		}
+		RF_WriteReg(0xFC, 0);                                                 
+	}
+}
+
+ 
+
+
+
+
+
+
+
+
+
+
+ 
+uint8_t ucRF_DumpRxData(uint8_t *ucPayload, uint8_t length) {
+	if (ucRF_GetStatus() & 0X40) {
+
+		RF_WriteReg(0xFC, 0);
+		RF_ReadBuf(0x61, ucPayload, length); 
+		RF_ClearFIFO();
+		RF_ClearStatus();                              		          
+		RF_WriteReg(0xFD, 0);                                                         
+		return 1;
+	}
+	return 0;
+}
+
+
+
+
+
+ 
+
+
+ 
+
+void RF_Init(void) {
+	uint8_t BB_cal_data[5] = { 0x0A, 0x6D, 0x67, 0x9C, 0x46 };
+	uint8_t RF_cal_data[3] = { 0xF6, 0x37, 0x5D };
+	uint8_t RF_cal2_data[6] = { 0x45, 0x21, 0xef, 0xAC, 0x5A, 0x50 };
+	uint8_t Dem_cal_data[1] = { 0x01 };
+	uint8_t Dem_cal2_data[3] = { 0x0b, 0xDF, 0x02 };
+	SPI_init();
+	RF_WriteReg(0x53, 0x5A);								
+	RF_WriteReg(0x53, 0XA5);
+
+	if (16 < 33) {
+		RF_WriteReg(0x20 + 0x1D, 0x20);
+	} else {
+		RF_WriteReg(0x20 + 0x1D, 0x38);
+	}
+	RF_WriteReg(0xFC, 0);
+	RF_WriteReg(0xE1, 0);									
+	RF_WriteReg(0xE2, 0);									
+	RF_WriteReg(0x20 + 0x07, 0x70);						
+	RF_WriteReg(0x20 + 0x02, 0x01);					
+	RF_WriteReg(0x20 + 0x03, 0x03);		
+	RF_WriteReg(0x20 + 0x05, 78);                
+	RF_WriteReg(0x20 + 0x11, 16);				
+	RF_WriteBuf(0x20 + 0x10, (uint8_t*) TX_ADDRESS_DEF,
+			sizeof(TX_ADDRESS_DEF));	
+	RF_WriteBuf(0x20 + 0x0A, (uint8_t*) TX_ADDRESS_DEF,
+			sizeof(TX_ADDRESS_DEF));	
+	RF_WriteBuf(0x20 + 0x1F, BB_cal_data, sizeof(BB_cal_data));
+	RF_WriteBuf(0x20 + 0x1A, RF_cal2_data, sizeof(RF_cal2_data));
+	RF_WriteBuf(0x20 + 0x19, Dem_cal_data, sizeof(Dem_cal_data));
+	RF_WriteBuf(0x20 + 0x1E, RF_cal_data, sizeof(RF_cal_data));
+	RF_WriteBuf(0x20 + 0x1B, Dem_cal2_data, sizeof(Dem_cal2_data));
+	RF_WriteReg(0x20 + 0x1C, 0x00);
+	RF_WriteReg(0x20 + 0x06, (0x3F |0X00));						
+
+
+
+
+
+			RF_WriteReg(0x20 + 0x04, 0x00);	
+			RF_WriteReg(0x20 + 0x01, 0x00);
+
+
+}
+
+ 
+
+ 
+void RF_Carrier(uint8_t ucChannel_Set) {
+	uint8_t i = 0;
+	uint8_t BB_cal_data[5] = { 0x0A, 0x6D, 0x67, 0x9C, 0x46 };
+	uint8_t RF_cal_data[3] = { 0xF6, 0x37, 0x5D };
+	uint8_t RF_cal2_data[6] = { 0x45, 0x21, 0xEF, 0xAC, 0x5A, 0x50 };
+	uint8_t Dem_cal_data[1] = { 0xE1 };
+	uint8_t Dem_cal2_data[3] = { 0x0B, 0xDF, 0x02 };
+
+	RF_WriteReg(0x53, 0x5A);								
+	RF_WriteReg(0x53, 0XA5);
+	RF_WriteReg(0x20 + 0x1D, 0x20);
+	RF_WriteReg(0xFC, 0);
+
+	for (i = 0; i < 220; i++) {
+		__nop; __nop;
+		__nop; __nop;
+	}
+
+	RF_WriteReg(0x20 + 0x05, ucChannel_Set);						
+	RF_WriteReg(0x20 + 0x06, (0x3F |0X00));      					
+	RF_WriteBuf(0x20 + 0x1F, BB_cal_data, sizeof(BB_cal_data));
+	RF_WriteBuf(0x20 + 0x1A, RF_cal2_data, sizeof(RF_cal2_data));
+	RF_WriteBuf(0x20 + 0x19, Dem_cal_data, sizeof(Dem_cal_data));
+	RF_WriteBuf(0x20 + 0x1E, RF_cal_data, sizeof(RF_cal_data));
+	RF_WriteBuf(0x20 + 0x1B, Dem_cal2_data, sizeof(Dem_cal2_data));
+}
+
+ 

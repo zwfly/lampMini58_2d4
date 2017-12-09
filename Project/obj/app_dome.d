@@ -23,6 +23,7 @@
 .\obj\app_dome.o: ..\Library\StdDriver\inc\uart.h
 .\obj\app_dome.o: ..\Library\StdDriver\inc\wdt.h
 .\obj\app_dome.o: ..\Library\StdDriver\inc\wwdt.h
+.\obj\app_dome.o: ..\Bsp\inc\bsp_2d4.h
 .\obj\app_dome.o: ..\Bsp\inc\bsp_uart.h
 .\obj\app_dome.o: ..\Bsp\inc\bsp_timer0.h
 .\obj\app_dome.o: ..\Bsp\inc\bsp_light.h

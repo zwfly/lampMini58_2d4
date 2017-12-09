@@ -17933,7 +17933,72 @@ void WWDT_Open(uint32_t u32PreScale, uint32_t u32CmpValue, uint32_t u32EnableInt
 #line 13 "..\\Bsp\\bsp.h"
 #line 14 "..\\Bsp\\bsp.h"
 
+#line 1 "..\\Bsp\\inc\\bsp_2d4.h"
 
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+#line 23 "..\\Bsp\\inc\\bsp_2d4.h"
+
+
+
+
+ 
+#line 44 "..\\Bsp\\inc\\bsp_2d4.h"
+
+ 
+#line 77 "..\\Bsp\\inc\\bsp_2d4.h"
+
+
+ 
+#line 93 "..\\Bsp\\inc\\bsp_2d4.h"
+
+#line 103 "..\\Bsp\\inc\\bsp_2d4.h"
+
+
+
+ 
+void Wireless2d4_InitHard(void);
+
+void SPI_WW(uint8_t R_REG);
+void RF_WriteReg(uint8_t reg, uint8_t wdata);
+void RF_WriteBuf(uint8_t reg, uint8_t *pBuf, uint8_t length);
+void SPI_WR(uint8_t R_REG);
+uint8_t ucSPI_Read(void);
+uint8_t ucRF_ReadReg(uint8_t reg);
+void RF_ReadBuf(uint8_t reg, uint8_t *pBuf, uint8_t length);
+void RF_TxMode(void);
+void RF_RxMode(void);
+uint8_t ucRF_GetStatus(void);
+uint8_t ucRF_GetRSSI(void);
+void RF_ClearStatus(void);
+void RF_ClearFIFO(void);
+void RF_SetChannel(uint8_t Channel);
+void RF_TxData(uint8_t *ucPayload, uint8_t length);
+uint8_t ucRF_DumpRxData(uint8_t *ucPayload, uint8_t length);
+void RF_Carrier(uint8_t ucChannel_Set);
+void RF_Init(void);
+
+ 
+
+
+
+
+
+
+
+#line 16 "..\\Bsp\\bsp.h"
 #line 1 "..\\Bsp\\inc\\bsp_uart.h"
 
 
@@ -19232,14 +19297,14 @@ int main(void) {
 			
 			bsp_KeyScan();
 
+
 		}
 		if (timer0_taskTimer_get()->flag_100ms) {
 			timer0_taskTimer_get()->flag_100ms = 0;
 			
 
 
-			
-			
+
 
 		}
 		if (timer0_taskTimer_get()->flag_500ms) {
@@ -19263,20 +19328,25 @@ int main(void) {
 		if (ucKeyCode != KEY_NONE) {
 			switch (ucKeyCode) {
 			case KEY_1_UP:   
-				break;
-			case KEY_1_DOWN: {
+				LITE_syslog(__FUNCTION__, 157, LOG_DEBUG_LEVEL, "ACC KEY up");
 
-			}
+				break;
+			case KEY_1_DOWN:
+				LITE_syslog(__FUNCTION__, 161, LOG_DEBUG_LEVEL, "relay %s", Relay_IsOn() ? "on" : "off");
+
+				Relay_toggle();
 				break;
 			case KEY_1_LONG:
+				LITE_syslog(__FUNCTION__, 166, LOG_DEBUG_LEVEL, "ACC KEY down");
 				break;
 			case KEY_2_UP:   
+				LITE_syslog(__FUNCTION__, 169, LOG_DEBUG_LEVEL, "LED KEY up");
 				break;
 			case KEY_2_DOWN:
-
-
+				LITE_syslog(__FUNCTION__, 172, LOG_DEBUG_LEVEL, "LED KEY down");
 				break;
 			case KEY_2_LONG:
+				LITE_syslog(__FUNCTION__, 175, LOG_DEBUG_LEVEL, "LED KEY long");
 				break;
 			}
 		}

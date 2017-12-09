@@ -23,6 +23,7 @@
 .\obj\main.o: ..\Library\StdDriver\inc\uart.h
 .\obj\main.o: ..\Library\StdDriver\inc\wdt.h
 .\obj\main.o: ..\Library\StdDriver\inc\wwdt.h
+.\obj\main.o: ..\Bsp\inc\bsp_2d4.h
 .\obj\main.o: ..\Bsp\inc\bsp_uart.h
 .\obj\main.o: ..\Bsp\inc\bsp_timer0.h
 .\obj\main.o: ..\Bsp\inc\bsp_light.h

@@ -10,6 +10,7 @@
 ".\obj\bsp_timer0.o"
 ".\obj\bsp_light.o"
 ".\obj\bsp_eeprom.o"
+".\obj\bsp_2d4.o"
 ".\obj\lite-log.o"
 ".\obj\system_mini58series.o"
 ".\obj\startup_mini58series.o"

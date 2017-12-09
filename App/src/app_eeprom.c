@@ -25,13 +25,17 @@ void app_eeprom_get_dome_with_index(DOME_DEFAULT_T *dd, uint8_t index) {
 	}
 
 	for (i = 0; i < (n / 4); i++) {
+		uint8_t j = 0;
 		uint32_t dt = app_eeprom_read_int(index * minSpaceBytes + i * 4);
 
-		uint8_t j = 0;
 		for (j = 0; j < 4; j++) {
 			*(pt + i * 4 + j) = (dt >> (i * 8)) & 0xFF;
 		}
 	}
+	for (i = 0; i < (n % 4); i++) {
+	//	*(pt + (n / 4) * 4 + i + 1) = (dt >> (i * 8)) & 0xFF;
+	}
+
 }
 
 void app_eeprom_save_dome_with_byte(DOME_DEFAULT_T *dd, uint8_t index) {

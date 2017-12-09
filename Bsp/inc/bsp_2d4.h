@@ -8,16 +8,16 @@
 #ifndef BSP_INC_BSP_2D4_H_
 #define BSP_INC_BSP_2D4_H_
 
-#define         CSN_HIGH                (P11 = 1)
-#define         CSN_LOW                 (P11 = 0)
-#define         SCK_HIGH                (P10 = 1)
-#define         SCK_LOW                 (P10 = 0)
+#define         CSN_HIGH                (P04 = 1)
+#define         CSN_LOW                 (P04 = 0)
+#define         SCK_HIGH                (P07 = 1)
+#define         SCK_LOW                 (P07 = 0)
 
-#define         SPI_DATA_HIGH           (P00 = 1)
-#define         SPI_DATA_LOW            (P00 = 0)
-#define         SPI_DATA_STATUS         (P00)
-#define         SPI_DATA_OUTPUT_MODE     clr_P0M1_0;set_P0M2_0
-#define         SPI_DATA_INPUT_MODE      set_P0M1_0;clr_P0M2_0
+#define         SPI_DATA_HIGH           (P05 = 1)
+#define         SPI_DATA_LOW            (P05 = 0)
+#define         SPI_DATA_STATUS         (P05)
+#define         SPI_DATA_OUTPUT_MODE     GPIO_SetMode(P0, BIT5, GPIO_MODE_OUTPUT);
+#define         SPI_DATA_INPUT_MODE      GPIO_SetMode(P0, BIT5, GPIO_MODE_INPUT);
 #define         CE_HIGH                  RF_WriteReg(CE_FSPI_ON, 0)
 #define         CE_LOW                   RF_WriteReg(CE_FSPI_OFF, 0)
 ////////////////////////////////////////////////////////////////////////////////

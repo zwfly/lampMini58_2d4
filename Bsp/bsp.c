@@ -2,7 +2,7 @@
 
 void bsp_Init(void) {
 
-//	Wireless2d4_InitHard();
+	Wireless2d4_InitHard();
 	
 	Relay_InitHard();
 

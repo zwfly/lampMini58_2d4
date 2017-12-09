@@ -15,8 +15,8 @@
 
 #include "bsp.h"
 
-static  KEY_T s_tBtn[KEY_COUNT];
-static  KEY_FIFO_T s_tKey; /* 按键FIFO变量,结构体 */
+static KEY_T s_tBtn[KEY_COUNT];
+static KEY_FIFO_T s_tKey; /* 按键FIFO变量,结构体 */
 
 static void bsp_InitKeyVar(void);
 static void bsp_InitKeyHard(void);
@@ -32,11 +32,23 @@ static void bsp_DetectKey(uint8_t i);
  */
 
 static uint8_t IsKeyDown1(void) {
-	return ~P31;
+	uint8_t sta = 0;
+	if (P31) {
+		sta = 0;
+	} else {
+		sta = 1;
+	}
+	return sta;
 }
 
 static uint8_t IsKeyDown2(void) {
-	return ~P32;
+	uint8_t sta = 0;
+	if (P32) {
+		sta = 0;
+	} else {
+		sta = 1;
+	}
+	return sta;
 }
 /*
  *********************************************************************************************************
@@ -163,8 +175,11 @@ void bsp_ClearKey(void) {
  */
 static void bsp_InitKeyHard(void) {
 
-	GPIO_SetMode(P3, BIT1, GPIO_MODE_INPUT);
-	GPIO_SetMode(P3, BIT2, GPIO_MODE_INPUT);
+	GPIO_SetMode(P3, BIT1, GPIO_MODE_QUASI);
+	GPIO_SetMode(P3, BIT2, GPIO_MODE_QUASI);
+
+	P31 = 1;
+	P32 = 1;
 
 }
 
@@ -211,9 +226,12 @@ static void bsp_InitKeyVar(void) {
  *********************************************************************************************************
  */
 KEY_T *pBtn;
+uint8_t sta = 0;
 static void bsp_DetectKey(uint8_t i) {
+
 	pBtn = &s_tBtn[i];
-	if (pBtn->IsKeyDownFunc()) {
+	sta = pBtn->IsKeyDownFunc();
+	if (sta) {
 		if (pBtn->Count < KEY_FILTER_TIME) {
 			pBtn->Count = KEY_FILTER_TIME;
 		} else if (pBtn->Count < 2 * KEY_FILTER_TIME) {

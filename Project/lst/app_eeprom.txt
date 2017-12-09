@@ -5,12 +5,12 @@
                           AREA ||i.app_eeprom_100ms_pro||, CODE, READONLY, ALIGN=1
 
                   app_eeprom_100ms_pro PROC
-;;;53     }
-;;;54     void app_eeprom_100ms_pro(void) {
+;;;57     }
+;;;58     void app_eeprom_100ms_pro(void) {
 000000  4770              BX       lr
-;;;55     
-;;;56     }
-;;;57     
+;;;59     
+;;;60     }
+;;;61     
                           ENDP
 
 
@@ -29,17 +29,17 @@
                           AREA ||i.app_eeprom_erase||, CODE, READONLY, ALIGN=1
 
                   app_eeprom_erase PROC
-;;;40     
-;;;41     void app_eeprom_erase(uint32_t addr) {
+;;;44     
+;;;45     void app_eeprom_erase(uint32_t addr) {
 000000  211b              MOVS     r1,#0x1b
 000002  b510              PUSH     {r4,lr}
-;;;42     	bsp_eeprom_erase(DOME_START_ADDR + addr);
+;;;46     	bsp_eeprom_erase(DOME_START_ADDR + addr);
 000004  0289              LSLS     r1,r1,#10
 000006  1840              ADDS     r0,r0,r1
 000008  f7fffffe          BL       bsp_eeprom_erase
-;;;43     }
+;;;47     }
 00000c  bd10              POP      {r4,pc}
-;;;44     void app_eeprom_write_int(uint32_t addr, uint32_t d) {
+;;;48     void app_eeprom_write_int(uint32_t addr, uint32_t d) {
                           ENDP
 
 
@@ -48,8 +48,8 @@
                   app_eeprom_get_dome_with_index PROC
 ;;;13     
 ;;;14     void app_eeprom_get_dome_with_index(DOME_DEFAULT_T *dd, uint8_t index) {
-000000  b5f8              PUSH     {r3-r7,lr}
-000002  4606              MOV      r6,r0
+000000  b5fe              PUSH     {r1-r7,lr}
+000002  4607              MOV      r7,r0
 ;;;15     
 ;;;16     	if (index >= ((FMC_APROM_END - DOME_START_ADDR) / sizeof(DOME_DEFAULT_T))) {
 000004  292c              CMP      r1,#0x2c
@@ -61,110 +61,128 @@
 ;;;19     	uint8_t i = 0;
 ;;;20     	uint8_t *pt = (uint8_t *) dd;
 ;;;21     	uint8_t n = sizeof(DOME_DEFAULT_T);
+00000a  2072              MOVS     r0,#0x72
 ;;;22     	uint8_t minSpaceBytes = n;
 ;;;23     	if (minSpaceBytes % 4) {
 ;;;24     		minSpaceBytes++;
-00000a  2273              MOVS     r2,#0x73
+00000c  9000              STR      r0,[sp,#0]
+00000e  2073              MOVS     r0,#0x73
 ;;;25     	}
 ;;;26     
 ;;;27     	for (i = 0; i < (n / 4); i++) {
-;;;28     		uint32_t dt = app_eeprom_read_int(index * minSpaceBytes + i * 4);
-00000c  4351              MULS     r1,r2,r1
-00000e  2400              MOVS     r4,#0                 ;19
-000010  2072              MOVS     r0,#0x72              ;21
-000012  0887              LSRS     r7,r0,#2              ;27
-000014  9100              STR      r1,[sp,#0]            ;23
-000016  e011              B        |L4.60|
-                  |L4.24|
-000018  9800              LDR      r0,[sp,#0]
-00001a  00a5              LSLS     r5,r4,#2
-00001c  1940              ADDS     r0,r0,r5
-00001e  f7fffffe          BL       app_eeprom_read_int
-000022  4601              MOV      r1,r0
-;;;29     
-;;;30     		uint8_t j = 0;
+;;;28     		uint8_t j = 0;
+;;;29     		uint32_t dt = app_eeprom_read_int(index * minSpaceBytes + i * 4);
+000010  4341              MULS     r1,r0,r1
+000012  9800              LDR      r0,[sp,#0]            ;27
+000014  2500              MOVS     r5,#0                 ;19
+000016  0880              LSRS     r0,r0,#2              ;27
+000018  9102              STR      r1,[sp,#8]            ;21
+00001a  9001              STR      r0,[sp,#4]            ;23
+00001c  e011              B        |L4.66|
+                  |L4.30|
+00001e  9802              LDR      r0,[sp,#8]
+000020  00ae              LSLS     r6,r5,#2
+000022  2400              MOVS     r4,#0                 ;28
+000024  1980              ADDS     r0,r0,r6
+000026  f7fffffe          BL       app_eeprom_read_int
+;;;30     
 ;;;31     		for (j = 0; j < 4; j++) {
 ;;;32     			*(pt + i * 4 + j) = (dt >> (i * 8)) & 0xFF;
-000024  00e2              LSLS     r2,r4,#3
-000026  40d1              LSRS     r1,r1,r2
-000028  2000              MOVS     r0,#0                 ;30
-00002a  b2c9              UXTB     r1,r1
-00002c  19aa              ADDS     r2,r5,r6
-                  |L4.46|
-00002e  5411              STRB     r1,[r2,r0]
-000030  1c40              ADDS     r0,r0,#1
-000032  b2c0              UXTB     r0,r0                 ;31
-000034  2804              CMP      r0,#4                 ;31
-000036  d3fa              BCC      |L4.46|
-000038  1c64              ADDS     r4,r4,#1              ;31
-00003a  b2e4              UXTB     r4,r4                 ;27
-                  |L4.60|
-00003c  42a7              CMP      r7,r4                 ;27
-00003e  d8eb              BHI      |L4.24|
+00002a  00e9              LSLS     r1,r5,#3
+00002c  40c8              LSRS     r0,r0,r1
+00002e  b2c0              UXTB     r0,r0
+000030  19f1              ADDS     r1,r6,r7
+                  |L4.50|
+000032  5508              STRB     r0,[r1,r4]
+000034  1c64              ADDS     r4,r4,#1
+000036  b2e4              UXTB     r4,r4                 ;31
+000038  2c04              CMP      r4,#4                 ;31
+00003a  d3fa              BCC      |L4.50|
+00003c  1c6d              ADDS     r5,r5,#1              ;31
+00003e  9801              LDR      r0,[sp,#4]            ;27
+000040  b2ed              UXTB     r5,r5                 ;27
+                  |L4.66|
+000042  42a8              CMP      r0,r5                 ;27
+000044  d8eb              BHI      |L4.30|
 ;;;33     		}
 ;;;34     	}
-;;;35     }
-000040  bdf8              POP      {r3-r7,pc}
-;;;36     
+;;;35     	for (i = 0; i < (n % 4); i++) {
+000046  9900              LDR      r1,[sp,#0]
+000048  2000              MOVS     r0,#0
+00004a  0789              LSLS     r1,r1,#30
+00004c  0f89              LSRS     r1,r1,#30
+00004e  e001              B        |L4.84|
+                  |L4.80|
+000050  1c40              ADDS     r0,r0,#1
+000052  b2c0              UXTB     r0,r0
+                  |L4.84|
+000054  4281              CMP      r1,r0
+000056  d8fb              BHI      |L4.80|
+;;;36     	//	*(pt + (n / 4) * 4 + i + 1) = (dt >> (i * 8)) & 0xFF;
+;;;37     	}
+;;;38     
+;;;39     }
+000058  bdfe              POP      {r1-r7,pc}
+;;;40     
                           ENDP
 
 
                           AREA ||i.app_eeprom_read_int||, CODE, READONLY, ALIGN=1
 
                   app_eeprom_read_int PROC
-;;;46     }
-;;;47     uint32_t app_eeprom_read_int(uint32_t addr) {
+;;;50     }
+;;;51     uint32_t app_eeprom_read_int(uint32_t addr) {
 000000  211b              MOVS     r1,#0x1b
 000002  b510              PUSH     {r4,lr}
-;;;48     	return bsp_eeprom_read_int(DOME_START_ADDR + addr);
+;;;52     	return bsp_eeprom_read_int(DOME_START_ADDR + addr);
 000004  0289              LSLS     r1,r1,#10
 000006  1840              ADDS     r0,r0,r1
 000008  f7fffffe          BL       bsp_eeprom_read_int
-;;;49     }
+;;;53     }
 00000c  bd10              POP      {r4,pc}
-;;;50     void app_eeprom_write_buf(uint16_t addr, uint8_t *pt, uint8_t len) {
+;;;54     void app_eeprom_write_buf(uint16_t addr, uint8_t *pt, uint8_t len) {
                           ENDP
 
 
                           AREA ||i.app_eeprom_save_dome_with_byte||, CODE, READONLY, ALIGN=1
 
                   app_eeprom_save_dome_with_byte PROC
-;;;36     
-;;;37     void app_eeprom_save_dome_with_byte(DOME_DEFAULT_T *dd, uint8_t index) {
-000000  4770              BX       lr
-;;;38     
-;;;39     }
 ;;;40     
+;;;41     void app_eeprom_save_dome_with_byte(DOME_DEFAULT_T *dd, uint8_t index) {
+000000  4770              BX       lr
+;;;42     
+;;;43     }
+;;;44     
                           ENDP
 
 
                           AREA ||i.app_eeprom_write_buf||, CODE, READONLY, ALIGN=1
 
                   app_eeprom_write_buf PROC
-;;;49     }
-;;;50     void app_eeprom_write_buf(uint16_t addr, uint8_t *pt, uint8_t len) {
-000000  4770              BX       lr
-;;;51     //write_DATAFLASH_BUF(DOME_START_ADDR + addr, pt, len);
-;;;52     
 ;;;53     }
-;;;54     void app_eeprom_100ms_pro(void) {
+;;;54     void app_eeprom_write_buf(uint16_t addr, uint8_t *pt, uint8_t len) {
+000000  4770              BX       lr
+;;;55     //write_DATAFLASH_BUF(DOME_START_ADDR + addr, pt, len);
+;;;56     
+;;;57     }
+;;;58     void app_eeprom_100ms_pro(void) {
                           ENDP
 
 
                           AREA ||i.app_eeprom_write_int||, CODE, READONLY, ALIGN=1
 
                   app_eeprom_write_int PROC
-;;;43     }
-;;;44     void app_eeprom_write_int(uint32_t addr, uint32_t d) {
+;;;47     }
+;;;48     void app_eeprom_write_int(uint32_t addr, uint32_t d) {
 000000  221b              MOVS     r2,#0x1b
 000002  b510              PUSH     {r4,lr}
-;;;45     	bsp_eeprom_write_int(DOME_START_ADDR + addr, d);
+;;;49     	bsp_eeprom_write_int(DOME_START_ADDR + addr, d);
 000004  0292              LSLS     r2,r2,#10
 000006  1880              ADDS     r0,r0,r2
 000008  f7fffffe          BL       bsp_eeprom_write_int
-;;;46     }
+;;;50     }
 00000c  bd10              POP      {r4,pc}
-;;;47     uint32_t app_eeprom_read_int(uint32_t addr) {
+;;;51     uint32_t app_eeprom_read_int(uint32_t addr) {
                           ENDP
 
 

@@ -10,20 +10,16 @@
 void Wireless2d4_InitHard(void) {
 
 	//SCK
-	clr_P1M1_0;
-	set_P1M2_0;
+	GPIO_SetMode(P0, BIT7, GPIO_MODE_OUTPUT);
 
 	//CSN
-	clr_P1M1_1;
-	set_P1M2_1;
+	GPIO_SetMode(P0, BIT4, GPIO_MODE_OUTPUT);
 
 	//TX
-	clr_P0M1_0;
-	set_P0M2_0;
-
+	GPIO_SetMode(P0, BIT5, GPIO_MODE_OUTPUT);
 }
 
-const uint8_t TX_ADDRESS_DEF[5] = { 0xCC, 0xCC, 0xCC, 0xCC, 0xCC }; //RF 地址：接收端和发送端需一致
+const uint8_t TX_ADDRESS_DEF[5] = { 0xCC, 0xCC, 0xCC, 0xCC, 0xAA }; //RF 地址：接收端和发送端需一致
 
 /******************************************************************************/
 //            SPI_init
@@ -50,7 +46,7 @@ void SPI_WW(uint8_t R_REG) {
 		}
 		R_REG <<= 1;
 		SCK_HIGH;
-		nop
+		__NOP;
 	}
 	SCK_LOW;
 
@@ -62,11 +58,10 @@ void SPI_WW(uint8_t R_REG) {
 /******************************************************************************/
 void RF_WriteReg(uint8_t reg, uint8_t wdata) {
 	CSN_LOW;
-	nop
-	SPI_WW(reg);
+	__NOP;
+	SPI_WW( reg);
 	SPI_WW(wdata);
-	nop
-	CSN_HIGH;
+	__NOP; CSN_HIGH;
 }
 
 /******************************************************************************/
@@ -100,10 +95,9 @@ void SPI_WR(uint8_t R_REG) {
 		}
 		R_REG <<= 1;
 		SCK_HIGH;
-		nop
+		__NOP;
 	}
-	SPI_DATA_INPUT_MODE
-	;
+	SPI_DATA_INPUT_MODE;
 	SCK_LOW;
 
 }
@@ -135,12 +129,11 @@ uint8_t ucRF_ReadReg(uint8_t reg) {
 	uint8_t dt;
 
 	CSN_LOW;
-	nop
-	SPI_WR(reg);
+	__NOP;
+	SPI_WR( reg);
 	dt = ucSPI_Read();
-	SPI_DATA_OUTPUT_MODE
-	;
-	nop
+	SPI_DATA_OUTPUT_MODE;
+	__NOP;
 	CSN_HIGH;
 
 	return dt;
@@ -157,8 +150,7 @@ void RF_ReadBuf(uint8_t reg, unsigned char *pBuf, uint8_t length) {
 	SPI_WR(reg);
 	for (byte_ctr = 0; byte_ctr < length; byte_ctr++)
 		pBuf[byte_ctr] = ucSPI_Read();
-	SPI_DATA_OUTPUT_MODE
-	;
+	SPI_DATA_OUTPUT_MODE;
 	CSN_HIGH;
 }
 
@@ -170,9 +162,8 @@ void RF_TxMode(void) {
 	CE_LOW;
 	RF_WriteReg(W_REGISTER + CONFIG, 0X8E);						// 将RF设置成TX模式
 //	delay_10us(1);
-	nop
-	nop
-	nop
+	__NOP; __NOP;
+	__NOP;
 }
 
 /******************************************************************************/
@@ -186,7 +177,7 @@ void RF_RxMode(void) {
 	CE_HIGH;										// Set CE pin high 开始接收数据
 //	delay_ms(2);
 	for (i = 0; i < 5000; i++) {
-		nop
+		__NOP;
 	}
 
 }
@@ -245,7 +236,7 @@ void RF_TxData(uint8_t *ucPayload, uint8_t length) {
 		CE_HIGH;                             //rf entery tx mode start send data
 //		delay_10us(60);                            //keep ce high at least 600us
 		for (i = 0; i < 200; i++) {
-			nop
+			__NOP;
 		}
 		CE_LOW;                                                 //rf entery stb3
 	}
@@ -322,10 +313,10 @@ void RF_Init(void) {
 
 #if(TRANSMIT_TYPE == TRANS_ENHANCE_MODE)
 	RF_WriteReg(W_REGISTER + SETUP_RETR, 0x03);					//  3 retrans...
-	RF_WriteReg(W_REGISTER + EN_AA, 0x01);// Enable Auto.Ack:Pipe0
+	RF_WriteReg(W_REGISTER + EN_AA, 0x01);				// Enable Auto.Ack:Pipe0
 #elif(TRANSMIT_TYPE == TRANS_BURST_MODE)
-	RF_WriteReg(W_REGISTER + SETUP_RETR, 0x00);	// Disable retrans...
-	RF_WriteReg(W_REGISTER + EN_AA, 0x00);	// Disable AutoAck
+			RF_WriteReg(W_REGISTER + SETUP_RETR, 0x00);	// Disable retrans...
+			RF_WriteReg(W_REGISTER + EN_AA, 0x00);// Disable AutoAck
 #endif
 
 }
@@ -347,10 +338,8 @@ void RF_Carrier(uint8_t ucChannel_Set) {
 	CE_LOW;
 //	delay_ms(200);
 	for (i = 0; i < 220; i++) {
-		nop
-		nop
-		nop
-		nop
+		__NOP; __NOP;
+		__NOP; __NOP;
 	}
 
 	RF_WriteReg(W_REGISTER + RF_CH, ucChannel_Set);						//单载波频点

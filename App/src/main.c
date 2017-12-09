@@ -122,15 +122,15 @@ int main(void) {
 			timer0_taskTimer_get()->flag_10ms = 0;
 			//////////////////
 			bsp_KeyScan();
-
+//			app_uart_pro();
+//			app_2d4_pro();
 		}
 		if (timer0_taskTimer_get()->flag_100ms) {
 			timer0_taskTimer_get()->flag_100ms = 0;
 			//////////////////
-//			app_uart_pro();
-//			app_2d4_pro();
-			//			app_work_100ms_pro();
-			//			Repeat_Pro();
+
+//			app_work_100ms_pro();
+//			Repeat_Pro();
 
 		}
 		if (timer0_taskTimer_get()->flag_500ms) {
@@ -153,21 +153,26 @@ int main(void) {
 		ucKeyCode = bsp_GetKey();
 		if (ucKeyCode != KEY_NONE) {
 			switch (ucKeyCode) {
-			case KEY_UP_K1:   //
-				break;
-			case KEY_DOWN_K1: {
+			case KEY_UP_K1:   //ACC
+				log_debug("ACC KEY up");
 
-			}
+				break;
+			case KEY_DOWN_K1:
+				log_debug("relay %s", Relay_IsOn() ? "on" : "off");
+
+				Relay_toggle();
 				break;
 			case KEY_LONG_K1:
+				log_debug("ACC KEY down");
 				break;
-			case KEY_UP_K2:   //
+			case KEY_UP_K2:   //LED
+				log_debug("LED KEY up");
 				break;
 			case KEY_DOWN_K2:
-
-//				Relay_toggle();
+				log_debug("LED KEY down");
 				break;
 			case KEY_LONG_K2:
+				log_debug("LED KEY long");
 				break;
 			}
 		}

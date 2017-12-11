@@ -22,9 +22,9 @@
 .\obj\bsp.o: ..\Library\StdDriver\inc\wdt.h
 .\obj\bsp.o: ..\Library\StdDriver\inc\wwdt.h
 .\obj\bsp.o: ..\Bsp\inc\bsp_2d4.h
-.\obj\bsp.o: ..\Bsp\inc\bsp_uart.h
 .\obj\bsp.o: ..\Bsp\inc\bsp_timer0.h
 .\obj\bsp.o: ..\Bsp\inc\bsp_light.h
 .\obj\bsp.o: ..\Bsp\inc\bsp_relay.h
 .\obj\bsp.o: ..\Bsp\inc\bsp_eeprom.h
 .\obj\bsp.o: ..\Bsp\inc\bsp_key.h
+.\obj\bsp.o: ..\Bsp\inc\bsp_uart_fifo.h

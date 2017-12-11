@@ -10,9 +10,11 @@ void bsp_Init(void) {
 
 	Light_InitHard();
 	
+		bsp_InitUart();
+	
 	Timer0_InitHard();
 
-	Uart_InitHard();
+//	Uart_InitHard();
 
 }
 

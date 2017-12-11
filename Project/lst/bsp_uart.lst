@@ -20036,7 +20036,91 @@ N#endif
 N
 N/*****************************(END OF FILE) *********************************/
 L 22 "..\Bsp\bsp.h" 2
+N#include "bsp_uart_fifo.h"
+L 1 "..\Bsp\inc\bsp_uart_fifo.h" 1
+N#ifndef _BSP_USART_FIFO_H_
+N#define _BSP_USART_FIFO_H_
 N
+N#define	UART0_FIFO_EN	1
+N#define	UART1_FIFO_EN	0
+N
+N///* RS485芯片发送使能GPIO, PB2 */
+N//#define RCC_RS485_TXEN 	 RCC_APB2Periph_GPIOB
+N//#define PORT_RS485_TXEN  GPIOB
+N//#define PIN_RS485_TXEN	 GPIO_Pin_2
+N
+N//#define RS485_RX_EN()	PORT_RS485_TXEN->BRR = PIN_RS485_TXEN
+N//#define RS485_TX_EN()	PORT_RS485_TXEN->BSRR = PIN_RS485_TXEN
+N
+N/* 定义端口号 */
+Ntypedef enum {
+N	COM0 = 0, COM1 = 1,
+N} COM_PORT_E;
+N
+N
+N#if UART0_FIFO_EN == 1
+X#if 1 == 1
+N#define UART0_BAUD			115200
+N#define UART0_TX_BUF_SIZE	1*1024
+N#define UART0_RX_BUF_SIZE	1*1024
+N#endif
+N
+N#if UART1_FIFO_EN == 1
+X#if 0 == 1
+S#define UART1_BAUD			115200
+S#define UART1_TX_BUF_SIZE	1*1024
+S#define UART1_RX_BUF_SIZE	1*1024
+N#endif
+N
+N/* 串口设备结构体 */
+Ntypedef struct {
+N	UART_T *uart; /* STM32内部串口设备指针 */
+N	uint8_t *pTxBuf; /* 发送缓冲区 */
+N	uint8_t *pRxBuf; /* 接收缓冲区 */
+N	uint16_t usTxBufSize; /* 发送缓冲区大小 */
+N	uint16_t usRxBufSize; /* 接收缓冲区大小 */
+N	__IO uint16_t usTxWrite; /* 发送缓冲区写指针 */
+X	volatile uint16_t usTxWrite;  
+N	__IO uint16_t usTxRead; /* 发送缓冲区读指针 */
+X	volatile uint16_t usTxRead;  
+N	__IO uint16_t usTxCount; /* 等待发送的数据个数 */
+X	volatile uint16_t usTxCount;  
+N
+N	__IO uint16_t usRxWrite; /* 接收缓冲区写指针 */
+X	volatile uint16_t usRxWrite;  
+N	__IO uint16_t usRxRead; /* 接收缓冲区读指针 */
+X	volatile uint16_t usRxRead;  
+N	__IO uint16_t usRxCount; /* 还未读取的新数据个数 */
+X	volatile uint16_t usRxCount;  
+N
+N	void (*SendBefor)(void); /* 开始发送之前的回调函数指针（主要用于RS485切换到发送模式） */
+N	void (*SendOver)(void); /* 发送完毕的回调函数指针（主要用于RS485将发送模式切换为接收模式） */
+N	void (*ReciveNew)(uint8_t _byte); /* 串口收到数据的回调函数指针 */
+N} UART_T_M;
+N
+Nvoid bsp_InitUart(void);
+Nvoid comSendBuf(COM_PORT_E _ucPort, uint8_t *_ucaBuf, uint16_t _usLen);
+Nvoid comSendChar(COM_PORT_E _ucPort, uint8_t _ucByte);
+Nuint8_t comGetChar(COM_PORT_E _ucPort, uint8_t *_pByte);
+N
+Nvoid comClearTxFifo(COM_PORT_E _ucPort);
+Nvoid comClearRxFifo(COM_PORT_E _ucPort);
+N
+N//void RS485_SendBuf(uint8_t *_ucaBuf, uint16_t _usLen);
+N//void RS485_SendStr(char *_pBuf);
+N
+N//void bsp_Set485Baud(uint32_t _baud);
+N
+Nvoid bsp_SetUart1Baud(uint32_t _baud);
+Nvoid bsp_SetUart2Baud(uint32_t _baud);
+N
+N#endif
+N
+N/***************************** 安富莱电子 www.armfly.com (END OF FILE) *********************************/
+L 23 "..\Bsp\bsp.h" 2
+N
+N#define ENABLE_INT()	__set_PRIMASK(0)
+N#define DISABLE_INT()	__set_PRIMASK(1)
 N
 Nvoid bsp_Init(void);
 N

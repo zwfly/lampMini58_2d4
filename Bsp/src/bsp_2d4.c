@@ -19,7 +19,7 @@ void Wireless2d4_InitHard(void) {
 	GPIO_SetMode(P0, BIT5, GPIO_MODE_OUTPUT);
 }
 
-const uint8_t TX_ADDRESS_DEF[5] = { 0xCC, 0xCC, 0xCC, 0xCC, 0xAA }; //RF 地址：接收端和发送端需一致
+const uint8_t TX_ADDRESS_DEF[5] = { 0xCC, 0xCC, 0xCC, 0xCC, 0xCC }; //RF 地址：接收端和发送端需一致
 
 /******************************************************************************/
 //            SPI_init
@@ -61,7 +61,8 @@ void RF_WriteReg(uint8_t reg, uint8_t wdata) {
 	__NOP;
 	SPI_WW( reg);
 	SPI_WW(wdata);
-	__NOP; CSN_HIGH;
+	__NOP; 
+	CSN_HIGH;
 }
 
 /******************************************************************************/
@@ -162,7 +163,8 @@ void RF_TxMode(void) {
 	CE_LOW;
 	RF_WriteReg(W_REGISTER + CONFIG, 0X8E);						// 将RF设置成TX模式
 //	delay_10us(1);
-	__NOP; __NOP;
+	__NOP;
+	__NOP;
 	__NOP;
 }
 
@@ -338,8 +340,10 @@ void RF_Carrier(uint8_t ucChannel_Set) {
 	CE_LOW;
 //	delay_ms(200);
 	for (i = 0; i < 220; i++) {
-		__NOP; __NOP;
-		__NOP; __NOP;
+		__NOP; 
+		__NOP;
+		__NOP; 
+		__NOP;
 	}
 
 	RF_WriteReg(W_REGISTER + RF_CH, ucChannel_Set);						//单载波频点

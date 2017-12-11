@@ -17556,33 +17556,7 @@ void RF_Init(void);
 
 
 #line 16 "..\\Bsp\\bsp.h"
-#line 1 "..\\Bsp\\inc\\bsp_uart.h"
 
-
-
-
-
- 
-
-
-
-
-
-
-typedef struct _RCV_T {
-
-	uint8_t rxBuf[160];
-	uint8_t pWrite;
-	uint8_t pRead;
-
-} RCV_T;
-
-extern RCV_T rcv_T;
-extern uint8_t riflag;
-
-void Uart_InitHard(void);
-
-#line 17 "..\\Bsp\\bsp.h"
 #line 1 "..\\Bsp\\inc\\bsp_timer0.h"
 
 
@@ -17773,6 +17747,81 @@ void bsp_ClearKey(void);
 
  
 #line 22 "..\\Bsp\\bsp.h"
+#line 1 "..\\Bsp\\inc\\bsp_uart_fifo.h"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+typedef enum {
+	COM0 = 0, COM1 = 1,
+} COM_PORT_E;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+typedef struct {
+	UART_T *uart;  
+	uint8_t *pTxBuf;  
+	uint8_t *pRxBuf;  
+	uint16_t usTxBufSize;  
+	uint16_t usRxBufSize;  
+	volatile uint16_t usTxWrite;  
+	volatile uint16_t usTxRead;  
+	volatile uint16_t usTxCount;  
+
+	volatile uint16_t usRxWrite;  
+	volatile uint16_t usRxRead;  
+	volatile uint16_t usRxCount;  
+
+	void (*SendBefor)(void);  
+	void (*SendOver)(void);  
+	void (*ReciveNew)(uint8_t _byte);  
+} UART_T_M;
+
+void bsp_InitUart(void);
+void comSendBuf(COM_PORT_E _ucPort, uint8_t *_ucaBuf, uint16_t _usLen);
+void comSendChar(COM_PORT_E _ucPort, uint8_t _ucByte);
+uint8_t comGetChar(COM_PORT_E _ucPort, uint8_t *_pByte);
+
+void comClearTxFifo(COM_PORT_E _ucPort);
+void comClearRxFifo(COM_PORT_E _ucPort);
+
+
+
+
+
+
+void bsp_SetUart1Baud(uint32_t _baud);
+void bsp_SetUart2Baud(uint32_t _baud);
+
+
+
+ 
+#line 23 "..\\Bsp\\bsp.h"
+
+
 
 
 void bsp_Init(void);
@@ -17794,7 +17843,7 @@ void Wireless2d4_InitHard(void) {
 	GPIO_SetMode(((GPIO_T *) (((uint32_t)0x50000000) + 0x04000)), (0x00000020), 0x1UL);
 }
 
-const uint8_t TX_ADDRESS_DEF[5] = { 0xCC, 0xCC, 0xCC, 0xCC, 0xAA }; 
+const uint8_t TX_ADDRESS_DEF[5] = { 0xCC, 0xCC, 0xCC, 0xCC, 0xCC }; 
 
  
 
@@ -17836,7 +17885,8 @@ void RF_WriteReg(uint8_t reg, uint8_t wdata) {
 	__nop;
 	SPI_WW( reg);
 	SPI_WW(wdata);
-	__nop; ((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((4)<<2)))) = 1);
+	__nop; 
+	((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((4)<<2)))) = 1);
 }
 
  
@@ -17937,7 +17987,8 @@ void RF_TxMode(void) {
 	RF_WriteReg(0xFC, 0);
 	RF_WriteReg(0x20 + 0x00, 0X8E);						
 
-	__nop; __nop;
+	__nop;
+	__nop;
 	__nop;
 }
 
@@ -18113,8 +18164,10 @@ void RF_Carrier(uint8_t ucChannel_Set) {
 	RF_WriteReg(0xFC, 0);
 
 	for (i = 0; i < 220; i++) {
-		__nop; __nop;
-		__nop; __nop;
+		__nop; 
+		__nop;
+		__nop; 
+		__nop;
 	}
 
 	RF_WriteReg(0x20 + 0x05, ucChannel_Set);						

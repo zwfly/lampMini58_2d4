@@ -24,12 +24,14 @@
 .\obj\app_eeprom.o: ..\Library\StdDriver\inc\wdt.h
 .\obj\app_eeprom.o: ..\Library\StdDriver\inc\wwdt.h
 .\obj\app_eeprom.o: ..\Bsp\inc\bsp_2d4.h
-.\obj\app_eeprom.o: ..\Bsp\inc\bsp_uart.h
 .\obj\app_eeprom.o: ..\Bsp\inc\bsp_timer0.h
 .\obj\app_eeprom.o: ..\Bsp\inc\bsp_light.h
 .\obj\app_eeprom.o: ..\Bsp\inc\bsp_relay.h
 .\obj\app_eeprom.o: ..\Bsp\inc\bsp_eeprom.h
 .\obj\app_eeprom.o: ..\Bsp\inc\bsp_key.h
+.\obj\app_eeprom.o: ..\Bsp\inc\bsp_uart_fifo.h
+.\obj\app_eeprom.o: ..\App\inc\app_work.h
+.\obj\app_eeprom.o: ..\App\inc\app_2d4.h
 .\obj\app_eeprom.o: ..\App\inc\app_uart.h
 .\obj\app_eeprom.o: ..\App\inc\app_crc.h
 .\obj\app_eeprom.o: ..\App\inc\app_dome.h

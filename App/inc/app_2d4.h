@@ -89,7 +89,7 @@
 #define  APP_SWITCH_INDEX_CMD      0x66
 
 
-extern uint8_t sendBuf[PAYLOAD_WIDTH];
+//extern uint8_t sendBuf[PAYLOAD_WIDTH];
 
 void app_2d4_init(void);
 void app_2d4_send(uint8_t *d, uint8_t len);

@@ -13,13 +13,16 @@
 #include "fmc.h"
 
 #include "bsp_2d4.h"
-#include "bsp_uart.h"
+//#include "bsp_uart.h"
 #include "bsp_timer0.h"
 #include "bsp_light.h"
 #include "bsp_relay.h"
 #include "bsp_eeprom.h"
 #include "bsp_key.h"
+#include "bsp_uart_fifo.h"
 
+#define ENABLE_INT()	__set_PRIMASK(0)
+#define DISABLE_INT()	__set_PRIMASK(1)
 
 void bsp_Init(void);
 

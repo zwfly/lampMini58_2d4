@@ -21,15 +21,17 @@
 ;;;11     	Light_InitHard();
 00000e  f7fffffe          BL       Light_InitHard
 ;;;12     	
-;;;13     	Timer0_InitHard();
-000012  f7fffffe          BL       Timer0_InitHard
-;;;14     
-;;;15     	Uart_InitHard();
-000016  f7fffffe          BL       Uart_InitHard
+;;;13     		bsp_InitUart();
+000012  f7fffffe          BL       bsp_InitUart
+;;;14     	
+;;;15     	Timer0_InitHard();
+000016  f7fffffe          BL       Timer0_InitHard
 ;;;16     
-;;;17     }
-00001a  bd10              POP      {r4,pc}
+;;;17     //	Uart_InitHard();
 ;;;18     
+;;;19     }
+00001a  bd10              POP      {r4,pc}
+;;;20     
                           ENDP
 
 

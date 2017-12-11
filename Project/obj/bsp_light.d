@@ -22,10 +22,10 @@
 .\obj\bsp_light.o: ..\Library\StdDriver\inc\wdt.h
 .\obj\bsp_light.o: ..\Library\StdDriver\inc\wwdt.h
 .\obj\bsp_light.o: ..\Bsp\inc\bsp_2d4.h
-.\obj\bsp_light.o: ..\Bsp\inc\bsp_uart.h
 .\obj\bsp_light.o: ..\Bsp\inc\bsp_timer0.h
 .\obj\bsp_light.o: ..\Bsp\inc\bsp_light.h
 .\obj\bsp_light.o: ..\Bsp\inc\bsp_relay.h
 .\obj\bsp_light.o: ..\Bsp\inc\bsp_eeprom.h
 .\obj\bsp_light.o: ..\Bsp\inc\bsp_key.h
+.\obj\bsp_light.o: ..\Bsp\inc\bsp_uart_fifo.h
 .\obj\bsp_light.o: ..\App\inc\app_dome.h

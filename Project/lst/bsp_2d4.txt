@@ -5,100 +5,102 @@
                           AREA ||i.RF_Carrier||, CODE, READONLY, ALIGN=2
 
                   RF_Carrier PROC
-;;;326    /******************************************************************************/
-;;;327    void RF_Carrier(uint8_t ucChannel_Set) {
+;;;328    /******************************************************************************/
+;;;329    void RF_Carrier(uint8_t ucChannel_Set) {
 000000  b530              PUSH     {r4,r5,lr}
 000002  4605              MOV      r5,r0
-;;;328    	uint8_t i = 0;
-;;;329    	uint8_t BB_cal_data[5] = { 0x0A, 0x6D, 0x67, 0x9C, 0x46 };
+;;;330    	uint8_t i = 0;
+;;;331    	uint8_t BB_cal_data[5] = { 0x0A, 0x6D, 0x67, 0x9C, 0x46 };
 000004  a024              ADR      r0,|L1.152|
 000006  c803              LDM      r0,{r0,r1}
-000008  b087              SUB      sp,sp,#0x1c           ;327
-;;;330    	uint8_t RF_cal_data[3] = { 0xF6, 0x37, 0x5D };
+000008  b087              SUB      sp,sp,#0x1c           ;329
+;;;332    	uint8_t RF_cal_data[3] = { 0xF6, 0x37, 0x5D };
 00000a  9000              STR      r0,[sp,#0]
 00000c  9101              STR      r1,[sp,#4]
 00000e  a024              ADR      r0,|L1.160|
 000010  6800              LDR      r0,[r0,#0]
-;;;331    	uint8_t RF_cal2_data[6] = { 0x45, 0x21, 0xEF, 0xAC, 0x5A, 0x50 };
+;;;333    	uint8_t RF_cal2_data[6] = { 0x45, 0x21, 0xEF, 0xAC, 0x5A, 0x50 };
 000012  9004              STR      r0,[sp,#0x10]
 000014  a023              ADR      r0,|L1.164|
 000016  c803              LDM      r0,{r0,r1}
-;;;332    	uint8_t Dem_cal_data[1] = { 0xE1 };
+;;;334    	uint8_t Dem_cal_data[1] = { 0xE1 };
 000018  9103              STR      r1,[sp,#0xc]
 00001a  9002              STR      r0,[sp,#8]
 00001c  a023              ADR      r0,|L1.172|
 00001e  6800              LDR      r0,[r0,#0]
-;;;333    	uint8_t Dem_cal2_data[3] = { 0x0B, 0xDF, 0x02 };
+;;;335    	uint8_t Dem_cal2_data[3] = { 0x0B, 0xDF, 0x02 };
 000020  9005              STR      r0,[sp,#0x14]
 000022  a023              ADR      r0,|L1.176|
 000024  6800              LDR      r0,[r0,#0]
-;;;334    
-;;;335    	RF_WriteReg(RST_FSPI, 0x5A);								//Software Reset
+;;;336    
+;;;337    	RF_WriteReg(RST_FSPI, 0x5A);								//Software Reset
 000026  9006              STR      r0,[sp,#0x18]
-000028  2400              MOVS     r4,#0                 ;328
+000028  2400              MOVS     r4,#0                 ;330
 00002a  215a              MOVS     r1,#0x5a
 00002c  2053              MOVS     r0,#0x53
 00002e  f7fffffe          BL       RF_WriteReg
-;;;336    	RF_WriteReg(RST_FSPI, 0XA5);
+;;;338    	RF_WriteReg(RST_FSPI, 0XA5);
 000032  21a5              MOVS     r1,#0xa5
 000034  2053              MOVS     r0,#0x53
 000036  f7fffffe          BL       RF_WriteReg
-;;;337    	RF_WriteReg(W_REGISTER + FEATURE, 0x20);
+;;;339    	RF_WriteReg(W_REGISTER + FEATURE, 0x20);
 00003a  2120              MOVS     r1,#0x20
 00003c  203d              MOVS     r0,#0x3d
 00003e  f7fffffe          BL       RF_WriteReg
-;;;338    	CE_LOW;
+;;;340    	CE_LOW;
 000042  2100              MOVS     r1,#0
 000044  20fc              MOVS     r0,#0xfc
 000046  f7fffffe          BL       RF_WriteReg
                   |L1.74|
 00004a  1c64              ADDS     r4,r4,#1
-;;;339    //	delay_ms(200);
-;;;340    	for (i = 0; i < 220; i++) {
+;;;341    //	delay_ms(200);
+;;;342    	for (i = 0; i < 220; i++) {
 00004c  b2e4              UXTB     r4,r4
 00004e  2cdc              CMP      r4,#0xdc
 000050  d3fb              BCC      |L1.74|
-;;;341    		__NOP; __NOP;
-;;;342    		__NOP; __NOP;
-;;;343    	}
-;;;344    
-;;;345    	RF_WriteReg(W_REGISTER + RF_CH, ucChannel_Set);						//单载波频点
+;;;343    		__NOP; 
+;;;344    		__NOP;
+;;;345    		__NOP; 
+;;;346    		__NOP;
+;;;347    	}
+;;;348    
+;;;349    	RF_WriteReg(W_REGISTER + RF_CH, ucChannel_Set);						//单载波频点
 000052  4629              MOV      r1,r5
 000054  2025              MOVS     r0,#0x25
 000056  f7fffffe          BL       RF_WriteReg
-;;;346    	RF_WriteReg(W_REGISTER + RF_SETUP, RF_POWER);      					//13dbm
+;;;350    	RF_WriteReg(W_REGISTER + RF_SETUP, RF_POWER);      					//13dbm
 00005a  213f              MOVS     r1,#0x3f
 00005c  2026              MOVS     r0,#0x26
 00005e  f7fffffe          BL       RF_WriteReg
-;;;347    	RF_WriteBuf(W_REGISTER + BB_CAL, BB_cal_data, sizeof(BB_cal_data));
+;;;351    	RF_WriteBuf(W_REGISTER + BB_CAL, BB_cal_data, sizeof(BB_cal_data));
 000062  2205              MOVS     r2,#5
 000064  4669              MOV      r1,sp
 000066  203f              MOVS     r0,#0x3f
 000068  f7fffffe          BL       RF_WriteBuf
-;;;348    	RF_WriteBuf(W_REGISTER + RF_CAL2, RF_cal2_data, sizeof(RF_cal2_data));
+;;;352    	RF_WriteBuf(W_REGISTER + RF_CAL2, RF_cal2_data, sizeof(RF_cal2_data));
 00006c  2206              MOVS     r2,#6
 00006e  a902              ADD      r1,sp,#8
 000070  203a              MOVS     r0,#0x3a
 000072  f7fffffe          BL       RF_WriteBuf
-;;;349    	RF_WriteBuf(W_REGISTER + DEMOD_CAL, Dem_cal_data, sizeof(Dem_cal_data));
+;;;353    	RF_WriteBuf(W_REGISTER + DEMOD_CAL, Dem_cal_data, sizeof(Dem_cal_data));
 000076  2201              MOVS     r2,#1
 000078  a905              ADD      r1,sp,#0x14
 00007a  2039              MOVS     r0,#0x39
 00007c  f7fffffe          BL       RF_WriteBuf
-;;;350    	RF_WriteBuf(W_REGISTER + RF_CAL, RF_cal_data, sizeof(RF_cal_data));
+;;;354    	RF_WriteBuf(W_REGISTER + RF_CAL, RF_cal_data, sizeof(RF_cal_data));
 000080  2203              MOVS     r2,#3
 000082  a904              ADD      r1,sp,#0x10
 000084  203e              MOVS     r0,#0x3e
 000086  f7fffffe          BL       RF_WriteBuf
-;;;351    	RF_WriteBuf(W_REGISTER + DEM_CAL2, Dem_cal2_data, sizeof(Dem_cal2_data));
+;;;355    	RF_WriteBuf(W_REGISTER + DEM_CAL2, Dem_cal2_data, sizeof(Dem_cal2_data));
 00008a  2203              MOVS     r2,#3
 00008c  a906              ADD      r1,sp,#0x18
 00008e  203b              MOVS     r0,#0x3b
 000090  f7fffffe          BL       RF_WriteBuf
-;;;352    }
+;;;356    }
 000094  b007              ADD      sp,sp,#0x1c
 000096  bd30              POP      {r4,r5,pc}
-;;;353    
+;;;357    
                           ENDP
 
                   |L1.152|
@@ -122,182 +124,182 @@
                           AREA ||i.RF_ClearFIFO||, CODE, READONLY, ALIGN=1
 
                   RF_ClearFIFO PROC
-;;;210    /******************************************************************************/
-;;;211    void RF_ClearFIFO(void) {
+;;;212    /******************************************************************************/
+;;;213    void RF_ClearFIFO(void) {
 000000  b500              PUSH     {lr}
-;;;212    	RF_WriteReg(FLUSH_TX, 0);			                        //清除RF 的 TX FIFO
+;;;214    	RF_WriteReg(FLUSH_TX, 0);			                        //清除RF 的 TX FIFO
 000002  2100              MOVS     r1,#0
 000004  20e1              MOVS     r0,#0xe1
 000006  f7fffffe          BL       RF_WriteReg
-;;;213    	RF_WriteReg(FLUSH_RX, 0);                                   //清除RF 的 RX FIFO
+;;;215    	RF_WriteReg(FLUSH_RX, 0);                                   //清除RF 的 RX FIFO
 00000a  2100              MOVS     r1,#0
 00000c  20e2              MOVS     r0,#0xe2
 00000e  f7fffffe          BL       RF_WriteReg
-;;;214    }
+;;;216    }
 000012  bd00              POP      {pc}
-;;;215    
+;;;217    
                           ENDP
 
 
                           AREA ||i.RF_ClearStatus||, CODE, READONLY, ALIGN=1
 
                   RF_ClearStatus PROC
-;;;202    /******************************************************************************/
-;;;203    void RF_ClearStatus(void) {
+;;;204    /******************************************************************************/
+;;;205    void RF_ClearStatus(void) {
 000000  b500              PUSH     {lr}
-;;;204    	RF_WriteReg(W_REGISTER + STATUS, 0x70);							//清除RF的IRQ标志
+;;;206    	RF_WriteReg(W_REGISTER + STATUS, 0x70);							//清除RF的IRQ标志
 000002  2170              MOVS     r1,#0x70
 000004  2027              MOVS     r0,#0x27
 000006  f7fffffe          BL       RF_WriteReg
-;;;205    }
+;;;207    }
 00000a  bd00              POP      {pc}
-;;;206    
+;;;208    
                           ENDP
 
 
                           AREA ||i.RF_Init||, CODE, READONLY, ALIGN=2
 
                   RF_Init PROC
-;;;278    
-;;;279    void RF_Init(void) {
+;;;280    
+;;;281    void RF_Init(void) {
 000000  b500              PUSH     {lr}
-;;;280    	uint8_t BB_cal_data[5] = { 0x0A, 0x6D, 0x67, 0x9C, 0x46 };
+;;;282    	uint8_t BB_cal_data[5] = { 0x0A, 0x6D, 0x67, 0x9C, 0x46 };
 000002  a039              ADR      r0,|L4.232|
 000004  c803              LDM      r0,{r0,r1}
-000006  b087              SUB      sp,sp,#0x1c           ;279
-;;;281    	uint8_t RF_cal_data[3] = { 0xF6, 0x37, 0x5D };
+000006  b087              SUB      sp,sp,#0x1c           ;281
+;;;283    	uint8_t RF_cal_data[3] = { 0xF6, 0x37, 0x5D };
 000008  9000              STR      r0,[sp,#0]
 00000a  9101              STR      r1,[sp,#4]
 00000c  a038              ADR      r0,|L4.240|
 00000e  6800              LDR      r0,[r0,#0]
-;;;282    	uint8_t RF_cal2_data[6] = { 0x45, 0x21, 0xef, 0xAC, 0x5A, 0x50 };
+;;;284    	uint8_t RF_cal2_data[6] = { 0x45, 0x21, 0xef, 0xAC, 0x5A, 0x50 };
 000010  9004              STR      r0,[sp,#0x10]
 000012  a038              ADR      r0,|L4.244|
 000014  c803              LDM      r0,{r0,r1}
-;;;283    	uint8_t Dem_cal_data[1] = { 0x01 };
+;;;285    	uint8_t Dem_cal_data[1] = { 0x01 };
 000016  9103              STR      r1,[sp,#0xc]
 000018  9002              STR      r0,[sp,#8]
 00001a  a038              ADR      r0,|L4.252|
 00001c  6800              LDR      r0,[r0,#0]
-;;;284    	uint8_t Dem_cal2_data[3] = { 0x0b, 0xDF, 0x02 };
+;;;286    	uint8_t Dem_cal2_data[3] = { 0x0b, 0xDF, 0x02 };
 00001e  9005              STR      r0,[sp,#0x14]
 000020  a037              ADR      r0,|L4.256|
 000022  6800              LDR      r0,[r0,#0]
-;;;285    	SPI_init();
-;;;286    	RF_WriteReg(RST_FSPI, 0x5A);								//Software Reset
+;;;287    	SPI_init();
+;;;288    	RF_WriteReg(RST_FSPI, 0x5A);								//Software Reset
 000024  9006              STR      r0,[sp,#0x18]
 000026  215a              MOVS     r1,#0x5a
 000028  2053              MOVS     r0,#0x53
 00002a  f7fffffe          BL       RF_WriteReg
-;;;287    	RF_WriteReg(RST_FSPI, 0XA5);
+;;;289    	RF_WriteReg(RST_FSPI, 0XA5);
 00002e  21a5              MOVS     r1,#0xa5
 000030  2053              MOVS     r0,#0x53
 000032  f7fffffe          BL       RF_WriteReg
-;;;288    
-;;;289    	if (PAYLOAD_WIDTH < 33) {
-;;;290    		RF_WriteReg(W_REGISTER + FEATURE, 0x20);//FIFO_LEN=32 BYTE  and enable Software control ce
+;;;290    
+;;;291    	if (PAYLOAD_WIDTH < 33) {
+;;;292    		RF_WriteReg(W_REGISTER + FEATURE, 0x20);//FIFO_LEN=32 BYTE  and enable Software control ce
 000036  2120              MOVS     r1,#0x20
 000038  203d              MOVS     r0,#0x3d
 00003a  f7fffffe          BL       RF_WriteReg
-;;;291    	} else {
-;;;292    		RF_WriteReg(W_REGISTER + FEATURE, 0x38);//FIFO_LEN=64 BYTE  and enable Software control ce
-;;;293    	}
-;;;294    	CE_LOW;
+;;;293    	} else {
+;;;294    		RF_WriteReg(W_REGISTER + FEATURE, 0x38);//FIFO_LEN=64 BYTE  and enable Software control ce
+;;;295    	}
+;;;296    	CE_LOW;
 00003e  2100              MOVS     r1,#0
 000040  20fc              MOVS     r0,#0xfc
 000042  f7fffffe          BL       RF_WriteReg
-;;;295    	RF_WriteReg(FLUSH_TX, 0);									// CLEAR TXFIFO
+;;;297    	RF_WriteReg(FLUSH_TX, 0);									// CLEAR TXFIFO
 000046  2100              MOVS     r1,#0
 000048  20e1              MOVS     r0,#0xe1
 00004a  f7fffffe          BL       RF_WriteReg
-;;;296    	RF_WriteReg(FLUSH_RX, 0);									// CLEAR  RXFIFO
+;;;298    	RF_WriteReg(FLUSH_RX, 0);									// CLEAR  RXFIFO
 00004e  2100              MOVS     r1,#0
 000050  20e2              MOVS     r0,#0xe2
 000052  f7fffffe          BL       RF_WriteReg
-;;;297    	RF_WriteReg(W_REGISTER + STATUS, 0x70);						// CLEAR  STATUS
+;;;299    	RF_WriteReg(W_REGISTER + STATUS, 0x70);						// CLEAR  STATUS
 000056  2170              MOVS     r1,#0x70
 000058  2027              MOVS     r0,#0x27
 00005a  f7fffffe          BL       RF_WriteReg
-;;;298    	RF_WriteReg(W_REGISTER + EN_RXADDR, 0x01);					// Enable Pipe0
+;;;300    	RF_WriteReg(W_REGISTER + EN_RXADDR, 0x01);					// Enable Pipe0
 00005e  2101              MOVS     r1,#1
 000060  2022              MOVS     r0,#0x22
 000062  f7fffffe          BL       RF_WriteReg
-;;;299    	RF_WriteReg(W_REGISTER + SETUP_AW, 0x03);		// address witdth is 5 bytes
+;;;301    	RF_WriteReg(W_REGISTER + SETUP_AW, 0x03);		// address witdth is 5 bytes
 000066  2103              MOVS     r1,#3
 000068  2023              MOVS     r0,#0x23
 00006a  f7fffffe          BL       RF_WriteReg
-;;;300    	RF_WriteReg(W_REGISTER + RF_CH, DEFAULT_CHANNEL);                // 2478M HZ
+;;;302    	RF_WriteReg(W_REGISTER + RF_CH, DEFAULT_CHANNEL);                // 2478M HZ
 00006e  214e              MOVS     r1,#0x4e
 000070  2025              MOVS     r0,#0x25
 000072  f7fffffe          BL       RF_WriteReg
-;;;301    	RF_WriteReg(W_REGISTER + RX_PW_P0, PAYLOAD_WIDTH);				// 8 bytes
+;;;303    	RF_WriteReg(W_REGISTER + RX_PW_P0, PAYLOAD_WIDTH);				// 8 bytes
 000076  2110              MOVS     r1,#0x10
 000078  2031              MOVS     r0,#0x31
 00007a  f7fffffe          BL       RF_WriteReg
-;;;302    	RF_WriteBuf(W_REGISTER + TX_ADDR, (uint8_t*) TX_ADDRESS_DEF,
+;;;304    	RF_WriteBuf(W_REGISTER + TX_ADDR, (uint8_t*) TX_ADDRESS_DEF,
 00007e  2205              MOVS     r2,#5
 000080  4920              LDR      r1,|L4.260|
 000082  2030              MOVS     r0,#0x30
 000084  f7fffffe          BL       RF_WriteBuf
-;;;303    			sizeof(TX_ADDRESS_DEF));	// Writes TX_Address to PN006
-;;;304    	RF_WriteBuf(W_REGISTER + RX_ADDR_P0, (uint8_t*) TX_ADDRESS_DEF,
+;;;305    			sizeof(TX_ADDRESS_DEF));	// Writes TX_Address to PN006
+;;;306    	RF_WriteBuf(W_REGISTER + RX_ADDR_P0, (uint8_t*) TX_ADDRESS_DEF,
 000088  2205              MOVS     r2,#5
 00008a  491e              LDR      r1,|L4.260|
 00008c  202a              MOVS     r0,#0x2a
 00008e  f7fffffe          BL       RF_WriteBuf
-;;;305    			sizeof(TX_ADDRESS_DEF));	// RX_Addr0 same as TX_Adr for Auto.Ack
-;;;306    	RF_WriteBuf(W_REGISTER + BB_CAL, BB_cal_data, sizeof(BB_cal_data));
+;;;307    			sizeof(TX_ADDRESS_DEF));	// RX_Addr0 same as TX_Adr for Auto.Ack
+;;;308    	RF_WriteBuf(W_REGISTER + BB_CAL, BB_cal_data, sizeof(BB_cal_data));
 000092  2205              MOVS     r2,#5
 000094  4669              MOV      r1,sp
 000096  203f              MOVS     r0,#0x3f
 000098  f7fffffe          BL       RF_WriteBuf
-;;;307    	RF_WriteBuf(W_REGISTER + RF_CAL2, RF_cal2_data, sizeof(RF_cal2_data));
+;;;309    	RF_WriteBuf(W_REGISTER + RF_CAL2, RF_cal2_data, sizeof(RF_cal2_data));
 00009c  2206              MOVS     r2,#6
 00009e  a902              ADD      r1,sp,#8
 0000a0  203a              MOVS     r0,#0x3a
 0000a2  f7fffffe          BL       RF_WriteBuf
-;;;308    	RF_WriteBuf(W_REGISTER + DEMOD_CAL, Dem_cal_data, sizeof(Dem_cal_data));
+;;;310    	RF_WriteBuf(W_REGISTER + DEMOD_CAL, Dem_cal_data, sizeof(Dem_cal_data));
 0000a6  2201              MOVS     r2,#1
 0000a8  a905              ADD      r1,sp,#0x14
 0000aa  2039              MOVS     r0,#0x39
 0000ac  f7fffffe          BL       RF_WriteBuf
-;;;309    	RF_WriteBuf(W_REGISTER + RF_CAL, RF_cal_data, sizeof(RF_cal_data));
+;;;311    	RF_WriteBuf(W_REGISTER + RF_CAL, RF_cal_data, sizeof(RF_cal_data));
 0000b0  2203              MOVS     r2,#3
 0000b2  a904              ADD      r1,sp,#0x10
 0000b4  203e              MOVS     r0,#0x3e
 0000b6  f7fffffe          BL       RF_WriteBuf
-;;;310    	RF_WriteBuf(W_REGISTER + DEM_CAL2, Dem_cal2_data, sizeof(Dem_cal2_data));
+;;;312    	RF_WriteBuf(W_REGISTER + DEM_CAL2, Dem_cal2_data, sizeof(Dem_cal2_data));
 0000ba  2203              MOVS     r2,#3
 0000bc  a906              ADD      r1,sp,#0x18
 0000be  203b              MOVS     r0,#0x3b
 0000c0  f7fffffe          BL       RF_WriteBuf
-;;;311    	RF_WriteReg(W_REGISTER + DYNPD, 0x00);
+;;;313    	RF_WriteReg(W_REGISTER + DYNPD, 0x00);
 0000c4  2100              MOVS     r1,#0
 0000c6  203c              MOVS     r0,#0x3c
 0000c8  f7fffffe          BL       RF_WriteReg
-;;;312    	RF_WriteReg(W_REGISTER + RF_SETUP, RF_POWER);						// 13DBM
+;;;314    	RF_WriteReg(W_REGISTER + RF_SETUP, RF_POWER);						// 13DBM
 0000cc  213f              MOVS     r1,#0x3f
 0000ce  2026              MOVS     r0,#0x26
 0000d0  f7fffffe          BL       RF_WriteReg
-;;;313    
-;;;314    #if(TRANSMIT_TYPE == TRANS_ENHANCE_MODE)
-;;;315    	RF_WriteReg(W_REGISTER + SETUP_RETR, 0x03);					//  3 retrans...
-;;;316    	RF_WriteReg(W_REGISTER + EN_AA, 0x01);				// Enable Auto.Ack:Pipe0
-;;;317    #elif(TRANSMIT_TYPE == TRANS_BURST_MODE)
-;;;318    			RF_WriteReg(W_REGISTER + SETUP_RETR, 0x00);	// Disable retrans...
+;;;315    
+;;;316    #if(TRANSMIT_TYPE == TRANS_ENHANCE_MODE)
+;;;317    	RF_WriteReg(W_REGISTER + SETUP_RETR, 0x03);					//  3 retrans...
+;;;318    	RF_WriteReg(W_REGISTER + EN_AA, 0x01);				// Enable Auto.Ack:Pipe0
+;;;319    #elif(TRANSMIT_TYPE == TRANS_BURST_MODE)
+;;;320    			RF_WriteReg(W_REGISTER + SETUP_RETR, 0x00);	// Disable retrans...
 0000d4  2100              MOVS     r1,#0
 0000d6  2024              MOVS     r0,#0x24
 0000d8  f7fffffe          BL       RF_WriteReg
-;;;319    			RF_WriteReg(W_REGISTER + EN_AA, 0x00);// Disable AutoAck
+;;;321    			RF_WriteReg(W_REGISTER + EN_AA, 0x00);// Disable AutoAck
 0000dc  2100              MOVS     r1,#0
 0000de  2021              MOVS     r0,#0x21
 0000e0  f7fffffe          BL       RF_WriteReg
-;;;320    #endif
-;;;321    
-;;;322    }
+;;;322    #endif
+;;;323    
+;;;324    }
 0000e4  b007              ADD      sp,sp,#0x1c
 0000e6  bd00              POP      {pc}
-;;;323    
+;;;325    
                           ENDP
 
                   |L4.232|
@@ -323,42 +325,42 @@
                           AREA ||i.RF_ReadBuf||, CODE, READONLY, ALIGN=2
 
                   RF_ReadBuf PROC
-;;;145    /******************************************************************************/
-;;;146    void RF_ReadBuf(uint8_t reg, unsigned char *pBuf, uint8_t length) {
+;;;146    /******************************************************************************/
+;;;147    void RF_ReadBuf(uint8_t reg, unsigned char *pBuf, uint8_t length) {
 000000  b5f8              PUSH     {r3-r7,lr}
 000002  460e              MOV      r6,r1
-;;;147    	uint8_t byte_ctr;
-;;;148    
-;;;149    	CSN_LOW;
+;;;148    	uint8_t byte_ctr;
+;;;149    
+;;;150    	CSN_LOW;
 000004  4f0b              LDR      r7,|L5.52|
 000006  2100              MOVS     r1,#0
-000008  4615              MOV      r5,r2                 ;146
+000008  4615              MOV      r5,r2                 ;147
 00000a  6139              STR      r1,[r7,#0x10]
-;;;150    	SPI_WR(reg);
+;;;151    	SPI_WR(reg);
 00000c  f7fffffe          BL       SPI_WR
-;;;151    	for (byte_ctr = 0; byte_ctr < length; byte_ctr++)
+;;;152    	for (byte_ctr = 0; byte_ctr < length; byte_ctr++)
 000010  2400              MOVS     r4,#0
 000012  e004              B        |L5.30|
                   |L5.20|
-;;;152    		pBuf[byte_ctr] = ucSPI_Read();
+;;;153    		pBuf[byte_ctr] = ucSPI_Read();
 000014  f7fffffe          BL       ucSPI_Read
 000018  5530              STRB     r0,[r6,r4]
 00001a  1c64              ADDS     r4,r4,#1
-00001c  b2e4              UXTB     r4,r4                 ;151
+00001c  b2e4              UXTB     r4,r4                 ;152
                   |L5.30|
-00001e  42ac              CMP      r4,r5                 ;151
+00001e  42ac              CMP      r4,r5                 ;152
 000020  d3f8              BCC      |L5.20|
-;;;153    	SPI_DATA_OUTPUT_MODE;
+;;;154    	SPI_DATA_OUTPUT_MODE;
 000022  2201              MOVS     r2,#1
 000024  2120              MOVS     r1,#0x20
 000026  4804              LDR      r0,|L5.56|
 000028  f7fffffe          BL       GPIO_SetMode
-;;;154    	CSN_HIGH;
+;;;155    	CSN_HIGH;
 00002c  2001              MOVS     r0,#1
 00002e  6138              STR      r0,[r7,#0x10]
-;;;155    }
+;;;156    }
 000030  bdf8              POP      {r3-r7,pc}
-;;;156    
+;;;157    
                           ENDP
 
 000032  0000              DCW      0x0000
@@ -370,37 +372,37 @@
                           AREA ||i.RF_RxMode||, CODE, READONLY, ALIGN=2
 
                   RF_RxMode PROC
-;;;172    /******************************************************************************/
-;;;173    void RF_RxMode(void) {
+;;;174    /******************************************************************************/
+;;;175    void RF_RxMode(void) {
 000000  b510              PUSH     {r4,lr}
-;;;174    	uint16_t i = 0;
+;;;176    	uint16_t i = 0;
 000002  2400              MOVS     r4,#0
-;;;175    	CE_LOW;
+;;;177    	CE_LOW;
 000004  4621              MOV      r1,r4
 000006  20fc              MOVS     r0,#0xfc
 000008  f7fffffe          BL       RF_WriteReg
-;;;176    	RF_WriteReg(W_REGISTER + CONFIG, 0X8F);						// 将RF设置成RX模式
+;;;178    	RF_WriteReg(W_REGISTER + CONFIG, 0X8F);						// 将RF设置成RX模式
 00000c  218f              MOVS     r1,#0x8f
 00000e  2020              MOVS     r0,#0x20
 000010  f7fffffe          BL       RF_WriteReg
-;;;177    	CE_HIGH;										// Set CE pin high 开始接收数据
+;;;179    	CE_HIGH;										// Set CE pin high 开始接收数据
 000014  2100              MOVS     r1,#0
 000016  20fd              MOVS     r0,#0xfd
 000018  f7fffffe          BL       RF_WriteReg
-;;;178    //	delay_ms(2);
-;;;179    	for (i = 0; i < 5000; i++) {
+;;;180    //	delay_ms(2);
+;;;181    	for (i = 0; i < 5000; i++) {
 00001c  4802              LDR      r0,|L6.40|
                   |L6.30|
 00001e  1c64              ADDS     r4,r4,#1
 000020  b2a4              UXTH     r4,r4
 000022  4284              CMP      r4,r0
 000024  d3fb              BCC      |L6.30|
-;;;180    		__NOP;
-;;;181    	}
-;;;182    
-;;;183    }
-000026  bd10              POP      {r4,pc}
+;;;182    		__NOP;
+;;;183    	}
 ;;;184    
+;;;185    }
+000026  bd10              POP      {r4,pc}
+;;;186    
                           ENDP
 
                   |L6.40|
@@ -409,127 +411,128 @@
                           AREA ||i.RF_SetChannel||, CODE, READONLY, ALIGN=1
 
                   RF_SetChannel PROC
-;;;219    /******************************************************************************/
-;;;220    void RF_SetChannel(uint8_t Channel) {
+;;;221    /******************************************************************************/
+;;;222    void RF_SetChannel(uint8_t Channel) {
 000000  b510              PUSH     {r4,lr}
 000002  4604              MOV      r4,r0
-;;;221    	CE_LOW;
+;;;223    	CE_LOW;
 000004  2100              MOVS     r1,#0
 000006  20fc              MOVS     r0,#0xfc
 000008  f7fffffe          BL       RF_WriteReg
-;;;222    	RF_WriteReg(W_REGISTER + RF_CH, Channel);
+;;;224    	RF_WriteReg(W_REGISTER + RF_CH, Channel);
 00000c  4621              MOV      r1,r4
 00000e  2025              MOVS     r0,#0x25
 000010  f7fffffe          BL       RF_WriteReg
-;;;223    }
+;;;225    }
 000014  bd10              POP      {r4,pc}
-;;;224    
+;;;226    
                           ENDP
 
 
                           AREA ||i.RF_TxData||, CODE, READONLY, ALIGN=1
 
                   RF_TxData PROC
-;;;231    /******************************************************************************/
-;;;232    void RF_TxData(uint8_t *ucPayload, uint8_t length) {
+;;;233    /******************************************************************************/
+;;;234    void RF_TxData(uint8_t *ucPayload, uint8_t length) {
 000000  b570              PUSH     {r4-r6,lr}
 000002  460d              MOV      r5,r1
 000004  4606              MOV      r6,r0
-;;;233    	if (0 == ucRF_GetStatus()) {                             // rf free status
+;;;235    	if (0 == ucRF_GetStatus()) {                             // rf free status
 000006  f7fffffe          BL       ucRF_GetStatus
 00000a  2800              CMP      r0,#0
 00000c  d111              BNE      |L8.50|
-;;;234    		uint16_t i = 0;
+;;;236    		uint16_t i = 0;
 00000e  2400              MOVS     r4,#0
-;;;235    		RF_WriteBuf(W_TX_PAYLOAD, ucPayload, length);
+;;;237    		RF_WriteBuf(W_TX_PAYLOAD, ucPayload, length);
 000010  462a              MOV      r2,r5
 000012  4631              MOV      r1,r6
 000014  20a0              MOVS     r0,#0xa0
 000016  f7fffffe          BL       RF_WriteBuf
-;;;236    		CE_HIGH;                             //rf entery tx mode start send data
+;;;238    		CE_HIGH;                             //rf entery tx mode start send data
 00001a  2100              MOVS     r1,#0
 00001c  20fd              MOVS     r0,#0xfd
 00001e  f7fffffe          BL       RF_WriteReg
                   |L8.34|
 000022  1c64              ADDS     r4,r4,#1
-;;;237    //		delay_10us(60);                            //keep ce high at least 600us
-;;;238    		for (i = 0; i < 200; i++) {
+;;;239    //		delay_10us(60);                            //keep ce high at least 600us
+;;;240    		for (i = 0; i < 200; i++) {
 000024  b2a4              UXTH     r4,r4
 000026  2cc8              CMP      r4,#0xc8
 000028  d3fb              BCC      |L8.34|
-;;;239    			__NOP;
-;;;240    		}
-;;;241    		CE_LOW;                                                 //rf entery stb3
+;;;241    			__NOP;
+;;;242    		}
+;;;243    		CE_LOW;                                                 //rf entery stb3
 00002a  2100              MOVS     r1,#0
 00002c  20fc              MOVS     r0,#0xfc
 00002e  f7fffffe          BL       RF_WriteReg
                   |L8.50|
-;;;242    	}
-;;;243    }
+;;;244    	}
+;;;245    }
 000032  bd70              POP      {r4-r6,pc}
-;;;244    
+;;;246    
                           ENDP
 
 
                           AREA ||i.RF_TxMode||, CODE, READONLY, ALIGN=1
 
                   RF_TxMode PROC
-;;;160    /******************************************************************************/
-;;;161    void RF_TxMode(void) {
+;;;161    /******************************************************************************/
+;;;162    void RF_TxMode(void) {
 000000  b500              PUSH     {lr}
-;;;162    	CE_LOW;
+;;;163    	CE_LOW;
 000002  2100              MOVS     r1,#0
 000004  20fc              MOVS     r0,#0xfc
 000006  f7fffffe          BL       RF_WriteReg
-;;;163    	RF_WriteReg(W_REGISTER + CONFIG, 0X8E);						// 将RF设置成TX模式
+;;;164    	RF_WriteReg(W_REGISTER + CONFIG, 0X8E);						// 将RF设置成TX模式
 00000a  218e              MOVS     r1,#0x8e
 00000c  2020              MOVS     r0,#0x20
 00000e  f7fffffe          BL       RF_WriteReg
-;;;164    //	delay_10us(1);
-;;;165    	__NOP; __NOP;
+;;;165    //	delay_10us(1);
 ;;;166    	__NOP;
-;;;167    }
+;;;167    	__NOP;
+;;;168    	__NOP;
+;;;169    }
 000012  bd00              POP      {pc}
-;;;168    
+;;;170    
                           ENDP
 
 
                           AREA ||i.RF_WriteBuf||, CODE, READONLY, ALIGN=2
 
                   RF_WriteBuf PROC
-;;;70     /******************************************************************************/
-;;;71     void RF_WriteBuf(uint8_t reg, uint8_t *pBuf, uint8_t length) {
+;;;71     /******************************************************************************/
+;;;72     void RF_WriteBuf(uint8_t reg, uint8_t *pBuf, uint8_t length) {
 000000  b5f0              PUSH     {r4-r7,lr}
 000002  460e              MOV      r6,r1
-;;;72     	uint8_t j;
-;;;73     	CSN_LOW;
+;;;73     	uint8_t j;
+;;;74     	CSN_LOW;
 000004  4f08              LDR      r7,|L10.40|
 000006  2100              MOVS     r1,#0
-000008  4615              MOV      r5,r2                 ;71
+000008  4615              MOV      r5,r2                 ;72
 00000a  6139              STR      r1,[r7,#0x10]
-;;;74     	j = 0;
+;;;75     	j = 0;
 00000c  460c              MOV      r4,r1
-;;;75     	SPI_WW(reg);
+;;;76     	SPI_WW(reg);
 00000e  f7fffffe          BL       SPI_WW
-;;;76     	for (j = 0; j < length; j++) {
+;;;77     	for (j = 0; j < length; j++) {
 000012  e004              B        |L10.30|
                   |L10.20|
-;;;77     		SPI_WW(pBuf[j]);
+;;;78     		SPI_WW(pBuf[j]);
 000014  5d30              LDRB     r0,[r6,r4]
 000016  f7fffffe          BL       SPI_WW
 00001a  1c64              ADDS     r4,r4,#1
-00001c  b2e4              UXTB     r4,r4                 ;76
+00001c  b2e4              UXTB     r4,r4                 ;77
                   |L10.30|
-00001e  42ac              CMP      r4,r5                 ;76
+00001e  42ac              CMP      r4,r5                 ;77
 000020  d3f8              BCC      |L10.20|
-;;;78     	}
-;;;79     	j = 0;
-;;;80     	CSN_HIGH;
+;;;79     	}
+;;;80     	j = 0;
+;;;81     	CSN_HIGH;
 000022  2001              MOVS     r0,#1
 000024  6138              STR      r0,[r7,#0x10]
-;;;81     }
+;;;82     }
 000026  bdf0              POP      {r4-r7,pc}
-;;;82     
+;;;83     
                           ENDP
 
                   |L10.40|
@@ -552,12 +555,13 @@
 ;;;63     	SPI_WW(wdata);
 00000e  4628              MOV      r0,r5
 000010  f7fffffe          BL       SPI_WW
-;;;64     	__NOP; CSN_HIGH;
+;;;64     	__NOP; 
+;;;65     	CSN_HIGH;
 000014  2001              MOVS     r0,#1
 000016  6120              STR      r0,[r4,#0x10]
-;;;65     }
+;;;66     }
 000018  bd30              POP      {r4,r5,pc}
-;;;66     
+;;;67     
                           ENDP
 
 00001a  0000              DCW      0x0000
@@ -567,52 +571,52 @@
                           AREA ||i.SPI_WR||, CODE, READONLY, ALIGN=2
 
                   SPI_WR PROC
-;;;86     /******************************************************************************/
-;;;87     void SPI_WR(uint8_t R_REG) {
+;;;87     /******************************************************************************/
+;;;88     void SPI_WR(uint8_t R_REG) {
 000000  b570              PUSH     {r4-r6,lr}
-;;;88     	uint8_t i;
-;;;89     	for (i = 0; i < 8; i++) {
+;;;89     	uint8_t i;
+;;;90     	for (i = 0; i < 8; i++) {
 000002  2100              MOVS     r1,#0
-;;;90     		SCK_LOW;
+;;;91     		SCK_LOW;
 000004  4c0b              LDR      r4,|L12.52|
-000006  460d              MOV      r5,r1                 ;89
-;;;91     		if (R_REG & 0x80) {
-;;;92     			SPI_DATA_HIGH;
+000006  460d              MOV      r5,r1                 ;90
+;;;92     		if (R_REG & 0x80) {
+;;;93     			SPI_DATA_HIGH;
 000008  2201              MOVS     r2,#1
                   |L12.10|
-00000a  61e5              STR      r5,[r4,#0x1c]         ;90
-00000c  0603              LSLS     r3,r0,#24             ;91
+00000a  61e5              STR      r5,[r4,#0x1c]         ;91
+00000c  0603              LSLS     r3,r0,#24             ;92
 00000e  d501              BPL      |L12.20|
 000010  6162              STR      r2,[r4,#0x14]
 000012  e000              B        |L12.22|
                   |L12.20|
-;;;93     		} else {
-;;;94     			SPI_DATA_LOW;
+;;;94     		} else {
+;;;95     			SPI_DATA_LOW;
 000014  6165              STR      r5,[r4,#0x14]
                   |L12.22|
-;;;95     		}
-;;;96     		R_REG <<= 1;
+;;;96     		}
+;;;97     		R_REG <<= 1;
 000016  0640              LSLS     r0,r0,#25
 000018  0e00              LSRS     r0,r0,#24
-;;;97     		SCK_HIGH;
+;;;98     		SCK_HIGH;
 00001a  61e2              STR      r2,[r4,#0x1c]
 00001c  1c49              ADDS     r1,r1,#1
-00001e  b2c9              UXTB     r1,r1                 ;89
-000020  2908              CMP      r1,#8                 ;89
+00001e  b2c9              UXTB     r1,r1                 ;90
+000020  2908              CMP      r1,#8                 ;90
 000022  d3f2              BCC      |L12.10|
-;;;98     		__NOP;
-;;;99     	}
-;;;100    	SPI_DATA_INPUT_MODE;
+;;;99     		__NOP;
+;;;100    	}
+;;;101    	SPI_DATA_INPUT_MODE;
 000024  2200              MOVS     r2,#0
 000026  2120              MOVS     r1,#0x20
 000028  4803              LDR      r0,|L12.56|
 00002a  f7fffffe          BL       GPIO_SetMode
-;;;101    	SCK_LOW;
+;;;102    	SCK_LOW;
 00002e  61e5              STR      r5,[r4,#0x1c]
-;;;102    
-;;;103    }
+;;;103    
+;;;104    }
 000030  bd70              POP      {r4-r6,pc}
-;;;104    
+;;;105    
                           ENDP
 
 000032  0000              DCW      0x0000
@@ -723,111 +727,111 @@
                           AREA ||i.ucRF_DumpRxData||, CODE, READONLY, ALIGN=1
 
                   ucRF_DumpRxData PROC
-;;;256    /******************************************************************************/
-;;;257    uint8_t ucRF_DumpRxData(uint8_t *ucPayload, uint8_t length) {
+;;;258    /******************************************************************************/
+;;;259    uint8_t ucRF_DumpRxData(uint8_t *ucPayload, uint8_t length) {
 000000  b570              PUSH     {r4-r6,lr}
 000002  460c              MOV      r4,r1
 000004  4605              MOV      r5,r0
-;;;258    	if (ucRF_GetStatus() & RX_DR_FLAG) {
+;;;260    	if (ucRF_GetStatus() & RX_DR_FLAG) {
 000006  f7fffffe          BL       ucRF_GetStatus
 00000a  0640              LSLS     r0,r0,#25
 00000c  d512              BPL      |L16.52|
-;;;259    
-;;;260    		CE_LOW;
+;;;261    
+;;;262    		CE_LOW;
 00000e  2100              MOVS     r1,#0
 000010  20fc              MOVS     r0,#0xfc
 000012  f7fffffe          BL       RF_WriteReg
-;;;261    		RF_ReadBuf(R_RX_PAYLOAD, ucPayload, length); //将接收到的数据读出到ucPayload，且清除rxfifo
+;;;263    		RF_ReadBuf(R_RX_PAYLOAD, ucPayload, length); //将接收到的数据读出到ucPayload，且清除rxfifo
 000016  4622              MOV      r2,r4
 000018  4629              MOV      r1,r5
 00001a  2061              MOVS     r0,#0x61
 00001c  f7fffffe          BL       RF_ReadBuf
-;;;262    		RF_ClearFIFO();
+;;;264    		RF_ClearFIFO();
 000020  f7fffffe          BL       RF_ClearFIFO
-;;;263    		RF_ClearStatus();                              		          //清除Status
+;;;265    		RF_ClearStatus();                              		          //清除Status
 000024  f7fffffe          BL       RF_ClearStatus
-;;;264    		CE_HIGH;                                                         //继续开始接
+;;;266    		CE_HIGH;                                                         //继续开始接
 000028  2100              MOVS     r1,#0
 00002a  20fd              MOVS     r0,#0xfd
 00002c  f7fffffe          BL       RF_WriteReg
-;;;265    		return 1;
+;;;267    		return 1;
 000030  2001              MOVS     r0,#1
-;;;266    	}
-;;;267    	return 0;
-;;;268    }
+;;;268    	}
+;;;269    	return 0;
+;;;270    }
 000032  bd70              POP      {r4-r6,pc}
                   |L16.52|
-000034  2000              MOVS     r0,#0                 ;267
+000034  2000              MOVS     r0,#0                 ;269
 000036  bd70              POP      {r4-r6,pc}
-;;;269    
+;;;271    
                           ENDP
 
 
                           AREA ||i.ucRF_GetRSSI||, CODE, READONLY, ALIGN=1
 
                   ucRF_GetRSSI PROC
-;;;195    /******************************************************************************/
-;;;196    uint8_t ucRF_GetRSSI(void) {
+;;;197    /******************************************************************************/
+;;;198    uint8_t ucRF_GetRSSI(void) {
 000000  b510              PUSH     {r4,lr}
-;;;197    	return (ucRF_ReadReg(DATAOUT));								//读取RF RSSI
+;;;199    	return (ucRF_ReadReg(DATAOUT));								//读取RF RSSI
 000002  2009              MOVS     r0,#9
 000004  f7fffffe          BL       ucRF_ReadReg
-;;;198    }
+;;;200    }
 000008  bd10              POP      {r4,pc}
-;;;199    /******************************************************************************/
+;;;201    /******************************************************************************/
                           ENDP
 
 
                           AREA ||i.ucRF_GetStatus||, CODE, READONLY, ALIGN=1
 
                   ucRF_GetStatus PROC
-;;;188    /******************************************************************************/
-;;;189    uint8_t ucRF_GetStatus(void) {
+;;;190    /******************************************************************************/
+;;;191    uint8_t ucRF_GetStatus(void) {
 000000  b510              PUSH     {r4,lr}
-;;;190    	return ucRF_ReadReg(STATUS) & 0x70;								//读取RF的状态
+;;;192    	return ucRF_ReadReg(STATUS) & 0x70;								//读取RF的状态
 000002  2007              MOVS     r0,#7
 000004  f7fffffe          BL       ucRF_ReadReg
 000008  2170              MOVS     r1,#0x70
 00000a  4008              ANDS     r0,r0,r1
-;;;191    }
+;;;193    }
 00000c  bd10              POP      {r4,pc}
-;;;192    /******************************************************************************/
+;;;194    /******************************************************************************/
                           ENDP
 
 
                           AREA ||i.ucRF_ReadReg||, CODE, READONLY, ALIGN=2
 
                   ucRF_ReadReg PROC
-;;;127    /******************************************************************************/
-;;;128    uint8_t ucRF_ReadReg(uint8_t reg) {
+;;;128    /******************************************************************************/
+;;;129    uint8_t ucRF_ReadReg(uint8_t reg) {
 000000  b570              PUSH     {r4-r6,lr}
-;;;129    	uint8_t dt;
-;;;130    
-;;;131    	CSN_LOW;
+;;;130    	uint8_t dt;
+;;;131    
+;;;132    	CSN_LOW;
 000002  4c08              LDR      r4,|L19.36|
 000004  2100              MOVS     r1,#0
 000006  6121              STR      r1,[r4,#0x10]
-;;;132    	__NOP;
-;;;133    	SPI_WR( reg);
+;;;133    	__NOP;
+;;;134    	SPI_WR( reg);
 000008  f7fffffe          BL       SPI_WR
-;;;134    	dt = ucSPI_Read();
+;;;135    	dt = ucSPI_Read();
 00000c  f7fffffe          BL       ucSPI_Read
 000010  4605              MOV      r5,r0
-;;;135    	SPI_DATA_OUTPUT_MODE;
+;;;136    	SPI_DATA_OUTPUT_MODE;
 000012  2201              MOVS     r2,#1
 000014  2120              MOVS     r1,#0x20
 000016  4804              LDR      r0,|L19.40|
 000018  f7fffffe          BL       GPIO_SetMode
-;;;136    	__NOP;
-;;;137    	CSN_HIGH;
+;;;137    	__NOP;
+;;;138    	CSN_HIGH;
 00001c  2101              MOVS     r1,#1
 00001e  6121              STR      r1,[r4,#0x10]
-;;;138    
-;;;139    	return dt;
+;;;139    
+;;;140    	return dt;
 000020  4628              MOV      r0,r5
-;;;140    }
+;;;141    }
 000022  bd70              POP      {r4-r6,pc}
-;;;141    
+;;;142    
                           ENDP
 
                   |L19.36|
@@ -838,44 +842,44 @@
                           AREA ||i.ucSPI_Read||, CODE, READONLY, ALIGN=2
 
                   ucSPI_Read PROC
-;;;108    /******************************************************************************/
-;;;109    uint8_t ucSPI_Read(void) {
+;;;109    /******************************************************************************/
+;;;110    uint8_t ucSPI_Read(void) {
 000000  b530              PUSH     {r4,r5,lr}
-;;;110    	uint8_t i, dt;
-;;;111    	dt = 0;
+;;;111    	uint8_t i, dt;
+;;;112    	dt = 0;
 000002  2000              MOVS     r0,#0
-;;;112    	for (i = 0; i < 8; i++) {
-;;;113    		SCK_LOW;
+;;;113    	for (i = 0; i < 8; i++) {
+;;;114    		SCK_LOW;
 000004  4a08              LDR      r2,|L20.40|
-000006  4601              MOV      r1,r0                 ;112
-000008  4604              MOV      r4,r0                 ;112
-;;;114    		dt = dt << 1;
-;;;115    		SCK_HIGH;
+000006  4601              MOV      r1,r0                 ;113
+000008  4604              MOV      r4,r0                 ;113
+;;;115    		dt = dt << 1;
+;;;116    		SCK_HIGH;
 00000a  2301              MOVS     r3,#1
                   |L20.12|
-00000c  61d4              STR      r4,[r2,#0x1c]         ;113
-00000e  0640              LSLS     r0,r0,#25             ;114
-000010  0e00              LSRS     r0,r0,#24             ;114
+00000c  61d4              STR      r4,[r2,#0x1c]         ;114
+00000e  0640              LSLS     r0,r0,#25             ;115
+000010  0e00              LSRS     r0,r0,#24             ;115
 000012  61d3              STR      r3,[r2,#0x1c]
-;;;116    		if (SPI_DATA_STATUS) {
+;;;117    		if (SPI_DATA_STATUS) {
 000014  6955              LDR      r5,[r2,#0x14]
 000016  2d00              CMP      r5,#0
 000018  d000              BEQ      |L20.28|
-;;;117    			dt |= 0x01;
+;;;118    			dt |= 0x01;
 00001a  4318              ORRS     r0,r0,r3
                   |L20.28|
 00001c  1c49              ADDS     r1,r1,#1
-00001e  b2c9              UXTB     r1,r1                 ;112
-000020  2908              CMP      r1,#8                 ;112
+00001e  b2c9              UXTB     r1,r1                 ;113
+000020  2908              CMP      r1,#8                 ;113
 000022  d3f3              BCC      |L20.12|
-;;;118    		}
-;;;119    	}
-;;;120    	SCK_LOW;
+;;;119    		}
+;;;120    	}
+;;;121    	SCK_LOW;
 000024  61d4              STR      r4,[r2,#0x1c]
-;;;121    	return dt;
-;;;122    }
+;;;122    	return dt;
+;;;123    }
 000026  bd30              POP      {r4,r5,pc}
-;;;123    
+;;;124    
                           ENDP
 
                   |L20.40|
@@ -885,7 +889,7 @@
 
                   TX_ADDRESS_DEF
 000000  cccccccc          DCB      0xcc,0xcc,0xcc,0xcc
-000004  aa                DCB      0xaa
+000004  cc                DCB      0xcc
 
 ;*** Start embedded assembler ***
 

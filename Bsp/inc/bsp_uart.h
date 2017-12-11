@@ -18,8 +18,8 @@ typedef struct _RCV_T {
 
 } RCV_T;
 
-extern RCV_T rcv_T;
-extern uint8_t riflag;
+//extern RCV_T rcv_T;
+//extern uint8_t riflag;
 
 void Uart_InitHard(void);
 

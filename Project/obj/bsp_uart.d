@@ -29,3 +29,4 @@
 .\obj\bsp_uart.o: ..\Bsp\inc\bsp_relay.h
 .\obj\bsp_uart.o: ..\Bsp\inc\bsp_eeprom.h
 .\obj\bsp_uart.o: ..\Bsp\inc\bsp_key.h
+.\obj\bsp_uart.o: ..\Bsp\inc\bsp_uart_fifo.h

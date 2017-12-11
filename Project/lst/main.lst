@@ -19828,36 +19828,7 @@ N#define         RF_POWER                      (RF13dBm |DATA_RATE)		//发射功率1
 N
 N#endif /* BSP_INC_BSP_2D4_H_ */
 L 16 "..\Bsp\bsp.h" 2
-N#include "bsp_uart.h"
-L 1 "..\Bsp\inc\bsp_uart.h" 1
-N/*
-N * bsp_uart.h
-N *
-N *  Created on: 2017年6月27日
-N *      Author: fly
-N */
-N
-N#ifndef BSP_INC_BSP_UART_H_
-N#define BSP_INC_BSP_UART_H_
-N
-N#define RCV_BUFSIZE  160
-N
-Ntypedef struct _RCV_T {
-N
-N	uint8_t rxBuf[RCV_BUFSIZE];
-X	uint8_t rxBuf[160];
-N	uint8_t pWrite;
-N	uint8_t pRead;
-N
-N} RCV_T;
-N
-Nextern RCV_T rcv_T;
-Nextern uint8_t riflag;
-N
-Nvoid Uart_InitHard(void);
-N
-N#endif /* BSP_INC_BSP_UART_H_ */
-L 17 "..\Bsp\bsp.h" 2
+N//#include "bsp_uart.h"
 N#include "bsp_timer0.h"
 L 1 "..\Bsp\inc\bsp_timer0.h" 1
 N/*
@@ -20058,7 +20029,91 @@ N#endif
 N
 N/*****************************(END OF FILE) *********************************/
 L 22 "..\Bsp\bsp.h" 2
+N#include "bsp_uart_fifo.h"
+L 1 "..\Bsp\inc\bsp_uart_fifo.h" 1
+N#ifndef _BSP_USART_FIFO_H_
+N#define _BSP_USART_FIFO_H_
 N
+N#define	UART0_FIFO_EN	1
+N#define	UART1_FIFO_EN	1
+N
+N///* RS485芯片发送使能GPIO, PB2 */
+N//#define RCC_RS485_TXEN 	 RCC_APB2Periph_GPIOB
+N//#define PORT_RS485_TXEN  GPIOB
+N//#define PIN_RS485_TXEN	 GPIO_Pin_2
+N
+N//#define RS485_RX_EN()	PORT_RS485_TXEN->BRR = PIN_RS485_TXEN
+N//#define RS485_TX_EN()	PORT_RS485_TXEN->BSRR = PIN_RS485_TXEN
+N
+N/* 定义端口号 */
+Ntypedef enum {
+N	COM0 = 0, COM1 = 1,
+N} COM_PORT_E;
+N
+N
+N#if UART0_FIFO_EN == 1
+X#if 1 == 1
+N#define UART0_BAUD			115200
+N#define UART0_TX_BUF_SIZE	1*64
+N#define UART0_RX_BUF_SIZE	1*64
+N#endif
+N
+N#if UART1_FIFO_EN == 1
+X#if 1 == 1
+N#define UART1_BAUD			115200
+N#define UART1_TX_BUF_SIZE	1*256
+N#define UART1_RX_BUF_SIZE	1*256
+N#endif
+N
+N/* 串口设备结构体 */
+Ntypedef struct {
+N	UART_T *uart; /* STM32内部串口设备指针 */
+N	uint8_t *pTxBuf; /* 发送缓冲区 */
+N	uint8_t *pRxBuf; /* 接收缓冲区 */
+N	uint16_t usTxBufSize; /* 发送缓冲区大小 */
+N	uint16_t usRxBufSize; /* 接收缓冲区大小 */
+N	__IO uint16_t usTxWrite; /* 发送缓冲区写指针 */
+X	volatile uint16_t usTxWrite;  
+N	__IO uint16_t usTxRead; /* 发送缓冲区读指针 */
+X	volatile uint16_t usTxRead;  
+N	__IO uint16_t usTxCount; /* 等待发送的数据个数 */
+X	volatile uint16_t usTxCount;  
+N
+N	__IO uint16_t usRxWrite; /* 接收缓冲区写指针 */
+X	volatile uint16_t usRxWrite;  
+N	__IO uint16_t usRxRead; /* 接收缓冲区读指针 */
+X	volatile uint16_t usRxRead;  
+N	__IO uint16_t usRxCount; /* 还未读取的新数据个数 */
+X	volatile uint16_t usRxCount;  
+N
+N	void (*SendBefor)(void); /* 开始发送之前的回调函数指针（主要用于RS485切换到发送模式） */
+N	void (*SendOver)(void); /* 发送完毕的回调函数指针（主要用于RS485将发送模式切换为接收模式） */
+N	void (*ReciveNew)(uint8_t _byte); /* 串口收到数据的回调函数指针 */
+N} UART_T_M;
+N
+Nvoid bsp_InitUart(void);
+Nvoid comSendBuf(COM_PORT_E _ucPort, uint8_t *_ucaBuf, uint16_t _usLen);
+Nvoid comSendChar(COM_PORT_E _ucPort, uint8_t _ucByte);
+Nuint8_t comGetChar(COM_PORT_E _ucPort, uint8_t *_pByte);
+N
+Nvoid comClearTxFifo(COM_PORT_E _ucPort);
+Nvoid comClearRxFifo(COM_PORT_E _ucPort);
+N
+N//void RS485_SendBuf(uint8_t *_ucaBuf, uint16_t _usLen);
+N//void RS485_SendStr(char *_pBuf);
+N
+N//void bsp_Set485Baud(uint32_t _baud);
+N
+Nvoid bsp_SetUart1Baud(uint32_t _baud);
+Nvoid bsp_SetUart2Baud(uint32_t _baud);
+N
+N#endif
+N
+N/***************************** 安富莱电子 www.armfly.com (END OF FILE) *********************************/
+L 23 "..\Bsp\bsp.h" 2
+N
+N#define ENABLE_INT()	__set_PRIMASK(0)
+N#define DISABLE_INT()	__set_PRIMASK(1)
 N
 Nvoid bsp_Init(void);
 N
@@ -20067,8 +20122,146 @@ N
 N/***************************** (END OF FILE) *********************************/
 L 18 "..\App\inc\app.h" 2
 N//#include "app_repeat_exe.h"
-N//#include "app_work.h"
-N//#include "app_2d4.h"
+N#include "app_work.h"
+L 1 "..\App\inc\app_work.h" 1
+N/*
+N * app_work.h
+N *
+N *  Created on: 2017年7月6日
+N *      Author: admin
+N */
+N
+N#ifndef APP_INC_APP_WORK_H_
+N#define APP_INC_APP_WORK_H_
+N
+Ntypedef struct _WORK_T {
+N
+N	union {
+N		uint8_t allbits;
+N		struct {
+N			unsigned DOME :1;
+N			unsigned ra2 :1;
+N			unsigned DEMO :1;
+N			unsigned blinkEnable :1;
+N			unsigned ra6 :1;
+N			unsigned ra7 :1;
+N			unsigned ra8 :1;
+N			unsigned ra9 :1;
+N		} bits;
+N	} status;
+N
+N//	uint8_t mode;
+N
+N} WORK_T;
+Nextern WORK_T g_tWork;
+N
+Nvoid app_work_Init(void);
+Nvoid app_work_1s_pro(void);
+Nvoid app_work_100ms_pro(void);
+N
+N#endif /* APP_INC_APP_WORK_H_ */
+L 20 "..\App\inc\app.h" 2
+N#include "app_2d4.h"
+L 1 "..\App\inc\app_2d4.h" 1
+N/*
+N * app_2d4.h
+N *
+N *  Created on: 2017年8月18日
+N *      Author: fly
+N */
+N
+N#ifndef APP_INC_APP_2D4_H_
+N#define APP_INC_APP_2D4_H_
+N
+N#define LCD2LAMP_HEADER   0xF2
+N#define LAMP2LCD_HEADER   0xF8
+N/*
+N #define POWER_SHORT_CMD      0xB1
+N #define POWER_LONG_CMD      0xBA
+N
+N #define ACC_CMD        0xB6
+N
+N #define UP_CMD         0xB3
+N #define DOWN_CMD       0xB4
+N #define DOME_CMD       0xB9
+N #define VOL_ADD_CMD    0xB5
+N #define VOL_MINUS_CMD  0xB7
+N
+N #define PLAY_CMD       0xB2
+N #define MODE_CMD       0xB8
+N */
+N/////////
+N#define  KEY_POWER_SHORT_CMD      0x01
+N//#define POWER_LONG_CMD      0xBA
+N
+N#define  KEY_ACC_CMD        0x09
+N#define  KEY_DOME_CMD       0xB9
+N
+N#define  KEY_UP_CMD           0x02
+N#define  KEY_DOWN_CMD         0x03
+N#define  KEY_VOL_ADD_CMD      0x04
+N#define  KEY_VOL_MINUS_CMD    0x05
+N#define  KEY_PLAY_SHORT_CMD   0x06
+N#define  KEY_PLAY_LONG_CMD    0x07
+N#define  KEY_MODE_CMD         0x08
+N///
+N
+N#define  RCV_POWER_STATUS_CMD                0x31
+N#define  RCV_X_BOX_STATUS_CMD                0x32
+N#define  RCV_BT_STATUS_CMD                   0x33
+N#define  RCV_PLAY_PAUSE_STATUS_CMD           0x34
+N#define  RCV_PREV_NEXT_CMD                   0x35
+N
+N#define  RCV_USB_PLAY_TIME_CMD               0x36
+N#define  RCV_FM_HZ_CMD                       0x37
+N#define  RCV_VOL_CMD                         0x38
+N
+N#define  MODE_CHANGE_CMD                     0x41
+N
+N#define  KEY_CARD_MODE_POWER_CMD           0x50
+N#define  KEY_CARD_MODE_POWER_LONG_CMD      0x70
+N#define  KEY_CARD_PREV_VOL_MINUS_CMD       0x51
+N#define  KEY_CARD_PREV_VOL_MINUS_LONG_CMD  0x71
+N#define  KEY_CARD_PLAY_BT_CALL_CMD         0x52
+N#define  KEY_CARD_PLAY_BT_CALL_LONG_CMD    0x72
+N#define  KEY_CARD_NEXT_VOL_ADD_CMD         0x53
+N#define  KEY_CARD_NEXT_VOL_ADD_LONG_CMD    0x73
+N
+N#define  KEY_CARD_POWER_CMD              0x54
+N#define  KEY_CARD_MODE_ADD_CMD           0x55
+N
+N#define  KEY_CARD_SPEED_ADD_CMD          0x56
+N#define  KEY_CARD_DEMO_CMD               0x57
+N#define  KEY_CARD_SPEED_MINUS_CMD        0x58
+N
+N#define  KEY_CARD_COLOR_ADD_CMD          0x59
+N#define  KEY_CARD_MODE_CMD               0x5A
+N#define  KEY_CARD_BRIGHT_ADD_CMD         0x5B
+N
+N#define  KEY_CARD_COLOR_MINUS_CMD        0x5C
+N#define  KEY_CARD_BRIGHT_MINUS_CMD       0x5D
+N
+N#define  KEY_CARD_NUM_1_CMD              0x5E
+N#define  KEY_CARD_NUM_1_LONG_CMD         0x7E
+N#define  KEY_CARD_NUM_2_CMD              0x5F
+N#define  KEY_CARD_NUM_3_CMD              0x60
+N#define  KEY_CARD_NUM_4_CMD              0x61
+N
+N#define  APP_COLOR_ATLA_CMD       0x62
+N#define  APP_BRIGHT_CMD           0x63
+N#define  APP_SPEED_CMD            0x64
+N#define  APP_FLASH_INDEX_CMD      0x65
+N#define  APP_SWITCH_INDEX_CMD      0x66
+N
+N
+N//extern uint8_t sendBuf[PAYLOAD_WIDTH];
+N
+Nvoid app_2d4_init(void);
+Nvoid app_2d4_send(uint8_t *d, uint8_t len);
+Nvoid app_2d4_pro(void);
+N
+N#endif /* APP_INC_APP_2D4_H_ */
+L 21 "..\App\inc\app.h" 2
 N#include "app_uart.h"
 L 1 "..\App\inc\app_uart.h" 1
 N/*
@@ -20081,24 +20274,34 @@ N
 N#ifndef APP_INC_APP_UART_H_
 N#define APP_INC_APP_UART_H_
 N
-N
 N#define BLINK_METHOD_CMD   0x12
 N/*
-N#define POWER_LONG_UART_CMD      0x31
-N//#define POWER_LONG_UART_CMD      0xBA
+N #define POWER_LONG_UART_CMD      0x31
+N //#define POWER_LONG_UART_CMD      0xBA
 N
-N#define DOME_UART_CMD      0x32
+N #define DOME_UART_CMD      0x32
 N
-N#define VOL_ADD_UART_CMD      0x36
-N#define VOL_MINUS_UART_CMD    0x37
+N #define VOL_ADD_UART_CMD      0x36
+N #define VOL_MINUS_UART_CMD    0x37
 N
-N#define UP_UART_CMD    0x34
-N#define DOWN_UART_CMD    0x35
+N #define UP_UART_CMD    0x34
+N #define DOWN_UART_CMD    0x35
 N
-N#define PLAY_UART_CMD    0x38
+N #define PLAY_UART_CMD    0x38
 N
-N#define MODE_UART_CMD    0x39
-N*/
+N #define MODE_UART_CMD    0x39
+N */
+N
+Ntypedef struct _Uart_ST {
+N
+N	uint8_t rxBuf[512];
+N	uint8_t txBuf[256];
+N
+N	uint16_t pWrite;
+N	uint16_t pRead;
+N
+N} Uart_ST;
+N
 Nvoid app_uart_Init(void);
 Nvoid app_uart_send(uint8_t cmd, uint8_t *ptr, uint8_t len);
 Nvoid app_uart_pro(void);
@@ -20255,6 +20458,7 @@ Nvoid app_eeprom_write_buf(uint16_t addr, uint8_t *pt, uint8_t len);
 N
 N#endif /* APP_INC_APP_EEPROM_H_ */
 L 25 "..\App\inc\app.h" 2
+N
 N
 N#include "lite-log.h"
 L 1 "..\utils\inc\lite-log.h" 1
@@ -21323,7 +21527,7 @@ X#if 0L
 S}
 N#endif
 N#endif  /* __LITE_LOG_H__ */
-L 27 "..\App\inc\app.h" 2
+L 28 "..\App\inc\app.h" 2
 N
 N#endif /* APP_INC_APP_H_ */
 N
@@ -21406,28 +21610,22 @@ X	LITE_syslog(__FUNCTION__, 82, LOG_DEBUG_LEVEL, " CPU @ %dHz\r\n", SystemCoreCl
 N
 N	log_debug("+-------------------------------------+ ");
 X	LITE_syslog(__FUNCTION__, 84, LOG_DEBUG_LEVEL, "+-------------------------------------+ ");
-N	log_debug("+-------------------------------------+ ");
-X	LITE_syslog(__FUNCTION__, 85, LOG_DEBUG_LEVEL, "+-------------------------------------+ ");
+N#if 0
+S	log_debug("+-------------------------------------+ ");
+S
+S	log_debug("default size: %d", sizeof(DOME_DEFAULT_T));
+S	log_debug("dome size: %d", sizeof(DOME_RUNNING_T));
+S	log_debug("header size: %d", sizeof(DOME_HEADER_T));
+S	log_debug("submode size: %d", sizeof(SUBDOME_T));
+S	log_debug("color size: %d", sizeof(COLOR_T));
+N#endif
+N//	int i = 0;
 N
-N	log_debug("default size: %d", sizeof(DOME_DEFAULT_T));
-X	LITE_syslog(__FUNCTION__, 87, LOG_DEBUG_LEVEL, "default size: %d", sizeof(DOME_DEFAULT_T));
-N	log_debug("dome size: %d", sizeof(DOME_RUNNING_T));
-X	LITE_syslog(__FUNCTION__, 88, LOG_DEBUG_LEVEL, "dome size: %d", sizeof(DOME_RUNNING_T));
-N	log_debug("header size: %d", sizeof(DOME_HEADER_T));
-X	LITE_syslog(__FUNCTION__, 89, LOG_DEBUG_LEVEL, "header size: %d", sizeof(DOME_HEADER_T));
-N	log_debug("submode size: %d", sizeof(SUBDOME_T));
-X	LITE_syslog(__FUNCTION__, 90, LOG_DEBUG_LEVEL, "submode size: %d", sizeof(SUBDOME_T));
-N	log_debug("color size: %d", sizeof(COLOR_T));
-X	LITE_syslog(__FUNCTION__, 91, LOG_DEBUG_LEVEL, "color size: %d", sizeof(COLOR_T));
+N	/**************/
+N	app_2d4_init();
+N	app_work_Init();
 N
-N	int i = 0;
-N
-N	DOME_DEFAULT_T def;
-N	uint8_t *def_p = (uint8_t *) &def;
-N	for (i = 0; i < sizeof(DOME_DEFAULT_T); ++i) {
-N		*(def_p + i) = i;
-N	}
-N
+N	/**************/
 N	while (1) {
 N		if (timer0_taskTimer_get()->flag_1ms) {
 N			timer0_taskTimer_get()->flag_1ms = 0;
@@ -21453,7 +21651,7 @@ N			timer0_taskTimer_get()->flag_10ms = 0;
 N			//////////////////
 N			bsp_KeyScan();
 N//			app_uart_pro();
-N//			app_2d4_pro();
+N			app_2d4_pro();
 N		}
 N		if (timer0_taskTimer_get()->flag_100ms) {
 N			timer0_taskTimer_get()->flag_100ms = 0;
@@ -21511,17 +21709,17 @@ N			case KEY_DOWN_K2:
 X			case KEY_2_DOWN:
 N				log_debug("LED KEY down");
 X				LITE_syslog(__FUNCTION__, 172, LOG_DEBUG_LEVEL, "LED KEY down");
+N
 N				break;
 N			case KEY_LONG_K2:
 X			case KEY_2_LONG:
 N				log_debug("LED KEY long");
-X				LITE_syslog(__FUNCTION__, 175, LOG_DEBUG_LEVEL, "LED KEY long");
+X				LITE_syslog(__FUNCTION__, 176, LOG_DEBUG_LEVEL, "LED KEY long");
 N				break;
 N			}
 N		}
 N
 N	}
 N
-W "..\App\src\main.c" 68 10 variable "dome_cnt"  was declared but never referenced
 N}
 N

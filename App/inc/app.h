@@ -16,12 +16,13 @@
 
 #include "bsp.h"
 //#include "app_repeat_exe.h"
-//#include "app_work.h"
-//#include "app_2d4.h"
+#include "app_work.h"
+#include "app_2d4.h"
 #include "app_uart.h"
 #include "app_crc.h"
 #include "app_dome.h"
 #include "app_eeprom.h"
+
 
 #include "lite-log.h"
 

@@ -8,24 +8,34 @@
 #ifndef APP_INC_APP_UART_H_
 #define APP_INC_APP_UART_H_
 
-
 #define BLINK_METHOD_CMD   0x12
 /*
-#define POWER_LONG_UART_CMD      0x31
-//#define POWER_LONG_UART_CMD      0xBA
+ #define POWER_LONG_UART_CMD      0x31
+ //#define POWER_LONG_UART_CMD      0xBA
 
-#define DOME_UART_CMD      0x32
+ #define DOME_UART_CMD      0x32
 
-#define VOL_ADD_UART_CMD      0x36
-#define VOL_MINUS_UART_CMD    0x37
+ #define VOL_ADD_UART_CMD      0x36
+ #define VOL_MINUS_UART_CMD    0x37
 
-#define UP_UART_CMD    0x34
-#define DOWN_UART_CMD    0x35
+ #define UP_UART_CMD    0x34
+ #define DOWN_UART_CMD    0x35
 
-#define PLAY_UART_CMD    0x38
+ #define PLAY_UART_CMD    0x38
 
-#define MODE_UART_CMD    0x39
-*/
+ #define MODE_UART_CMD    0x39
+ */
+
+typedef struct _Uart_ST {
+
+	uint8_t rxBuf[512];
+	uint8_t txBuf[256];
+
+	uint16_t pWrite;
+	uint16_t pRead;
+
+} Uart_ST;
+
 void app_uart_Init(void);
 void app_uart_send(uint8_t cmd, uint8_t *ptr, uint8_t len);
 void app_uart_pro(void);

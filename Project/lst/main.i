@@ -17999,33 +17999,7 @@ void RF_Init(void);
 
 
 #line 16 "..\\Bsp\\bsp.h"
-#line 1 "..\\Bsp\\inc\\bsp_uart.h"
 
-
-
-
-
- 
-
-
-
-
-
-
-typedef struct _RCV_T {
-
-	uint8_t rxBuf[160];
-	uint8_t pWrite;
-	uint8_t pRead;
-
-} RCV_T;
-
-extern RCV_T rcv_T;
-extern uint8_t riflag;
-
-void Uart_InitHard(void);
-
-#line 17 "..\\Bsp\\bsp.h"
 #line 1 "..\\Bsp\\inc\\bsp_timer0.h"
 
 
@@ -18216,6 +18190,81 @@ void bsp_ClearKey(void);
 
  
 #line 22 "..\\Bsp\\bsp.h"
+#line 1 "..\\Bsp\\inc\\bsp_uart_fifo.h"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+typedef enum {
+	COM0 = 0, COM1 = 1,
+} COM_PORT_E;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+typedef struct {
+	UART_T *uart;  
+	uint8_t *pTxBuf;  
+	uint8_t *pRxBuf;  
+	uint16_t usTxBufSize;  
+	uint16_t usRxBufSize;  
+	volatile uint16_t usTxWrite;  
+	volatile uint16_t usTxRead;  
+	volatile uint16_t usTxCount;  
+
+	volatile uint16_t usRxWrite;  
+	volatile uint16_t usRxRead;  
+	volatile uint16_t usRxCount;  
+
+	void (*SendBefor)(void);  
+	void (*SendOver)(void);  
+	void (*ReciveNew)(uint8_t _byte);  
+} UART_T_M;
+
+void bsp_InitUart(void);
+void comSendBuf(COM_PORT_E _ucPort, uint8_t *_ucaBuf, uint16_t _usLen);
+void comSendChar(COM_PORT_E _ucPort, uint8_t _ucByte);
+uint8_t comGetChar(COM_PORT_E _ucPort, uint8_t *_pByte);
+
+void comClearTxFifo(COM_PORT_E _ucPort);
+void comClearRxFifo(COM_PORT_E _ucPort);
+
+
+
+
+
+
+void bsp_SetUart1Baud(uint32_t _baud);
+void bsp_SetUart2Baud(uint32_t _baud);
+
+
+
+ 
+#line 23 "..\\Bsp\\bsp.h"
+
+
 
 
 void bsp_Init(void);
@@ -18225,8 +18274,129 @@ void bsp_Init(void);
  
 #line 18 "..\\App\\inc\\app.h"
 
+#line 1 "..\\App\\inc\\app_work.h"
 
 
+
+
+
+ 
+
+
+
+
+typedef struct _WORK_T {
+
+	union {
+		uint8_t allbits;
+		struct {
+			unsigned DOME :1;
+			unsigned ra2 :1;
+			unsigned DEMO :1;
+			unsigned blinkEnable :1;
+			unsigned ra6 :1;
+			unsigned ra7 :1;
+			unsigned ra8 :1;
+			unsigned ra9 :1;
+		} bits;
+	} status;
+
+
+
+} WORK_T;
+extern WORK_T g_tWork;
+
+void app_work_Init(void);
+void app_work_1s_pro(void);
+void app_work_100ms_pro(void);
+
+#line 20 "..\\App\\inc\\app.h"
+#line 1 "..\\App\\inc\\app_2d4.h"
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+#line 42 "..\\App\\inc\\app_2d4.h"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#line 64 "..\\App\\inc\\app_2d4.h"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+void app_2d4_init(void);
+void app_2d4_send(uint8_t *d, uint8_t len);
+void app_2d4_pro(void);
+
+#line 21 "..\\App\\inc\\app.h"
 #line 1 "..\\App\\inc\\app_uart.h"
 
 
@@ -18254,8 +18424,18 @@ void bsp_Init(void);
 
 
 
-
  
+
+typedef struct _Uart_ST {
+
+	uint8_t rxBuf[512];
+	uint8_t txBuf[256];
+
+	uint16_t pWrite;
+	uint16_t pRead;
+
+} Uart_ST;
+
 void app_uart_Init(void);
 void app_uart_send(uint8_t cmd, uint8_t *ptr, uint8_t len);
 void app_uart_pro(void);
@@ -18405,6 +18585,7 @@ uint32_t app_eeprom_read_int(uint32_t addr);
 void app_eeprom_write_buf(uint16_t addr, uint8_t *pt, uint8_t len);
 
 #line 25 "..\\App\\inc\\app.h"
+
 
 #line 1 "..\\utils\\inc\\lite-log.h"
 
@@ -19212,7 +19393,7 @@ void LITE_rich_hexdump(const char *f, const int l, const int level,
 
 
 
-#line 27 "..\\App\\inc\\app.h"
+#line 28 "..\\App\\inc\\app.h"
 
 
 
@@ -19269,22 +19450,14 @@ int main(void) {
 	LITE_syslog(__FUNCTION__, 82, LOG_DEBUG_LEVEL, " CPU @ %dHz\r\n", SystemCoreClock);
 
 	LITE_syslog(__FUNCTION__, 84, LOG_DEBUG_LEVEL, "+-------------------------------------+ ");
-	LITE_syslog(__FUNCTION__, 85, LOG_DEBUG_LEVEL, "+-------------------------------------+ ");
+#line 94 "..\\App\\src\\main.c"
 
-	LITE_syslog(__FUNCTION__, 87, LOG_DEBUG_LEVEL, "default size: %d", sizeof(DOME_DEFAULT_T));
-	LITE_syslog(__FUNCTION__, 88, LOG_DEBUG_LEVEL, "dome size: %d", sizeof(DOME_RUNNING_T));
-	LITE_syslog(__FUNCTION__, 89, LOG_DEBUG_LEVEL, "header size: %d", sizeof(DOME_HEADER_T));
-	LITE_syslog(__FUNCTION__, 90, LOG_DEBUG_LEVEL, "submode size: %d", sizeof(SUBDOME_T));
-	LITE_syslog(__FUNCTION__, 91, LOG_DEBUG_LEVEL, "color size: %d", sizeof(COLOR_T));
 
-	int i = 0;
+	 
+	app_2d4_init();
+	app_work_Init();
 
-	DOME_DEFAULT_T def;
-	uint8_t *def_p = (uint8_t *) &def;
-	for (i = 0; i < sizeof(DOME_DEFAULT_T); ++i) {
-		*(def_p + i) = i;
-	}
-
+	 
 	while (1) {
 		if (timer0_taskTimer_get()->flag_1ms) {
 			timer0_taskTimer_get()->flag_1ms = 0;
@@ -19297,7 +19470,7 @@ int main(void) {
 			
 			bsp_KeyScan();
 
-
+			app_2d4_pro();
 		}
 		if (timer0_taskTimer_get()->flag_100ms) {
 			timer0_taskTimer_get()->flag_100ms = 0;
@@ -19344,9 +19517,10 @@ int main(void) {
 				break;
 			case KEY_2_DOWN:
 				LITE_syslog(__FUNCTION__, 172, LOG_DEBUG_LEVEL, "LED KEY down");
+
 				break;
 			case KEY_2_LONG:
-				LITE_syslog(__FUNCTION__, 175, LOG_DEBUG_LEVEL, "LED KEY long");
+				LITE_syslog(__FUNCTION__, 176, LOG_DEBUG_LEVEL, "LED KEY long");
 				break;
 			}
 		}

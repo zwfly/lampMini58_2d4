@@ -82,6 +82,7 @@ int main(void) {
 	log_debug(" CPU @ %dHz\r\n", SystemCoreClock);
 
 	log_debug("+-------------------------------------+ ");
+#if 0
 	log_debug("+-------------------------------------+ ");
 
 	log_debug("default size: %d", sizeof(DOME_DEFAULT_T));
@@ -89,15 +90,14 @@ int main(void) {
 	log_debug("header size: %d", sizeof(DOME_HEADER_T));
 	log_debug("submode size: %d", sizeof(SUBDOME_T));
 	log_debug("color size: %d", sizeof(COLOR_T));
+#endif
+//	int i = 0;
 
-	int i = 0;
+	/**************/
+	app_2d4_init();
+	app_work_Init();
 
-	DOME_DEFAULT_T def;
-	uint8_t *def_p = (uint8_t *) &def;
-	for (i = 0; i < sizeof(DOME_DEFAULT_T); ++i) {
-		*(def_p + i) = i;
-	}
-
+	/**************/
 	while (1) {
 		if (timer0_taskTimer_get()->flag_1ms) {
 			timer0_taskTimer_get()->flag_1ms = 0;
@@ -123,7 +123,7 @@ int main(void) {
 			//////////////////
 			bsp_KeyScan();
 //			app_uart_pro();
-//			app_2d4_pro();
+			app_2d4_pro();
 		}
 		if (timer0_taskTimer_get()->flag_100ms) {
 			timer0_taskTimer_get()->flag_100ms = 0;
@@ -170,6 +170,7 @@ int main(void) {
 				break;
 			case KEY_DOWN_K2:
 				log_debug("LED KEY down");
+
 				break;
 			case KEY_LONG_K2:
 				log_debug("LED KEY long");

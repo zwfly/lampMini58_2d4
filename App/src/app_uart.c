@@ -1,12 +1,13 @@
 /*
  * app_uart.c
  *
- *  Created on: 2017Äê8ÔÂ31ÈÕ
+ *  Created on: 2017å¹´8æœˆ31æ—¥
  *      Author: fly
  */
 
 #include "app.h"
 #include <string.h>
+//#include "Mini58Series.h"
 
 #define BT_MODE     0x01
 #define FM_MODE     0x02
@@ -20,141 +21,498 @@ static uint8_t len = 0;
 //static uint8_t i = 0, j = 0;
 static uint16_t tmp = 0;
 static uint8_t u8_tmp = 0;
-static uint8_t uart_sendBuf[16] = { 0 };
+//static uint8_t uart_sendBuf[16] = { 0 };
+
+static Uart_ST uart_st;
 
 void app_uart_Init(void) {
 
-	memset((uint8_t *) &rcv_T, 0, sizeof(RCV_T));
+	memset((uint8_t *) &uart_st, 0, sizeof(Uart_ST));
 }
 
 void app_uart_send(uint8_t cmd, uint8_t *ptr, uint8_t len) {
 	uint8_t index = 0, i = 0;
 
-	uart_sendBuf[index++] = 0x55;
-	uart_sendBuf[index++] = 0xAA;
-	uart_sendBuf[index++] = len + 1;
-	uart_sendBuf[index++] = cmd;
-	for (i = 0; i < len; i++) {
-		uart_sendBuf[index++] = *(ptr + i);
-	}
-	uart_sendBuf[index++] = app_CalcCRC8(uart_sendBuf, len + 4);
+	memset(uart_st.txBuf, 0, sizeof(uart_st.txBuf));
 
-	for (i = 0; i < (len + 5); i++) {
-		Send_Data_To_UART0(uart_sendBuf[i]);
+	uart_st.txBuf[index++] = 0x55;
+	uart_st.txBuf[index++] = 0xAA;
+	uart_st.txBuf[index++] = len + 1;
+	uart_st.txBuf[index++] = cmd;
+	for (i = 0; i < len; i++) {
+		uart_st.txBuf[index++] = *(ptr + i);
 	}
+	uart_st.txBuf[index++] = app_CalcCRC8(uart_st.txBuf, len + 4);
+	comSendBuf(COM1, uart_st.txBuf, index);
+
+//	for (i = 0; i < (len + 5); i++) {
+//		comSendChar(uart_st.txBuf[i]);
+//	}
+}
+
+static void app_RC_Receiver_cmd_pro(Uart_ST* st) {
+
+	uint8_t index = 0;
+	uint8_t i = 0;
+	uint8_t buffer[PAYLOAD_WIDTH] = { 0 };
+
+	switch (st->rxBuf[(st->pRead + 3) % sizeof(st->rxBuf)]) {
+	case BLINK_METHOD_CMD:  //é—ªæ³•
+	{
+
+		break;
+		uint16_t index = 0;
+		index = st->rxBuf[(st->pRead + 12) % sizeof(st->rxBuf)];
+
+		if (index
+				>= ((FMC_APROM_END - DOME_START_ADDR) / sizeof(DOME_DEFAULT_T)
+						- 1)) {
+			break;
+		}
+		FMC_ENABLE_AP_UPDATE();
+		SYS_UnlockReg();
+		FMC_Open();
+
+		if (index == 0) {
+			u8_tmp = (FMC_APROM_END - DOME_START_ADDR) / FMC_FLASH_PAGE_SIZE;
+			for (i = 0; i < u8_tmp; i++) {
+				app_eeprom_erase(i * FMC_FLASH_PAGE_SIZE);
+			}
+		}
+#if 0
+		for (i = (index + 1); i < DEFAULT_DOME_NUM; i++) {
+			uint16_t addr = i * sizeof(DOME_DEFAULT_T)
+			+ (&dome_blink.header.index
+					- &dome_blink);
+			app_eeprom_write_byte(addr, 0);
+			nop
+		}
+#endif
+#if 1
+		tmp = st->rxBuf[(st->pRead + 13) % sizeof(st->rxBuf)] & 0x0F; //sub mode number
+
+		uint8_t n = (tmp * sizeof(SUBDOME_T) + sizeof(DOME_HEADER_T));
+		uint8_t minSpaceBytes = sizeof(DOME_DEFAULT_T);
+		if (minSpaceBytes % 4) {
+			minSpaceBytes++;
+		}
+
+		for (i = 0; i < (n / 4); i++) {
+			uint32_t addr = index * minSpaceBytes + i * 4;
+			uint32_t dt = st->rxBuf[(st->pRead + 4 + i) % sizeof(st->rxBuf)];
+			dt |= st->rxBuf[(st->pRead + 4 + i + 1) % sizeof(st->rxBuf)] << 8;
+			dt |= st->rxBuf[(st->pRead + 4 + i + 2) % sizeof(st->rxBuf)] << 16;
+			dt |= st->rxBuf[(st->pRead + 4 + i + 3) % sizeof(st->rxBuf)] << 24;
+			app_eeprom_write_int(addr, dt);
+		}
+		for (i = 0; i < (n % 4); i++) {
+			uint32_t addr = index * minSpaceBytes + n / 4 + 4;
+			uint32_t dt = 0;
+			switch (i) {
+			case 0:
+				dt = st->rxBuf[(st->pRead + 4 + n / 4) % sizeof(st->rxBuf)];
+				break;
+			case 1:
+				dt |= st->rxBuf[(st->pRead + 4 + n / 4 + i) % sizeof(st->rxBuf)]
+						<< 8;
+				break;
+			case 2:
+				dt |= st->rxBuf[(st->pRead + 4 + n / 4 + i) % sizeof(st->rxBuf)]
+						<< 16;
+				break;
+			case 3:
+				dt |= st->rxBuf[(st->pRead + 4 + n / 4 + i) % sizeof(st->rxBuf)]
+						<< 24;
+				break;
+			}
+			app_eeprom_write_int(addr, dt);
+		}
+
+		FMC_Close();
+		SYS_LockReg();
+		FMC_DISABLE_AP_UPDATE();
+#endif
+		u8_tmp = index & 0xFF;
+		app_uart_send(BLINK_METHOD_CMD, &u8_tmp, 1);
+	}
+		break;
+	case RCV_VOL_CMD:
+		buffer[index++] = LAMP2LCD_HEADER;
+		buffer[index++] = len;
+		buffer[index++] = RCV_VOL_CMD;
+		for (i = 0; i < (len - 1); i++) {
+			buffer[index++] =
+					st->rxBuf[(st->pRead + 4 + i) % sizeof(st->rxBuf)];
+		}
+		for (i = 0; i < (buffer[1] + 1); i++) {
+			buffer[index] += buffer[i + 1];
+		}
+		index++;
+		app_2d4_send(buffer, index);
+		break;
+	case RCV_POWER_STATUS_CMD:
+		buffer[index++] = LAMP2LCD_HEADER;
+		buffer[index++] = len;
+		buffer[index++] = RCV_POWER_STATUS_CMD;
+		for (i = 0; i < (len - 1); i++) {
+			buffer[index++] =
+					st->rxBuf[(st->pRead + 4 + i) % sizeof(st->rxBuf)];
+		}
+		for (i = 0; i < (buffer[1] + 1); i++) {
+			buffer[index] += buffer[i + 1];
+		}
+		index++;
+		app_2d4_send(buffer, index);
+		break;
+#if 0
+		case RCV_X_BOX_STATUS_CMD:
+		buffer[index++] = LAMP2LCD_HEADER;
+		buffer[index++] = len;
+		buffer[index++] = RCV_X_BOX_STATUS_CMD;
+		for (i = 0; i < (len - 1); i++) {
+			buffer[index++] = st->rxBuf[(st->pRead + 4
+					+ i) % sizeof(st->rxBuf)];
+		}
+		for (i = 0; i < (buffer[1] + 1); i++) {
+			buffer[index] += buffer[i + 1];
+		}
+		index++;
+		app_2d4_send(buffer, index);
+		break;
+#endif
+	case RCV_BT_STATUS_CMD:
+		buffer[index++] = LAMP2LCD_HEADER;
+		buffer[index++] = len;
+		buffer[index++] = RCV_BT_STATUS_CMD;
+		for (i = 0; i < (len - 1); i++) {
+			buffer[index++] =
+					st->rxBuf[(st->pRead + 4 + i) % sizeof(st->rxBuf)];
+		}
+		for (i = 0; i < (buffer[1] + 1); i++) {
+			buffer[index] += buffer[i + 1];
+		}
+		index++;
+		if (g_tWork.status.bits.DOME == 0) {
+			app_2d4_send(buffer, index);
+		}
+		break;
+	case RCV_PREV_NEXT_CMD:
+		buffer[index++] = LAMP2LCD_HEADER;
+		buffer[index++] = len;
+		buffer[index++] = RCV_PREV_NEXT_CMD;
+		for (i = 0; i < (len - 1); i++) {
+			buffer[index++] =
+					st->rxBuf[(st->pRead + 4 + i) % sizeof(st->rxBuf)];
+		}
+		for (i = 0; i < (buffer[1] + 1); i++) {
+			buffer[index] += buffer[i + 1];
+		}
+		index++;
+		if (g_tWork.status.bits.DOME == 0) {
+			app_2d4_send(buffer, index);
+		}
+		break;
+	case RCV_USB_PLAY_TIME_CMD:
+		buffer[index++] = LAMP2LCD_HEADER;
+		buffer[index++] = len;
+		buffer[index++] = RCV_USB_PLAY_TIME_CMD;
+		for (i = 0; i < (len - 1); i++) {
+			buffer[index++] =
+					st->rxBuf[(st->pRead + 4 + i) % sizeof(st->rxBuf)];
+		}
+		for (i = 0; i < (buffer[1] + 1); i++) {
+			buffer[index] += buffer[i + 1];
+		}
+		index++;
+		if (g_tWork.status.bits.DOME == 0) {
+			app_2d4_send(buffer, index);
+		}
+		break;
+	case RCV_FM_HZ_CMD:
+		buffer[index++] = LAMP2LCD_HEADER;
+		buffer[index++] = len;
+		buffer[index++] = RCV_FM_HZ_CMD;
+		for (i = 0; i < (len - 1); i++) {
+			buffer[index++] =
+					st->rxBuf[(st->pRead + 4 + i) % sizeof(st->rxBuf)];
+		}
+		for (i = 0; i < (buffer[1] + 1); i++) {
+			buffer[index] += buffer[i + 1];
+		}
+		index++;
+
+		if (g_tWork.status.bits.DOME == 0) {
+			app_2d4_send(buffer, index);
+		}
+		break;
+	case MODE_CHANGE_CMD:   //MODE
+		buffer[index++] = LAMP2LCD_HEADER;
+		buffer[index++] = len;
+		buffer[index++] = MODE_CHANGE_CMD;
+		for (i = 0; i < (len - 1); i++) {
+			buffer[index++] =
+					st->rxBuf[(st->pRead + 4 + i) % sizeof(st->rxBuf)];
+		}
+		for (i = 0; i < (buffer[1] + 1); i++) {
+			buffer[index] += buffer[i + 1];
+		}
+		index++;
+		app_2d4_send(buffer, index);
+		break;
+	case RCV_PLAY_PAUSE_STATUS_CMD:
+		buffer[index++] = LAMP2LCD_HEADER;
+		buffer[index++] = len;
+		buffer[index++] = RCV_PLAY_PAUSE_STATUS_CMD;
+		for (i = 0; i < (len - 1); i++) {
+			buffer[index++] =
+					st->rxBuf[(st->pRead + 4 + i) % sizeof(st->rxBuf)];
+		}
+		for (i = 0; i < (buffer[1] + 1); i++) {
+			buffer[index] += buffer[i + 1];
+		}
+		index++;
+		if (g_tWork.status.bits.DOME == 0) {
+			app_2d4_send(buffer, index);
+		}
+		break;
+		/// app --start
+	case KEY_CARD_POWER_CMD:
+		if (g_tWork.status.bits.blinkEnable == 0) {
+			//								g_tWork.status.bits.pause = 0;
+			g_tWork.status.bits.blinkEnable = 1;
+			g_tWork.status.bits.DEMO = 1;
+			app_dome_start_current();
+		} else {
+			//								g_tWork.status.bits.pause = 1;
+			g_tWork.status.bits.blinkEnable = 0;
+			g_tWork.status.bits.DEMO = 0;
+			app_dome_stop_current();
+		}
+		buffer[index++] = LAMP2LCD_HEADER;
+		buffer[index++] = 10;
+		buffer[index++] = KEY_POWER_SHORT_CMD;
+		buffer[index++] = g_tWork.status.bits.blinkEnable;
+		app_dome_get_current_Name(buffer + index, 8);
+		index += 8;
+		for (i = 0; i < (buffer[1] + 1); i++) {
+			buffer[index] += buffer[i + 1];
+		}
+		index++;
+		app_2d4_send(buffer, index);
+		break;
+	case KEY_CARD_DEMO_CMD:
+		//							if (g_tWork.status.bits.DEMO) {
+		//								g_tWork.status.bits.DEMO = 0;
+		//							} else {
+		g_tWork.status.bits.DEMO = 1;
+		//							}
+		app_dome_start(0, 0);
+
+		break;
+	case APP_COLOR_ATLA_CMD:
+#if 1
+		app_dome_rgb(st->rxBuf[(st->pRead + 4) % sizeof(st->rxBuf)],
+				st->rxBuf[(st->pRead + 5) % sizeof(st->rxBuf)],
+				st->rxBuf[(st->pRead + 6) % sizeof(st->rxBuf)]);
+#else
+		app_dome_rgb(0xFFFF, 0xFFFF, 0xFFFF);
+#endif
+		break;
+	case APP_BRIGHT_CMD:
+		dome_running_param.bright = st->rxBuf[(st->pRead + 4)
+				% sizeof(st->rxBuf)];
+		Light_bright_set(st->rxBuf[(st->pRead + 4) % sizeof(st->rxBuf)]);
+		break;
+	case APP_SPEED_CMD:
+		dome_running_param.speed =
+				st->rxBuf[(st->pRead + 4) % sizeof(st->rxBuf)];
+		break;
+	case APP_FLASH_INDEX_CMD:
+		g_tWork.status.bits.DEMO = 0;
+		app_dome_start_current();
+		app_dome_start(st->rxBuf[(st->pRead + 4) % sizeof(st->rxBuf)], 0);
+		break;
+	case APP_SWITCH_INDEX_CMD: {
+		uint8_t switchData = st->rxBuf[(st->pRead + 4) % sizeof(st->rxBuf)];
+		if (((switchData >> 4) & 0x0F) == 0) {
+			Relay_set(switchData & 0x0F);
+		}
+	}
+		break;
+		/// app --end
+	default:
+		break;
+	}
+
 }
 
 void app_uart_pro(void) {
+	uint8_t ucData = 0;
+
+#if 1
+	while (1) {
+
+		if (comGetChar(COM1, &ucData)) {
+#if 0
+			comSendChar(COM0, ucData);
+#endif
+
+			uart_st.rxBuf[uart_st.pWrite++] = ucData;
+			if (uart_st.pWrite >= sizeof(uart_st.rxBuf)) {
+				uart_st.pWrite = 0;
+			}
+
+			/*
+			 (0x55,0xAA)...0x00......0x00...0x00,0x00...0x00
+			 Head..........Length....cmd....Data........crc8()
+			 */
+			if ((uart_st.pWrite + sizeof(uart_st.rxBuf) - uart_st.pRead)
+					% sizeof(uart_st.rxBuf) > 5) {
+				if (((uart_st.rxBuf[uart_st.pRead]) == 0x55)
+						&& ((uart_st.rxBuf[(uart_st.pRead + 1)
+								% sizeof(uart_st.rxBuf)]) == 0xAA)) {
+					uint8_t index = 2;
+					uint8_t len = uart_st.rxBuf[(uart_st.pRead + index++)
+							% sizeof(uart_st.rxBuf)];
+					if ((uart_st.pWrite + sizeof(uart_st.rxBuf) - uart_st.pRead)
+							% sizeof(uart_st.rxBuf) >= (len + 4)) {
+						if (uart_st.rxBuf[(uart_st.pRead + len + 3)
+								% sizeof(uart_st.rxBuf)]
+								!= app_CalcCRC8_cycle(
+										uart_st.rxBuf + uart_st.pRead, len + 3,
+										uart_st.pRead, sizeof(uart_st.rxBuf))) {
+							uart_st.pRead++;
+							log_err(
+									"[ERROR]   remote control check error!\r\n");
+						} else {
+							/* your code */
+							app_RC_Receiver_cmd_pro(&uart_st);
+							uart_st.pRead += len + 4;
+							uart_st.pRead = uart_st.pRead
+									% sizeof(uart_st.rxBuf);
+						}
+					}
+				} else {
+					uart_st.pRead++;
+				}
+				uart_st.pRead = uart_st.pRead % sizeof(uart_st.rxBuf);
+			}
+			continue;
+		}
+		break;
+
+	}
+#else
 	while (riflag) {
 		riflag--;
-		if ((rcv_T.pWrite + RCV_BUFSIZE - rcv_T.pRead) % RCV_BUFSIZE >= 4) {
-			if (((rcv_T.rxBuf[rcv_T.pRead]) == 0x55)
-					&& ((rcv_T.rxBuf[(rcv_T.pRead + 1) % RCV_BUFSIZE]) == 0xAA)) {
-				len = rcv_T.rxBuf[(rcv_T.pRead + 2) % RCV_BUFSIZE];
-				if ((rcv_T.pWrite + RCV_BUFSIZE - rcv_T.pRead) % RCV_BUFSIZE
+		if ((st.pWrite + RCV_BUFSIZE - st.pRead) % RCV_BUFSIZE >= 4) {
+			if (((st.rxBuf[st.pRead]) == 0x55)
+					&& ((st.rxBuf[(st.pRead + 1) % RCV_BUFSIZE]) == 0xAA)) {
+				len = st.rxBuf[(st.pRead + 2) % RCV_BUFSIZE];
+				if ((st.pWrite + RCV_BUFSIZE - st.pRead) % RCV_BUFSIZE
 						>= (len + 4)) {
-					if (rcv_T.rxBuf[(rcv_T.pRead + len + 3) % RCV_BUFSIZE]
-							!= app_CalcCRC8_cycle(rcv_T.rxBuf + rcv_T.pRead,
-									len + 3, rcv_T.pRead, RCV_BUFSIZE)) {
-						rcv_T.pRead++;
+					if (st.rxBuf[(st.pRead + len + 3) % RCV_BUFSIZE]
+							!= app_CalcCRC8_cycle(st.rxBuf + st.pRead,
+									len + 3, st.pRead, RCV_BUFSIZE)) {
+						st.pRead++;
 					} else {
 						uint8_t index = 0;
 						memset(sendBuf, 0, PAYLOAD_WIDTH);
-						switch (rcv_T.rxBuf[(rcv_T.pRead + 3) % RCV_BUFSIZE]) {
-						case BLINK_METHOD_CMD:  //ÉÁ·¨
-						{
-							uint8_t i = 0;
-							uint16_t index = 0;
-							index =
-									rcv_T.rxBuf[(rcv_T.pRead + 12) % RCV_BUFSIZE];
+						switch (st.rxBuf[(st.pRead + 3) % RCV_BUFSIZE]) {
+							case BLINK_METHOD_CMD:  //é—ªæ³•
+							{
+								uint8_t i = 0;
+								uint16_t index = 0;
+								index =
+								st.rxBuf[(st.pRead + 12) % RCV_BUFSIZE];
 
-							if (index
-									>= ((FMC_APROM_END - DOME_START_ADDR)
-											/ sizeof(DOME_DEFAULT_T) - 1)) {
-								break;
-							}
-							FMC_ENABLE_AP_UPDATE();
-							SYS_UnlockReg();
-							FMC_Open();
-
-							if (index == 0) {
-								u8_tmp = (FMC_APROM_END - DOME_START_ADDR)
-										/ FMC_FLASH_PAGE_SIZE;
-								for (i = 0; i < u8_tmp; i++) {
-									app_eeprom_erase(i * FMC_FLASH_PAGE_SIZE);
+								if (index
+										>= ((FMC_APROM_END - DOME_START_ADDR)
+												/ sizeof(DOME_DEFAULT_T) - 1)) {
+									break;
 								}
-							}
+								FMC_ENABLE_AP_UPDATE();
+								SYS_UnlockReg();
+								FMC_Open();
+
+								if (index == 0) {
+									u8_tmp = (FMC_APROM_END - DOME_START_ADDR)
+									/ FMC_FLASH_PAGE_SIZE;
+									for (i = 0; i < u8_tmp; i++) {
+										app_eeprom_erase(i * FMC_FLASH_PAGE_SIZE);
+									}
+								}
 #if 0
-							for (i = (index + 1); i < DEFAULT_DOME_NUM; i++) {
-								uint16_t addr = i * sizeof(DOME_DEFAULT_T)
-								+ (&dome_blink.header.index
-										- &dome_blink);
-								app_eeprom_write_byte(addr, 0);
-								nop
-							}
+								for (i = (index + 1); i < DEFAULT_DOME_NUM; i++) {
+									uint16_t addr = i * sizeof(DOME_DEFAULT_T)
+									+ (&dome_blink.header.index
+											- &dome_blink);
+									app_eeprom_write_byte(addr, 0);
+									nop
+								}
 #endif
 #if 1
-							tmp = rcv_T.rxBuf[(rcv_T.pRead + 13) % RCV_BUFSIZE]
-									& 0x0F;  //sub mode number
+								tmp = st.rxBuf[(st.pRead + 13) % RCV_BUFSIZE]
+								& 0x0F;  //sub mode number
 
-							uint8_t n = (tmp * sizeof(SUBDOME_T)
-									+ sizeof(DOME_HEADER_T));
-							uint8_t minSpaceBytes = sizeof(DOME_DEFAULT_T);
-							if (minSpaceBytes % 4) {
-								minSpaceBytes++;
-							}
-
-							for (i = 0; i < (n / 4); i++) {
-								uint32_t addr = index * minSpaceBytes + i * 4;
-								uint32_t dt = rcv_T.rxBuf[(rcv_T.pRead + 4 + i)
-										% RCV_BUFSIZE];
-								dt |= rcv_T.rxBuf[(rcv_T.pRead + 4 + i + 1)
-										% RCV_BUFSIZE] << 8;
-								dt |= rcv_T.rxBuf[(rcv_T.pRead + 4 + i + 2)
-										% RCV_BUFSIZE] << 16;
-								dt |= rcv_T.rxBuf[(rcv_T.pRead + 4 + i + 3)
-										% RCV_BUFSIZE] << 24;
-								app_eeprom_write_int(addr, dt);
-							}
-							for (i = 0; i < (n % 4); i++) {
-								uint32_t addr = index * minSpaceBytes + n / 4
-										+ 4;
-								uint32_t dt = 0;
-								switch (i) {
-								case 0:
-									dt = rcv_T.rxBuf[(rcv_T.pRead + 4 + n / 4)
-											% RCV_BUFSIZE];
-									break;
-								case 1:
-									dt |= rcv_T.rxBuf[(rcv_T.pRead + 4 + n / 4
-											+ i) % RCV_BUFSIZE] << 8;
-									break;
-								case 2:
-									dt |= rcv_T.rxBuf[(rcv_T.pRead + 4 + n / 4
-											+ i) % RCV_BUFSIZE] << 16;
-									break;
-								case 3:
-									dt |= rcv_T.rxBuf[(rcv_T.pRead + 4 + n / 4
-											+ i) % RCV_BUFSIZE] << 24;
-									break;
+								uint8_t n = (tmp * sizeof(SUBDOME_T)
+										+ sizeof(DOME_HEADER_T));
+								uint8_t minSpaceBytes = sizeof(DOME_DEFAULT_T);
+								if (minSpaceBytes % 4) {
+									minSpaceBytes++;
 								}
-								app_eeprom_write_int(addr, dt);
-							}
 
-							FMC_Close();
-							SYS_LockReg();
-							FMC_DISABLE_AP_UPDATE();
+								for (i = 0; i < (n / 4); i++) {
+									uint32_t addr = index * minSpaceBytes + i * 4;
+									uint32_t dt = st.rxBuf[(st.pRead + 4 + i)
+									% RCV_BUFSIZE];
+									dt |= st.rxBuf[(st.pRead + 4 + i + 1)
+									% RCV_BUFSIZE] << 8;
+									dt |= st.rxBuf[(st.pRead + 4 + i + 2)
+									% RCV_BUFSIZE] << 16;
+									dt |= st.rxBuf[(st.pRead + 4 + i + 3)
+									% RCV_BUFSIZE] << 24;
+									app_eeprom_write_int(addr, dt);
+								}
+								for (i = 0; i < (n % 4); i++) {
+									uint32_t addr = index * minSpaceBytes + n / 4
+									+ 4;
+									uint32_t dt = 0;
+									switch (i) {
+										case 0:
+										dt = st.rxBuf[(st.pRead + 4 + n / 4)
+										% RCV_BUFSIZE];
+										break;
+										case 1:
+										dt |= st.rxBuf[(st.pRead + 4 + n / 4
+												+ i) % RCV_BUFSIZE] << 8;
+										break;
+										case 2:
+										dt |= st.rxBuf[(st.pRead + 4 + n / 4
+												+ i) % RCV_BUFSIZE] << 16;
+										break;
+										case 3:
+										dt |= st.rxBuf[(st.pRead + 4 + n / 4
+												+ i) % RCV_BUFSIZE] << 24;
+										break;
+									}
+									app_eeprom_write_int(addr, dt);
+								}
+
+								FMC_Close();
+								SYS_LockReg();
+								FMC_DISABLE_AP_UPDATE();
 #endif
-							u8_tmp = index & 0xFF;
-							app_uart_send(BLINK_METHOD_CMD, &u8_tmp, 1);
-						}
+								u8_tmp = index & 0xFF;
+								app_uart_send(BLINK_METHOD_CMD, &u8_tmp, 1);
+							}
 							break;
-						case RCV_VOL_CMD:
+							case RCV_VOL_CMD:
 							sendBuf[index++] = LAMP2LCD_HEADER;
 							sendBuf[index++] = len;
 							sendBuf[index++] = RCV_VOL_CMD;
 							for (i = 0; i < (len - 1); i++) {
-								sendBuf[index++] = rcv_T.rxBuf[(rcv_T.pRead + 4
+								sendBuf[index++] = st.rxBuf[(st.pRead + 4
 										+ i) % RCV_BUFSIZE];
 							}
 							for (i = 0; i < (sendBuf[1] + 1); i++) {
@@ -163,12 +521,12 @@ void app_uart_pro(void) {
 							index++;
 							app_2d4_send(sendBuf, index);
 							break;
-						case RCV_POWER_STATUS_CMD:
+							case RCV_POWER_STATUS_CMD:
 							sendBuf[index++] = LAMP2LCD_HEADER;
 							sendBuf[index++] = len;
 							sendBuf[index++] = RCV_POWER_STATUS_CMD;
 							for (i = 0; i < (len - 1); i++) {
-								sendBuf[index++] = rcv_T.rxBuf[(rcv_T.pRead + 4
+								sendBuf[index++] = st.rxBuf[(st.pRead + 4
 										+ i) % RCV_BUFSIZE];
 							}
 							for (i = 0; i < (sendBuf[1] + 1); i++) {
@@ -183,7 +541,7 @@ void app_uart_pro(void) {
 							sendBuf[index++] = len;
 							sendBuf[index++] = RCV_X_BOX_STATUS_CMD;
 							for (i = 0; i < (len - 1); i++) {
-								sendBuf[index++] = rcv_T.rxBuf[(rcv_T.pRead + 4
+								sendBuf[index++] = st.rxBuf[(st.pRead + 4
 										+ i) % RCV_BUFSIZE];
 							}
 							for (i = 0; i < (sendBuf[1] + 1); i++) {
@@ -193,12 +551,12 @@ void app_uart_pro(void) {
 							app_2d4_send(sendBuf, index);
 							break;
 #endif
-						case RCV_BT_STATUS_CMD:
+							case RCV_BT_STATUS_CMD:
 							sendBuf[index++] = LAMP2LCD_HEADER;
 							sendBuf[index++] = len;
 							sendBuf[index++] = RCV_BT_STATUS_CMD;
 							for (i = 0; i < (len - 1); i++) {
-								sendBuf[index++] = rcv_T.rxBuf[(rcv_T.pRead + 4
+								sendBuf[index++] = st.rxBuf[(st.pRead + 4
 										+ i) % RCV_BUFSIZE];
 							}
 							for (i = 0; i < (sendBuf[1] + 1); i++) {
@@ -209,12 +567,12 @@ void app_uart_pro(void) {
 								app_2d4_send(sendBuf, index);
 							}
 							break;
-						case RCV_PREV_NEXT_CMD:
+							case RCV_PREV_NEXT_CMD:
 							sendBuf[index++] = LAMP2LCD_HEADER;
 							sendBuf[index++] = len;
 							sendBuf[index++] = RCV_PREV_NEXT_CMD;
 							for (i = 0; i < (len - 1); i++) {
-								sendBuf[index++] = rcv_T.rxBuf[(rcv_T.pRead + 4
+								sendBuf[index++] = st.rxBuf[(st.pRead + 4
 										+ i) % RCV_BUFSIZE];
 							}
 							for (i = 0; i < (sendBuf[1] + 1); i++) {
@@ -225,12 +583,12 @@ void app_uart_pro(void) {
 								app_2d4_send(sendBuf, index);
 							}
 							break;
-						case RCV_USB_PLAY_TIME_CMD:
+							case RCV_USB_PLAY_TIME_CMD:
 							sendBuf[index++] = LAMP2LCD_HEADER;
 							sendBuf[index++] = len;
 							sendBuf[index++] = RCV_USB_PLAY_TIME_CMD;
 							for (i = 0; i < (len - 1); i++) {
-								sendBuf[index++] = rcv_T.rxBuf[(rcv_T.pRead + 4
+								sendBuf[index++] = st.rxBuf[(st.pRead + 4
 										+ i) % RCV_BUFSIZE];
 							}
 							for (i = 0; i < (sendBuf[1] + 1); i++) {
@@ -241,12 +599,12 @@ void app_uart_pro(void) {
 								app_2d4_send(sendBuf, index);
 							}
 							break;
-						case RCV_FM_HZ_CMD:
+							case RCV_FM_HZ_CMD:
 							sendBuf[index++] = LAMP2LCD_HEADER;
 							sendBuf[index++] = len;
 							sendBuf[index++] = RCV_FM_HZ_CMD;
 							for (i = 0; i < (len - 1); i++) {
-								sendBuf[index++] = rcv_T.rxBuf[(rcv_T.pRead + 4
+								sendBuf[index++] = st.rxBuf[(st.pRead + 4
 										+ i) % RCV_BUFSIZE];
 							}
 							for (i = 0; i < (sendBuf[1] + 1); i++) {
@@ -258,12 +616,12 @@ void app_uart_pro(void) {
 								app_2d4_send(sendBuf, index);
 							}
 							break;
-						case MODE_CHANGE_CMD:   //MODE
+							case MODE_CHANGE_CMD:   //MODE
 							sendBuf[index++] = LAMP2LCD_HEADER;
 							sendBuf[index++] = len;
 							sendBuf[index++] = MODE_CHANGE_CMD;
 							for (i = 0; i < (len - 1); i++) {
-								sendBuf[index++] = rcv_T.rxBuf[(rcv_T.pRead + 4
+								sendBuf[index++] = st.rxBuf[(st.pRead + 4
 										+ i) % RCV_BUFSIZE];
 							}
 							for (i = 0; i < (sendBuf[1] + 1); i++) {
@@ -272,12 +630,12 @@ void app_uart_pro(void) {
 							index++;
 							app_2d4_send(sendBuf, index);
 							break;
-						case RCV_PLAY_PAUSE_STATUS_CMD:
+							case RCV_PLAY_PAUSE_STATUS_CMD:
 							sendBuf[index++] = LAMP2LCD_HEADER;
 							sendBuf[index++] = len;
 							sendBuf[index++] = RCV_PLAY_PAUSE_STATUS_CMD;
 							for (i = 0; i < (len - 1); i++) {
-								sendBuf[index++] = rcv_T.rxBuf[(rcv_T.pRead + 4
+								sendBuf[index++] = st.rxBuf[(st.pRead + 4
 										+ i) % RCV_BUFSIZE];
 							}
 							for (i = 0; i < (sendBuf[1] + 1); i++) {
@@ -289,7 +647,7 @@ void app_uart_pro(void) {
 							}
 							break;
 							/// app --start
-						case KEY_CARD_POWER_CMD:
+							case KEY_CARD_POWER_CMD:
 							if (g_tWork.status.bits.blinkEnable == 0) {
 //								g_tWork.status.bits.pause = 0;
 								g_tWork.status.bits.blinkEnable = 1;
@@ -313,7 +671,7 @@ void app_uart_pro(void) {
 							index++;
 							app_2d4_send(sendBuf, index);
 							break;
-						case KEY_CARD_DEMO_CMD:
+							case KEY_CARD_DEMO_CMD:
 //							if (g_tWork.status.bits.DEMO) {
 //								g_tWork.status.bits.DEMO = 0;
 //							} else {
@@ -322,58 +680,58 @@ void app_uart_pro(void) {
 							app_dome_start(0, 0);
 
 							break;
-						case APP_COLOR_ATLA_CMD:
+							case APP_COLOR_ATLA_CMD:
 #if 1
 							app_dome_rgb(
-									rcv_T.rxBuf[(rcv_T.pRead + 4) % RCV_BUFSIZE],
-									rcv_T.rxBuf[(rcv_T.pRead + 5) % RCV_BUFSIZE],
-									rcv_T.rxBuf[(rcv_T.pRead + 6) % RCV_BUFSIZE]);
+									st.rxBuf[(st.pRead + 4) % RCV_BUFSIZE],
+									st.rxBuf[(st.pRead + 5) % RCV_BUFSIZE],
+									st.rxBuf[(st.pRead + 6) % RCV_BUFSIZE]);
 #else
 							app_dome_rgb(0xFFFF, 0xFFFF, 0xFFFF);
 #endif
 							break;
-						case APP_BRIGHT_CMD:
-							dome_running_param.bright = rcv_T.rxBuf[(rcv_T.pRead
+							case APP_BRIGHT_CMD:
+							dome_running_param.bright = st.rxBuf[(st.pRead
 									+ 4) % RCV_BUFSIZE];
 							Light_bright_set(
-									rcv_T.rxBuf[(rcv_T.pRead + 4) % RCV_BUFSIZE]);
+									st.rxBuf[(st.pRead + 4) % RCV_BUFSIZE]);
 							break;
-						case APP_SPEED_CMD:
-							dome_running_param.speed = rcv_T.rxBuf[(rcv_T.pRead
+							case APP_SPEED_CMD:
+							dome_running_param.speed = st.rxBuf[(st.pRead
 									+ 4) % RCV_BUFSIZE];
 							break;
-						case APP_FLASH_INDEX_CMD:
+							case APP_FLASH_INDEX_CMD:
 							g_tWork.status.bits.DEMO = 0;
 							app_dome_start_current();
 							app_dome_start(
-									rcv_T.rxBuf[(rcv_T.pRead + 4) % RCV_BUFSIZE],
+									st.rxBuf[(st.pRead + 4) % RCV_BUFSIZE],
 									0);
 							break;
-						case APP_SWITCH_INDEX_CMD: {
-							uint8_t switchData = rcv_T.rxBuf[(rcv_T.pRead + 4)
-									% RCV_BUFSIZE];
-							if (((switchData >> 4) & 0x0F) == 0) {
-								Relay_set(switchData & 0x0F);
+							case APP_SWITCH_INDEX_CMD: {
+								uint8_t switchData = st.rxBuf[(st.pRead + 4)
+								% RCV_BUFSIZE];
+								if (((switchData >> 4) & 0x0F) == 0) {
+									Relay_set(switchData & 0x0F);
+								}
 							}
-						}
 							break;
 							/// app --end
-						default:
+							default:
 							break;
 						}
-						rcv_T.pRead += len + 4;
+						st.pRead += len + 4;
 #if 1
-						rcv_T.pRead = rcv_T.pRead % RCV_BUFSIZE;
+						st.pRead = st.pRead % RCV_BUFSIZE;
 //						break;
 						return;
 #endif
 					}
 				}
 			} else {
-				rcv_T.pRead++;
+				st.pRead++;
 			}
-			rcv_T.pRead = rcv_T.pRead % RCV_BUFSIZE;
+			st.pRead = st.pRead % RCV_BUFSIZE;
 		}
 	}
-
+#endif
 }

@@ -8,7 +8,7 @@
 #include "bsp.h"
 #include <stdint.h>
 
-RCV_T rcv_T;
+//RCV_T rcv_T;
 
 void Uart_InitHard(void) {
 

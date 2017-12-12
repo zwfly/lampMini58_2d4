@@ -19703,8 +19703,8 @@ N#define BSP_INC_BSP_2D4_H_
 N
 N#define         CSN_HIGH                (P04 = 1)
 N#define         CSN_LOW                 (P04 = 0)
-N#define         SCK_HIGH                (P07 = 1)
-N#define         SCK_LOW                 (P07 = 0)
+N#define         SCK_HIGH                P07 = 1;delay_2d4(1)
+N#define         SCK_LOW                 P07 = 0;delay_2d4(1)
 N
 N#define         SPI_DATA_HIGH           (P05 = 1)
 N#define         SPI_DATA_LOW            (P05 = 0)
@@ -19921,6 +19921,11 @@ N
 N#ifndef BSP_INC_BSP_EEPROM_H_
 N#define BSP_INC_BSP_EEPROM_H_
 N
+N//#define DOME_START_ADDR   0x3C00  //use 3KB
+N//#define DOME_START_ADDR   0x3E00  //use 2.5KB
+N#define DOME_START_ADDR   0x6C00  //use 5KB
+N
+N
 Nvoid EEPROM_InitHard(void);
 N
 Nvoid bsp_eeprom_write_int(uint32_t u32addr, uint32_t u32data);
@@ -20060,7 +20065,7 @@ N#endif
 N
 N#if UART1_FIFO_EN == 1
 X#if 1 == 1
-N#define UART1_BAUD			115200
+N#define UART1_BAUD			19200
 N#define UART1_TX_BUF_SIZE	1*256
 N#define UART1_RX_BUF_SIZE	1*256
 N#endif
@@ -20444,9 +20449,7 @@ N
 N#ifndef APP_INC_APP_EEPROM_H_
 N#define APP_INC_APP_EEPROM_H_
 N
-N//#define DOME_START_ADDR   0x3C00  //use 3KB
-N//#define DOME_START_ADDR   0x3E00  //use 2.5KB
-N#define DOME_START_ADDR   0x6C00  //use 5KB
+N
 N
 Nvoid app_eeprom_Init(void);
 Nvoid app_eeprom_get_dome_with_index(DOME_DEFAULT_T* dd, uint8_t index);
@@ -21596,14 +21599,14 @@ N
 N	/* Init System */
 N	SYS_Init();
 N
-N	bsp_Init();
-N
 N#if 1
 N	LITE_openlog("lamp");
 N	LITE_set_loglevel(LOG_DEBUG_LEVEL);
 N#else
 S	LITE_closelog();
 N#endif
+N
+N	bsp_Init();
 N
 N	log_debug(" CPU @ %dHz\r\n", SystemCoreClock);
 X	LITE_syslog(__FUNCTION__, 82, LOG_DEBUG_LEVEL, " CPU @ %dHz\r\n", SystemCoreClock);
@@ -21619,13 +21622,21 @@ S	log_debug("header size: %d", sizeof(DOME_HEADER_T));
 S	log_debug("submode size: %d", sizeof(SUBDOME_T));
 S	log_debug("color size: %d", sizeof(COLOR_T));
 N#endif
-N//	int i = 0;
 N
 N	/**************/
 N	app_2d4_init();
 N	app_work_Init();
 N
 N	/**************/
+N//	uint32_t aa = 0;
+N
+N//	SYS_UnlockReg();
+N//	FMC_Open();
+N//	aa = app_eeprom_read_int(0);
+N//	FMC_Close();
+N//	SYS_LockReg();
+N//	log_debug("test: %X", aa);
+N
 N	while (1) {
 N		if (timer0_taskTimer_get()->flag_1ms) {
 N			timer0_taskTimer_get()->flag_1ms = 0;
@@ -21672,7 +21683,7 @@ N			//////////////////
 N			static uint32_t cnt = 0;
 N			cnt++;
 N			log_debug("I am alive %d", cnt);
-X			LITE_syslog(__FUNCTION__, 146, LOG_DEBUG_LEVEL, "I am alive %d", cnt);
+X			LITE_syslog(__FUNCTION__, 154, LOG_DEBUG_LEVEL, "I am alive %d", cnt);
 N
 N			//			app_work_1s_pro();
 N
@@ -21685,41 +21696,42 @@ N			switch (ucKeyCode) {
 N			case KEY_UP_K1:   //ACC
 X			case KEY_1_UP:   
 N				log_debug("ACC KEY up");
-X				LITE_syslog(__FUNCTION__, 157, LOG_DEBUG_LEVEL, "ACC KEY up");
+X				LITE_syslog(__FUNCTION__, 165, LOG_DEBUG_LEVEL, "ACC KEY up");
 N
 N				break;
 N			case KEY_DOWN_K1:
 X			case KEY_1_DOWN:
 N				log_debug("relay %s", Relay_IsOn() ? "on" : "off");
-X				LITE_syslog(__FUNCTION__, 161, LOG_DEBUG_LEVEL, "relay %s", Relay_IsOn() ? "on" : "off");
+X				LITE_syslog(__FUNCTION__, 169, LOG_DEBUG_LEVEL, "relay %s", Relay_IsOn() ? "on" : "off");
 N
 N				Relay_toggle();
 N				break;
 N			case KEY_LONG_K1:
 X			case KEY_1_LONG:
 N				log_debug("ACC KEY down");
-X				LITE_syslog(__FUNCTION__, 166, LOG_DEBUG_LEVEL, "ACC KEY down");
+X				LITE_syslog(__FUNCTION__, 174, LOG_DEBUG_LEVEL, "ACC KEY down");
 N				break;
 N			case KEY_UP_K2:   //LED
 X			case KEY_2_UP:   
 N				log_debug("LED KEY up");
-X				LITE_syslog(__FUNCTION__, 169, LOG_DEBUG_LEVEL, "LED KEY up");
+X				LITE_syslog(__FUNCTION__, 177, LOG_DEBUG_LEVEL, "LED KEY up");
 N				break;
 N			case KEY_DOWN_K2:
 X			case KEY_2_DOWN:
 N				log_debug("LED KEY down");
-X				LITE_syslog(__FUNCTION__, 172, LOG_DEBUG_LEVEL, "LED KEY down");
+X				LITE_syslog(__FUNCTION__, 180, LOG_DEBUG_LEVEL, "LED KEY down");
 N
 N				break;
 N			case KEY_LONG_K2:
 X			case KEY_2_LONG:
 N				log_debug("LED KEY long");
-X				LITE_syslog(__FUNCTION__, 176, LOG_DEBUG_LEVEL, "LED KEY long");
+X				LITE_syslog(__FUNCTION__, 184, LOG_DEBUG_LEVEL, "LED KEY long");
 N				break;
 N			}
 N		}
 N
 N	}
 N
+W "..\App\src\main.c" 68 10 variable "dome_cnt"  was declared but never referenced
 N}
 N

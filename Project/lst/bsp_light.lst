@@ -19131,8 +19131,8 @@ N#define BSP_INC_BSP_2D4_H_
 N
 N#define         CSN_HIGH                (P04 = 1)
 N#define         CSN_LOW                 (P04 = 0)
-N#define         SCK_HIGH                (P07 = 1)
-N#define         SCK_LOW                 (P07 = 0)
+N#define         SCK_HIGH                P07 = 1;delay_2d4(1)
+N#define         SCK_LOW                 P07 = 0;delay_2d4(1)
 N
 N#define         SPI_DATA_HIGH           (P05 = 1)
 N#define         SPI_DATA_LOW            (P05 = 0)
@@ -19349,6 +19349,11 @@ N
 N#ifndef BSP_INC_BSP_EEPROM_H_
 N#define BSP_INC_BSP_EEPROM_H_
 N
+N//#define DOME_START_ADDR   0x3C00  //use 3KB
+N//#define DOME_START_ADDR   0x3E00  //use 2.5KB
+N#define DOME_START_ADDR   0x6C00  //use 5KB
+N
+N
 Nvoid EEPROM_InitHard(void);
 N
 Nvoid bsp_eeprom_write_int(uint32_t u32addr, uint32_t u32data);
@@ -19488,7 +19493,7 @@ N#endif
 N
 N#if UART1_FIFO_EN == 1
 X#if 1 == 1
-N#define UART1_BAUD			115200
+N#define UART1_BAUD			19200
 N#define UART1_TX_BUF_SIZE	1*256
 N#define UART1_RX_BUF_SIZE	1*256
 N#endif
@@ -19673,21 +19678,19 @@ X	CLK_SetModuleClock((( 1UL<<31)|( 1<<29)|( 3<<25)|(28<<20)|( 0<<18)|( 0x0<<10)|
 N	CLK_SetModuleClock(PWMCH45_MODULE, CLK_CLKSEL2_PWMCH45SEL_HCLK, 0);
 X	CLK_SetModuleClock((( 1UL<<31)|( 3<<29)|( 3<<25)|( 4<<20)|( 0<<18)|( 0x0<<10)|( 0<<5)|(22<<0)), 0x00000020UL, 0);
 N
-N
 N	SYS->P1_MFP |= SYS_MFP_P12_PWM0_CH0 | SYS_MFP_P13_PWM0_CH1
 X	((SYS_T *) (((uint32_t)0x50000000) + 0x00000))->P1_MFP |= 0x04000000UL | 0x08000000UL
 N			| SYS_MFP_P14_PWM0_CH4;
 X			| 0x10000000UL;
 N
 N	// PWM-Timer 0 enable and Auto-reload
-N	PWM->CTL = PWM_CTL_CNTEN0_Msk | PWM_CTL_CNTMODE0_Msk;
-X	((PWM_T *) (((uint32_t)0x40000000) + 0x40000))->CTL = (0x1ul << (0)) | (0x1ul << (3));
-N		PWM->CTL = PWM_CTL_CNTEN1_Msk | PWM_CTL_CNTMODE1_Msk;
-X		((PWM_T *) (((uint32_t)0x40000000) + 0x40000))->CTL = (0x1ul << (4)) | (0x1ul << (7));
-N		PWM->CTL = PWM_CTL_CNTEN4_Msk | PWM_CTL_CNTMODE4_Msk;
-X		((PWM_T *) (((uint32_t)0x40000000) + 0x40000))->CTL = (0x1ul << (16)) | (0x1ul << (19));
-N	
-N	
+N	PWM->CTL = PWM_CTL_CNTEN0_Msk | PWM_CTL_CNTMODE0_Msk | PWM_CTL_CNTEN1_Msk
+X	((PWM_T *) (((uint32_t)0x40000000) + 0x40000))->CTL = (0x1ul << (0)) | (0x1ul << (3)) | (0x1ul << (4))
+N			| PWM_CTL_CNTMODE1_Msk | PWM_CTL_CNTEN4_Msk | PWM_CTL_CNTMODE4_Msk;
+X			| (0x1ul << (7)) | (0x1ul << (16)) | (0x1ul << (19));
+N//	PWM->CTL = PWM_CTL_CNTEN1_Msk | PWM_CTL_CNTMODE1_Msk;
+N//	PWM->CTL = PWM_CTL_CNTEN4_Msk | PWM_CTL_CNTMODE4_Msk;
+N
 N	PWM_SET_PRESCALER(PWM, 0, 3);
 X	((((PWM_T *) (((uint32_t)0x40000000) + 0x40000)))->CLKPSC = ((((PWM_T *) (((uint32_t)0x40000000) + 0x40000)))->CLKPSC & ~((0xfful << (0)) << (((0) >> 1) * 8))) | ((3) << (((0) >> 1) * 8)));
 N	PWM_SET_DIVIDER(PWM, 0, PWM_CLK_DIV_1);
@@ -19726,8 +19729,8 @@ X	PWM_Start(((PWM_T *) (((uint32_t)0x40000000) + 0x40000)), (0x00000002));
 N	PWM_Start(PWM, BIT4);
 X	PWM_Start(((PWM_T *) (((uint32_t)0x40000000) + 0x40000)), (0x00000010));
 N
-N	PWM_SET_CMR(PWM, 0, 1000);
-X	(*((volatile uint32_t *)((((uint32_t) & ((((PWM_T *) (((uint32_t)0x40000000) + 0x40000)))->CMPDAT0)) + 0 * 4)))= (1000));
+N	PWM_SET_CMR(PWM, 0, 10000);
+X	(*((volatile uint32_t *)((((uint32_t) & ((((PWM_T *) (((uint32_t)0x40000000) + 0x40000)))->CMPDAT0)) + 0 * 4)))= (10000));
 N	PWM_SET_CNR(PWM, 0, 0xFFFF);
 X	(*((volatile uint32_t *) ((((uint32_t)&((((PWM_T *) (((uint32_t)0x40000000) + 0x40000)))->PERIOD0)) + (0) * 4))) = (0xFFFF));
 N
@@ -19741,55 +19744,56 @@ X	(*((volatile uint32_t *)((((uint32_t) & ((((PWM_T *) (((uint32_t)0x40000000) +
 N	PWM_SET_CNR(PWM, 4, 0xFFFF);
 X	(*((volatile uint32_t *) ((((uint32_t)&((((PWM_T *) (((uint32_t)0x40000000) + 0x40000)))->PERIOD0)) + (4) * 4))) = (0xFFFF));
 N
-N//	Light_RGB_set(0, 0, 0);
+N	///////////////
+N//	Light_bright_set(95);
+N//	Light_RGB_set(0,50000,0);
 N}
 Nstatic void Light_Red_set(uint16_t duty) {
-NPWM_SET_CMR(PWM, 1, duty);
-X(*((volatile uint32_t *)((((uint32_t) & ((((PWM_T *) (((uint32_t)0x40000000) + 0x40000)))->CMPDAT0)) + 1 * 4)))= (duty));
+N	PWM_SET_CMR(PWM, 1, duty);
+X	(*((volatile uint32_t *)((((uint32_t) & ((((PWM_T *) (((uint32_t)0x40000000) + 0x40000)))->CMPDAT0)) + 1 * 4)))= (duty));
 N}
 Nstatic void Light_Green_set(uint16_t duty) {
-NPWM_SET_CMR(PWM, 0, duty);
-X(*((volatile uint32_t *)((((uint32_t) & ((((PWM_T *) (((uint32_t)0x40000000) + 0x40000)))->CMPDAT0)) + 0 * 4)))= (duty));
+N	PWM_SET_CMR(PWM, 0, duty);
+X	(*((volatile uint32_t *)((((uint32_t) & ((((PWM_T *) (((uint32_t)0x40000000) + 0x40000)))->CMPDAT0)) + 0 * 4)))= (duty));
 N}
 Nstatic void Light_Blue_set(uint16_t duty) {
-NPWM_SET_CMR(PWM, 4, duty);
-X(*((volatile uint32_t *)((((uint32_t) & ((((PWM_T *) (((uint32_t)0x40000000) + 0x40000)))->CMPDAT0)) + 4 * 4)))= (duty));
+N	PWM_SET_CMR(PWM, 4, duty);
+X	(*((volatile uint32_t *)((((uint32_t) & ((((PWM_T *) (((uint32_t)0x40000000) + 0x40000)))->CMPDAT0)) + 4 * 4)))= (duty));
 N}
 N
 Nvoid Light_RGB_set(uint16_t r, uint16_t g, uint16_t b) {
 N	uint32_t tmp = 0;
-N#if 0
-S	tmp = r;
-S	tmp *= dome_running_param.bright;
-S	tmp /= 100;
-S	Light_Red_set(tmp & 0xFFFF);
-S
-S	tmp = g;
-S	tmp *= dome_running_param.bright;
-S	tmp /= 100;
-S	Light_Green_set(tmp & 0xFFFF);
-S
-S	tmp = b;
-S	tmp *= dome_running_param.bright;
-S	tmp /= 100;
-S	Light_Blue_set(tmp & 0xFFFF);
+N#if 1
+N	tmp = r;
+N	tmp *= dome_running_param.bright;
+N	tmp /= 100;
+N	Light_Red_set(tmp & 0xFFFF);
+N
+N	tmp = g;
+N	tmp *= dome_running_param.bright;
+N	tmp /= 100;
+N	Light_Green_set(tmp & 0xFFFF);
+N
+N	tmp = b;
+N	tmp *= dome_running_param.bright;
+N	tmp /= 100;
+N	Light_Blue_set(tmp & 0xFFFF);
 N#else
-N	Light_Red_set(0xFFFF);
-N	Light_Green_set(0xFFFF);
-N	Light_Blue_set(0xFFFF);
+S	Light_Red_set(0xFFFF);
+S	Light_Green_set(0xFFFF);
+S	Light_Blue_set(0xFFFF);
 N#endif
 N}
 Nvoid Light_bright_set(uint8_t br) {
 N//	uint16_t tmp = 0;
-N#if 0
-S	dome_running_param.bright = br;
-S
-S	if (dome_running_param.bright < 10) {
-S		dome_running_param.bright = 10;
-S	}
-S
-S	Light_RGB_set(dome_running_param.color.R, dome_running_param.color.G,
-S			dome_running_param.color.B);
+N#if 1
+N	dome_running_param.bright = br;
+N
+N	if (dome_running_param.bright < 10) {
+N		dome_running_param.bright = 10;
+N	}
+N	Light_RGB_set(dome_running_param.color.R, dome_running_param.color.G,
+N			dome_running_param.color.B);
 N#endif
 N}
 N

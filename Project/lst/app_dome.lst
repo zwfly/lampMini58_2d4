@@ -19699,8 +19699,8 @@ N#define BSP_INC_BSP_2D4_H_
 N
 N#define         CSN_HIGH                (P04 = 1)
 N#define         CSN_LOW                 (P04 = 0)
-N#define         SCK_HIGH                (P07 = 1)
-N#define         SCK_LOW                 (P07 = 0)
+N#define         SCK_HIGH                P07 = 1;delay_2d4(1)
+N#define         SCK_LOW                 P07 = 0;delay_2d4(1)
 N
 N#define         SPI_DATA_HIGH           (P05 = 1)
 N#define         SPI_DATA_LOW            (P05 = 0)
@@ -19917,6 +19917,11 @@ N
 N#ifndef BSP_INC_BSP_EEPROM_H_
 N#define BSP_INC_BSP_EEPROM_H_
 N
+N//#define DOME_START_ADDR   0x3C00  //use 3KB
+N//#define DOME_START_ADDR   0x3E00  //use 2.5KB
+N#define DOME_START_ADDR   0x6C00  //use 5KB
+N
+N
 Nvoid EEPROM_InitHard(void);
 N
 Nvoid bsp_eeprom_write_int(uint32_t u32addr, uint32_t u32data);
@@ -20056,7 +20061,7 @@ N#endif
 N
 N#if UART1_FIFO_EN == 1
 X#if 1 == 1
-N#define UART1_BAUD			115200
+N#define UART1_BAUD			19200
 N#define UART1_TX_BUF_SIZE	1*256
 N#define UART1_RX_BUF_SIZE	1*256
 N#endif
@@ -20440,9 +20445,7 @@ N
 N#ifndef APP_INC_APP_EEPROM_H_
 N#define APP_INC_APP_EEPROM_H_
 N
-N//#define DOME_START_ADDR   0x3C00  //use 3KB
-N//#define DOME_START_ADDR   0x3E00  //use 2.5KB
-N#define DOME_START_ADDR   0x6C00  //use 5KB
+N
 N
 Nvoid app_eeprom_Init(void);
 Nvoid app_eeprom_get_dome_with_index(DOME_DEFAULT_T* dd, uint8_t index);
@@ -21552,347 +21555,6 @@ N		{ 0, 255, 128 }, //blue:green = 1:2
 N		{ 0, 128, 255 }, //blue:green = 2:1
 N		{ 255, 128, 0 } //red:green = 2:1
 N};
-N
-N//DOME_DEFAULT_T dome_blink_buffers[DEFAULT_DOME_NUM];
-N#if 0
-Scode const DOME_DEFAULT_T dome_default[DEFAULT_DOME_NUM] = {  //
-S	{ //start big dome0
-S		{  //start header0
-S			"    DOME", 0, 0x01//header0 body
-S		},  //end header0
-S		{  //start dome0
-S			{	0x05, {255, 255, 255}, {0, 0, 0}, 1, 200,
-S				100, 0}, //subdome0
-S			{	0x14, {255, 0, 0}, {0, 0, 0}, 1, 200, 100,
-S				0},  //subdome1
-S			{	0x24, {0, 255, 0}, {0, 0, 0}, 1, 200, 100,
-S				0},  //subdome2
-S			{	0x34, {0, 255, 0}, {0, 0, 0}, 1, 200, 100,
-S				0},   //subdome3
-S			{	0x44, {0, 255, 0}, {0, 0, 0}, 1, 200, 100,
-S				0},  //subdome4
-S			{	0x54, {0, 255, 0}, {0, 0, 0}, 1, 200, 100,
-S				0},  //subdome5
-S			{	0x64, {0, 255, 0}, {0, 0, 0}, 1, 200, 100,
-S				0},  //subdome6
-S			{	0x74, {0, 255, 0}, {0, 0, 0}, 1, 200, 100,
-S				0}    //subdome7
-S		}  //end dome0
-S	},  // end big dome0
-S	{ //start big dome1
-S		{  //start header0
-S			"     LSU", 0, 0x02}, //end header0
-S		{  //start dome0
-S			{	0x03, {160, 32, 240}, {255, 165, 0}, 1, 200, 100,
-S				0}, //subdome0
-S			{	0x13, {255, 165, 0}, {160, 32, 240}, 1,
-S				200, 100, 0},  //subdome1
-S			{	0x04, {0, 0, 255}, {0, 0, 0}, 1, 200, 100,
-S				0},  //subdome2
-S			{	0x04, {0, 0, 255}, {0, 0, 0}, 1, 200, 100,
-S				0},   //subdome3
-S			{	0x04, {0, 0, 255}, {0, 0, 0}, 1, 200, 100,
-S				0},  //subdome4
-S			{	0x04, {0, 0, 255}, {0, 0, 0}, 1, 200, 100,
-S				0},  //subdome5
-S			{	0x04, {0, 0, 255}, {0, 0, 0}, 1, 200, 100,
-S				0},  //subdome6
-S			{	0x04, {0, 0, 255}, {0, 0, 0}, 1, 200, 100,
-S				0}    //subdome7
-S
-S		}  //end dome0
-S	},  // end big dome1
-S	{ //start big dome2
-S		{  //start header0
-S			"    XMAS", 0, 0x03}, //end header0
-S		{  //start dome0
-S			{	0x03, {255, 0, 0}, {0, 255, 0}, 1, 200, 100, 0}, //subdome0
-S			{	0x13, {0, 255, 0}, {255, 255, 255}, 1,
-S				200, 100, 0},  //subdome1
-S			{	0x23, {255, 255, 255}, {255, 0, 0}, 1,
-S				200, 100, 0},  //subdome2
-S			{	0x04, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
-S				0},   //subdome3
-S			{	0x04, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
-S				0},  //subdome4
-S			{	0x04, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
-S				0},  //subdome5
-S			{	0x04, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
-S				0},  //subdome6
-S			{	0x04, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
-S				0}    //subdome7
-S
-S		}  //end dome0
-S	},  // end big dome2
-S	{ //start big dome3
-S		{  //start header0
-S			"   MARDI", 0, 0x04}, //end header0
-S		{  //start dome0
-S			{	0x03, {255, 0, 0}, {0, 255, 0}, 1, 100, 100, 0}, //subdome0
-S			{	0x13, {0, 255, 0}, {160, 32, 240}, 1, 100,
-S				100, 0},  //subdome1
-S			{	0x23, {160, 32, 240}, {255, 255, 0}, 1,
-S				100, 100, 0},  //subdome2
-S			{	0x33, {255, 255, 0}, {255, 0, 0}, 1, 100,
-S				100, 0},   //subdome3
-S			{	0x44, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
-S				0},  //subdome4
-S			{	0x54, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
-S				0},  //subdome5
-S			{	0x64, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
-S				0},  //subdome6
-S			{	0x74, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
-S				0}    //subdome7
-S
-S		}  //end dome0
-S	},  // end big dome3
-S	{ //start big dome4
-S		{  //start header0
-S			"   FADE1", 0, 0x01}, //end header0
-S		{  //start dome0
-S			{	0x04, {255, 0, 0}, {0, 0, 0}, 1, 200, 100, 0}, //subdome0
-S			{	0x13, {0, 255, 0}, {160, 32, 240}, 1, 100,
-S				100, 0},  //subdome1
-S			{	0x23, {160, 32, 240}, {255, 255, 0}, 1,
-S				100, 100, 0},  //subdome2
-S			{	0x33, {255, 255, 0}, {255, 0, 0}, 1, 100,
-S				100, 0},   //subdome3
-S			{	0x44, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
-S				0},  //subdome4
-S			{	0x54, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
-S				0},  //subdome5
-S			{	0x64, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
-S				0},  //subdome6
-S			{	0x74, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
-S				0}    //subdome7
-S
-S		}  //end dome0
-S	},  // end big dome4
-S	{ //start big dome4
-S		{  //start header0
-S			"   FADE2", 0, 0x01}, //end header0
-S		{  //start dome0
-S			{	0x04, {0, 255, 0}, {0, 0, 0}, 1, 200, 100, 0}, //subdome0
-S			{	0x13, {0, 255, 0}, {160, 32, 240}, 1, 100,
-S				100, 0},  //subdome1
-S			{	0x23, {160, 32, 240}, {255, 255, 0}, 1,
-S				100, 100, 0},  //subdome2
-S			{	0x33, {255, 255, 0}, {255, 0, 0}, 1, 100,
-S				100, 0},   //subdome3
-S			{	0x44, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
-S				0},  //subdome4
-S			{	0x54, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
-S				0},  //subdome5
-S			{	0x64, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
-S				0},  //subdome6
-S			{	0x74, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
-S				0}    //subdome7
-S
-S		}  //end dome0
-S	}, // end big dome4
-S	{ //start big dome4
-S		{  //start header0
-S			"   FADE3", 0, 0x01}, //end header0
-S		{  //start dome0
-S			{	0x04, {0, 0, 255}, {0, 0, 0}, 1, 200, 100, 0}, //subdome0
-S			{	0x13, {0, 255, 0}, {160, 32, 240}, 1, 100,
-S				100, 0},  //subdome1
-S			{	0x23, {160, 32, 240}, {255, 255, 0}, 1,
-S				100, 100, 0},  //subdome2
-S			{	0x33, {255, 255, 0}, {255, 0, 0}, 1, 100,
-S				100, 0},   //subdome3
-S			{	0x44, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
-S				0},  //subdome4
-S			{	0x54, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
-S				0},  //subdome5
-S			{	0x64, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
-S				0},  //subdome6
-S			{	0x74, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
-S				0}    //subdome7
-S
-S		}  //end dome0
-S	},  // end big dome4
-S	{ //start big dome4
-S		{  //start header0
-S			"   FADE4", 0, 0x01}, //end header0
-S		{  //start dome0
-S			{	0x04, {160, 32, 240}, {0, 0, 0}, 1, 200, 100, 0}, //subdome0
-S			{	0x13, {0, 255, 0}, {160, 32, 240}, 1, 100,
-S				100, 0},  //subdome1
-S			{	0x23, {160, 32, 240}, {255, 255, 0}, 1,
-S				100, 100, 0},  //subdome2
-S			{	0x33, {255, 255, 0}, {255, 0, 0}, 1, 100,
-S				100, 0},   //subdome3
-S			{	0x44, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
-S				0},  //subdome4
-S			{	0x54, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
-S				0},  //subdome5
-S			{	0x64, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
-S				0},  //subdome6
-S			{	0x74, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
-S				0}    //subdome7
-S
-S		}  //end dome0
-S	},  // end big dome4
-S	{ //start big dome4
-S		{  //start header0
-S			"   FADE5", 0, 0x01}, //end header0
-S		{  //start dome0
-S			{	0x04, {255, 165, 0}, {0, 0, 0}, 1, 200, 100, 0}, //subdome0
-S			{	0x13, {0, 255, 0}, {160, 32, 240}, 1, 100,
-S				100, 0},  //subdome1
-S			{	0x23, {160, 32, 240}, {255, 255, 0}, 1,
-S				100, 100, 0},  //subdome2
-S			{	0x33, {255, 255, 0}, {255, 0, 0}, 1, 100,
-S				100, 0},   //subdome3
-S			{	0x44, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
-S				0},  //subdome4
-S			{	0x54, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
-S				0},  //subdome5
-S			{	0x64, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
-S				0},  //subdome6
-S			{	0x74, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
-S				0}    //subdome7
-S
-S		}  //end dome0
-S	},  // end big dome4
-S	{ //start big dome4
-S		{  //start header0
-S			"  SHARP1", 0, 0x01}, //end header0
-S		{  //start dome0
-S			{	0x05, {255, 0, 0}, {0, 0, 0}, 1, 100, 100, 100}, //subdome0
-S			{	0x13, {0, 255, 0}, {160, 32, 240}, 1, 100,
-S				100, 0},  //subdome1
-S			{	0x23, {160, 32, 240}, {255, 255, 0}, 1,
-S				100, 100, 0},  //subdome2
-S			{	0x33, {255, 255, 0}, {255, 0, 0}, 1, 100,
-S				100, 0},   //subdome3
-S			{	0x44, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
-S				0},  //subdome4
-S			{	0x54, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
-S				0},  //subdome5
-S			{	0x64, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
-S				0},  //subdome6
-S			{	0x74, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
-S				0}    //subdome7
-S
-S		}  //end dome0
-S	},  // end big dome4
-S	{ //start big dome4
-S		{  //start header0
-S			"  SHARP2", 0, 0x01}, //end header0
-S		{  //start dome0
-S			{	0x05, {0, 255, 0}, {0, 0, 0}, 1, 100, 100, 100}, //subdome0
-S			{	0x13, {0, 255, 0}, {160, 32, 240}, 1, 100,
-S				100, 0},  //subdome1
-S			{	0x23, {160, 32, 240}, {255, 255, 0}, 1,
-S				100, 100, 0},  //subdome2
-S			{	0x33, {255, 255, 0}, {255, 0, 0}, 1, 100,
-S				100, 0},   //subdome3
-S			{	0x44, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
-S				0},  //subdome4
-S			{	0x54, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
-S				0},  //subdome5
-S			{	0x64, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
-S				0},  //subdome6
-S			{	0x74, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
-S				0}    //subdome7
-S
-S		}  //end dome0
-S	}, // end big dome4
-S	{ //start big dome4
-S		{  //start header0
-S			"  SHARP3", 0, 0x01}, //end header0
-S		{  //start dome0
-S			{	0x05, {0, 0, 255}, {0, 0, 0}, 1, 100, 100, 100}, //subdome0
-S			{	0x13, {0, 255, 0}, {160, 32, 240}, 1, 100,
-S				100, 0},  //subdome1
-S			{	0x23, {160, 32, 240}, {255, 255, 0}, 1,
-S				100, 100, 0},  //subdome2
-S			{	0x33, {255, 255, 0}, {255, 0, 0}, 1, 100,
-S				100, 0},   //subdome3
-S			{	0x44, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
-S				0},  //subdome4
-S			{	0x54, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
-S				0},  //subdome5
-S			{	0x64, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
-S				0},  //subdome6
-S			{	0x74, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
-S				0}    //subdome7
-S
-S		}  //end dome0
-S	},  // end big dome4
-S	{ //start big dome4
-S		{  //start header0
-S			"  SHARP4", 0, 0x01}, //end header0
-S		{  //start dome0
-S			{	0x05, {160, 32, 240}, {0, 0, 0}, 1, 100,
-S				100, 100}, //subdome0
-S			{	0x13, {0, 255, 0}, {160, 32, 240}, 1, 100,
-S				100, 0},  //subdome1
-S			{	0x23, {160, 32, 240}, {255, 255, 0}, 1,
-S				100, 100, 0},  //subdome2
-S			{	0x33, {255, 255, 0}, {255, 0, 0}, 1, 100,
-S				100, 0},   //subdome3
-S			{	0x44, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
-S				0},  //subdome4
-S			{	0x54, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
-S				0},  //subdome5
-S			{	0x64, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
-S				0},  //subdome6
-S			{	0x74, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
-S				0}    //subdome7
-S
-S		}  //end dome0
-S	},  // end big dome4
-S	{ //start big dome4
-S		{  //start header0
-S			"  SHARP5", 0, 0x01}, //end header0
-S		{  //start dome0
-S			{	0x05, {255, 165, 0}, {0, 0, 0}, 1, 100,
-S				100, 100}, //subdome0
-S			{	0x13, {0, 255, 0}, {160, 32, 240}, 1, 100,
-S				100, 100},  //subdome1
-S			{	0x23, {160, 32, 240}, {255, 255, 0}, 1,
-S				100, 100, 100},  //subdome2
-S			{	0x33, {255, 255, 0}, {255, 0, 0}, 1, 100,
-S				100, 0},   //subdome3
-S			{	0x44, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
-S				0},  //subdome4
-S			{	0x54, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
-S				0},  //subdome5
-S			{	0x64, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
-S				0},  //subdome6
-S			{	0x74, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
-S				0}    //subdome7
-S
-S		}  //end dome0
-S	}, // end big dome4
-S	{ //start big dome4
-S		{  //start header0
-S			" GRADIEN", 0, 0x07}, //end header0
-S		{  //start dome0
-S			{	0x03, {255, 0, 0}, {255, 0x7F, 0}, 1, 100,
-S				100, 0}, //subdome0
-S			{	0x13, {255, 0x7F, 0}, {255, 255, 0}, 1,
-S				100, 100, 0},  //subdome1
-S			{	0x23, {255, 255, 0}, {0, 255, 0}, 1, 100,
-S				100, 0},  //subdome2
-S			{	0x33, {0, 255, 0}, {0, 255, 255}, 1, 100,
-S				100, 0},   //subdome3
-S			{	0x43, {0, 255, 255}, {0, 0, 255}, 1, 100,
-S				100, 0},  //subdome4
-S			{	0x53, {0, 0, 255}, {0x8B, 0, 255}, 1, 100,
-S				100, 0},  //subdome5
-S			{	0x63, {0x8B, 0, 255}, {255, 0, 0}, 1, 100,
-S				100, 0},  //subdome6
-S			{	0x73, {0, 0, 255}, {0, 0, 0}, 4, 200, 100,
-S				0}    //subdome7
-S
-S		}  //end dome0
-S	}  // end big dome4
-S};
-N#endif
 N//////////////////
 N
 Nvoid app_dome_Init(void) {

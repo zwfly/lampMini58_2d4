@@ -18,828 +18,833 @@
 ;;;58     
 ;;;59     	switch (st->rxBuf[(st->pRead + 3) % sizeof(st->rxBuf)]) {
 000008  2003              MOVS     r0,#3
-00000a  0200              LSLS     r0,r0,#8
-00000c  9400              STR      r4,[sp,#0]            ;57
-00000e  9401              STR      r4,[sp,#4]            ;57
-000010  9402              STR      r4,[sp,#8]            ;57
-000012  182e              ADDS     r6,r5,r0
-000014  9403              STR      r4,[sp,#0xc]
+00000a  9400              STR      r4,[sp,#0]            ;57
+00000c  9401              STR      r4,[sp,#4]            ;57
+00000e  9402              STR      r4,[sp,#8]            ;57
+000010  0200              LSLS     r0,r0,#8
+000012  9403              STR      r4,[sp,#0xc]
+000014  182e              ADDS     r6,r5,r0
 000016  8873              LDRH     r3,[r6,#2]
 ;;;60     	case BLINK_METHOD_CMD:  //闪法
 ;;;61     	{
-;;;62     
-;;;63     		break;
-;;;64     		uint16_t index = 0;
-;;;65     		index = st->rxBuf[(st->pRead + 12) % sizeof(st->rxBuf)];
-;;;66     
-;;;67     		if (index
-;;;68     				>= ((FMC_APROM_END - DOME_START_ADDR) / sizeof(DOME_DEFAULT_T)
-;;;69     						- 1)) {
-;;;70     			break;
-;;;71     		}
-;;;72     		FMC_ENABLE_AP_UPDATE();
-;;;73     		SYS_UnlockReg();
-;;;74     		FMC_Open();
-;;;75     
-;;;76     		if (index == 0) {
-;;;77     			u8_tmp = (FMC_APROM_END - DOME_START_ADDR) / FMC_FLASH_PAGE_SIZE;
-;;;78     			for (i = 0; i < u8_tmp; i++) {
-;;;79     				app_eeprom_erase(i * FMC_FLASH_PAGE_SIZE);
-;;;80     			}
-;;;81     		}
-;;;82     #if 0
-;;;83     		for (i = (index + 1); i < DEFAULT_DOME_NUM; i++) {
-;;;84     			uint16_t addr = i * sizeof(DOME_DEFAULT_T)
-;;;85     			+ (&dome_blink.header.index
-;;;86     					- &dome_blink);
-;;;87     			app_eeprom_write_byte(addr, 0);
-;;;88     			nop
-;;;89     		}
-;;;90     #endif
-;;;91     #if 1
-;;;92     		tmp = st->rxBuf[(st->pRead + 13) % sizeof(st->rxBuf)] & 0x0F; //sub mode number
-;;;93     
-;;;94     		uint8_t n = (tmp * sizeof(SUBDOME_T) + sizeof(DOME_HEADER_T));
-;;;95     		uint8_t minSpaceBytes = sizeof(DOME_DEFAULT_T);
-;;;96     		if (minSpaceBytes % 4) {
-;;;97     			minSpaceBytes++;
-;;;98     		}
-;;;99     
-;;;100    		for (i = 0; i < (n / 4); i++) {
-;;;101    			uint32_t addr = index * minSpaceBytes + i * 4;
-;;;102    			uint32_t dt = st->rxBuf[(st->pRead + 4 + i) % sizeof(st->rxBuf)];
-;;;103    			dt |= st->rxBuf[(st->pRead + 4 + i + 1) % sizeof(st->rxBuf)] << 8;
-;;;104    			dt |= st->rxBuf[(st->pRead + 4 + i + 2) % sizeof(st->rxBuf)] << 16;
-;;;105    			dt |= st->rxBuf[(st->pRead + 4 + i + 3) % sizeof(st->rxBuf)] << 24;
-;;;106    			app_eeprom_write_int(addr, dt);
-;;;107    		}
-;;;108    		for (i = 0; i < (n % 4); i++) {
-;;;109    			uint32_t addr = index * minSpaceBytes + n / 4 + 4;
-;;;110    			uint32_t dt = 0;
-;;;111    			switch (i) {
-;;;112    			case 0:
-;;;113    				dt = st->rxBuf[(st->pRead + 4 + n / 4) % sizeof(st->rxBuf)];
-;;;114    				break;
-;;;115    			case 1:
-;;;116    				dt |= st->rxBuf[(st->pRead + 4 + n / 4 + i) % sizeof(st->rxBuf)]
-;;;117    						<< 8;
-;;;118    				break;
-;;;119    			case 2:
-;;;120    				dt |= st->rxBuf[(st->pRead + 4 + n / 4 + i) % sizeof(st->rxBuf)]
-;;;121    						<< 16;
-;;;122    				break;
-;;;123    			case 3:
-;;;124    				dt |= st->rxBuf[(st->pRead + 4 + n / 4 + i) % sizeof(st->rxBuf)]
-;;;125    						<< 24;
-;;;126    				break;
-;;;127    			}
-;;;128    			app_eeprom_write_int(addr, dt);
-;;;129    		}
-;;;130    
-;;;131    		FMC_Close();
-;;;132    		SYS_LockReg();
-;;;133    		FMC_DISABLE_AP_UPDATE();
-;;;134    #endif
-;;;135    		u8_tmp = index & 0xFF;
-;;;136    		app_uart_send(BLINK_METHOD_CMD, &u8_tmp, 1);
-;;;137    	}
-;;;138    		break;
-;;;139    	case RCV_VOL_CMD:
-;;;140    		buffer[index++] = LAMP2LCD_HEADER;
-;;;141    		buffer[index++] = len;
-;;;142    		buffer[index++] = RCV_VOL_CMD;
-;;;143    		for (i = 0; i < (len - 1); i++) {
-;;;144    			buffer[index++] =
-;;;145    					st->rxBuf[(st->pRead + 4 + i) % sizeof(st->rxBuf)];
-;;;146    		}
-;;;147    		for (i = 0; i < (buffer[1] + 1); i++) {
-;;;148    			buffer[index] += buffer[i + 1];
-;;;149    		}
-;;;150    		index++;
-;;;151    		app_2d4_send(buffer, index);
-;;;152    		break;
-;;;153    	case RCV_POWER_STATUS_CMD:
-;;;154    		buffer[index++] = LAMP2LCD_HEADER;
-;;;155    		buffer[index++] = len;
-;;;156    		buffer[index++] = RCV_POWER_STATUS_CMD;
-;;;157    		for (i = 0; i < (len - 1); i++) {
-;;;158    			buffer[index++] =
-;;;159    					st->rxBuf[(st->pRead + 4 + i) % sizeof(st->rxBuf)];
-;;;160    		}
-;;;161    		for (i = 0; i < (buffer[1] + 1); i++) {
-;;;162    			buffer[index] += buffer[i + 1];
-;;;163    		}
-;;;164    		index++;
-;;;165    		app_2d4_send(buffer, index);
-;;;166    		break;
-;;;167    #if 0
-;;;168    		case RCV_X_BOX_STATUS_CMD:
-;;;169    		buffer[index++] = LAMP2LCD_HEADER;
-;;;170    		buffer[index++] = len;
-;;;171    		buffer[index++] = RCV_X_BOX_STATUS_CMD;
-;;;172    		for (i = 0; i < (len - 1); i++) {
-;;;173    			buffer[index++] = st->rxBuf[(st->pRead + 4
-;;;174    					+ i) % sizeof(st->rxBuf)];
-;;;175    		}
-;;;176    		for (i = 0; i < (buffer[1] + 1); i++) {
-;;;177    			buffer[index] += buffer[i + 1];
-;;;178    		}
-;;;179    		index++;
-;;;180    		app_2d4_send(buffer, index);
-;;;181    		break;
-;;;182    #endif
-;;;183    	case RCV_BT_STATUS_CMD:
-;;;184    		buffer[index++] = LAMP2LCD_HEADER;
-;;;185    		buffer[index++] = len;
-;;;186    		buffer[index++] = RCV_BT_STATUS_CMD;
-;;;187    		for (i = 0; i < (len - 1); i++) {
-;;;188    			buffer[index++] =
-;;;189    					st->rxBuf[(st->pRead + 4 + i) % sizeof(st->rxBuf)];
-;;;190    		}
-;;;191    		for (i = 0; i < (buffer[1] + 1); i++) {
-;;;192    			buffer[index] += buffer[i + 1];
-;;;193    		}
-;;;194    		index++;
-;;;195    		if (g_tWork.status.bits.DOME == 0) {
-000018  4ae7              LDR      r2,|L1.952|
+;;;62     		break;
+;;;63     		uint16_t index = 0;
+;;;64     		index = st->rxBuf[(st->pRead + 12) % sizeof(st->rxBuf)];
+;;;65     		if (index
+;;;66     				>= ((FMC_APROM_END - DOME_START_ADDR) / sizeof(DOME_DEFAULT_T)
+;;;67     						- 1)) {
+;;;68     			break;
+;;;69     		}
+;;;70     		FMC_ENABLE_AP_UPDATE();
+;;;71     		SYS_UnlockReg();
+;;;72     		FMC_Open();
+;;;73     
+;;;74     		if (index == 0) {
+;;;75     			u8_tmp = (FMC_APROM_END - DOME_START_ADDR) / FMC_FLASH_PAGE_SIZE;
+;;;76     			for (i = 0; i < u8_tmp; i++) {
+;;;77     				app_eeprom_erase(i * FMC_FLASH_PAGE_SIZE);
+;;;78     			}
+;;;79     		}
+;;;80     #if 0
+;;;81     		for (i = (index + 1); i < DEFAULT_DOME_NUM; i++) {
+;;;82     			uint16_t addr = i * sizeof(DOME_DEFAULT_T)
+;;;83     			+ (&dome_blink.header.index
+;;;84     					- &dome_blink);
+;;;85     			app_eeprom_write_byte(addr, 0);
+;;;86     			nop
+;;;87     		}
+;;;88     #endif
+;;;89     #if 1
+;;;90     		tmp = st->rxBuf[(st->pRead + 13) % sizeof(st->rxBuf)] & 0x0F; //sub mode number
+;;;91     
+;;;92     		uint8_t n = (tmp * sizeof(SUBDOME_T) + sizeof(DOME_HEADER_T));
+;;;93     		uint8_t minSpaceBytes = sizeof(DOME_DEFAULT_T);
+;;;94     		if (minSpaceBytes % 4) {
+;;;95     			minSpaceBytes++;
+;;;96     		}
+;;;97     
+;;;98     		for (i = 0; i < (n / 4); i++) {
+;;;99     			uint32_t addr = index * minSpaceBytes + i * 4;
+;;;100    			uint32_t dt = st->rxBuf[(st->pRead + 4 + i) % sizeof(st->rxBuf)];
+;;;101    			dt |= st->rxBuf[(st->pRead + 4 + i + 1) % sizeof(st->rxBuf)] << 8;
+;;;102    			dt |= st->rxBuf[(st->pRead + 4 + i + 2) % sizeof(st->rxBuf)] << 16;
+;;;103    			dt |= st->rxBuf[(st->pRead + 4 + i + 3) % sizeof(st->rxBuf)] << 24;
+;;;104    			app_eeprom_write_int(addr, dt);
+;;;105    		}
+;;;106    		for (i = 0; i < (n % 4); i++) {
+;;;107    			uint32_t addr = index * minSpaceBytes + n / 4 + 4;
+;;;108    			uint32_t dt = 0;
+;;;109    			switch (i) {
+;;;110    			case 0:
+;;;111    				dt = st->rxBuf[(st->pRead + 4 + n / 4) % sizeof(st->rxBuf)];
+;;;112    				break;
+;;;113    			case 1:
+;;;114    				dt |= st->rxBuf[(st->pRead + 4 + n / 4 + i) % sizeof(st->rxBuf)]
+;;;115    						<< 8;
+;;;116    				break;
+;;;117    			case 2:
+;;;118    				dt |= st->rxBuf[(st->pRead + 4 + n / 4 + i) % sizeof(st->rxBuf)]
+;;;119    						<< 16;
+;;;120    				break;
+;;;121    			case 3:
+;;;122    				dt |= st->rxBuf[(st->pRead + 4 + n / 4 + i) % sizeof(st->rxBuf)]
+;;;123    						<< 24;
+;;;124    				break;
+;;;125    			}
+;;;126    			app_eeprom_write_int(addr, dt);
+;;;127    		}
+;;;128    
+;;;129    		FMC_Close();
+;;;130    		SYS_LockReg();
+;;;131    		FMC_DISABLE_AP_UPDATE();
+;;;132    #endif
+;;;133    		u8_tmp = index & 0xFF;
+;;;134    		app_uart_send(BLINK_METHOD_CMD, &u8_tmp, 1);
+;;;135    	}
+;;;136    		break;
+;;;137    	case RCV_VOL_CMD:
+;;;138    		buffer[index++] = LAMP2LCD_HEADER;
+;;;139    		buffer[index++] = len;
+000018  49e9              LDR      r1,|L1.960|
 00001a  1cd8              ADDS     r0,r3,#3              ;59
 00001c  05c0              LSLS     r0,r0,#23             ;59
 00001e  0dc0              LSRS     r0,r0,#23             ;59
-000020  5c29              LDRB     r1,[r5,r0]            ;59
-000022  48e4              LDR      r0,|L1.948|
-000024  6812              LDR      r2,[r2,#0]
-000026  7807              LDRB     r7,[r0,#0]            ;141
-000028  1e78              SUBS     r0,r7,#1              ;143
-00002a  2941              CMP      r1,#0x41              ;59
-00002c  d073              BEQ      |L1.278|
+000020  780f              LDRB     r7,[r1,#0]
+;;;140    		buffer[index++] = RCV_VOL_CMD;
+;;;141    		for (i = 0; i < (len - 1); i++) {
+;;;142    			buffer[index++] =
+;;;143    					st->rxBuf[(st->pRead + 4 + i) % sizeof(st->rxBuf)];
+;;;144    		}
+;;;145    		for (i = 0; i < (buffer[1] + 1); i++) {
+;;;146    			buffer[index] += buffer[i + 1];
+;;;147    		}
+;;;148    		index++;
+;;;149    		app_2d4_send(buffer, index);
+;;;150    		break;
+;;;151    	case RCV_POWER_STATUS_CMD:
+;;;152    		buffer[index++] = LAMP2LCD_HEADER;
+;;;153    		buffer[index++] = len;
+;;;154    		buffer[index++] = RCV_POWER_STATUS_CMD;
+;;;155    		for (i = 0; i < (len - 1); i++) {
+;;;156    			buffer[index++] =
+;;;157    					st->rxBuf[(st->pRead + 4 + i) % sizeof(st->rxBuf)];
+;;;158    		}
+;;;159    		for (i = 0; i < (buffer[1] + 1); i++) {
+;;;160    			buffer[index] += buffer[i + 1];
+;;;161    		}
+;;;162    		index++;
+;;;163    		app_2d4_send(buffer, index);
+;;;164    		break;
+;;;165    #if 0
+;;;166    		case RCV_X_BOX_STATUS_CMD:
+;;;167    		buffer[index++] = LAMP2LCD_HEADER;
+;;;168    		buffer[index++] = len;
+;;;169    		buffer[index++] = RCV_X_BOX_STATUS_CMD;
+;;;170    		for (i = 0; i < (len - 1); i++) {
+;;;171    			buffer[index++] = st->rxBuf[(st->pRead + 4
+;;;172    					+ i) % sizeof(st->rxBuf)];
+;;;173    		}
+;;;174    		for (i = 0; i < (buffer[1] + 1); i++) {
+;;;175    			buffer[index] += buffer[i + 1];
+;;;176    		}
+;;;177    		index++;
+;;;178    		app_2d4_send(buffer, index);
+;;;179    		break;
+;;;180    #endif
+;;;181    	case RCV_BT_STATUS_CMD:
+;;;182    		buffer[index++] = LAMP2LCD_HEADER;
+;;;183    		buffer[index++] = len;
+;;;184    		buffer[index++] = RCV_BT_STATUS_CMD;
+;;;185    		for (i = 0; i < (len - 1); i++) {
+;;;186    			buffer[index++] =
+;;;187    					st->rxBuf[(st->pRead + 4 + i) % sizeof(st->rxBuf)];
+;;;188    		}
+;;;189    		for (i = 0; i < (buffer[1] + 1); i++) {
+;;;190    			buffer[index] += buffer[i + 1];
+;;;191    		}
+;;;192    		index++;
+;;;193    		if (g_tWork.status.bits.DOME == 0) {
+000022  4ae8              LDR      r2,|L1.964|
+000024  5c28              LDRB     r0,[r5,r0]            ;59
+000026  1e79              SUBS     r1,r7,#1              ;141
+000028  6812              LDR      r2,[r2,#0]
+00002a  2841              CMP      r0,#0x41              ;59
+00002c  d06f              BEQ      |L1.270|
 00002e  dc20              BGT      |L1.114|
-000030  2935              CMP      r1,#0x35              ;59
-000032  d071              BEQ      |L1.280|
+000030  2835              CMP      r0,#0x35              ;59
+000032  d06d              BEQ      |L1.272|
 000034  dc0f              BGT      |L1.86|
-000036  2912              CMP      r1,#0x12              ;59
-000038  d034              BEQ      |L1.164|
-00003a  2931              CMP      r1,#0x31              ;59
-00003c  d063              BEQ      |L1.262|
-00003e  2933              CMP      r1,#0x33              ;59
-000040  d06b              BEQ      |L1.282|
-000042  2934              CMP      r1,#0x34              ;59
-000044  d12e              BNE      |L1.164|
-;;;196    			app_2d4_send(buffer, index);
-;;;197    		}
-;;;198    		break;
-;;;199    	case RCV_PREV_NEXT_CMD:
-;;;200    		buffer[index++] = LAMP2LCD_HEADER;
-;;;201    		buffer[index++] = len;
-;;;202    		buffer[index++] = RCV_PREV_NEXT_CMD;
-;;;203    		for (i = 0; i < (len - 1); i++) {
-;;;204    			buffer[index++] =
-;;;205    					st->rxBuf[(st->pRead + 4 + i) % sizeof(st->rxBuf)];
-;;;206    		}
-;;;207    		for (i = 0; i < (buffer[1] + 1); i++) {
-;;;208    			buffer[index] += buffer[i + 1];
-;;;209    		}
-;;;210    		index++;
-;;;211    		if (g_tWork.status.bits.DOME == 0) {
-;;;212    			app_2d4_send(buffer, index);
-;;;213    		}
-;;;214    		break;
-;;;215    	case RCV_USB_PLAY_TIME_CMD:
-;;;216    		buffer[index++] = LAMP2LCD_HEADER;
-;;;217    		buffer[index++] = len;
-;;;218    		buffer[index++] = RCV_USB_PLAY_TIME_CMD;
-;;;219    		for (i = 0; i < (len - 1); i++) {
-;;;220    			buffer[index++] =
-;;;221    					st->rxBuf[(st->pRead + 4 + i) % sizeof(st->rxBuf)];
-;;;222    		}
-;;;223    		for (i = 0; i < (buffer[1] + 1); i++) {
-;;;224    			buffer[index] += buffer[i + 1];
-;;;225    		}
-;;;226    		index++;
-;;;227    		if (g_tWork.status.bits.DOME == 0) {
-;;;228    			app_2d4_send(buffer, index);
-;;;229    		}
-;;;230    		break;
-;;;231    	case RCV_FM_HZ_CMD:
-;;;232    		buffer[index++] = LAMP2LCD_HEADER;
-;;;233    		buffer[index++] = len;
-;;;234    		buffer[index++] = RCV_FM_HZ_CMD;
-;;;235    		for (i = 0; i < (len - 1); i++) {
-;;;236    			buffer[index++] =
-;;;237    					st->rxBuf[(st->pRead + 4 + i) % sizeof(st->rxBuf)];
-;;;238    		}
-;;;239    		for (i = 0; i < (buffer[1] + 1); i++) {
-;;;240    			buffer[index] += buffer[i + 1];
-;;;241    		}
-;;;242    		index++;
-;;;243    
-;;;244    		if (g_tWork.status.bits.DOME == 0) {
-;;;245    			app_2d4_send(buffer, index);
-;;;246    		}
-;;;247    		break;
-;;;248    	case MODE_CHANGE_CMD:   //MODE
-;;;249    		buffer[index++] = LAMP2LCD_HEADER;
-;;;250    		buffer[index++] = len;
-;;;251    		buffer[index++] = MODE_CHANGE_CMD;
-;;;252    		for (i = 0; i < (len - 1); i++) {
-;;;253    			buffer[index++] =
-;;;254    					st->rxBuf[(st->pRead + 4 + i) % sizeof(st->rxBuf)];
-;;;255    		}
-;;;256    		for (i = 0; i < (buffer[1] + 1); i++) {
-;;;257    			buffer[index] += buffer[i + 1];
-;;;258    		}
-;;;259    		index++;
-;;;260    		app_2d4_send(buffer, index);
-;;;261    		break;
-;;;262    	case RCV_PLAY_PAUSE_STATUS_CMD:
-;;;263    		buffer[index++] = LAMP2LCD_HEADER;
-000046  21f8              MOVS     r1,#0xf8
+000036  2812              CMP      r0,#0x12              ;59
+000038  d038              BEQ      |L1.172|
+00003a  2831              CMP      r0,#0x31              ;59
+00003c  d06b              BEQ      |L1.278|
+00003e  2833              CMP      r0,#0x33              ;59
+000040  d068              BEQ      |L1.276|
+000042  2834              CMP      r0,#0x34              ;59
+000044  d132              BNE      |L1.172|
+;;;194    			app_2d4_send(buffer, index);
+;;;195    		}
+;;;196    		break;
+;;;197    	case RCV_PREV_NEXT_CMD:
+;;;198    		buffer[index++] = LAMP2LCD_HEADER;
+;;;199    		buffer[index++] = len;
+;;;200    		buffer[index++] = RCV_PREV_NEXT_CMD;
+;;;201    		for (i = 0; i < (len - 1); i++) {
+;;;202    			buffer[index++] =
+;;;203    					st->rxBuf[(st->pRead + 4 + i) % sizeof(st->rxBuf)];
+;;;204    		}
+;;;205    		for (i = 0; i < (buffer[1] + 1); i++) {
+;;;206    			buffer[index] += buffer[i + 1];
+;;;207    		}
+;;;208    		index++;
+;;;209    		if (g_tWork.status.bits.DOME == 0) {
+;;;210    			app_2d4_send(buffer, index);
+;;;211    		}
+;;;212    		break;
+;;;213    	case RCV_USB_PLAY_TIME_CMD:
+;;;214    		buffer[index++] = LAMP2LCD_HEADER;
+;;;215    		buffer[index++] = len;
+;;;216    		buffer[index++] = RCV_USB_PLAY_TIME_CMD;
+;;;217    		for (i = 0; i < (len - 1); i++) {
+;;;218    			buffer[index++] =
+;;;219    					st->rxBuf[(st->pRead + 4 + i) % sizeof(st->rxBuf)];
+;;;220    		}
+;;;221    		for (i = 0; i < (buffer[1] + 1); i++) {
+;;;222    			buffer[index] += buffer[i + 1];
+;;;223    		}
+;;;224    		index++;
+;;;225    		if (g_tWork.status.bits.DOME == 0) {
+;;;226    			app_2d4_send(buffer, index);
+;;;227    		}
+;;;228    		break;
+;;;229    	case RCV_FM_HZ_CMD:
+;;;230    		buffer[index++] = LAMP2LCD_HEADER;
+;;;231    		buffer[index++] = len;
+;;;232    		buffer[index++] = RCV_FM_HZ_CMD;
+;;;233    		for (i = 0; i < (len - 1); i++) {
+;;;234    			buffer[index++] =
+;;;235    					st->rxBuf[(st->pRead + 4 + i) % sizeof(st->rxBuf)];
+;;;236    		}
+;;;237    		for (i = 0; i < (buffer[1] + 1); i++) {
+;;;238    			buffer[index] += buffer[i + 1];
+;;;239    		}
+;;;240    		index++;
+;;;241    
+;;;242    		if (g_tWork.status.bits.DOME == 0) {
+;;;243    			app_2d4_send(buffer, index);
+;;;244    		}
+;;;245    		break;
+;;;246    	case MODE_CHANGE_CMD:   //MODE
+;;;247    		buffer[index++] = LAMP2LCD_HEADER;
+;;;248    		buffer[index++] = len;
+;;;249    		buffer[index++] = MODE_CHANGE_CMD;
+;;;250    		for (i = 0; i < (len - 1); i++) {
+;;;251    			buffer[index++] =
+;;;252    					st->rxBuf[(st->pRead + 4 + i) % sizeof(st->rxBuf)];
+;;;253    		}
+;;;254    		for (i = 0; i < (buffer[1] + 1); i++) {
+;;;255    			buffer[index] += buffer[i + 1];
+;;;256    		}
+;;;257    		index++;
+;;;258    		app_2d4_send(buffer, index);
+;;;259    		break;
+;;;260    	case RCV_PLAY_PAUSE_STATUS_CMD:
+;;;261    		buffer[index++] = LAMP2LCD_HEADER;
+000046  20f8              MOVS     r0,#0xf8
 000048  466b              MOV      r3,sp
-00004a  7019              STRB     r1,[r3,#0]
-;;;264    		buffer[index++] = len;
+00004a  7018              STRB     r0,[r3,#0]
+;;;262    		buffer[index++] = len;
 00004c  705f              STRB     r7,[r3,#1]
-;;;265    		buffer[index++] = RCV_PLAY_PAUSE_STATUS_CMD;
-00004e  2134              MOVS     r1,#0x34
-000050  7099              STRB     r1,[r3,#2]
-000052  2103              MOVS     r1,#3
-;;;266    		for (i = 0; i < (len - 1); i++) {
-000054  e148              B        |L1.744|
+;;;263    		buffer[index++] = RCV_PLAY_PAUSE_STATUS_CMD;
+00004e  2034              MOVS     r0,#0x34
+000050  7098              STRB     r0,[r3,#2]
+000052  2003              MOVS     r0,#3
+;;;264    		for (i = 0; i < (len - 1); i++) {
+000054  e14d              B        |L1.754|
                   |L1.86|
-000056  2936              CMP      r1,#0x36              ;59
-000058  d06f              BEQ      |L1.314|
-00005a  2937              CMP      r1,#0x37              ;59
-00005c  d06e              BEQ      |L1.316|
-00005e  2938              CMP      r1,#0x38              ;59
-000060  d120              BNE      |L1.164|
-000062  21f8              MOVS     r1,#0xf8              ;140
-000064  466a              MOV      r2,sp                 ;140
-000066  7011              STRB     r1,[r2,#0]            ;140
-000068  7057              STRB     r7,[r2,#1]            ;141
-00006a  2138              MOVS     r1,#0x38              ;142
-00006c  7091              STRB     r1,[r2,#2]            ;142
-00006e  2103              MOVS     r1,#3                 ;142
-000070  e036              B        |L1.224|
+000056  2836              CMP      r0,#0x36              ;59
+000058  d074              BEQ      |L1.324|
+00005a  2837              CMP      r0,#0x37              ;59
+00005c  d073              BEQ      |L1.326|
+00005e  2838              CMP      r0,#0x38              ;59
+000060  d124              BNE      |L1.172|
+000062  20f8              MOVS     r0,#0xf8              ;138
+000064  466a              MOV      r2,sp                 ;138
+000066  7010              STRB     r0,[r2,#0]            ;138
+000068  7057              STRB     r7,[r2,#1]            ;139
+00006a  2038              MOVS     r0,#0x38              ;140
+00006c  7090              STRB     r0,[r2,#2]            ;140
+00006e  2003              MOVS     r0,#3                 ;140
+000070  e03a              B        |L1.232|
                   |L1.114|
-;;;267    			buffer[index++] =
-;;;268    					st->rxBuf[(st->pRead + 4 + i) % sizeof(st->rxBuf)];
-;;;269    		}
-;;;270    		for (i = 0; i < (buffer[1] + 1); i++) {
-;;;271    			buffer[index] += buffer[i + 1];
-;;;272    		}
-;;;273    		index++;
-;;;274    		if (g_tWork.status.bits.DOME == 0) {
-;;;275    			app_2d4_send(buffer, index);
-;;;276    		}
-;;;277    		break;
-;;;278    		/// app --start
-;;;279    	case KEY_CARD_POWER_CMD:
-;;;280    		if (g_tWork.status.bits.blinkEnable == 0) {
-;;;281    			//								g_tWork.status.bits.pause = 0;
-;;;282    			g_tWork.status.bits.blinkEnable = 1;
-;;;283    			g_tWork.status.bits.DEMO = 1;
-;;;284    			app_dome_start_current();
-;;;285    		} else {
-;;;286    			//								g_tWork.status.bits.pause = 1;
-;;;287    			g_tWork.status.bits.blinkEnable = 0;
-;;;288    			g_tWork.status.bits.DEMO = 0;
-;;;289    			app_dome_stop_current();
-;;;290    		}
-;;;291    		buffer[index++] = LAMP2LCD_HEADER;
-;;;292    		buffer[index++] = 10;
-;;;293    		buffer[index++] = KEY_POWER_SHORT_CMD;
-;;;294    		buffer[index++] = g_tWork.status.bits.blinkEnable;
-;;;295    		app_dome_get_current_Name(buffer + index, 8);
-;;;296    		index += 8;
-;;;297    		for (i = 0; i < (buffer[1] + 1); i++) {
-;;;298    			buffer[index] += buffer[i + 1];
-;;;299    		}
-;;;300    		index++;
-;;;301    		app_2d4_send(buffer, index);
-;;;302    		break;
-;;;303    	case KEY_CARD_DEMO_CMD:
-;;;304    		//							if (g_tWork.status.bits.DEMO) {
-;;;305    		//								g_tWork.status.bits.DEMO = 0;
-;;;306    		//							} else {
-;;;307    		g_tWork.status.bits.DEMO = 1;
-;;;308    		//							}
-;;;309    		app_dome_start(0, 0);
-;;;310    
-;;;311    		break;
-;;;312    	case APP_COLOR_ATLA_CMD:
-;;;313    #if 1
-;;;314    		app_dome_rgb(st->rxBuf[(st->pRead + 4) % sizeof(st->rxBuf)],
-;;;315    				st->rxBuf[(st->pRead + 5) % sizeof(st->rxBuf)],
-;;;316    				st->rxBuf[(st->pRead + 6) % sizeof(st->rxBuf)]);
-;;;317    #else
-;;;318    		app_dome_rgb(0xFFFF, 0xFFFF, 0xFFFF);
-;;;319    #endif
-;;;320    		break;
-;;;321    	case APP_BRIGHT_CMD:
-;;;322    		dome_running_param.bright = st->rxBuf[(st->pRead + 4)
-000072  4fd2              LDR      r7,|L1.956|
-000074  2004              MOVS     r0,#4                 ;283
-000076  2963              CMP      r1,#0x63              ;59
-000078  d075              BEQ      |L1.358|
-00007a  dc15              BGT      |L1.168|
-00007c  2954              CMP      r1,#0x54              ;59
-00007e  d073              BEQ      |L1.360|
-000080  2957              CMP      r1,#0x57              ;59
-000082  d072              BEQ      |L1.362|
-000084  2962              CMP      r1,#0x62              ;59
-000086  d10d              BNE      |L1.164|
-000088  1d98              ADDS     r0,r3,#6              ;59
-00008a  05c0              LSLS     r0,r0,#23             ;314
-00008c  0dc0              LSRS     r0,r0,#23             ;314
-00008e  5c2a              LDRB     r2,[r5,r0]            ;314
-000090  1d58              ADDS     r0,r3,#5              ;314
-000092  05c0              LSLS     r0,r0,#23             ;314
-000094  0dc0              LSRS     r0,r0,#23             ;314
-000096  5c29              LDRB     r1,[r5,r0]            ;314
-000098  1d1b              ADDS     r3,r3,#4              ;314
-00009a  05d8              LSLS     r0,r3,#23             ;314
-00009c  0dc0              LSRS     r0,r0,#23             ;314
-00009e  5c28              LDRB     r0,[r5,r0]            ;314
-0000a0  f7fffffe          BL       app_dome_rgb
-                  |L1.164|
-;;;323    				% sizeof(st->rxBuf)];
-;;;324    		Light_bright_set(st->rxBuf[(st->pRead + 4) % sizeof(st->rxBuf)]);
-;;;325    		break;
-;;;326    	case APP_SPEED_CMD:
-;;;327    		dome_running_param.speed =
-;;;328    				st->rxBuf[(st->pRead + 4) % sizeof(st->rxBuf)];
-;;;329    		break;
-;;;330    	case APP_FLASH_INDEX_CMD:
-;;;331    		g_tWork.status.bits.DEMO = 0;
-;;;332    		app_dome_start_current();
-;;;333    		app_dome_start(st->rxBuf[(st->pRead + 4) % sizeof(st->rxBuf)], 0);
-;;;334    		break;
-;;;335    	case APP_SWITCH_INDEX_CMD: {
-;;;336    		uint8_t switchData = st->rxBuf[(st->pRead + 4) % sizeof(st->rxBuf)];
-;;;337    		if (((switchData >> 4) & 0x0F) == 0) {
-;;;338    			Relay_set(switchData & 0x0F);
-;;;339    		}
-;;;340    	}
-;;;341    		break;
-;;;342    		/// app --end
-;;;343    	default:
-;;;344    		break;
-;;;345    	}
-;;;346    
-;;;347    }
-0000a4  b005              ADD      sp,sp,#0x14
-0000a6  bdf0              POP      {r4-r7,pc}
-                  |L1.168|
-0000a8  2964              CMP      r1,#0x64              ;59
-0000aa  d06f              BEQ      |L1.396|
-0000ac  2965              CMP      r1,#0x65              ;59
-0000ae  d06e              BEQ      |L1.398|
-0000b0  2966              CMP      r1,#0x66              ;59
-0000b2  d1f7              BNE      |L1.164|
-0000b4  1d1b              ADDS     r3,r3,#4              ;59
-0000b6  05d8              LSLS     r0,r3,#23             ;336
-0000b8  0dc0              LSRS     r0,r0,#23             ;336
-0000ba  5c28              LDRB     r0,[r5,r0]            ;336
-0000bc  0901              LSRS     r1,r0,#4              ;337
-0000be  d1f1              BNE      |L1.164|
-0000c0  0700              LSLS     r0,r0,#28             ;338
-0000c2  0f00              LSRS     r0,r0,#28             ;338
-0000c4  f7fffffe          BL       Relay_set
-                  |L1.200|
-0000c8  e7ec              B        |L1.164|
-                  |L1.202|
-0000ca  8873              LDRH     r3,[r6,#2]            ;144
-0000cc  1d27              ADDS     r7,r4,#4              ;144
-0000ce  19db              ADDS     r3,r3,r7              ;144
-0000d0  05db              LSLS     r3,r3,#23             ;144
-0000d2  0ddb              LSRS     r3,r3,#23             ;144
-0000d4  5ceb              LDRB     r3,[r5,r3]            ;144
-0000d6  5453              STRB     r3,[r2,r1]            ;144
-0000d8  1c49              ADDS     r1,r1,#1              ;144
-0000da  1c64              ADDS     r4,r4,#1              ;144
-0000dc  b2c9              UXTB     r1,r1                 ;144
-0000de  b2e4              UXTB     r4,r4                 ;143
-                  |L1.224|
-0000e0  4284              CMP      r4,r0                 ;143
-0000e2  dbf2              BLT      |L1.202|
-0000e4  2000              MOVS     r0,#0                 ;147
-0000e6  e006              B        |L1.246|
+000072  49d4              LDR      r1,|L1.964|
+;;;265    			buffer[index++] =
+;;;266    					st->rxBuf[(st->pRead + 4 + i) % sizeof(st->rxBuf)];
+;;;267    		}
+;;;268    		for (i = 0; i < (buffer[1] + 1); i++) {
+;;;269    			buffer[index] += buffer[i + 1];
+;;;270    		}
+;;;271    		index++;
+;;;272    		if (g_tWork.status.bits.DOME == 0) {
+;;;273    			app_2d4_send(buffer, index);
+;;;274    		}
+;;;275    		break;
+;;;276    		/// app --start
+;;;277    	case KEY_CARD_POWER_CMD:
+;;;278    		if (g_tWork.status.bits.blinkEnable == 0) {
+;;;279    			//								g_tWork.status.bits.pause = 0;
+;;;280    			g_tWork.status.bits.blinkEnable = 1;
+;;;281    			g_tWork.status.bits.DEMO = 1;
+000074  2704              MOVS     r7,#4
+000076  6809              LDR      r1,[r1,#0]            ;193
+;;;282    			app_dome_start_current();
+;;;283    		} else {
+;;;284    			//								g_tWork.status.bits.pause = 1;
+;;;285    			g_tWork.status.bits.blinkEnable = 0;
+;;;286    			g_tWork.status.bits.DEMO = 0;
+000078  43b9              BICS     r1,r1,r7
+00007a  2863              CMP      r0,#0x63              ;59
+00007c  d070              BEQ      |L1.352|
+00007e  dc17              BGT      |L1.176|
+000080  2854              CMP      r0,#0x54              ;59
+000082  d06e              BEQ      |L1.354|
+000084  2857              CMP      r0,#0x57              ;59
+000086  d06d              BEQ      |L1.356|
+000088  2862              CMP      r0,#0x62              ;59
+00008a  d10f              BNE      |L1.172|
+;;;287    			app_dome_stop_current();
+;;;288    		}
+;;;289    		buffer[index++] = LAMP2LCD_HEADER;
+;;;290    		buffer[index++] = 10;
+;;;291    		buffer[index++] = KEY_POWER_SHORT_CMD;
+;;;292    		buffer[index++] = g_tWork.status.bits.blinkEnable;
+;;;293    		app_dome_get_current_Name(buffer + index, 8);
+;;;294    		index += 8;
+;;;295    		for (i = 0; i < (buffer[1] + 1); i++) {
+;;;296    			buffer[index] += buffer[i + 1];
+;;;297    		}
+;;;298    		index++;
+;;;299    		app_2d4_send(buffer, index);
+;;;300    		break;
+;;;301    	case KEY_CARD_DEMO_CMD:
+;;;302    		//							if (g_tWork.status.bits.DEMO) {
+;;;303    		//								g_tWork.status.bits.DEMO = 0;
+;;;304    		//							} else {
+;;;305    		g_tWork.status.bits.DEMO = 1;
+;;;306    		//							}
+;;;307    		app_dome_start(0, 0);
+;;;308    
+;;;309    		break;
+;;;310    	case APP_COLOR_ATLA_CMD:
+;;;311    #if 1
+;;;312    		g_tWork.status.bits.DEMO = 0;
+00008c  48cd              LDR      r0,|L1.964|
+;;;313    		app_dome_rgb(st->rxBuf[(st->pRead + 4) % sizeof(st->rxBuf)],
+00008e  6001              STR      r1,[r0,#0]  ; g_tWork
+000090  1d98              ADDS     r0,r3,#6
+000092  05c0              LSLS     r0,r0,#23
+000094  0dc0              LSRS     r0,r0,#23
+000096  5c2a              LDRB     r2,[r5,r0]
+000098  1d58              ADDS     r0,r3,#5
+00009a  05c0              LSLS     r0,r0,#23
+00009c  0dc0              LSRS     r0,r0,#23
+00009e  5c29              LDRB     r1,[r5,r0]
+0000a0  1d1b              ADDS     r3,r3,#4
+0000a2  05d8              LSLS     r0,r3,#23
+0000a4  0dc0              LSRS     r0,r0,#23
+0000a6  5c28              LDRB     r0,[r5,r0]
+0000a8  f7fffffe          BL       app_dome_rgb
+                  |L1.172|
+;;;314    				st->rxBuf[(st->pRead + 5) % sizeof(st->rxBuf)],
+;;;315    				st->rxBuf[(st->pRead + 6) % sizeof(st->rxBuf)]);
+;;;316    #else
+;;;317    		app_dome_rgb(0xFFFF, 0xFFFF, 0xFFFF);
+;;;318    #endif
+;;;319    		break;
+;;;320    	case APP_BRIGHT_CMD:
+;;;321    		dome_running_param.bright = st->rxBuf[(st->pRead + 4)
+;;;322    				% sizeof(st->rxBuf)];
+;;;323    		Light_bright_set(st->rxBuf[(st->pRead + 4) % sizeof(st->rxBuf)]);
+;;;324    		break;
+;;;325    	case APP_SPEED_CMD:
+;;;326    		dome_running_param.speed =
+;;;327    				st->rxBuf[(st->pRead + 4) % sizeof(st->rxBuf)];
+;;;328    		break;
+;;;329    	case APP_FLASH_INDEX_CMD:
+;;;330    		g_tWork.status.bits.DEMO = 0;
+;;;331    		app_dome_start_current();
+;;;332    		app_dome_start(st->rxBuf[(st->pRead + 4) % sizeof(st->rxBuf)], 0);
+;;;333    		break;
+;;;334    	case APP_SWITCH_INDEX_CMD: {
+;;;335    		uint8_t switchData = st->rxBuf[(st->pRead + 4) % sizeof(st->rxBuf)];
+;;;336    		if (((switchData >> 4) & 0x0F) == 0) {
+;;;337    			Relay_set(switchData & 0x0F);
+;;;338    		}
+;;;339    	}
+;;;340    		break;
+;;;341    		/// app --end
+;;;342    	default:
+;;;343    		break;
+;;;344    	}
+;;;345    
+;;;346    }
+0000ac  b005              ADD      sp,sp,#0x14
+0000ae  bdf0              POP      {r4-r7,pc}
+                  |L1.176|
+0000b0  2864              CMP      r0,#0x64              ;59
+0000b2  d070              BEQ      |L1.406|
+0000b4  2865              CMP      r0,#0x65              ;59
+0000b6  d06f              BEQ      |L1.408|
+0000b8  2866              CMP      r0,#0x66              ;59
+0000ba  d1f7              BNE      |L1.172|
+0000bc  1d1b              ADDS     r3,r3,#4              ;59
+0000be  05d8              LSLS     r0,r3,#23             ;335
+0000c0  0dc0              LSRS     r0,r0,#23             ;335
+0000c2  5c28              LDRB     r0,[r5,r0]            ;335
+0000c4  0901              LSRS     r1,r0,#4              ;336
+0000c6  d1f1              BNE      |L1.172|
+0000c8  0700              LSLS     r0,r0,#28             ;337
+0000ca  0f00              LSRS     r0,r0,#28             ;337
+0000cc  f7fffffe          BL       Relay_set
+                  |L1.208|
+0000d0  e7ec              B        |L1.172|
+                  |L1.210|
+0000d2  8873              LDRH     r3,[r6,#2]            ;142
+0000d4  1d27              ADDS     r7,r4,#4              ;142
+0000d6  19db              ADDS     r3,r3,r7              ;142
+0000d8  05db              LSLS     r3,r3,#23             ;142
+0000da  0ddb              LSRS     r3,r3,#23             ;142
+0000dc  5ceb              LDRB     r3,[r5,r3]            ;142
+0000de  5413              STRB     r3,[r2,r0]            ;142
+0000e0  1c40              ADDS     r0,r0,#1              ;142
+0000e2  1c64              ADDS     r4,r4,#1              ;142
+0000e4  b2c0              UXTB     r0,r0                 ;142
+0000e6  b2e4              UXTB     r4,r4                 ;141
                   |L1.232|
-0000e8  1814              ADDS     r4,r2,r0              ;148
-0000ea  5c53              LDRB     r3,[r2,r1]            ;148
-0000ec  7864              LDRB     r4,[r4,#1]            ;148
-0000ee  191b              ADDS     r3,r3,r4              ;148
-0000f0  1c40              ADDS     r0,r0,#1              ;148
-0000f2  5453              STRB     r3,[r2,r1]            ;148
-0000f4  b2c0              UXTB     r0,r0                 ;147
-                  |L1.246|
-0000f6  7853              LDRB     r3,[r2,#1]            ;147
-0000f8  1c5b              ADDS     r3,r3,#1              ;147
-0000fa  4283              CMP      r3,r0                 ;147
-0000fc  d8f4              BHI      |L1.232|
+0000e8  428c              CMP      r4,r1                 ;141
+0000ea  dbf2              BLT      |L1.210|
+0000ec  2100              MOVS     r1,#0                 ;145
+0000ee  e006              B        |L1.254|
+                  |L1.240|
+0000f0  1854              ADDS     r4,r2,r1              ;146
+0000f2  5c13              LDRB     r3,[r2,r0]            ;146
+0000f4  7864              LDRB     r4,[r4,#1]            ;146
+0000f6  191b              ADDS     r3,r3,r4              ;146
+0000f8  1c49              ADDS     r1,r1,#1              ;146
+0000fa  5413              STRB     r3,[r2,r0]            ;146
+0000fc  b2c9              UXTB     r1,r1                 ;145
                   |L1.254|
-0000fe  1c49              ADDS     r1,r1,#1              ;147
-000100  b2c9              UXTB     r1,r1                 ;150
-000102  4610              MOV      r0,r2                 ;151
-000104  e12f              B        |L1.870|
+0000fe  7853              LDRB     r3,[r2,#1]            ;145
+000100  1c5b              ADDS     r3,r3,#1              ;145
+000102  428b              CMP      r3,r1                 ;145
+000104  d8f4              BHI      |L1.240|
                   |L1.262|
-000106  21f8              MOVS     r1,#0xf8              ;154
-000108  466a              MOV      r2,sp                 ;154
-00010a  7011              STRB     r1,[r2,#0]            ;154
-00010c  7057              STRB     r7,[r2,#1]            ;155
-00010e  2131              MOVS     r1,#0x31              ;156
-000110  7091              STRB     r1,[r2,#2]            ;156
-000112  2103              MOVS     r1,#3                 ;156
-000114  e00d              B        |L1.306|
+000106  1c40              ADDS     r0,r0,#1              ;145
+000108  b2c1              UXTB     r1,r0                 ;148
+00010a  4610              MOV      r0,r2                 ;149
+00010c  e130              B        |L1.880|
+                  |L1.270|
+00010e  e0c1              B        |L1.660|
+                  |L1.272|
+000110  e054              B        |L1.444|
+000112  e000              B        |L1.278|
+                  |L1.276|
+000114  e027              B        |L1.358|
                   |L1.278|
-000116  e0b8              B        |L1.650|
-                  |L1.280|
-000118  e04b              B        |L1.434|
-                  |L1.282|
-00011a  e01c              B        |L1.342|
-                  |L1.284|
-00011c  8873              LDRH     r3,[r6,#2]            ;158
-00011e  1d27              ADDS     r7,r4,#4              ;158
-000120  19db              ADDS     r3,r3,r7              ;158
-000122  05db              LSLS     r3,r3,#23             ;158
-000124  0ddb              LSRS     r3,r3,#23             ;158
-000126  5ceb              LDRB     r3,[r5,r3]            ;158
-000128  5453              STRB     r3,[r2,r1]            ;158
-00012a  1c49              ADDS     r1,r1,#1              ;158
-00012c  1c64              ADDS     r4,r4,#1              ;158
-00012e  b2c9              UXTB     r1,r1                 ;158
-000130  b2e4              UXTB     r4,r4                 ;157
-                  |L1.306|
-000132  4284              CMP      r4,r0                 ;157
-000134  dbf2              BLT      |L1.284|
-000136  2000              MOVS     r0,#0                 ;161
-000138  e008              B        |L1.332|
-                  |L1.314|
-00013a  e05e              B        |L1.506|
+000116  20f8              MOVS     r0,#0xf8              ;152
+000118  466a              MOV      r2,sp                 ;152
+00011a  7010              STRB     r0,[r2,#0]            ;152
+00011c  7057              STRB     r7,[r2,#1]            ;153
+00011e  2031              MOVS     r0,#0x31              ;154
+000120  7090              STRB     r0,[r2,#2]            ;154
+000122  2003              MOVS     r0,#3                 ;154
+000124  e00a              B        |L1.316|
+                  |L1.294|
+000126  8873              LDRH     r3,[r6,#2]            ;156
+000128  1d27              ADDS     r7,r4,#4              ;156
+00012a  19db              ADDS     r3,r3,r7              ;156
+00012c  05db              LSLS     r3,r3,#23             ;156
+00012e  0ddb              LSRS     r3,r3,#23             ;156
+000130  5ceb              LDRB     r3,[r5,r3]            ;156
+000132  5413              STRB     r3,[r2,r0]            ;156
+000134  1c40              ADDS     r0,r0,#1              ;156
+000136  1c64              ADDS     r4,r4,#1              ;156
+000138  b2c0              UXTB     r0,r0                 ;156
+00013a  b2e4              UXTB     r4,r4                 ;155
                   |L1.316|
-00013c  e081              B        |L1.578|
-                  |L1.318|
-00013e  1814              ADDS     r4,r2,r0              ;162
-000140  5c53              LDRB     r3,[r2,r1]            ;162
-000142  7864              LDRB     r4,[r4,#1]            ;162
-000144  191b              ADDS     r3,r3,r4              ;162
-000146  1c40              ADDS     r0,r0,#1              ;162
-000148  5453              STRB     r3,[r2,r1]            ;162
-00014a  b2c0              UXTB     r0,r0                 ;161
-                  |L1.332|
-00014c  7853              LDRB     r3,[r2,#1]            ;161
-00014e  1c5b              ADDS     r3,r3,#1              ;161
-000150  4283              CMP      r3,r0                 ;161
-000152  d8f4              BHI      |L1.318|
-000154  e7d3              B        |L1.254|
+00013c  428c              CMP      r4,r1                 ;155
+00013e  dbf2              BLT      |L1.294|
+000140  2100              MOVS     r1,#0                 ;159
+000142  e008              B        |L1.342|
+                  |L1.324|
+000144  e05e              B        |L1.516|
+                  |L1.326|
+000146  e081              B        |L1.588|
+                  |L1.328|
+000148  1854              ADDS     r4,r2,r1              ;160
+00014a  5c13              LDRB     r3,[r2,r0]            ;160
+00014c  7864              LDRB     r4,[r4,#1]            ;160
+00014e  191b              ADDS     r3,r3,r4              ;160
+000150  1c49              ADDS     r1,r1,#1              ;160
+000152  5413              STRB     r3,[r2,r0]            ;160
+000154  b2c9              UXTB     r1,r1                 ;159
                   |L1.342|
-000156  21f8              MOVS     r1,#0xf8              ;184
-000158  466b              MOV      r3,sp                 ;184
-00015a  7019              STRB     r1,[r3,#0]            ;184
-00015c  705f              STRB     r7,[r3,#1]            ;185
-00015e  2133              MOVS     r1,#0x33              ;186
-000160  7099              STRB     r1,[r3,#2]            ;186
-000162  2103              MOVS     r1,#3                 ;186
-000164  e00e              B        |L1.388|
+000156  7853              LDRB     r3,[r2,#1]            ;159
+000158  1c5b              ADDS     r3,r3,#1              ;159
+00015a  428b              CMP      r3,r1                 ;159
+00015c  d8f4              BHI      |L1.328|
+00015e  e7d2              B        |L1.262|
+                  |L1.352|
+000160  e10f              B        |L1.898|
+                  |L1.354|
+000162  e0d6              B        |L1.786|
+                  |L1.356|
+000164  e107              B        |L1.886|
                   |L1.358|
-000166  e107              B        |L1.888|
-                  |L1.360|
-000168  e0ce              B        |L1.776|
-                  |L1.362|
-00016a  e0ff              B        |L1.876|
-                  |L1.364|
-00016c  8873              LDRH     r3,[r6,#2]            ;188
-00016e  1d27              ADDS     r7,r4,#4              ;188
-000170  19db              ADDS     r3,r3,r7              ;188
-000172  05db              LSLS     r3,r3,#23             ;188
-000174  0ddb              LSRS     r3,r3,#23             ;188
-000176  5cef              LDRB     r7,[r5,r3]            ;188
-000178  466b              MOV      r3,sp                 ;188
-00017a  545f              STRB     r7,[r3,r1]            ;188
-00017c  1c49              ADDS     r1,r1,#1              ;188
-00017e  1c64              ADDS     r4,r4,#1              ;188
-000180  b2c9              UXTB     r1,r1                 ;188
-000182  b2e4              UXTB     r4,r4                 ;187
-                  |L1.388|
-000184  4284              CMP      r4,r0                 ;187
-000186  dbf1              BLT      |L1.364|
-000188  2000              MOVS     r0,#0                 ;191
-00018a  e008              B        |L1.414|
-                  |L1.396|
-00018c  e0fd              B        |L1.906|
+000166  20f8              MOVS     r0,#0xf8              ;182
+000168  466b              MOV      r3,sp                 ;182
+00016a  7018              STRB     r0,[r3,#0]            ;182
+00016c  705f              STRB     r7,[r3,#1]            ;183
+00016e  2033              MOVS     r0,#0x33              ;184
+000170  7098              STRB     r0,[r3,#2]            ;184
+000172  2003              MOVS     r0,#3                 ;184
+000174  e00b              B        |L1.398|
+                  |L1.374|
+000176  8873              LDRH     r3,[r6,#2]            ;186
+000178  1d27              ADDS     r7,r4,#4              ;186
+00017a  19db              ADDS     r3,r3,r7              ;186
+00017c  05db              LSLS     r3,r3,#23             ;186
+00017e  0ddb              LSRS     r3,r3,#23             ;186
+000180  5cef              LDRB     r7,[r5,r3]            ;186
+000182  466b              MOV      r3,sp                 ;186
+000184  541f              STRB     r7,[r3,r0]            ;186
+000186  1c40              ADDS     r0,r0,#1              ;186
+000188  1c64              ADDS     r4,r4,#1              ;186
+00018a  b2c0              UXTB     r0,r0                 ;186
+00018c  b2e4              UXTB     r4,r4                 ;185
                   |L1.398|
-00018e  e102              B        |L1.918|
-                  |L1.400|
-000190  181d              ADDS     r5,r3,r0              ;192
-000192  5c5c              LDRB     r4,[r3,r1]            ;192
-000194  786d              LDRB     r5,[r5,#1]            ;192
-000196  1964              ADDS     r4,r4,r5              ;192
-000198  1c40              ADDS     r0,r0,#1              ;192
-00019a  545c              STRB     r4,[r3,r1]            ;192
-00019c  b2c0              UXTB     r0,r0                 ;191
-                  |L1.414|
-00019e  785c              LDRB     r4,[r3,#1]            ;191
-0001a0  1c64              ADDS     r4,r4,#1              ;191
-0001a2  4284              CMP      r4,r0                 ;191
-0001a4  d8f4              BHI      |L1.400|
-                  |L1.422|
-0001a6  1c49              ADDS     r1,r1,#1              ;191
-0001a8  b2c9              UXTB     r1,r1                 ;194
-0001aa  07d0              LSLS     r0,r2,#31             ;195
-0001ac  d18c              BNE      |L1.200|
-0001ae  4618              MOV      r0,r3                 ;275
-0001b0  e0d9              B        |L1.870|
-                  |L1.434|
-0001b2  21f8              MOVS     r1,#0xf8              ;200
-0001b4  466b              MOV      r3,sp                 ;200
-0001b6  7019              STRB     r1,[r3,#0]            ;200
-0001b8  705f              STRB     r7,[r3,#1]            ;201
-0001ba  2135              MOVS     r1,#0x35              ;202
-0001bc  7099              STRB     r1,[r3,#2]            ;202
-0001be  2103              MOVS     r1,#3                 ;202
-0001c0  e00b              B        |L1.474|
-                  |L1.450|
-0001c2  8873              LDRH     r3,[r6,#2]            ;204
-0001c4  1d27              ADDS     r7,r4,#4              ;204
-0001c6  19db              ADDS     r3,r3,r7              ;204
-0001c8  05db              LSLS     r3,r3,#23             ;204
-0001ca  0ddb              LSRS     r3,r3,#23             ;204
-0001cc  5cef              LDRB     r7,[r5,r3]            ;204
-0001ce  466b              MOV      r3,sp                 ;204
-0001d0  545f              STRB     r7,[r3,r1]            ;204
-0001d2  1c49              ADDS     r1,r1,#1              ;204
-0001d4  1c64              ADDS     r4,r4,#1              ;204
-0001d6  b2c9              UXTB     r1,r1                 ;204
-0001d8  b2e4              UXTB     r4,r4                 ;203
-                  |L1.474|
-0001da  4284              CMP      r4,r0                 ;203
-0001dc  dbf1              BLT      |L1.450|
-0001de  2000              MOVS     r0,#0                 ;207
-0001e0  e006              B        |L1.496|
-                  |L1.482|
-0001e2  181d              ADDS     r5,r3,r0              ;208
-0001e4  5c5c              LDRB     r4,[r3,r1]            ;208
-0001e6  786d              LDRB     r5,[r5,#1]            ;208
-0001e8  1964              ADDS     r4,r4,r5              ;208
-0001ea  1c40              ADDS     r0,r0,#1              ;208
-0001ec  545c              STRB     r4,[r3,r1]            ;208
-0001ee  b2c0              UXTB     r0,r0                 ;207
-                  |L1.496|
-0001f0  785c              LDRB     r4,[r3,#1]            ;207
-0001f2  1c64              ADDS     r4,r4,#1              ;207
-0001f4  4284              CMP      r4,r0                 ;207
-0001f6  d8f4              BHI      |L1.482|
-0001f8  e7d5              B        |L1.422|
+00018e  428c              CMP      r4,r1                 ;185
+000190  dbf1              BLT      |L1.374|
+000192  2100              MOVS     r1,#0                 ;189
+000194  e008              B        |L1.424|
+                  |L1.406|
+000196  e0fe              B        |L1.918|
+                  |L1.408|
+000198  e104              B        |L1.932|
+                  |L1.410|
+00019a  185d              ADDS     r5,r3,r1              ;190
+00019c  5c1c              LDRB     r4,[r3,r0]            ;190
+00019e  786d              LDRB     r5,[r5,#1]            ;190
+0001a0  1964              ADDS     r4,r4,r5              ;190
+0001a2  1c49              ADDS     r1,r1,#1              ;190
+0001a4  541c              STRB     r4,[r3,r0]            ;190
+0001a6  b2c9              UXTB     r1,r1                 ;189
+                  |L1.424|
+0001a8  785c              LDRB     r4,[r3,#1]            ;189
+0001aa  1c64              ADDS     r4,r4,#1              ;189
+0001ac  428c              CMP      r4,r1                 ;189
+0001ae  d8f4              BHI      |L1.410|
+                  |L1.432|
+0001b0  1c40              ADDS     r0,r0,#1              ;189
+0001b2  b2c1              UXTB     r1,r0                 ;192
+0001b4  07d0              LSLS     r0,r2,#31             ;193
+0001b6  d18b              BNE      |L1.208|
+0001b8  4618              MOV      r0,r3                 ;273
+0001ba  e0d9              B        |L1.880|
+                  |L1.444|
+0001bc  20f8              MOVS     r0,#0xf8              ;198
+0001be  466b              MOV      r3,sp                 ;198
+0001c0  7018              STRB     r0,[r3,#0]            ;198
+0001c2  705f              STRB     r7,[r3,#1]            ;199
+0001c4  2035              MOVS     r0,#0x35              ;200
+0001c6  7098              STRB     r0,[r3,#2]            ;200
+0001c8  2003              MOVS     r0,#3                 ;200
+0001ca  e00b              B        |L1.484|
+                  |L1.460|
+0001cc  8873              LDRH     r3,[r6,#2]            ;202
+0001ce  1d27              ADDS     r7,r4,#4              ;202
+0001d0  19db              ADDS     r3,r3,r7              ;202
+0001d2  05db              LSLS     r3,r3,#23             ;202
+0001d4  0ddb              LSRS     r3,r3,#23             ;202
+0001d6  5cef              LDRB     r7,[r5,r3]            ;202
+0001d8  466b              MOV      r3,sp                 ;202
+0001da  541f              STRB     r7,[r3,r0]            ;202
+0001dc  1c40              ADDS     r0,r0,#1              ;202
+0001de  1c64              ADDS     r4,r4,#1              ;202
+0001e0  b2c0              UXTB     r0,r0                 ;202
+0001e2  b2e4              UXTB     r4,r4                 ;201
+                  |L1.484|
+0001e4  428c              CMP      r4,r1                 ;201
+0001e6  dbf1              BLT      |L1.460|
+0001e8  2100              MOVS     r1,#0                 ;205
+0001ea  e006              B        |L1.506|
+                  |L1.492|
+0001ec  185d              ADDS     r5,r3,r1              ;206
+0001ee  5c1c              LDRB     r4,[r3,r0]            ;206
+0001f0  786d              LDRB     r5,[r5,#1]            ;206
+0001f2  1964              ADDS     r4,r4,r5              ;206
+0001f4  1c49              ADDS     r1,r1,#1              ;206
+0001f6  541c              STRB     r4,[r3,r0]            ;206
+0001f8  b2c9              UXTB     r1,r1                 ;205
                   |L1.506|
-0001fa  21f8              MOVS     r1,#0xf8              ;216
-0001fc  466b              MOV      r3,sp                 ;216
-0001fe  7019              STRB     r1,[r3,#0]            ;216
-000200  705f              STRB     r7,[r3,#1]            ;217
-000202  2136              MOVS     r1,#0x36              ;218
-000204  7099              STRB     r1,[r3,#2]            ;218
-000206  2103              MOVS     r1,#3                 ;218
-000208  e00b              B        |L1.546|
-                  |L1.522|
-00020a  8873              LDRH     r3,[r6,#2]            ;220
-00020c  1d27              ADDS     r7,r4,#4              ;220
-00020e  19db              ADDS     r3,r3,r7              ;220
-000210  05db              LSLS     r3,r3,#23             ;220
-000212  0ddb              LSRS     r3,r3,#23             ;220
-000214  5cef              LDRB     r7,[r5,r3]            ;220
-000216  466b              MOV      r3,sp                 ;220
-000218  545f              STRB     r7,[r3,r1]            ;220
-00021a  1c49              ADDS     r1,r1,#1              ;220
-00021c  1c64              ADDS     r4,r4,#1              ;220
-00021e  b2c9              UXTB     r1,r1                 ;220
-000220  b2e4              UXTB     r4,r4                 ;219
-                  |L1.546|
-000222  4284              CMP      r4,r0                 ;219
-000224  dbf1              BLT      |L1.522|
-000226  2000              MOVS     r0,#0                 ;223
-000228  e006              B        |L1.568|
-                  |L1.554|
-00022a  181d              ADDS     r5,r3,r0              ;224
-00022c  5c5c              LDRB     r4,[r3,r1]            ;224
-00022e  786d              LDRB     r5,[r5,#1]            ;224
-000230  1964              ADDS     r4,r4,r5              ;224
-000232  1c40              ADDS     r0,r0,#1              ;224
-000234  545c              STRB     r4,[r3,r1]            ;224
-000236  b2c0              UXTB     r0,r0                 ;223
-                  |L1.568|
-000238  785c              LDRB     r4,[r3,#1]            ;223
-00023a  1c64              ADDS     r4,r4,#1              ;223
-00023c  4284              CMP      r4,r0                 ;223
-00023e  d8f4              BHI      |L1.554|
-000240  e7b1              B        |L1.422|
+0001fa  785c              LDRB     r4,[r3,#1]            ;205
+0001fc  1c64              ADDS     r4,r4,#1              ;205
+0001fe  428c              CMP      r4,r1                 ;205
+000200  d8f4              BHI      |L1.492|
+000202  e7d5              B        |L1.432|
+                  |L1.516|
+000204  20f8              MOVS     r0,#0xf8              ;214
+000206  466b              MOV      r3,sp                 ;214
+000208  7018              STRB     r0,[r3,#0]            ;214
+00020a  705f              STRB     r7,[r3,#1]            ;215
+00020c  2036              MOVS     r0,#0x36              ;216
+00020e  7098              STRB     r0,[r3,#2]            ;216
+000210  2003              MOVS     r0,#3                 ;216
+000212  e00b              B        |L1.556|
+                  |L1.532|
+000214  8873              LDRH     r3,[r6,#2]            ;218
+000216  1d27              ADDS     r7,r4,#4              ;218
+000218  19db              ADDS     r3,r3,r7              ;218
+00021a  05db              LSLS     r3,r3,#23             ;218
+00021c  0ddb              LSRS     r3,r3,#23             ;218
+00021e  5cef              LDRB     r7,[r5,r3]            ;218
+000220  466b              MOV      r3,sp                 ;218
+000222  541f              STRB     r7,[r3,r0]            ;218
+000224  1c40              ADDS     r0,r0,#1              ;218
+000226  1c64              ADDS     r4,r4,#1              ;218
+000228  b2c0              UXTB     r0,r0                 ;218
+00022a  b2e4              UXTB     r4,r4                 ;217
+                  |L1.556|
+00022c  428c              CMP      r4,r1                 ;217
+00022e  dbf1              BLT      |L1.532|
+000230  2100              MOVS     r1,#0                 ;221
+000232  e006              B        |L1.578|
+                  |L1.564|
+000234  185d              ADDS     r5,r3,r1              ;222
+000236  5c1c              LDRB     r4,[r3,r0]            ;222
+000238  786d              LDRB     r5,[r5,#1]            ;222
+00023a  1964              ADDS     r4,r4,r5              ;222
+00023c  1c49              ADDS     r1,r1,#1              ;222
+00023e  541c              STRB     r4,[r3,r0]            ;222
+000240  b2c9              UXTB     r1,r1                 ;221
                   |L1.578|
-000242  21f8              MOVS     r1,#0xf8              ;232
-000244  466b              MOV      r3,sp                 ;232
-000246  7019              STRB     r1,[r3,#0]            ;232
-000248  705f              STRB     r7,[r3,#1]            ;233
-00024a  2137              MOVS     r1,#0x37              ;234
-00024c  7099              STRB     r1,[r3,#2]            ;234
-00024e  2103              MOVS     r1,#3                 ;234
-000250  e00b              B        |L1.618|
-                  |L1.594|
-000252  8873              LDRH     r3,[r6,#2]            ;236
-000254  1d27              ADDS     r7,r4,#4              ;236
-000256  19db              ADDS     r3,r3,r7              ;236
-000258  05db              LSLS     r3,r3,#23             ;236
-00025a  0ddb              LSRS     r3,r3,#23             ;236
-00025c  5cef              LDRB     r7,[r5,r3]            ;236
-00025e  466b              MOV      r3,sp                 ;236
-000260  545f              STRB     r7,[r3,r1]            ;236
-000262  1c49              ADDS     r1,r1,#1              ;236
-000264  1c64              ADDS     r4,r4,#1              ;236
-000266  b2c9              UXTB     r1,r1                 ;236
-000268  b2e4              UXTB     r4,r4                 ;235
-                  |L1.618|
-00026a  4284              CMP      r4,r0                 ;235
-00026c  dbf1              BLT      |L1.594|
-00026e  2000              MOVS     r0,#0                 ;239
-000270  e006              B        |L1.640|
-                  |L1.626|
-000272  181d              ADDS     r5,r3,r0              ;240
-000274  5c5c              LDRB     r4,[r3,r1]            ;240
-000276  786d              LDRB     r5,[r5,#1]            ;240
-000278  1964              ADDS     r4,r4,r5              ;240
-00027a  1c40              ADDS     r0,r0,#1              ;240
-00027c  545c              STRB     r4,[r3,r1]            ;240
-00027e  b2c0              UXTB     r0,r0                 ;239
-                  |L1.640|
-000280  785c              LDRB     r4,[r3,#1]            ;239
-000282  1c64              ADDS     r4,r4,#1              ;239
-000284  4284              CMP      r4,r0                 ;239
-000286  d8f4              BHI      |L1.626|
-000288  e78d              B        |L1.422|
+000242  785c              LDRB     r4,[r3,#1]            ;221
+000244  1c64              ADDS     r4,r4,#1              ;221
+000246  428c              CMP      r4,r1                 ;221
+000248  d8f4              BHI      |L1.564|
+00024a  e7b1              B        |L1.432|
+                  |L1.588|
+00024c  20f8              MOVS     r0,#0xf8              ;230
+00024e  466b              MOV      r3,sp                 ;230
+000250  7018              STRB     r0,[r3,#0]            ;230
+000252  705f              STRB     r7,[r3,#1]            ;231
+000254  2037              MOVS     r0,#0x37              ;232
+000256  7098              STRB     r0,[r3,#2]            ;232
+000258  2003              MOVS     r0,#3                 ;232
+00025a  e00b              B        |L1.628|
+                  |L1.604|
+00025c  8873              LDRH     r3,[r6,#2]            ;234
+00025e  1d27              ADDS     r7,r4,#4              ;234
+000260  19db              ADDS     r3,r3,r7              ;234
+000262  05db              LSLS     r3,r3,#23             ;234
+000264  0ddb              LSRS     r3,r3,#23             ;234
+000266  5cef              LDRB     r7,[r5,r3]            ;234
+000268  466b              MOV      r3,sp                 ;234
+00026a  541f              STRB     r7,[r3,r0]            ;234
+00026c  1c40              ADDS     r0,r0,#1              ;234
+00026e  1c64              ADDS     r4,r4,#1              ;234
+000270  b2c0              UXTB     r0,r0                 ;234
+000272  b2e4              UXTB     r4,r4                 ;233
+                  |L1.628|
+000274  428c              CMP      r4,r1                 ;233
+000276  dbf1              BLT      |L1.604|
+000278  2100              MOVS     r1,#0                 ;237
+00027a  e006              B        |L1.650|
+                  |L1.636|
+00027c  185d              ADDS     r5,r3,r1              ;238
+00027e  5c1c              LDRB     r4,[r3,r0]            ;238
+000280  786d              LDRB     r5,[r5,#1]            ;238
+000282  1964              ADDS     r4,r4,r5              ;238
+000284  1c49              ADDS     r1,r1,#1              ;238
+000286  541c              STRB     r4,[r3,r0]            ;238
+000288  b2c9              UXTB     r1,r1                 ;237
                   |L1.650|
-00028a  21f8              MOVS     r1,#0xf8              ;249
-00028c  466a              MOV      r2,sp                 ;249
-00028e  7011              STRB     r1,[r2,#0]            ;249
-000290  7057              STRB     r7,[r2,#1]            ;250
-000292  2141              MOVS     r1,#0x41              ;251
-000294  7091              STRB     r1,[r2,#2]            ;251
-000296  2103              MOVS     r1,#3                 ;251
-000298  e00a              B        |L1.688|
-                  |L1.666|
-00029a  8873              LDRH     r3,[r6,#2]            ;253
-00029c  1d27              ADDS     r7,r4,#4              ;253
-00029e  19db              ADDS     r3,r3,r7              ;253
-0002a0  05db              LSLS     r3,r3,#23             ;253
-0002a2  0ddb              LSRS     r3,r3,#23             ;253
-0002a4  5ceb              LDRB     r3,[r5,r3]            ;253
-0002a6  5453              STRB     r3,[r2,r1]            ;253
-0002a8  1c49              ADDS     r1,r1,#1              ;253
-0002aa  1c64              ADDS     r4,r4,#1              ;253
-0002ac  b2c9              UXTB     r1,r1                 ;253
-0002ae  b2e4              UXTB     r4,r4                 ;252
-                  |L1.688|
-0002b0  4284              CMP      r4,r0                 ;252
-0002b2  dbf2              BLT      |L1.666|
-0002b4  2000              MOVS     r0,#0                 ;256
-0002b6  e006              B        |L1.710|
-                  |L1.696|
-0002b8  1814              ADDS     r4,r2,r0              ;257
-0002ba  5c53              LDRB     r3,[r2,r1]            ;257
-0002bc  7864              LDRB     r4,[r4,#1]            ;257
-0002be  191b              ADDS     r3,r3,r4              ;257
-0002c0  1c40              ADDS     r0,r0,#1              ;257
-0002c2  5453              STRB     r3,[r2,r1]            ;257
-0002c4  b2c0              UXTB     r0,r0                 ;256
-                  |L1.710|
-0002c6  7853              LDRB     r3,[r2,#1]            ;256
-0002c8  1c5b              ADDS     r3,r3,#1              ;256
-0002ca  4283              CMP      r3,r0                 ;256
-0002cc  d8f4              BHI      |L1.696|
-0002ce  e716              B        |L1.254|
+00028a  785c              LDRB     r4,[r3,#1]            ;237
+00028c  1c64              ADDS     r4,r4,#1              ;237
+00028e  428c              CMP      r4,r1                 ;237
+000290  d8f4              BHI      |L1.636|
+000292  e78d              B        |L1.432|
+                  |L1.660|
+000294  20f8              MOVS     r0,#0xf8              ;247
+000296  466a              MOV      r2,sp                 ;247
+000298  7010              STRB     r0,[r2,#0]            ;247
+00029a  7057              STRB     r7,[r2,#1]            ;248
+00029c  2041              MOVS     r0,#0x41              ;249
+00029e  7090              STRB     r0,[r2,#2]            ;249
+0002a0  2003              MOVS     r0,#3                 ;249
+0002a2  e00a              B        |L1.698|
+                  |L1.676|
+0002a4  8873              LDRH     r3,[r6,#2]            ;251
+0002a6  1d27              ADDS     r7,r4,#4              ;251
+0002a8  19db              ADDS     r3,r3,r7              ;251
+0002aa  05db              LSLS     r3,r3,#23             ;251
+0002ac  0ddb              LSRS     r3,r3,#23             ;251
+0002ae  5ceb              LDRB     r3,[r5,r3]            ;251
+0002b0  5413              STRB     r3,[r2,r0]            ;251
+0002b2  1c40              ADDS     r0,r0,#1              ;251
+0002b4  1c64              ADDS     r4,r4,#1              ;251
+0002b6  b2c0              UXTB     r0,r0                 ;251
+0002b8  b2e4              UXTB     r4,r4                 ;250
+                  |L1.698|
+0002ba  428c              CMP      r4,r1                 ;250
+0002bc  dbf2              BLT      |L1.676|
+0002be  2100              MOVS     r1,#0                 ;254
+0002c0  e006              B        |L1.720|
+                  |L1.706|
+0002c2  1854              ADDS     r4,r2,r1              ;255
+0002c4  5c13              LDRB     r3,[r2,r0]            ;255
+0002c6  7864              LDRB     r4,[r4,#1]            ;255
+0002c8  191b              ADDS     r3,r3,r4              ;255
+0002ca  1c49              ADDS     r1,r1,#1              ;255
+0002cc  5413              STRB     r3,[r2,r0]            ;255
+0002ce  b2c9              UXTB     r1,r1                 ;254
                   |L1.720|
-0002d0  8873              LDRH     r3,[r6,#2]            ;267
-0002d2  1d27              ADDS     r7,r4,#4              ;267
-0002d4  19db              ADDS     r3,r3,r7              ;267
-0002d6  05db              LSLS     r3,r3,#23             ;267
-0002d8  0ddb              LSRS     r3,r3,#23             ;267
-0002da  5cef              LDRB     r7,[r5,r3]            ;267
-0002dc  466b              MOV      r3,sp                 ;267
-0002de  545f              STRB     r7,[r3,r1]            ;267
-0002e0  1c49              ADDS     r1,r1,#1              ;267
-0002e2  1c64              ADDS     r4,r4,#1              ;267
-0002e4  b2c9              UXTB     r1,r1                 ;267
-0002e6  b2e4              UXTB     r4,r4                 ;266
-                  |L1.744|
-0002e8  4284              CMP      r4,r0                 ;266
-0002ea  dbf1              BLT      |L1.720|
-0002ec  2000              MOVS     r0,#0                 ;270
-0002ee  e006              B        |L1.766|
-                  |L1.752|
-0002f0  181d              ADDS     r5,r3,r0              ;271
-0002f2  5c5c              LDRB     r4,[r3,r1]            ;271
-0002f4  786d              LDRB     r5,[r5,#1]            ;271
-0002f6  1964              ADDS     r4,r4,r5              ;271
-0002f8  1c40              ADDS     r0,r0,#1              ;271
-0002fa  545c              STRB     r4,[r3,r1]            ;271
-0002fc  b2c0              UXTB     r0,r0                 ;270
-                  |L1.766|
-0002fe  785c              LDRB     r4,[r3,#1]            ;270
-000300  1c64              ADDS     r4,r4,#1              ;270
-000302  4284              CMP      r4,r0                 ;270
-000304  d8f4              BHI      |L1.752|
-000306  e74e              B        |L1.422|
+0002d0  7853              LDRB     r3,[r2,#1]            ;254
+0002d2  1c5b              ADDS     r3,r3,#1              ;254
+0002d4  428b              CMP      r3,r1                 ;254
+0002d6  d8f4              BHI      |L1.706|
+0002d8  e715              B        |L1.262|
+                  |L1.730|
+0002da  8873              LDRH     r3,[r6,#2]            ;265
+0002dc  1d27              ADDS     r7,r4,#4              ;265
+0002de  19db              ADDS     r3,r3,r7              ;265
+0002e0  05db              LSLS     r3,r3,#23             ;265
+0002e2  0ddb              LSRS     r3,r3,#23             ;265
+0002e4  5cef              LDRB     r7,[r5,r3]            ;265
+0002e6  466b              MOV      r3,sp                 ;265
+0002e8  541f              STRB     r7,[r3,r0]            ;265
+0002ea  1c40              ADDS     r0,r0,#1              ;265
+0002ec  1c64              ADDS     r4,r4,#1              ;265
+0002ee  b2c0              UXTB     r0,r0                 ;265
+0002f0  b2e4              UXTB     r4,r4                 ;264
+                  |L1.754|
+0002f2  428c              CMP      r4,r1                 ;264
+0002f4  dbf1              BLT      |L1.730|
+0002f6  2100              MOVS     r1,#0                 ;268
+0002f8  e006              B        |L1.776|
+                  |L1.762|
+0002fa  185d              ADDS     r5,r3,r1              ;269
+0002fc  5c1c              LDRB     r4,[r3,r0]            ;269
+0002fe  786d              LDRB     r5,[r5,#1]            ;269
+000300  1964              ADDS     r4,r4,r5              ;269
+000302  1c49              ADDS     r1,r1,#1              ;269
+000304  541c              STRB     r4,[r3,r0]            ;269
+000306  b2c9              UXTB     r1,r1                 ;268
                   |L1.776|
-000308  4e2b              LDR      r6,|L1.952|
-00030a  0713              LSLS     r3,r2,#28             ;280
-00030c  2108              MOVS     r1,#8                 ;282
-00030e  2b00              CMP      r3,#0                 ;280
-000310  db05              BLT      |L1.798|
-000312  430a              ORRS     r2,r2,r1              ;282
-000314  4302              ORRS     r2,r2,r0              ;283
-000316  6032              STR      r2,[r6,#0]            ;284  ; g_tWork
-000318  f7fffffe          BL       app_dome_start_current
-00031c  e004              B        |L1.808|
-                  |L1.798|
-00031e  438a              BICS     r2,r2,r1              ;287
-000320  4382              BICS     r2,r2,r0              ;288
-000322  6032              STR      r2,[r6,#0]            ;289  ; g_tWork
-000324  f7fffffe          BL       app_dome_stop_current
+000308  785c              LDRB     r4,[r3,#1]            ;268
+00030a  1c64              ADDS     r4,r4,#1              ;268
+00030c  428c              CMP      r4,r1                 ;268
+00030e  d8f4              BHI      |L1.762|
+000310  e74e              B        |L1.432|
+                  |L1.786|
+000312  4d2c              LDR      r5,|L1.964|
+000314  0711              LSLS     r1,r2,#28             ;278
+000316  2008              MOVS     r0,#8                 ;280
+000318  2900              CMP      r1,#0                 ;278
+00031a  db05              BLT      |L1.808|
+00031c  4302              ORRS     r2,r2,r0              ;280
+00031e  433a              ORRS     r2,r2,r7              ;281
+000320  602a              STR      r2,[r5,#0]            ;282  ; g_tWork
+000322  f7fffffe          BL       app_dome_start_current
+000326  e004              B        |L1.818|
                   |L1.808|
-000328  21f8              MOVS     r1,#0xf8              ;291
-00032a  466d              MOV      r5,sp                 ;291
-00032c  7029              STRB     r1,[r5,#0]            ;291
-00032e  220a              MOVS     r2,#0xa               ;292
-000330  2101              MOVS     r1,#1                 ;291
-000332  706a              STRB     r2,[r5,#1]            ;292
-000334  70a9              STRB     r1,[r5,#2]            ;293
-000336  7831              LDRB     r1,[r6,#0]            ;294  ; g_tWork
-000338  a801              ADD      r0,sp,#4              ;295
-00033a  0709              LSLS     r1,r1,#28             ;294
-00033c  0fc9              LSRS     r1,r1,#31             ;294
-00033e  70e9              STRB     r1,[r5,#3]            ;294
-000340  2108              MOVS     r1,#8                 ;295
-000342  f7fffffe          BL       app_dome_get_current_Name
-000346  210c              MOVS     r1,#0xc               ;296
-000348  e006              B        |L1.856|
-                  |L1.842|
-00034a  192a              ADDS     r2,r5,r4              ;298
-00034c  5c68              LDRB     r0,[r5,r1]            ;298
-00034e  7852              LDRB     r2,[r2,#1]            ;298
-000350  1880              ADDS     r0,r0,r2              ;298
-000352  1c64              ADDS     r4,r4,#1              ;298
-000354  5468              STRB     r0,[r5,r1]            ;298
-000356  b2e4              UXTB     r4,r4                 ;297
-                  |L1.856|
-000358  4668              MOV      r0,sp                 ;297
-00035a  7840              LDRB     r0,[r0,#1]            ;297
-00035c  1c40              ADDS     r0,r0,#1              ;297
-00035e  42a0              CMP      r0,r4                 ;297
-000360  d8f3              BHI      |L1.842|
-000362  4668              MOV      r0,sp                 ;301
-000364  1c49              ADDS     r1,r1,#1              ;301
-                  |L1.870|
-000366  f7fffffe          BL       app_2d4_send
-00036a  e69b              B        |L1.164|
-                  |L1.876|
-00036c  4912              LDR      r1,|L1.952|
-00036e  4302              ORRS     r2,r2,r0              ;307
-000370  600a              STR      r2,[r1,#0]            ;309  ; g_tWork
-000372  2100              MOVS     r1,#0                 ;309
-000374  4608              MOV      r0,r1                 ;309
-000376  e019              B        |L1.940|
-                  |L1.888|
-000378  1d1b              ADDS     r3,r3,#4              ;311
-00037a  05d8              LSLS     r0,r3,#23             ;322
-00037c  0dc0              LSRS     r0,r0,#23             ;322
-00037e  5c29              LDRB     r1,[r5,r0]            ;322
-000380  7039              STRB     r1,[r7,#0]            ;322
-000382  5c28              LDRB     r0,[r5,r0]            ;324
-000384  f7fffffe          BL       Light_bright_set
-000388  e68c              B        |L1.164|
-                  |L1.906|
-00038a  1d1b              ADDS     r3,r3,#4
-00038c  05d8              LSLS     r0,r3,#23             ;327
-00038e  0dc0              LSRS     r0,r0,#23             ;327
-000390  5c28              LDRB     r0,[r5,r0]            ;327
-000392  7078              STRB     r0,[r7,#1]            ;327
-000394  e686              B        |L1.164|
+000328  4382              BICS     r2,r2,r0              ;285
+00032a  43ba              BICS     r2,r2,r7              ;286
+00032c  602a              STR      r2,[r5,#0]            ;287  ; g_tWork
+00032e  f7fffffe          BL       app_dome_stop_current
+                  |L1.818|
+000332  21f8              MOVS     r1,#0xf8              ;289
+000334  466e              MOV      r6,sp                 ;289
+000336  7031              STRB     r1,[r6,#0]            ;289
+000338  220a              MOVS     r2,#0xa               ;290
+00033a  2101              MOVS     r1,#1                 ;289
+00033c  7072              STRB     r2,[r6,#1]            ;290
+00033e  70b1              STRB     r1,[r6,#2]            ;291
+000340  7829              LDRB     r1,[r5,#0]            ;292  ; g_tWork
+000342  a801              ADD      r0,sp,#4              ;293
+000344  0709              LSLS     r1,r1,#28             ;292
+000346  0fc9              LSRS     r1,r1,#31             ;292
+000348  70f1              STRB     r1,[r6,#3]            ;292
+00034a  2108              MOVS     r1,#8                 ;293
+00034c  f7fffffe          BL       app_dome_get_current_Name
+000350  210c              MOVS     r1,#0xc               ;294
+000352  e006              B        |L1.866|
+                  |L1.852|
+000354  1932              ADDS     r2,r6,r4              ;296
+000356  5c70              LDRB     r0,[r6,r1]            ;296
+000358  7852              LDRB     r2,[r2,#1]            ;296
+00035a  1880              ADDS     r0,r0,r2              ;296
+00035c  1c64              ADDS     r4,r4,#1              ;296
+00035e  5470              STRB     r0,[r6,r1]            ;296
+000360  b2e4              UXTB     r4,r4                 ;295
+                  |L1.866|
+000362  4668              MOV      r0,sp                 ;295
+000364  7840              LDRB     r0,[r0,#1]            ;295
+000366  1c40              ADDS     r0,r0,#1              ;295
+000368  42a0              CMP      r0,r4                 ;295
+00036a  d8f3              BHI      |L1.852|
+00036c  4668              MOV      r0,sp                 ;299
+00036e  1c49              ADDS     r1,r1,#1              ;299
+                  |L1.880|
+000370  f7fffffe          BL       app_2d4_send
+000374  e69a              B        |L1.172|
+                  |L1.886|
+000376  4813              LDR      r0,|L1.964|
+000378  433a              ORRS     r2,r2,r7              ;305
+00037a  2100              MOVS     r1,#0                 ;307
+00037c  6002              STR      r2,[r0,#0]            ;307  ; g_tWork
+00037e  4608              MOV      r0,r1                 ;307
+000380  e01a              B        |L1.952|
+                  |L1.898|
+000382  1d1b              ADDS     r3,r3,#4              ;309
+000384  05d8              LSLS     r0,r3,#23             ;321
+000386  0dc0              LSRS     r0,r0,#23             ;321
+000388  490f              LDR      r1,|L1.968|
+00038a  5c2a              LDRB     r2,[r5,r0]            ;321
+00038c  700a              STRB     r2,[r1,#0]            ;321
+00038e  5c28              LDRB     r0,[r5,r0]            ;323
+000390  f7fffffe          BL       Light_bright_set
+000394  e68a              B        |L1.172|
                   |L1.918|
-000396  4908              LDR      r1,|L1.952|
-000398  4382              BICS     r2,r2,r0              ;331
-00039a  600a              STR      r2,[r1,#0]            ;332  ; g_tWork
-00039c  f7fffffe          BL       app_dome_start_current
-0003a0  8870              LDRH     r0,[r6,#2]            ;333
-0003a2  2100              MOVS     r1,#0                 ;333
-0003a4  1d00              ADDS     r0,r0,#4              ;333
-0003a6  05c0              LSLS     r0,r0,#23             ;333
-0003a8  0dc0              LSRS     r0,r0,#23             ;333
-0003aa  5c28              LDRB     r0,[r5,r0]            ;333
-                  |L1.940|
-0003ac  f7fffffe          BL       app_dome_start
-0003b0  e678              B        |L1.164|
-;;;348    
+000396  1d1b              ADDS     r3,r3,#4
+000398  05d8              LSLS     r0,r3,#23             ;326
+00039a  0dc0              LSRS     r0,r0,#23             ;326
+00039c  5c29              LDRB     r1,[r5,r0]            ;326
+00039e  480a              LDR      r0,|L1.968|
+0003a0  7041              STRB     r1,[r0,#1]            ;326
+0003a2  e683              B        |L1.172|
+                  |L1.932|
+0003a4  4807              LDR      r0,|L1.964|
+0003a6  6001              STR      r1,[r0,#0]            ;331  ; g_tWork
+0003a8  f7fffffe          BL       app_dome_start_current
+0003ac  8870              LDRH     r0,[r6,#2]            ;332
+0003ae  2100              MOVS     r1,#0                 ;332
+0003b0  1d00              ADDS     r0,r0,#4              ;332
+0003b2  05c0              LSLS     r0,r0,#23             ;332
+0003b4  0dc0              LSRS     r0,r0,#23             ;332
+0003b6  5c28              LDRB     r0,[r5,r0]            ;332
+                  |L1.952|
+0003b8  f7fffffe          BL       app_dome_start
+0003bc  e676              B        |L1.172|
+;;;347    
                           ENDP
 
-0003b2  0000              DCW      0x0000
-                  |L1.948|
+0003be  0000              DCW      0x0000
+                  |L1.960|
                           DCD      ||.data||
-                  |L1.952|
+                  |L1.964|
                           DCD      g_tWork
-                  |L1.956|
+                  |L1.968|
                           DCD      dome_running_param
 
                           AREA ||i.app_uart_Init||, CODE, READONLY, ALIGN=2
@@ -866,57 +871,57 @@
                           AREA ||i.app_uart_pro||, CODE, READONLY, ALIGN=2
 
                   app_uart_pro PROC
-;;;348    
-;;;349    void app_uart_pro(void) {
+;;;347    
+;;;348    void app_uart_pro(void) {
 000000  b5f8              PUSH     {r3-r7,lr}
-;;;350    	uint8_t ucData = 0;
+;;;349    	uint8_t ucData = 0;
 000002  2000              MOVS     r0,#0
 000004  4669              MOV      r1,sp
 000006  7008              STRB     r0,[r1,#0]
-;;;351    
-;;;352    #if 1
-;;;353    	while (1) {
-;;;354    
-;;;355    		if (comGetChar(COM1, &ucData)) {
-;;;356    #if 0
-;;;357    			comSendChar(COM0, ucData);
-;;;358    #endif
-;;;359    
-;;;360    			uart_st.rxBuf[uart_st.pWrite++] = ucData;
+;;;350    
+;;;351    #if 1
+;;;352    	while (1) {
+;;;353    
+;;;354    		if (comGetChar(COM1, &ucData)) {
+;;;355    #if 0
+;;;356    			comSendChar(COM0, ucData);
+;;;357    #endif
+;;;358    
+;;;359    			uart_st.rxBuf[uart_st.pWrite++] = ucData;
 000008  4f2b              LDR      r7,|L3.184|
 00000a  2003              MOVS     r0,#3
 00000c  0200              LSLS     r0,r0,#8
 00000e  183c              ADDS     r4,r7,r0
                   |L3.16|
-000010  4669              MOV      r1,sp                 ;355
-000012  2001              MOVS     r0,#1                 ;355
+000010  4669              MOV      r1,sp                 ;354
+000012  2001              MOVS     r0,#1                 ;354
 000014  f7fffffe          BL       comGetChar
-000018  2800              CMP      r0,#0                 ;355
+000018  2800              CMP      r0,#0                 ;354
 00001a  d04b              BEQ      |L3.180|
 00001c  4668              MOV      r0,sp
 00001e  8821              LDRH     r1,[r4,#0]  ; uart_st
 000020  7800              LDRB     r0,[r0,#0]
 000022  5478              STRB     r0,[r7,r1]
 000024  8820              LDRH     r0,[r4,#0]  ; uart_st
-;;;361    			if (uart_st.pWrite >= sizeof(uart_st.rxBuf)) {
+;;;360    			if (uart_st.pWrite >= sizeof(uart_st.rxBuf)) {
 000026  2101              MOVS     r1,#1
-000028  1c40              ADDS     r0,r0,#1              ;360
-00002a  b280              UXTH     r0,r0                 ;360
+000028  1c40              ADDS     r0,r0,#1              ;359
+00002a  b280              UXTH     r0,r0                 ;359
 00002c  0249              LSLS     r1,r1,#9
-00002e  8020              STRH     r0,[r4,#0]            ;360
+00002e  8020              STRH     r0,[r4,#0]            ;359
 000030  4288              CMP      r0,r1
 000032  d301              BCC      |L3.56|
-;;;362    				uart_st.pWrite = 0;
+;;;361    				uart_st.pWrite = 0;
 000034  2000              MOVS     r0,#0
 000036  8020              STRH     r0,[r4,#0]
                   |L3.56|
-;;;363    			}
-;;;364    
-;;;365    			/*
-;;;366    			 (0x55,0xAA)...0x00......0x00...0x00,0x00...0x00
-;;;367    			 Head..........Length....cmd....Data........crc8()
-;;;368    			 */
-;;;369    			if ((uart_st.pWrite + sizeof(uart_st.rxBuf) - uart_st.pRead)
+;;;362    			}
+;;;363    
+;;;364    			/*
+;;;365    			 (0x55,0xAA)...0x00......0x00...0x00,0x00...0x00
+;;;366    			 Head..........Length....cmd....Data........crc8()
+;;;367    			 */
+;;;368    			if ((uart_st.pWrite + sizeof(uart_st.rxBuf) - uart_st.pRead)
 000038  b281              UXTH     r1,r0
 00003a  8860              LDRH     r0,[r4,#2]  ; uart_st
 00003c  1a09              SUBS     r1,r1,r0
@@ -924,12 +929,12 @@
 000040  0dc9              LSRS     r1,r1,#23
 000042  2905              CMP      r1,#5
 000044  d9e4              BLS      |L3.16|
-;;;370    					% sizeof(uart_st.rxBuf) > 5) {
-;;;371    				if (((uart_st.rxBuf[uart_st.pRead]) == 0x55)
+;;;369    					% sizeof(uart_st.rxBuf) > 5) {
+;;;370    				if (((uart_st.rxBuf[uart_st.pRead]) == 0x55)
 000046  5c3a              LDRB     r2,[r7,r0]
 000048  2a55              CMP      r2,#0x55
 00004a  d105              BNE      |L3.88|
-;;;372    						&& ((uart_st.rxBuf[(uart_st.pRead + 1)
+;;;371    						&& ((uart_st.rxBuf[(uart_st.pRead + 1)
 00004c  1c42              ADDS     r2,r0,#1
 00004e  05d2              LSLS     r2,r2,#23
 000050  0dd2              LSRS     r2,r2,#23
@@ -938,418 +943,417 @@
 000056  d001              BEQ      |L3.92|
                   |L3.88|
 000058  1c40              ADDS     r0,r0,#1
-;;;373    								% sizeof(uart_st.rxBuf)]) == 0xAA)) {
-;;;374    					uint8_t index = 2;
-;;;375    					uint8_t len = uart_st.rxBuf[(uart_st.pRead + index++)
-;;;376    							% sizeof(uart_st.rxBuf)];
-;;;377    					if ((uart_st.pWrite + sizeof(uart_st.rxBuf) - uart_st.pRead)
-;;;378    							% sizeof(uart_st.rxBuf) >= (len + 4)) {
-;;;379    						if (uart_st.rxBuf[(uart_st.pRead + len + 3)
-;;;380    								% sizeof(uart_st.rxBuf)]
-;;;381    								!= app_CalcCRC8_cycle(
-;;;382    										uart_st.rxBuf + uart_st.pRead, len + 3,
-;;;383    										uart_st.pRead, sizeof(uart_st.rxBuf))) {
-;;;384    							uart_st.pRead++;
-;;;385    							log_err(
-;;;386    									"[ERROR]   remote control check error!\r\n");
-;;;387    						} else {
-;;;388    							/* your code */
-;;;389    							app_RC_Receiver_cmd_pro(&uart_st);
-;;;390    							uart_st.pRead += len + 4;
-;;;391    							uart_st.pRead = uart_st.pRead
-;;;392    									% sizeof(uart_st.rxBuf);
-;;;393    						}
-;;;394    					}
-;;;395    				} else {
-;;;396    					uart_st.pRead++;
+;;;372    								% sizeof(uart_st.rxBuf)]) == 0xAA)) {
+;;;373    					uint8_t len = uart_st.rxBuf[(uart_st.pRead + 2)
+;;;374    							% sizeof(uart_st.rxBuf)];
+;;;375    					if ((uart_st.pWrite + sizeof(uart_st.rxBuf) - uart_st.pRead)
+;;;376    							% sizeof(uart_st.rxBuf) >= (len + 4)) {
+;;;377    						if (uart_st.rxBuf[(uart_st.pRead + len + 3)
+;;;378    								% sizeof(uart_st.rxBuf)]
+;;;379    								!= app_CalcCRC8_cycle(
+;;;380    										uart_st.rxBuf + uart_st.pRead, len + 3,
+;;;381    										uart_st.pRead, sizeof(uart_st.rxBuf))) {
+;;;382    							uart_st.pRead++;
+;;;383    							log_err(
+;;;384    									"[ERROR]   remote control check error!\r\n");
+;;;385    						} else {
+;;;386    							/* your code */
+;;;387    							app_RC_Receiver_cmd_pro(&uart_st);
+;;;388    							uart_st.pRead += len + 4;
+;;;389    							uart_st.pRead = uart_st.pRead
+;;;390    									% sizeof(uart_st.rxBuf);
+;;;391    						}
+;;;392    					}
+;;;393    				} else {
+;;;394    					uart_st.pRead++;
 00005a  e025              B        |L3.168|
                   |L3.92|
-00005c  1c82              ADDS     r2,r0,#2              ;375
-00005e  05d2              LSLS     r2,r2,#23             ;375
-000060  0dd2              LSRS     r2,r2,#23             ;375
-000062  5cbe              LDRB     r6,[r7,r2]            ;375
-000064  1d35              ADDS     r5,r6,#4              ;375
-000066  42a9              CMP      r1,r5                 ;377
+00005c  1c82              ADDS     r2,r0,#2              ;373
+00005e  05d2              LSLS     r2,r2,#23             ;373
+000060  0dd2              LSRS     r2,r2,#23             ;373
+000062  5cbe              LDRB     r6,[r7,r2]            ;373
+000064  1d35              ADDS     r5,r6,#4              ;373
+000066  42a9              CMP      r1,r5                 ;375
 000068  d31f              BCC      |L3.170|
-00006a  b2c2              UXTB     r2,r0                 ;379
-00006c  1cf6              ADDS     r6,r6,#3              ;379
-00006e  b2f1              UXTB     r1,r6                 ;379
-000070  19c0              ADDS     r0,r0,r7              ;379
-000072  2300              MOVS     r3,#0                 ;379
+00006a  b2c2              UXTB     r2,r0                 ;377
+00006c  1cf6              ADDS     r6,r6,#3              ;377
+00006e  b2f1              UXTB     r1,r6                 ;377
+000070  19c0              ADDS     r0,r0,r7              ;377
+000072  2300              MOVS     r3,#0                 ;377
 000074  f7fffffe          BL       app_CalcCRC8_cycle
-000078  8861              LDRH     r1,[r4,#2]            ;379  ; uart_st
-00007a  198a              ADDS     r2,r1,r6              ;379
-00007c  05d2              LSLS     r2,r2,#23             ;379
-00007e  0dd2              LSRS     r2,r2,#23             ;379
-000080  5cba              LDRB     r2,[r7,r2]            ;379
-000082  4290              CMP      r0,r2                 ;379
+000078  8861              LDRH     r1,[r4,#2]            ;377  ; uart_st
+00007a  198a              ADDS     r2,r1,r6              ;377
+00007c  05d2              LSLS     r2,r2,#23             ;377
+00007e  0dd2              LSRS     r2,r2,#23             ;377
+000080  5cba              LDRB     r2,[r7,r2]            ;377
+000082  4290              CMP      r0,r2                 ;377
 000084  d009              BEQ      |L3.154|
-000086  1c49              ADDS     r1,r1,#1              ;379
-000088  8061              STRH     r1,[r4,#2]            ;384
-00008a  21ff              MOVS     r1,#0xff              ;385
+000086  1c49              ADDS     r1,r1,#1              ;377
+000088  8061              STRH     r1,[r4,#2]            ;382
+00008a  21ff              MOVS     r1,#0xff              ;383
 00008c  a30b              ADR      r3,|L3.188|
-00008e  2202              MOVS     r2,#2                 ;385
-000090  3182              ADDS     r1,r1,#0x82           ;385
+00008e  2202              MOVS     r2,#2                 ;383
+000090  3180              ADDS     r1,r1,#0x80           ;383
 000092  4814              LDR      r0,|L3.228|
 000094  f7fffffe          BL       LITE_syslog
 000098  e007              B        |L3.170|
                   |L3.154|
 00009a  4807              LDR      r0,|L3.184|
 00009c  f7fffffe          BL       app_RC_Receiver_cmd_pro
-0000a0  8860              LDRH     r0,[r4,#2]            ;390  ; uart_st
-0000a2  1940              ADDS     r0,r0,r5              ;390
-0000a4  05c0              LSLS     r0,r0,#23             ;391
-0000a6  0dc0              LSRS     r0,r0,#23             ;391
+0000a0  8860              LDRH     r0,[r4,#2]            ;388  ; uart_st
+0000a2  1940              ADDS     r0,r0,r5              ;388
+0000a4  05c0              LSLS     r0,r0,#23             ;389
+0000a6  0dc0              LSRS     r0,r0,#23             ;389
                   |L3.168|
-0000a8  8060              STRH     r0,[r4,#2]            ;391
+0000a8  8060              STRH     r0,[r4,#2]            ;389
                   |L3.170|
-;;;397    				}
-;;;398    				uart_st.pRead = uart_st.pRead % sizeof(uart_st.rxBuf);
+;;;395    				}
+;;;396    				uart_st.pRead = uart_st.pRead % sizeof(uart_st.rxBuf);
 0000aa  8860              LDRH     r0,[r4,#2]  ; uart_st
 0000ac  05c0              LSLS     r0,r0,#23
 0000ae  0dc0              LSRS     r0,r0,#23
 0000b0  8060              STRH     r0,[r4,#2]
 0000b2  e7ad              B        |L3.16|
                   |L3.180|
-;;;399    			}
-;;;400    			continue;
-;;;401    		}
-;;;402    		break;
-;;;403    
-;;;404    	}
-;;;405    #else
-;;;406    	while (riflag) {
-;;;407    		riflag--;
-;;;408    		if ((st.pWrite + RCV_BUFSIZE - st.pRead) % RCV_BUFSIZE >= 4) {
-;;;409    			if (((st.rxBuf[st.pRead]) == 0x55)
-;;;410    					&& ((st.rxBuf[(st.pRead + 1) % RCV_BUFSIZE]) == 0xAA)) {
-;;;411    				len = st.rxBuf[(st.pRead + 2) % RCV_BUFSIZE];
-;;;412    				if ((st.pWrite + RCV_BUFSIZE - st.pRead) % RCV_BUFSIZE
-;;;413    						>= (len + 4)) {
-;;;414    					if (st.rxBuf[(st.pRead + len + 3) % RCV_BUFSIZE]
-;;;415    							!= app_CalcCRC8_cycle(st.rxBuf + st.pRead,
-;;;416    									len + 3, st.pRead, RCV_BUFSIZE)) {
-;;;417    						st.pRead++;
-;;;418    					} else {
-;;;419    						uint8_t index = 0;
-;;;420    						memset(sendBuf, 0, PAYLOAD_WIDTH);
-;;;421    						switch (st.rxBuf[(st.pRead + 3) % RCV_BUFSIZE]) {
-;;;422    							case BLINK_METHOD_CMD:  //闪法
-;;;423    							{
-;;;424    								uint8_t i = 0;
-;;;425    								uint16_t index = 0;
-;;;426    								index =
-;;;427    								st.rxBuf[(st.pRead + 12) % RCV_BUFSIZE];
-;;;428    
-;;;429    								if (index
-;;;430    										>= ((FMC_APROM_END - DOME_START_ADDR)
-;;;431    												/ sizeof(DOME_DEFAULT_T) - 1)) {
-;;;432    									break;
-;;;433    								}
-;;;434    								FMC_ENABLE_AP_UPDATE();
-;;;435    								SYS_UnlockReg();
-;;;436    								FMC_Open();
-;;;437    
-;;;438    								if (index == 0) {
-;;;439    									u8_tmp = (FMC_APROM_END - DOME_START_ADDR)
-;;;440    									/ FMC_FLASH_PAGE_SIZE;
-;;;441    									for (i = 0; i < u8_tmp; i++) {
-;;;442    										app_eeprom_erase(i * FMC_FLASH_PAGE_SIZE);
-;;;443    									}
-;;;444    								}
-;;;445    #if 0
-;;;446    								for (i = (index + 1); i < DEFAULT_DOME_NUM; i++) {
-;;;447    									uint16_t addr = i * sizeof(DOME_DEFAULT_T)
-;;;448    									+ (&dome_blink.header.index
-;;;449    											- &dome_blink);
-;;;450    									app_eeprom_write_byte(addr, 0);
-;;;451    									nop
-;;;452    								}
-;;;453    #endif
-;;;454    #if 1
-;;;455    								tmp = st.rxBuf[(st.pRead + 13) % RCV_BUFSIZE]
-;;;456    								& 0x0F;  //sub mode number
-;;;457    
-;;;458    								uint8_t n = (tmp * sizeof(SUBDOME_T)
-;;;459    										+ sizeof(DOME_HEADER_T));
-;;;460    								uint8_t minSpaceBytes = sizeof(DOME_DEFAULT_T);
-;;;461    								if (minSpaceBytes % 4) {
-;;;462    									minSpaceBytes++;
-;;;463    								}
-;;;464    
-;;;465    								for (i = 0; i < (n / 4); i++) {
-;;;466    									uint32_t addr = index * minSpaceBytes + i * 4;
-;;;467    									uint32_t dt = st.rxBuf[(st.pRead + 4 + i)
-;;;468    									% RCV_BUFSIZE];
-;;;469    									dt |= st.rxBuf[(st.pRead + 4 + i + 1)
-;;;470    									% RCV_BUFSIZE] << 8;
-;;;471    									dt |= st.rxBuf[(st.pRead + 4 + i + 2)
-;;;472    									% RCV_BUFSIZE] << 16;
-;;;473    									dt |= st.rxBuf[(st.pRead + 4 + i + 3)
-;;;474    									% RCV_BUFSIZE] << 24;
-;;;475    									app_eeprom_write_int(addr, dt);
-;;;476    								}
-;;;477    								for (i = 0; i < (n % 4); i++) {
-;;;478    									uint32_t addr = index * minSpaceBytes + n / 4
-;;;479    									+ 4;
-;;;480    									uint32_t dt = 0;
-;;;481    									switch (i) {
-;;;482    										case 0:
-;;;483    										dt = st.rxBuf[(st.pRead + 4 + n / 4)
-;;;484    										% RCV_BUFSIZE];
-;;;485    										break;
-;;;486    										case 1:
-;;;487    										dt |= st.rxBuf[(st.pRead + 4 + n / 4
-;;;488    												+ i) % RCV_BUFSIZE] << 8;
-;;;489    										break;
-;;;490    										case 2:
-;;;491    										dt |= st.rxBuf[(st.pRead + 4 + n / 4
-;;;492    												+ i) % RCV_BUFSIZE] << 16;
-;;;493    										break;
-;;;494    										case 3:
-;;;495    										dt |= st.rxBuf[(st.pRead + 4 + n / 4
-;;;496    												+ i) % RCV_BUFSIZE] << 24;
-;;;497    										break;
-;;;498    									}
-;;;499    									app_eeprom_write_int(addr, dt);
-;;;500    								}
-;;;501    
-;;;502    								FMC_Close();
-;;;503    								SYS_LockReg();
-;;;504    								FMC_DISABLE_AP_UPDATE();
-;;;505    #endif
-;;;506    								u8_tmp = index & 0xFF;
-;;;507    								app_uart_send(BLINK_METHOD_CMD, &u8_tmp, 1);
-;;;508    							}
-;;;509    							break;
-;;;510    							case RCV_VOL_CMD:
-;;;511    							sendBuf[index++] = LAMP2LCD_HEADER;
-;;;512    							sendBuf[index++] = len;
-;;;513    							sendBuf[index++] = RCV_VOL_CMD;
-;;;514    							for (i = 0; i < (len - 1); i++) {
-;;;515    								sendBuf[index++] = st.rxBuf[(st.pRead + 4
-;;;516    										+ i) % RCV_BUFSIZE];
-;;;517    							}
-;;;518    							for (i = 0; i < (sendBuf[1] + 1); i++) {
-;;;519    								sendBuf[index] += sendBuf[i + 1];
-;;;520    							}
-;;;521    							index++;
-;;;522    							app_2d4_send(sendBuf, index);
-;;;523    							break;
-;;;524    							case RCV_POWER_STATUS_CMD:
-;;;525    							sendBuf[index++] = LAMP2LCD_HEADER;
-;;;526    							sendBuf[index++] = len;
-;;;527    							sendBuf[index++] = RCV_POWER_STATUS_CMD;
-;;;528    							for (i = 0; i < (len - 1); i++) {
-;;;529    								sendBuf[index++] = st.rxBuf[(st.pRead + 4
-;;;530    										+ i) % RCV_BUFSIZE];
-;;;531    							}
-;;;532    							for (i = 0; i < (sendBuf[1] + 1); i++) {
-;;;533    								sendBuf[index] += sendBuf[i + 1];
-;;;534    							}
-;;;535    							index++;
-;;;536    							app_2d4_send(sendBuf, index);
-;;;537    							break;
-;;;538    #if 0
-;;;539    							case RCV_X_BOX_STATUS_CMD:
-;;;540    							sendBuf[index++] = LAMP2LCD_HEADER;
-;;;541    							sendBuf[index++] = len;
-;;;542    							sendBuf[index++] = RCV_X_BOX_STATUS_CMD;
-;;;543    							for (i = 0; i < (len - 1); i++) {
-;;;544    								sendBuf[index++] = st.rxBuf[(st.pRead + 4
-;;;545    										+ i) % RCV_BUFSIZE];
-;;;546    							}
-;;;547    							for (i = 0; i < (sendBuf[1] + 1); i++) {
-;;;548    								sendBuf[index] += sendBuf[i + 1];
-;;;549    							}
-;;;550    							index++;
-;;;551    							app_2d4_send(sendBuf, index);
-;;;552    							break;
-;;;553    #endif
-;;;554    							case RCV_BT_STATUS_CMD:
-;;;555    							sendBuf[index++] = LAMP2LCD_HEADER;
-;;;556    							sendBuf[index++] = len;
-;;;557    							sendBuf[index++] = RCV_BT_STATUS_CMD;
-;;;558    							for (i = 0; i < (len - 1); i++) {
-;;;559    								sendBuf[index++] = st.rxBuf[(st.pRead + 4
-;;;560    										+ i) % RCV_BUFSIZE];
-;;;561    							}
-;;;562    							for (i = 0; i < (sendBuf[1] + 1); i++) {
-;;;563    								sendBuf[index] += sendBuf[i + 1];
-;;;564    							}
-;;;565    							index++;
-;;;566    							if (g_tWork.status.bits.DOME == 0) {
-;;;567    								app_2d4_send(sendBuf, index);
-;;;568    							}
-;;;569    							break;
-;;;570    							case RCV_PREV_NEXT_CMD:
-;;;571    							sendBuf[index++] = LAMP2LCD_HEADER;
-;;;572    							sendBuf[index++] = len;
-;;;573    							sendBuf[index++] = RCV_PREV_NEXT_CMD;
-;;;574    							for (i = 0; i < (len - 1); i++) {
-;;;575    								sendBuf[index++] = st.rxBuf[(st.pRead + 4
-;;;576    										+ i) % RCV_BUFSIZE];
-;;;577    							}
-;;;578    							for (i = 0; i < (sendBuf[1] + 1); i++) {
-;;;579    								sendBuf[index] += sendBuf[i + 1];
-;;;580    							}
-;;;581    							index++;
-;;;582    							if (g_tWork.status.bits.DOME == 0) {
-;;;583    								app_2d4_send(sendBuf, index);
-;;;584    							}
-;;;585    							break;
-;;;586    							case RCV_USB_PLAY_TIME_CMD:
-;;;587    							sendBuf[index++] = LAMP2LCD_HEADER;
-;;;588    							sendBuf[index++] = len;
-;;;589    							sendBuf[index++] = RCV_USB_PLAY_TIME_CMD;
-;;;590    							for (i = 0; i < (len - 1); i++) {
-;;;591    								sendBuf[index++] = st.rxBuf[(st.pRead + 4
-;;;592    										+ i) % RCV_BUFSIZE];
-;;;593    							}
-;;;594    							for (i = 0; i < (sendBuf[1] + 1); i++) {
-;;;595    								sendBuf[index] += sendBuf[i + 1];
-;;;596    							}
-;;;597    							index++;
-;;;598    							if (g_tWork.status.bits.DOME == 0) {
-;;;599    								app_2d4_send(sendBuf, index);
-;;;600    							}
-;;;601    							break;
-;;;602    							case RCV_FM_HZ_CMD:
-;;;603    							sendBuf[index++] = LAMP2LCD_HEADER;
-;;;604    							sendBuf[index++] = len;
-;;;605    							sendBuf[index++] = RCV_FM_HZ_CMD;
-;;;606    							for (i = 0; i < (len - 1); i++) {
-;;;607    								sendBuf[index++] = st.rxBuf[(st.pRead + 4
-;;;608    										+ i) % RCV_BUFSIZE];
-;;;609    							}
-;;;610    							for (i = 0; i < (sendBuf[1] + 1); i++) {
-;;;611    								sendBuf[index] += sendBuf[i + 1];
-;;;612    							}
-;;;613    							index++;
-;;;614    
-;;;615    							if (g_tWork.status.bits.DOME == 0) {
-;;;616    								app_2d4_send(sendBuf, index);
-;;;617    							}
-;;;618    							break;
-;;;619    							case MODE_CHANGE_CMD:   //MODE
-;;;620    							sendBuf[index++] = LAMP2LCD_HEADER;
-;;;621    							sendBuf[index++] = len;
-;;;622    							sendBuf[index++] = MODE_CHANGE_CMD;
-;;;623    							for (i = 0; i < (len - 1); i++) {
-;;;624    								sendBuf[index++] = st.rxBuf[(st.pRead + 4
-;;;625    										+ i) % RCV_BUFSIZE];
-;;;626    							}
-;;;627    							for (i = 0; i < (sendBuf[1] + 1); i++) {
-;;;628    								sendBuf[index] += sendBuf[i + 1];
-;;;629    							}
-;;;630    							index++;
-;;;631    							app_2d4_send(sendBuf, index);
-;;;632    							break;
-;;;633    							case RCV_PLAY_PAUSE_STATUS_CMD:
-;;;634    							sendBuf[index++] = LAMP2LCD_HEADER;
-;;;635    							sendBuf[index++] = len;
-;;;636    							sendBuf[index++] = RCV_PLAY_PAUSE_STATUS_CMD;
-;;;637    							for (i = 0; i < (len - 1); i++) {
-;;;638    								sendBuf[index++] = st.rxBuf[(st.pRead + 4
-;;;639    										+ i) % RCV_BUFSIZE];
-;;;640    							}
-;;;641    							for (i = 0; i < (sendBuf[1] + 1); i++) {
-;;;642    								sendBuf[index] += sendBuf[i + 1];
-;;;643    							}
-;;;644    							index++;
-;;;645    							if (g_tWork.status.bits.DOME == 0) {
-;;;646    								app_2d4_send(sendBuf, index);
-;;;647    							}
-;;;648    							break;
-;;;649    							/// app --start
-;;;650    							case KEY_CARD_POWER_CMD:
-;;;651    							if (g_tWork.status.bits.blinkEnable == 0) {
-;;;652    //								g_tWork.status.bits.pause = 0;
-;;;653    								g_tWork.status.bits.blinkEnable = 1;
-;;;654    								g_tWork.status.bits.DEMO = 1;
-;;;655    								app_dome_start_current();
-;;;656    							} else {
-;;;657    //								g_tWork.status.bits.pause = 1;
-;;;658    								g_tWork.status.bits.blinkEnable = 0;
-;;;659    								g_tWork.status.bits.DEMO = 0;
-;;;660    								app_dome_stop_current();
-;;;661    							}
-;;;662    							sendBuf[index++] = LAMP2LCD_HEADER;
-;;;663    							sendBuf[index++] = 10;
-;;;664    							sendBuf[index++] = KEY_POWER_SHORT_CMD;
-;;;665    							sendBuf[index++] = g_tWork.status.bits.blinkEnable;
-;;;666    							app_dome_get_current_Name(sendBuf + index, 8);
-;;;667    							index += 8;
-;;;668    							for (i = 0; i < (sendBuf[1] + 1); i++) {
-;;;669    								sendBuf[index] += sendBuf[i + 1];
-;;;670    							}
-;;;671    							index++;
-;;;672    							app_2d4_send(sendBuf, index);
-;;;673    							break;
-;;;674    							case KEY_CARD_DEMO_CMD:
-;;;675    //							if (g_tWork.status.bits.DEMO) {
-;;;676    //								g_tWork.status.bits.DEMO = 0;
-;;;677    //							} else {
-;;;678    							g_tWork.status.bits.DEMO = 1;
-;;;679    //							}
-;;;680    							app_dome_start(0, 0);
-;;;681    
-;;;682    							break;
-;;;683    							case APP_COLOR_ATLA_CMD:
-;;;684    #if 1
-;;;685    							app_dome_rgb(
-;;;686    									st.rxBuf[(st.pRead + 4) % RCV_BUFSIZE],
-;;;687    									st.rxBuf[(st.pRead + 5) % RCV_BUFSIZE],
-;;;688    									st.rxBuf[(st.pRead + 6) % RCV_BUFSIZE]);
-;;;689    #else
-;;;690    							app_dome_rgb(0xFFFF, 0xFFFF, 0xFFFF);
-;;;691    #endif
-;;;692    							break;
-;;;693    							case APP_BRIGHT_CMD:
-;;;694    							dome_running_param.bright = st.rxBuf[(st.pRead
-;;;695    									+ 4) % RCV_BUFSIZE];
-;;;696    							Light_bright_set(
-;;;697    									st.rxBuf[(st.pRead + 4) % RCV_BUFSIZE]);
-;;;698    							break;
-;;;699    							case APP_SPEED_CMD:
-;;;700    							dome_running_param.speed = st.rxBuf[(st.pRead
-;;;701    									+ 4) % RCV_BUFSIZE];
-;;;702    							break;
-;;;703    							case APP_FLASH_INDEX_CMD:
-;;;704    							g_tWork.status.bits.DEMO = 0;
-;;;705    							app_dome_start_current();
-;;;706    							app_dome_start(
-;;;707    									st.rxBuf[(st.pRead + 4) % RCV_BUFSIZE],
-;;;708    									0);
-;;;709    							break;
-;;;710    							case APP_SWITCH_INDEX_CMD: {
-;;;711    								uint8_t switchData = st.rxBuf[(st.pRead + 4)
-;;;712    								% RCV_BUFSIZE];
-;;;713    								if (((switchData >> 4) & 0x0F) == 0) {
-;;;714    									Relay_set(switchData & 0x0F);
-;;;715    								}
-;;;716    							}
-;;;717    							break;
-;;;718    							/// app --end
-;;;719    							default:
-;;;720    							break;
-;;;721    						}
-;;;722    						st.pRead += len + 4;
-;;;723    #if 1
-;;;724    						st.pRead = st.pRead % RCV_BUFSIZE;
-;;;725    //						break;
-;;;726    						return;
-;;;727    #endif
-;;;728    					}
-;;;729    				}
-;;;730    			} else {
-;;;731    				st.pRead++;
-;;;732    			}
-;;;733    			st.pRead = st.pRead % RCV_BUFSIZE;
-;;;734    		}
-;;;735    	}
-;;;736    #endif
-;;;737    }
+;;;397    			}
+;;;398    			continue;
+;;;399    		}
+;;;400    		break;
+;;;401    
+;;;402    	}
+;;;403    #else
+;;;404    	while (riflag) {
+;;;405    		riflag--;
+;;;406    		if ((st.pWrite + RCV_BUFSIZE - st.pRead) % RCV_BUFSIZE >= 4) {
+;;;407    			if (((st.rxBuf[st.pRead]) == 0x55)
+;;;408    					&& ((st.rxBuf[(st.pRead + 1) % RCV_BUFSIZE]) == 0xAA)) {
+;;;409    				len = st.rxBuf[(st.pRead + 2) % RCV_BUFSIZE];
+;;;410    				if ((st.pWrite + RCV_BUFSIZE - st.pRead) % RCV_BUFSIZE
+;;;411    						>= (len + 4)) {
+;;;412    					if (st.rxBuf[(st.pRead + len + 3) % RCV_BUFSIZE]
+;;;413    							!= app_CalcCRC8_cycle(st.rxBuf + st.pRead,
+;;;414    									len + 3, st.pRead, RCV_BUFSIZE)) {
+;;;415    						st.pRead++;
+;;;416    					} else {
+;;;417    						uint8_t index = 0;
+;;;418    						memset(sendBuf, 0, PAYLOAD_WIDTH);
+;;;419    						switch (st.rxBuf[(st.pRead + 3) % RCV_BUFSIZE]) {
+;;;420    							case BLINK_METHOD_CMD:  //闪法
+;;;421    							{
+;;;422    								uint8_t i = 0;
+;;;423    								uint16_t index = 0;
+;;;424    								index =
+;;;425    								st.rxBuf[(st.pRead + 12) % RCV_BUFSIZE];
+;;;426    
+;;;427    								if (index
+;;;428    										>= ((FMC_APROM_END - DOME_START_ADDR)
+;;;429    												/ sizeof(DOME_DEFAULT_T) - 1)) {
+;;;430    									break;
+;;;431    								}
+;;;432    								FMC_ENABLE_AP_UPDATE();
+;;;433    								SYS_UnlockReg();
+;;;434    								FMC_Open();
+;;;435    
+;;;436    								if (index == 0) {
+;;;437    									u8_tmp = (FMC_APROM_END - DOME_START_ADDR)
+;;;438    									/ FMC_FLASH_PAGE_SIZE;
+;;;439    									for (i = 0; i < u8_tmp; i++) {
+;;;440    										app_eeprom_erase(i * FMC_FLASH_PAGE_SIZE);
+;;;441    									}
+;;;442    								}
+;;;443    #if 0
+;;;444    								for (i = (index + 1); i < DEFAULT_DOME_NUM; i++) {
+;;;445    									uint16_t addr = i * sizeof(DOME_DEFAULT_T)
+;;;446    									+ (&dome_blink.header.index
+;;;447    											- &dome_blink);
+;;;448    									app_eeprom_write_byte(addr, 0);
+;;;449    									nop
+;;;450    								}
+;;;451    #endif
+;;;452    #if 1
+;;;453    								tmp = st.rxBuf[(st.pRead + 13) % RCV_BUFSIZE]
+;;;454    								& 0x0F;  //sub mode number
+;;;455    
+;;;456    								uint8_t n = (tmp * sizeof(SUBDOME_T)
+;;;457    										+ sizeof(DOME_HEADER_T));
+;;;458    								uint8_t minSpaceBytes = sizeof(DOME_DEFAULT_T);
+;;;459    								if (minSpaceBytes % 4) {
+;;;460    									minSpaceBytes++;
+;;;461    								}
+;;;462    
+;;;463    								for (i = 0; i < (n / 4); i++) {
+;;;464    									uint32_t addr = index * minSpaceBytes + i * 4;
+;;;465    									uint32_t dt = st.rxBuf[(st.pRead + 4 + i)
+;;;466    									% RCV_BUFSIZE];
+;;;467    									dt |= st.rxBuf[(st.pRead + 4 + i + 1)
+;;;468    									% RCV_BUFSIZE] << 8;
+;;;469    									dt |= st.rxBuf[(st.pRead + 4 + i + 2)
+;;;470    									% RCV_BUFSIZE] << 16;
+;;;471    									dt |= st.rxBuf[(st.pRead + 4 + i + 3)
+;;;472    									% RCV_BUFSIZE] << 24;
+;;;473    									app_eeprom_write_int(addr, dt);
+;;;474    								}
+;;;475    								for (i = 0; i < (n % 4); i++) {
+;;;476    									uint32_t addr = index * minSpaceBytes + n / 4
+;;;477    									+ 4;
+;;;478    									uint32_t dt = 0;
+;;;479    									switch (i) {
+;;;480    										case 0:
+;;;481    										dt = st.rxBuf[(st.pRead + 4 + n / 4)
+;;;482    										% RCV_BUFSIZE];
+;;;483    										break;
+;;;484    										case 1:
+;;;485    										dt |= st.rxBuf[(st.pRead + 4 + n / 4
+;;;486    												+ i) % RCV_BUFSIZE] << 8;
+;;;487    										break;
+;;;488    										case 2:
+;;;489    										dt |= st.rxBuf[(st.pRead + 4 + n / 4
+;;;490    												+ i) % RCV_BUFSIZE] << 16;
+;;;491    										break;
+;;;492    										case 3:
+;;;493    										dt |= st.rxBuf[(st.pRead + 4 + n / 4
+;;;494    												+ i) % RCV_BUFSIZE] << 24;
+;;;495    										break;
+;;;496    									}
+;;;497    									app_eeprom_write_int(addr, dt);
+;;;498    								}
+;;;499    
+;;;500    								FMC_Close();
+;;;501    								SYS_LockReg();
+;;;502    								FMC_DISABLE_AP_UPDATE();
+;;;503    #endif
+;;;504    								u8_tmp = index & 0xFF;
+;;;505    								app_uart_send(BLINK_METHOD_CMD, &u8_tmp, 1);
+;;;506    							}
+;;;507    							break;
+;;;508    							case RCV_VOL_CMD:
+;;;509    							sendBuf[index++] = LAMP2LCD_HEADER;
+;;;510    							sendBuf[index++] = len;
+;;;511    							sendBuf[index++] = RCV_VOL_CMD;
+;;;512    							for (i = 0; i < (len - 1); i++) {
+;;;513    								sendBuf[index++] = st.rxBuf[(st.pRead + 4
+;;;514    										+ i) % RCV_BUFSIZE];
+;;;515    							}
+;;;516    							for (i = 0; i < (sendBuf[1] + 1); i++) {
+;;;517    								sendBuf[index] += sendBuf[i + 1];
+;;;518    							}
+;;;519    							index++;
+;;;520    							app_2d4_send(sendBuf, index);
+;;;521    							break;
+;;;522    							case RCV_POWER_STATUS_CMD:
+;;;523    							sendBuf[index++] = LAMP2LCD_HEADER;
+;;;524    							sendBuf[index++] = len;
+;;;525    							sendBuf[index++] = RCV_POWER_STATUS_CMD;
+;;;526    							for (i = 0; i < (len - 1); i++) {
+;;;527    								sendBuf[index++] = st.rxBuf[(st.pRead + 4
+;;;528    										+ i) % RCV_BUFSIZE];
+;;;529    							}
+;;;530    							for (i = 0; i < (sendBuf[1] + 1); i++) {
+;;;531    								sendBuf[index] += sendBuf[i + 1];
+;;;532    							}
+;;;533    							index++;
+;;;534    							app_2d4_send(sendBuf, index);
+;;;535    							break;
+;;;536    #if 0
+;;;537    							case RCV_X_BOX_STATUS_CMD:
+;;;538    							sendBuf[index++] = LAMP2LCD_HEADER;
+;;;539    							sendBuf[index++] = len;
+;;;540    							sendBuf[index++] = RCV_X_BOX_STATUS_CMD;
+;;;541    							for (i = 0; i < (len - 1); i++) {
+;;;542    								sendBuf[index++] = st.rxBuf[(st.pRead + 4
+;;;543    										+ i) % RCV_BUFSIZE];
+;;;544    							}
+;;;545    							for (i = 0; i < (sendBuf[1] + 1); i++) {
+;;;546    								sendBuf[index] += sendBuf[i + 1];
+;;;547    							}
+;;;548    							index++;
+;;;549    							app_2d4_send(sendBuf, index);
+;;;550    							break;
+;;;551    #endif
+;;;552    							case RCV_BT_STATUS_CMD:
+;;;553    							sendBuf[index++] = LAMP2LCD_HEADER;
+;;;554    							sendBuf[index++] = len;
+;;;555    							sendBuf[index++] = RCV_BT_STATUS_CMD;
+;;;556    							for (i = 0; i < (len - 1); i++) {
+;;;557    								sendBuf[index++] = st.rxBuf[(st.pRead + 4
+;;;558    										+ i) % RCV_BUFSIZE];
+;;;559    							}
+;;;560    							for (i = 0; i < (sendBuf[1] + 1); i++) {
+;;;561    								sendBuf[index] += sendBuf[i + 1];
+;;;562    							}
+;;;563    							index++;
+;;;564    							if (g_tWork.status.bits.DOME == 0) {
+;;;565    								app_2d4_send(sendBuf, index);
+;;;566    							}
+;;;567    							break;
+;;;568    							case RCV_PREV_NEXT_CMD:
+;;;569    							sendBuf[index++] = LAMP2LCD_HEADER;
+;;;570    							sendBuf[index++] = len;
+;;;571    							sendBuf[index++] = RCV_PREV_NEXT_CMD;
+;;;572    							for (i = 0; i < (len - 1); i++) {
+;;;573    								sendBuf[index++] = st.rxBuf[(st.pRead + 4
+;;;574    										+ i) % RCV_BUFSIZE];
+;;;575    							}
+;;;576    							for (i = 0; i < (sendBuf[1] + 1); i++) {
+;;;577    								sendBuf[index] += sendBuf[i + 1];
+;;;578    							}
+;;;579    							index++;
+;;;580    							if (g_tWork.status.bits.DOME == 0) {
+;;;581    								app_2d4_send(sendBuf, index);
+;;;582    							}
+;;;583    							break;
+;;;584    							case RCV_USB_PLAY_TIME_CMD:
+;;;585    							sendBuf[index++] = LAMP2LCD_HEADER;
+;;;586    							sendBuf[index++] = len;
+;;;587    							sendBuf[index++] = RCV_USB_PLAY_TIME_CMD;
+;;;588    							for (i = 0; i < (len - 1); i++) {
+;;;589    								sendBuf[index++] = st.rxBuf[(st.pRead + 4
+;;;590    										+ i) % RCV_BUFSIZE];
+;;;591    							}
+;;;592    							for (i = 0; i < (sendBuf[1] + 1); i++) {
+;;;593    								sendBuf[index] += sendBuf[i + 1];
+;;;594    							}
+;;;595    							index++;
+;;;596    							if (g_tWork.status.bits.DOME == 0) {
+;;;597    								app_2d4_send(sendBuf, index);
+;;;598    							}
+;;;599    							break;
+;;;600    							case RCV_FM_HZ_CMD:
+;;;601    							sendBuf[index++] = LAMP2LCD_HEADER;
+;;;602    							sendBuf[index++] = len;
+;;;603    							sendBuf[index++] = RCV_FM_HZ_CMD;
+;;;604    							for (i = 0; i < (len - 1); i++) {
+;;;605    								sendBuf[index++] = st.rxBuf[(st.pRead + 4
+;;;606    										+ i) % RCV_BUFSIZE];
+;;;607    							}
+;;;608    							for (i = 0; i < (sendBuf[1] + 1); i++) {
+;;;609    								sendBuf[index] += sendBuf[i + 1];
+;;;610    							}
+;;;611    							index++;
+;;;612    
+;;;613    							if (g_tWork.status.bits.DOME == 0) {
+;;;614    								app_2d4_send(sendBuf, index);
+;;;615    							}
+;;;616    							break;
+;;;617    							case MODE_CHANGE_CMD:   //MODE
+;;;618    							sendBuf[index++] = LAMP2LCD_HEADER;
+;;;619    							sendBuf[index++] = len;
+;;;620    							sendBuf[index++] = MODE_CHANGE_CMD;
+;;;621    							for (i = 0; i < (len - 1); i++) {
+;;;622    								sendBuf[index++] = st.rxBuf[(st.pRead + 4
+;;;623    										+ i) % RCV_BUFSIZE];
+;;;624    							}
+;;;625    							for (i = 0; i < (sendBuf[1] + 1); i++) {
+;;;626    								sendBuf[index] += sendBuf[i + 1];
+;;;627    							}
+;;;628    							index++;
+;;;629    							app_2d4_send(sendBuf, index);
+;;;630    							break;
+;;;631    							case RCV_PLAY_PAUSE_STATUS_CMD:
+;;;632    							sendBuf[index++] = LAMP2LCD_HEADER;
+;;;633    							sendBuf[index++] = len;
+;;;634    							sendBuf[index++] = RCV_PLAY_PAUSE_STATUS_CMD;
+;;;635    							for (i = 0; i < (len - 1); i++) {
+;;;636    								sendBuf[index++] = st.rxBuf[(st.pRead + 4
+;;;637    										+ i) % RCV_BUFSIZE];
+;;;638    							}
+;;;639    							for (i = 0; i < (sendBuf[1] + 1); i++) {
+;;;640    								sendBuf[index] += sendBuf[i + 1];
+;;;641    							}
+;;;642    							index++;
+;;;643    							if (g_tWork.status.bits.DOME == 0) {
+;;;644    								app_2d4_send(sendBuf, index);
+;;;645    							}
+;;;646    							break;
+;;;647    							/// app --start
+;;;648    							case KEY_CARD_POWER_CMD:
+;;;649    							if (g_tWork.status.bits.blinkEnable == 0) {
+;;;650    //								g_tWork.status.bits.pause = 0;
+;;;651    								g_tWork.status.bits.blinkEnable = 1;
+;;;652    								g_tWork.status.bits.DEMO = 1;
+;;;653    								app_dome_start_current();
+;;;654    							} else {
+;;;655    //								g_tWork.status.bits.pause = 1;
+;;;656    								g_tWork.status.bits.blinkEnable = 0;
+;;;657    								g_tWork.status.bits.DEMO = 0;
+;;;658    								app_dome_stop_current();
+;;;659    							}
+;;;660    							sendBuf[index++] = LAMP2LCD_HEADER;
+;;;661    							sendBuf[index++] = 10;
+;;;662    							sendBuf[index++] = KEY_POWER_SHORT_CMD;
+;;;663    							sendBuf[index++] = g_tWork.status.bits.blinkEnable;
+;;;664    							app_dome_get_current_Name(sendBuf + index, 8);
+;;;665    							index += 8;
+;;;666    							for (i = 0; i < (sendBuf[1] + 1); i++) {
+;;;667    								sendBuf[index] += sendBuf[i + 1];
+;;;668    							}
+;;;669    							index++;
+;;;670    							app_2d4_send(sendBuf, index);
+;;;671    							break;
+;;;672    							case KEY_CARD_DEMO_CMD:
+;;;673    //							if (g_tWork.status.bits.DEMO) {
+;;;674    //								g_tWork.status.bits.DEMO = 0;
+;;;675    //							} else {
+;;;676    							g_tWork.status.bits.DEMO = 1;
+;;;677    //							}
+;;;678    							app_dome_start(0, 0);
+;;;679    
+;;;680    							break;
+;;;681    							case APP_COLOR_ATLA_CMD:
+;;;682    #if 1
+;;;683    							app_dome_rgb(
+;;;684    									st.rxBuf[(st.pRead + 4) % RCV_BUFSIZE],
+;;;685    									st.rxBuf[(st.pRead + 5) % RCV_BUFSIZE],
+;;;686    									st.rxBuf[(st.pRead + 6) % RCV_BUFSIZE]);
+;;;687    #else
+;;;688    							app_dome_rgb(0xFFFF, 0xFFFF, 0xFFFF);
+;;;689    #endif
+;;;690    							break;
+;;;691    							case APP_BRIGHT_CMD:
+;;;692    							dome_running_param.bright = st.rxBuf[(st.pRead
+;;;693    									+ 4) % RCV_BUFSIZE];
+;;;694    							Light_bright_set(
+;;;695    									st.rxBuf[(st.pRead + 4) % RCV_BUFSIZE]);
+;;;696    							break;
+;;;697    							case APP_SPEED_CMD:
+;;;698    							dome_running_param.speed = st.rxBuf[(st.pRead
+;;;699    									+ 4) % RCV_BUFSIZE];
+;;;700    							break;
+;;;701    							case APP_FLASH_INDEX_CMD:
+;;;702    							g_tWork.status.bits.DEMO = 0;
+;;;703    							app_dome_start_current();
+;;;704    							app_dome_start(
+;;;705    									st.rxBuf[(st.pRead + 4) % RCV_BUFSIZE],
+;;;706    									0);
+;;;707    							break;
+;;;708    							case APP_SWITCH_INDEX_CMD: {
+;;;709    								uint8_t switchData = st.rxBuf[(st.pRead + 4)
+;;;710    								% RCV_BUFSIZE];
+;;;711    								if (((switchData >> 4) & 0x0F) == 0) {
+;;;712    									Relay_set(switchData & 0x0F);
+;;;713    								}
+;;;714    							}
+;;;715    							break;
+;;;716    							/// app --end
+;;;717    							default:
+;;;718    							break;
+;;;719    						}
+;;;720    						st.pRead += len + 4;
+;;;721    #if 1
+;;;722    						st.pRead = st.pRead % RCV_BUFSIZE;
+;;;723    //						break;
+;;;724    						return;
+;;;725    #endif
+;;;726    					}
+;;;727    				}
+;;;728    			} else {
+;;;729    				st.pRead++;
+;;;730    			}
+;;;731    			st.pRead = st.pRead % RCV_BUFSIZE;
+;;;732    		}
+;;;733    	}
+;;;734    #endif
+;;;735    }
 0000b4  bdf8              POP      {r3-r7,pc}
                           ENDP
 

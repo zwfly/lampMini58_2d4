@@ -8,9 +8,7 @@
 #ifndef APP_INC_APP_EEPROM_H_
 #define APP_INC_APP_EEPROM_H_
 
-//#define DOME_START_ADDR   0x3C00  //use 3KB
-//#define DOME_START_ADDR   0x3E00  //use 2.5KB
-#define DOME_START_ADDR   0x6C00  //use 5KB
+
 
 void app_eeprom_Init(void);
 void app_eeprom_get_dome_with_index(DOME_DEFAULT_T* dd, uint8_t index);

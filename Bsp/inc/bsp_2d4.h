@@ -10,8 +10,8 @@
 
 #define         CSN_HIGH                (P04 = 1)
 #define         CSN_LOW                 (P04 = 0)
-#define         SCK_HIGH                (P07 = 1)
-#define         SCK_LOW                 (P07 = 0)
+#define         SCK_HIGH                P07 = 1;delay_2d4(1)
+#define         SCK_LOW                 P07 = 0;delay_2d4(1)
 
 #define         SPI_DATA_HIGH           (P05 = 1)
 #define         SPI_DATA_LOW            (P05 = 0)

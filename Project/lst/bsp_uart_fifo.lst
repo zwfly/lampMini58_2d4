@@ -19124,8 +19124,8 @@ N#define BSP_INC_BSP_2D4_H_
 N
 N#define         CSN_HIGH                (P04 = 1)
 N#define         CSN_LOW                 (P04 = 0)
-N#define         SCK_HIGH                (P07 = 1)
-N#define         SCK_LOW                 (P07 = 0)
+N#define         SCK_HIGH                P07 = 1;delay_2d4(1)
+N#define         SCK_LOW                 P07 = 0;delay_2d4(1)
 N
 N#define         SPI_DATA_HIGH           (P05 = 1)
 N#define         SPI_DATA_LOW            (P05 = 0)
@@ -19342,6 +19342,11 @@ N
 N#ifndef BSP_INC_BSP_EEPROM_H_
 N#define BSP_INC_BSP_EEPROM_H_
 N
+N//#define DOME_START_ADDR   0x3C00  //use 3KB
+N//#define DOME_START_ADDR   0x3E00  //use 2.5KB
+N#define DOME_START_ADDR   0x6C00  //use 5KB
+N
+N
 Nvoid EEPROM_InitHard(void);
 N
 Nvoid bsp_eeprom_write_int(uint32_t u32addr, uint32_t u32data);
@@ -19481,7 +19486,7 @@ N#endif
 N
 N#if UART1_FIFO_EN == 1
 X#if 1 == 1
-N#define UART1_BAUD			115200
+N#define UART1_BAUD			19200
 N#define UART1_TX_BUF_SIZE	1*256
 N#define UART1_RX_BUF_SIZE	1*256
 N#endif
@@ -19835,7 +19840,7 @@ X	SYS_ResetModule((0x1ul << (17)));
 N
 N	/* Configure UART and set UART Baudrate */
 N	UART_Open(UART1, UART1_BAUD);
-X	UART_Open(((UART_T *) (((uint32_t)0x40100000) + 0x50000)), 115200);
+X	UART_Open(((UART_T *) (((uint32_t)0x40100000) + 0x50000)), 19200);
 N
 N#endif
 N
@@ -20154,4 +20159,3 @@ S}
 N#endif
 N
 N/***************************** 安富莱电子 www.armfly.com (END OF FILE) *********************************/
-W "..\Bsp\src\bsp_uart_fifo.c" 279 13 function "ConfigUartNVIC"  was declared but never referenced

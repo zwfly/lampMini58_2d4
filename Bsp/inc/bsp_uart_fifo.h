@@ -25,7 +25,7 @@ typedef enum {
 #endif
 
 #if UART1_FIFO_EN == 1
-#define UART1_BAUD			115200
+#define UART1_BAUD			19200
 #define UART1_TX_BUF_SIZE	1*256
 #define UART1_RX_BUF_SIZE	1*256
 #endif

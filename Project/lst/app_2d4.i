@@ -18080,6 +18080,11 @@ void Relay_set(uint8_t s);
 
 
 
+
+
+
+
+
 void EEPROM_InitHard(void);
 
 void bsp_eeprom_write_int(uint32_t u32addr, uint32_t u32data);
@@ -18563,8 +18568,6 @@ void app_dome_interrupter(void);
 
 
  
-
-
 
 
 
@@ -19586,7 +19589,7 @@ static uint8_t send_2d4_flag = 0;
 static uint8_t rcv_2d4_Buf[16] = { 0 };
 static uint8_t send_2d4_Buf[16] = { 0 };
 
-uint8_t tmpBuf[8] = { 0 };
+
 
 
 
@@ -19621,6 +19624,7 @@ void app_2d4_send(uint8_t *d, uint8_t len) {
 	memcpy(send_2d4_Buf, d, len);
 	RF_TxData(send_2d4_Buf, sizeof(send_2d4_Buf));
 
+	RF_RxMode();
 	send_2d4_flag = 0;
 
 
@@ -19633,7 +19637,7 @@ static void app_2d4_Rcv(uint8_t *buf) {
 	uint8_t i = 0;
 	uint8_t index = 0;
 	uint8_t check = 0;
-#line 78 "..\\App\\src\\app_2d4.c"
+#line 79 "..\\App\\src\\app_2d4.c"
 	if (buf[0] != 0xF2) {
 		return;
 	}
@@ -19675,7 +19679,7 @@ static void app_2d4_Rcv(uint8_t *buf) {
 		app_uart_send(0x01, 0, 0);
 
 		break;
-#line 147 "..\\App\\src\\app_2d4.c"
+#line 148 "..\\App\\src\\app_2d4.c"
 	case 0x09:
 		if (buf[3] == 1) {
 			Relay_on();
@@ -19969,7 +19973,7 @@ void app_2d4_pro(void) {
 		if (ucRF_DumpRxData(rcv_2d4_Buf, sizeof(rcv_2d4_Buf))) {
 			app_2d4_Rcv(rcv_2d4_Buf);
 
-			Relay_toggle();
+
 		}
 	}
 }

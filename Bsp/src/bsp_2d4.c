@@ -31,6 +31,13 @@ void SPI_init(void) {
 //	GPIO_Init(GPIOB, GPIO_Pin_6, GPIO_Mode_Out_PP_High_Fast); //DATA PIN output  DEFAULT  High pulling push
 }
 
+static void delay_2d4(uint8_t n) {
+	uint8_t i = 0;
+
+	for (i = 0; i < n; i++);
+
+}
+
 /******************************************************************************/
 //           SPI_WW
 //                SPI Write a byte for write regiest
@@ -49,7 +56,6 @@ void SPI_WW(uint8_t R_REG) {
 		__NOP;
 	}
 	SCK_LOW;
-
 }
 
 /******************************************************************************/
@@ -59,9 +65,9 @@ void SPI_WW(uint8_t R_REG) {
 void RF_WriteReg(uint8_t reg, uint8_t wdata) {
 	CSN_LOW;
 	__NOP;
-	SPI_WW( reg);
+	SPI_WW(reg);
 	SPI_WW(wdata);
-	__NOP; 
+	__NOP;
 	CSN_HIGH;
 }
 
@@ -98,7 +104,8 @@ void SPI_WR(uint8_t R_REG) {
 		SCK_HIGH;
 		__NOP;
 	}
-	SPI_DATA_INPUT_MODE;
+	SPI_DATA_INPUT_MODE
+	;
 	SCK_LOW;
 
 }
@@ -131,9 +138,10 @@ uint8_t ucRF_ReadReg(uint8_t reg) {
 
 	CSN_LOW;
 	__NOP;
-	SPI_WR( reg);
+	SPI_WR(reg);
 	dt = ucSPI_Read();
-	SPI_DATA_OUTPUT_MODE;
+	SPI_DATA_OUTPUT_MODE
+	;
 	__NOP;
 	CSN_HIGH;
 
@@ -151,7 +159,8 @@ void RF_ReadBuf(uint8_t reg, unsigned char *pBuf, uint8_t length) {
 	SPI_WR(reg);
 	for (byte_ctr = 0; byte_ctr < length; byte_ctr++)
 		pBuf[byte_ctr] = ucSPI_Read();
-	SPI_DATA_OUTPUT_MODE;
+	SPI_DATA_OUTPUT_MODE
+	;
 	CSN_HIGH;
 }
 
@@ -315,10 +324,10 @@ void RF_Init(void) {
 
 #if(TRANSMIT_TYPE == TRANS_ENHANCE_MODE)
 	RF_WriteReg(W_REGISTER + SETUP_RETR, 0x03);					//  3 retrans...
-	RF_WriteReg(W_REGISTER + EN_AA, 0x01);				// Enable Auto.Ack:Pipe0
+	RF_WriteReg(W_REGISTER + EN_AA, 0x01);// Enable Auto.Ack:Pipe0
 #elif(TRANSMIT_TYPE == TRANS_BURST_MODE)
-			RF_WriteReg(W_REGISTER + SETUP_RETR, 0x00);	// Disable retrans...
-			RF_WriteReg(W_REGISTER + EN_AA, 0x00);// Disable AutoAck
+	RF_WriteReg(W_REGISTER + SETUP_RETR, 0x00);	// Disable retrans...
+	RF_WriteReg(W_REGISTER + EN_AA, 0x00);	// Disable AutoAck
 #endif
 
 }
@@ -340,9 +349,9 @@ void RF_Carrier(uint8_t ucChannel_Set) {
 	CE_LOW;
 //	delay_ms(200);
 	for (i = 0; i < 220; i++) {
-		__NOP; 
 		__NOP;
-		__NOP; 
+		__NOP;
+		__NOP;
 		__NOP;
 	}
 

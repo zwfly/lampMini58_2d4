@@ -18081,6 +18081,11 @@ void Relay_set(uint8_t s);
 
 
 
+
+
+
+
+
 void EEPROM_InitHard(void);
 
 void bsp_eeprom_write_int(uint32_t u32addr, uint32_t u32data);
@@ -18564,8 +18569,6 @@ void app_dome_interrupter(void);
 
 
  
-
-
 
 
 
@@ -19419,9 +19422,6 @@ const uint8_t color_blink_buffer[10][3] = { { 255, 255, 255 },
 };
 
 
-#line 373 "..\\App\\src\\app_dome.c"
-
-
 void app_dome_Init(void) {
 	color_blink_index = 10 - 1;
 
@@ -19592,7 +19592,7 @@ static void app_dome_subDome_pro(uint8_t subIndex) {
 	subDome_Assist.switch_flag = 0;
 	subDome_Assist.msCnt = 0;
 	subDome_Assist.stopTime = 50;
-#line 559 "..\\App\\src\\app_dome.c"
+#line 218 "..\\App\\src\\app_dome.c"
 }
 
 void app_dome_rgb(uint8_t r, uint8_t g, uint8_t b) {
@@ -19686,7 +19686,7 @@ void app_dome_interrupter(void) {
 
 		if (subDome_Assist.msCnt >= subDome.speed) {
 			subDome_Assist.msCnt = 0;
-#line 676 "..\\App\\src\\app_dome.c"
+#line 335 "..\\App\\src\\app_dome.c"
 
 			if (subDome.repeate) {
 				subDome.repeate--;

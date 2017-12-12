@@ -17642,6 +17642,11 @@ void Relay_set(uint8_t s);
 
 
 
+
+
+
+
+
 void EEPROM_InitHard(void);
 
 void bsp_eeprom_write_int(uint32_t u32addr, uint32_t u32data);
@@ -17947,16 +17952,15 @@ void Light_InitHard(void) {
 	CLK_SetModuleClock((( 1UL<<31)|( 1<<29)|( 3<<25)|(28<<20)|( 0<<18)|( 0x0<<10)|( 0<<5)|(20<<0)), 0x20000000UL, 0);
 	CLK_SetModuleClock((( 1UL<<31)|( 3<<29)|( 3<<25)|( 4<<20)|( 0<<18)|( 0x0<<10)|( 0<<5)|(22<<0)), 0x00000020UL, 0);
 
-
 	((SYS_T *) (((uint32_t)0x50000000) + 0x00000))->P1_MFP |= 0x04000000UL | 0x08000000UL
 			| 0x10000000UL;
 
 	
-	((PWM_T *) (((uint32_t)0x40000000) + 0x40000))->CTL = (0x1ul << (0)) | (0x1ul << (3));
-		((PWM_T *) (((uint32_t)0x40000000) + 0x40000))->CTL = (0x1ul << (4)) | (0x1ul << (7));
-		((PWM_T *) (((uint32_t)0x40000000) + 0x40000))->CTL = (0x1ul << (16)) | (0x1ul << (19));
-	
-	
+	((PWM_T *) (((uint32_t)0x40000000) + 0x40000))->CTL = (0x1ul << (0)) | (0x1ul << (3)) | (0x1ul << (4))
+			| (0x1ul << (7)) | (0x1ul << (16)) | (0x1ul << (19));
+
+
+
 	((((PWM_T *) (((uint32_t)0x40000000) + 0x40000)))->CLKPSC = ((((PWM_T *) (((uint32_t)0x40000000) + 0x40000)))->CLKPSC & ~((0xfful << (0)) << (((0) >> 1) * 8))) | ((3) << (((0) >> 1) * 8)));
 	((((PWM_T *) (((uint32_t)0x40000000) + 0x40000)))->CLKDIV = ((((PWM_T *) (((uint32_t)0x40000000) + 0x40000)))->CLKDIV & ~((0x7ul << (0)) << ((0) * 4))) | (((4UL)) << ((0) * 4)));
 
@@ -17980,7 +17984,7 @@ void Light_InitHard(void) {
 	PWM_Start(((PWM_T *) (((uint32_t)0x40000000) + 0x40000)), (0x00000002));
 	PWM_Start(((PWM_T *) (((uint32_t)0x40000000) + 0x40000)), (0x00000010));
 
-	(*((volatile uint32_t *)((((uint32_t) & ((((PWM_T *) (((uint32_t)0x40000000) + 0x40000)))->CMPDAT0)) + 0 * 4)))= (1000));
+	(*((volatile uint32_t *)((((uint32_t) & ((((PWM_T *) (((uint32_t)0x40000000) + 0x40000)))->CMPDAT0)) + 0 * 4)))= (10000));
 	(*((volatile uint32_t *) ((((uint32_t)&((((PWM_T *) (((uint32_t)0x40000000) + 0x40000)))->PERIOD0)) + (0) * 4))) = (0xFFFF));
 
 	(*((volatile uint32_t *)((((uint32_t) & ((((PWM_T *) (((uint32_t)0x40000000) + 0x40000)))->CMPDAT0)) + 1 * 4)))= (20000));
@@ -17989,28 +17993,53 @@ void Light_InitHard(void) {
 	(*((volatile uint32_t *)((((uint32_t) & ((((PWM_T *) (((uint32_t)0x40000000) + 0x40000)))->CMPDAT0)) + 4 * 4)))= (50000));
 	(*((volatile uint32_t *) ((((uint32_t)&((((PWM_T *) (((uint32_t)0x40000000) + 0x40000)))->PERIOD0)) + (4) * 4))) = (0xFFFF));
 
+	
+
 
 }
 static void Light_Red_set(uint16_t duty) {
-(*((volatile uint32_t *)((((uint32_t) & ((((PWM_T *) (((uint32_t)0x40000000) + 0x40000)))->CMPDAT0)) + 1 * 4)))= (duty));
+	(*((volatile uint32_t *)((((uint32_t) & ((((PWM_T *) (((uint32_t)0x40000000) + 0x40000)))->CMPDAT0)) + 1 * 4)))= (duty));
 }
 static void Light_Green_set(uint16_t duty) {
-(*((volatile uint32_t *)((((uint32_t) & ((((PWM_T *) (((uint32_t)0x40000000) + 0x40000)))->CMPDAT0)) + 0 * 4)))= (duty));
+	(*((volatile uint32_t *)((((uint32_t) & ((((PWM_T *) (((uint32_t)0x40000000) + 0x40000)))->CMPDAT0)) + 0 * 4)))= (duty));
 }
 static void Light_Blue_set(uint16_t duty) {
-(*((volatile uint32_t *)((((uint32_t) & ((((PWM_T *) (((uint32_t)0x40000000) + 0x40000)))->CMPDAT0)) + 4 * 4)))= (duty));
+	(*((volatile uint32_t *)((((uint32_t) & ((((PWM_T *) (((uint32_t)0x40000000) + 0x40000)))->CMPDAT0)) + 4 * 4)))= (duty));
 }
 
 void Light_RGB_set(uint16_t r, uint16_t g, uint16_t b) {
 	uint32_t tmp = 0;
-#line 95 "..\\Bsp\\src\\bsp_light.c"
-	Light_Red_set(0xFFFF);
-	Light_Green_set(0xFFFF);
-	Light_Blue_set(0xFFFF);
+
+	tmp = r;
+	tmp *= dome_running_param.bright;
+	tmp /= 100;
+	Light_Red_set(tmp & 0xFFFF);
+
+	tmp = g;
+	tmp *= dome_running_param.bright;
+	tmp /= 100;
+	Light_Green_set(tmp & 0xFFFF);
+
+	tmp = b;
+	tmp *= dome_running_param.bright;
+	tmp /= 100;
+	Light_Blue_set(tmp & 0xFFFF);
+
+
+
+
 
 }
 void Light_bright_set(uint8_t br) {
 
-#line 112 "..\\Bsp\\src\\bsp_light.c"
+
+	dome_running_param.bright = br;
+
+	if (dome_running_param.bright < 10) {
+		dome_running_param.bright = 10;
+	}
+	Light_RGB_set(dome_running_param.color.R, dome_running_param.color.G,
+			dome_running_param.color.B);
+
 }
 

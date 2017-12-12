@@ -14,7 +14,7 @@ static uint8_t send_2d4_flag = 0; //0 rcv£¬ 1 send
 static uint8_t rcv_2d4_Buf[PAYLOAD_WIDTH] = { 0 };
 static uint8_t send_2d4_Buf[PAYLOAD_WIDTH] = { 0 };
 
-uint8_t tmpBuf[8] = { 0 };
+//uint8_t tmpBuf[8] = { 0 };
 
 //static uint8_t test_vol = 0;
 //static uint8_t test_yinxiang_status = 0;
@@ -57,12 +57,13 @@ void app_2d4_send(uint8_t *d, uint8_t len) {
 	memcpy(send_2d4_Buf, d, len);
 	RF_TxData(send_2d4_Buf, sizeof(send_2d4_Buf));
 
+	RF_RxMode();
 	send_2d4_flag = 0;
 #endif
 
 }
 #if DEBUG
-idata char sss[32] = {0};
+char sss[32] = {0};
 #endif
 static void app_2d4_Rcv(uint8_t *buf) {
 	uint8_t tmp = 0;
@@ -73,7 +74,7 @@ static void app_2d4_Rcv(uint8_t *buf) {
 	sprintf(sss, "rcv %02X %02X %02X %02X %02X %02X\r\n", (uint16_t) buf[0],
 			(uint16_t) buf[1], (uint16_t) buf[2], (uint16_t) buf[3],
 			(uint16_t) buf[4], (uint16_t) buf[5]);
-	printf(sss);
+	log_debug(sss);
 #endif
 	if (buf[0] != LCD2LAMP_HEADER) {
 		return;
@@ -437,7 +438,7 @@ void app_2d4_pro(void) {
 		if (ucRF_DumpRxData(rcv_2d4_Buf, sizeof(rcv_2d4_Buf))) {
 			app_2d4_Rcv(rcv_2d4_Buf);
 
-			Relay_toggle();
+//			Relay_toggle();
 		}
 	}
 }

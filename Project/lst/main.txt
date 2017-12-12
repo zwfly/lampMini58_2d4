@@ -99,19 +99,19 @@
 ;;;71     	SYS_Init();
 000002  f7fffffe          BL       SYS_Init
 ;;;72     
-;;;73     	bsp_Init();
-000006  f7fffffe          BL       bsp_Init
-;;;74     
-;;;75     #if 1
-;;;76     	LITE_openlog("lamp");
-00000a  a043              ADR      r0,|L2.280|
-00000c  f7fffffe          BL       LITE_openlog
-;;;77     	LITE_set_loglevel(LOG_DEBUG_LEVEL);
-000010  2005              MOVS     r0,#5
-000012  f7fffffe          BL       LITE_set_loglevel
-;;;78     #else
-;;;79     	LITE_closelog();
-;;;80     #endif
+;;;73     #if 1
+;;;74     	LITE_openlog("lamp");
+000006  a044              ADR      r0,|L2.280|
+000008  f7fffffe          BL       LITE_openlog
+;;;75     	LITE_set_loglevel(LOG_DEBUG_LEVEL);
+00000c  2005              MOVS     r0,#5
+00000e  f7fffffe          BL       LITE_set_loglevel
+;;;76     #else
+;;;77     	LITE_closelog();
+;;;78     #endif
+;;;79     
+;;;80     	bsp_Init();
+000012  f7fffffe          BL       bsp_Init
 ;;;81     
 ;;;82     	log_debug(" CPU @ %dHz\r\n", SystemCoreClock);
 000016  4842              LDR      r0,|L2.288|
@@ -138,138 +138,146 @@
 ;;;91     	log_debug("submode size: %d", sizeof(SUBDOME_T));
 ;;;92     	log_debug("color size: %d", sizeof(COLOR_T));
 ;;;93     #endif
-;;;94     //	int i = 0;
-;;;95     
-;;;96     	/**************/
-;;;97     	app_2d4_init();
+;;;94     
+;;;95     	/**************/
+;;;96     	app_2d4_init();
 000034  f7fffffe          BL       app_2d4_init
-;;;98     	app_work_Init();
+;;;97     	app_work_Init();
 000038  f7fffffe          BL       app_work_Init
 00003c  2400              MOVS     r4,#0
                   |L2.62|
-;;;99     
-;;;100    	/**************/
-;;;101    	while (1) {
-;;;102    		if (timer0_taskTimer_get()->flag_1ms) {
+;;;98     
+;;;99     	/**************/
+;;;100    //	uint32_t aa = 0;
+;;;101    
+;;;102    //	SYS_UnlockReg();
+;;;103    //	FMC_Open();
+;;;104    //	aa = app_eeprom_read_int(0);
+;;;105    //	FMC_Close();
+;;;106    //	SYS_LockReg();
+;;;107    //	log_debug("test: %X", aa);
+;;;108    
+;;;109    	while (1) {
+;;;110    		if (timer0_taskTimer_get()->flag_1ms) {
 00003e  f7fffffe          BL       timer0_taskTimer_get
 000042  7800              LDRB     r0,[r0,#0]
 000044  2800              CMP      r0,#0
 000046  d002              BEQ      |L2.78|
-;;;103    			timer0_taskTimer_get()->flag_1ms = 0;
+;;;111    			timer0_taskTimer_get()->flag_1ms = 0;
 000048  f7fffffe          BL       timer0_taskTimer_get
 00004c  7004              STRB     r4,[r0,#0]
                   |L2.78|
-;;;104    			//////////////////
-;;;105    #if 0
-;;;106    			dome_cnt++;
-;;;107    			if (dome_running_param.speed >= 50) {
-;;;108    				if (dome_cnt > (10 + (dome_running_param.speed - 50) / 3)) {
-;;;109    					dome_cnt = 0;
-;;;110    					app_dome_interrupter();
-;;;111    				}
-;;;112    			} else {
-;;;113    				if (dome_cnt > (10 - (50 - dome_running_param.speed) / 6)) {
-;;;114    					dome_cnt = 0;
-;;;115    					app_dome_interrupter();
-;;;116    				}
-;;;117    			}
-;;;118    #endif
-;;;119    		}
-;;;120    
-;;;121    		if (timer0_taskTimer_get()->flag_10ms) {
+;;;112    			//////////////////
+;;;113    #if 0
+;;;114    			dome_cnt++;
+;;;115    			if (dome_running_param.speed >= 50) {
+;;;116    				if (dome_cnt > (10 + (dome_running_param.speed - 50) / 3)) {
+;;;117    					dome_cnt = 0;
+;;;118    					app_dome_interrupter();
+;;;119    				}
+;;;120    			} else {
+;;;121    				if (dome_cnt > (10 - (50 - dome_running_param.speed) / 6)) {
+;;;122    					dome_cnt = 0;
+;;;123    					app_dome_interrupter();
+;;;124    				}
+;;;125    			}
+;;;126    #endif
+;;;127    		}
+;;;128    
+;;;129    		if (timer0_taskTimer_get()->flag_10ms) {
 00004e  f7fffffe          BL       timer0_taskTimer_get
 000052  7880              LDRB     r0,[r0,#2]
 000054  2800              CMP      r0,#0
 000056  d006              BEQ      |L2.102|
-;;;122    			timer0_taskTimer_get()->flag_10ms = 0;
+;;;130    			timer0_taskTimer_get()->flag_10ms = 0;
 000058  f7fffffe          BL       timer0_taskTimer_get
 00005c  7084              STRB     r4,[r0,#2]
-;;;123    			//////////////////
-;;;124    			bsp_KeyScan();
+;;;131    			//////////////////
+;;;132    			bsp_KeyScan();
 00005e  f7fffffe          BL       bsp_KeyScan
-;;;125    //			app_uart_pro();
-;;;126    			app_2d4_pro();
+;;;133    //			app_uart_pro();
+;;;134    			app_2d4_pro();
 000062  f7fffffe          BL       app_2d4_pro
                   |L2.102|
-;;;127    		}
-;;;128    		if (timer0_taskTimer_get()->flag_100ms) {
+;;;135    		}
+;;;136    		if (timer0_taskTimer_get()->flag_100ms) {
 000066  f7fffffe          BL       timer0_taskTimer_get
 00006a  7900              LDRB     r0,[r0,#4]
 00006c  2800              CMP      r0,#0
 00006e  d002              BEQ      |L2.118|
-;;;129    			timer0_taskTimer_get()->flag_100ms = 0;
+;;;137    			timer0_taskTimer_get()->flag_100ms = 0;
 000070  f7fffffe          BL       timer0_taskTimer_get
 000074  7104              STRB     r4,[r0,#4]
                   |L2.118|
-;;;130    			//////////////////
-;;;131    
-;;;132    //			app_work_100ms_pro();
-;;;133    //			Repeat_Pro();
-;;;134    
-;;;135    		}
-;;;136    		if (timer0_taskTimer_get()->flag_500ms) {
+;;;138    			//////////////////
+;;;139    
+;;;140    //			app_work_100ms_pro();
+;;;141    //			Repeat_Pro();
+;;;142    
+;;;143    		}
+;;;144    		if (timer0_taskTimer_get()->flag_500ms) {
 000076  f7fffffe          BL       timer0_taskTimer_get
 00007a  7980              LDRB     r0,[r0,#6]
 00007c  2800              CMP      r0,#0
 00007e  d002              BEQ      |L2.134|
-;;;137    			timer0_taskTimer_get()->flag_500ms = 0;
+;;;145    			timer0_taskTimer_get()->flag_500ms = 0;
 000080  f7fffffe          BL       timer0_taskTimer_get
 000084  7184              STRB     r4,[r0,#6]
                   |L2.134|
-;;;138    			//////////////////
-;;;139    
-;;;140    		}
-;;;141    		if (timer0_taskTimer_get()->flag_1s) {
+;;;146    			//////////////////
+;;;147    
+;;;148    		}
+;;;149    		if (timer0_taskTimer_get()->flag_1s) {
 000086  f7fffffe          BL       timer0_taskTimer_get
 00008a  7a80              LDRB     r0,[r0,#0xa]
 00008c  2800              CMP      r0,#0
 00008e  d00d              BEQ      |L2.172|
-;;;142    			timer0_taskTimer_get()->flag_1s = 0;
+;;;150    			timer0_taskTimer_get()->flag_1s = 0;
 000090  f7fffffe          BL       timer0_taskTimer_get
-;;;143    			//////////////////
-;;;144    			static uint32_t cnt = 0;
-;;;145    			cnt++;
+;;;151    			//////////////////
+;;;152    			static uint32_t cnt = 0;
+;;;153    			cnt++;
 000094  4933              LDR      r1,|L2.356|
-000096  7284              STRB     r4,[r0,#0xa]          ;142
+000096  7284              STRB     r4,[r0,#0xa]          ;150
 000098  6808              LDR      r0,[r1,#0]  ; cnt
-;;;146    			log_debug("I am alive %d", cnt);
+;;;154    			log_debug("I am alive %d", cnt);
 00009a  a333              ADR      r3,|L2.360|
-00009c  1c40              ADDS     r0,r0,#1              ;145
+00009c  1c40              ADDS     r0,r0,#1              ;153
 00009e  6008              STR      r0,[r1,#0]  ; cnt
 0000a0  9000              STR      r0,[sp,#0]
 0000a2  2205              MOVS     r2,#5
-0000a4  2192              MOVS     r1,#0x92
+0000a4  219a              MOVS     r1,#0x9a
 0000a6  4823              LDR      r0,|L2.308|
 0000a8  f7fffffe          BL       LITE_syslog
                   |L2.172|
-;;;147    
-;;;148    			//			app_work_1s_pro();
-;;;149    
-;;;150    		}
-;;;151    
-;;;152    		//////
-;;;153    		ucKeyCode = bsp_GetKey();
+;;;155    
+;;;156    			//			app_work_1s_pro();
+;;;157    
+;;;158    		}
+;;;159    
+;;;160    		//////
+;;;161    		ucKeyCode = bsp_GetKey();
 0000ac  f7fffffe          BL       bsp_GetKey
-;;;154    		if (ucKeyCode != KEY_NONE) {
+;;;162    		if (ucKeyCode != KEY_NONE) {
 0000b0  2800              CMP      r0,#0
 0000b2  d0c4              BEQ      |L2.62|
-;;;155    			switch (ucKeyCode) {
+;;;163    			switch (ucKeyCode) {
 0000b4  0003              MOVS     r3,r0
 0000b6  f7fffffe          BL       __ARM_common_switch8
 0000ba  0705              DCB      0x07,0x05
 0000bc  0a061b23          DCB      0x0a,0x06,0x1b,0x23
 0000c0  1f270500          DCB      0x1f,0x27,0x05,0x00
 0000c4  e7bb              B        |L2.62|
-;;;156    			case KEY_UP_K1:   //ACC
-;;;157    				log_debug("ACC KEY up");
+;;;164    			case KEY_UP_K1:   //ACC
+;;;165    				log_debug("ACC KEY up");
 0000c6  2205              MOVS     r2,#5
 0000c8  a32b              ADR      r3,|L2.376|
-0000ca  219d              MOVS     r1,#0x9d
-;;;158    
-;;;159    				break;
+0000ca  21a5              MOVS     r1,#0xa5
+;;;166    
+;;;167    				break;
 0000cc  e01f              B        |L2.270|
-;;;160    			case KEY_DOWN_K1:
-;;;161    				log_debug("relay %s", Relay_IsOn() ? "on" : "off");
+;;;168    			case KEY_DOWN_K1:
+;;;169    				log_debug("relay %s", Relay_IsOn() ? "on" : "off");
 0000ce  f7fffffe          BL       Relay_IsOn
 0000d2  2800              CMP      r0,#0
 0000d4  d001              BEQ      |L2.218|
@@ -281,53 +289,53 @@
 0000dc  9000              STR      r0,[sp,#0]
 0000de  a32b              ADR      r3,|L2.396|
 0000e0  2205              MOVS     r2,#5
-0000e2  21a1              MOVS     r1,#0xa1
+0000e2  21a9              MOVS     r1,#0xa9
 0000e4  4813              LDR      r0,|L2.308|
 0000e6  f7fffffe          BL       LITE_syslog
-;;;162    
-;;;163    				Relay_toggle();
+;;;170    
+;;;171    				Relay_toggle();
 0000ea  f7fffffe          BL       Relay_toggle
-;;;164    				break;
+;;;172    				break;
 0000ee  e7a6              B        |L2.62|
-;;;165    			case KEY_LONG_K1:
-;;;166    				log_debug("ACC KEY down");
+;;;173    			case KEY_LONG_K1:
+;;;174    				log_debug("ACC KEY down");
 0000f0  2205              MOVS     r2,#5
 0000f2  a329              ADR      r3,|L2.408|
-0000f4  21a6              MOVS     r1,#0xa6
-;;;167    				break;
+0000f4  21ae              MOVS     r1,#0xae
+;;;175    				break;
 0000f6  e00a              B        |L2.270|
-;;;168    			case KEY_UP_K2:   //LED
-;;;169    				log_debug("LED KEY up");
+;;;176    			case KEY_UP_K2:   //LED
+;;;177    				log_debug("LED KEY up");
 0000f8  2205              MOVS     r2,#5
 0000fa  a32b              ADR      r3,|L2.424|
-0000fc  21a9              MOVS     r1,#0xa9
-;;;170    				break;
+0000fc  21b1              MOVS     r1,#0xb1
+;;;178    				break;
 0000fe  e006              B        |L2.270|
-;;;171    			case KEY_DOWN_K2:
-;;;172    				log_debug("LED KEY down");
+;;;179    			case KEY_DOWN_K2:
+;;;180    				log_debug("LED KEY down");
 000100  2205              MOVS     r2,#5
 000102  a32c              ADR      r3,|L2.436|
-000104  21ac              MOVS     r1,#0xac
-;;;173    
-;;;174    				break;
+000104  21b4              MOVS     r1,#0xb4
+;;;181    
+;;;182    				break;
 000106  e002              B        |L2.270|
-;;;175    			case KEY_LONG_K2:
-;;;176    				log_debug("LED KEY long");
+;;;183    			case KEY_LONG_K2:
+;;;184    				log_debug("LED KEY long");
 000108  2205              MOVS     r2,#5
 00010a  a32e              ADR      r3,|L2.452|
-00010c  21b0              MOVS     r1,#0xb0
+00010c  21b8              MOVS     r1,#0xb8
                   |L2.270|
 00010e  4809              LDR      r0,|L2.308|
 000110  f7fffffe          BL       LITE_syslog
 000114  e793              B        |L2.62|
-;;;177    				break;
-;;;178    			}
-;;;179    		}
-;;;180    
-;;;181    	}
-;;;182    
-;;;183    }
-;;;184    
+;;;185    				break;
+;;;186    			}
+;;;187    		}
+;;;188    
+;;;189    	}
+;;;190    
+;;;191    }
+;;;192    
                           ENDP
 
 000116  0000              DCW      0x0000

@@ -19131,8 +19131,8 @@ N#define BSP_INC_BSP_2D4_H_
 N
 N#define         CSN_HIGH                (P04 = 1)
 N#define         CSN_LOW                 (P04 = 0)
-N#define         SCK_HIGH                (P07 = 1)
-N#define         SCK_LOW                 (P07 = 0)
+N#define         SCK_HIGH                P07 = 1;delay_2d4(1)
+N#define         SCK_LOW                 P07 = 0;delay_2d4(1)
 N
 N#define         SPI_DATA_HIGH           (P05 = 1)
 N#define         SPI_DATA_LOW            (P05 = 0)
@@ -19349,6 +19349,11 @@ N
 N#ifndef BSP_INC_BSP_EEPROM_H_
 N#define BSP_INC_BSP_EEPROM_H_
 N
+N//#define DOME_START_ADDR   0x3C00  //use 3KB
+N//#define DOME_START_ADDR   0x3E00  //use 2.5KB
+N#define DOME_START_ADDR   0x6C00  //use 5KB
+N
+N
 Nvoid EEPROM_InitHard(void);
 N
 Nvoid bsp_eeprom_write_int(uint32_t u32addr, uint32_t u32data);
@@ -19488,7 +19493,7 @@ N#endif
 N
 N#if UART1_FIFO_EN == 1
 X#if 1 == 1
-N#define UART1_BAUD			115200
+N#define UART1_BAUD			19200
 N#define UART1_TX_BUF_SIZE	1*256
 N#define UART1_RX_BUF_SIZE	1*256
 N#endif
@@ -19577,6 +19582,13 @@ N//	GPIO_Init(GPIOB, GPIO_Pin_5, GPIO_Mode_Out_PP_Low_Fast); //SCK PIN output Lo
 N//	GPIO_Init(GPIOB, GPIO_Pin_6, GPIO_Mode_Out_PP_High_Fast); //DATA PIN output  DEFAULT  High pulling push
 N}
 N
+Nstatic void delay_2d4(uint8_t n) {
+N	uint8_t i = 0;
+N
+N	for (i = 0; i < n; i++);
+N
+N}
+N
 N/******************************************************************************/
 N//           SPI_WW
 N//                SPI Write a byte for write regiest
@@ -19585,7 +19597,7 @@ Nvoid SPI_WW(uint8_t R_REG) {
 N	uint8_t i;
 N	for (i = 0; i < 8; i++) {
 N		SCK_LOW;
-X		((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((7)<<2)))) = 0);
+X		(*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((7)<<2)))) = 0;delay_2d4(1);
 N		if (R_REG & 0x80) {
 N			SPI_DATA_HIGH;
 X			((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((5)<<2)))) = 1);
@@ -19595,13 +19607,12 @@ X			((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + 
 N		}
 N		R_REG <<= 1;
 N		SCK_HIGH;
-X		((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((7)<<2)))) = 1);
+X		(*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((7)<<2)))) = 1;delay_2d4(1);
 N		__NOP;
 X		__nop;
 N	}
 N	SCK_LOW;
-X	((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((7)<<2)))) = 0);
-N
+X	(*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((7)<<2)))) = 0;delay_2d4(1);
 N}
 N
 N/******************************************************************************/
@@ -19613,10 +19624,10 @@ N	CSN_LOW;
 X	((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((4)<<2)))) = 0);
 N	__NOP;
 X	__nop;
-N	SPI_WW( reg);
+N	SPI_WW(reg);
 N	SPI_WW(wdata);
-N	__NOP; 
-X	__nop; 
+N	__NOP;
+X	__nop;
 N	CSN_HIGH;
 X	((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((4)<<2)))) = 1);
 N}
@@ -19647,7 +19658,7 @@ Nvoid SPI_WR(uint8_t R_REG) {
 N	uint8_t i;
 N	for (i = 0; i < 8; i++) {
 N		SCK_LOW;
-X		((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((7)<<2)))) = 0);
+X		(*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((7)<<2)))) = 0;delay_2d4(1);
 N		if (R_REG & 0x80) {
 N			SPI_DATA_HIGH;
 X			((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((5)<<2)))) = 1);
@@ -19657,14 +19668,15 @@ X			((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + 
 N		}
 N		R_REG <<= 1;
 N		SCK_HIGH;
-X		((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((7)<<2)))) = 1);
+X		(*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((7)<<2)))) = 1;delay_2d4(1);
 N		__NOP;
 X		__nop;
 N	}
-N	SPI_DATA_INPUT_MODE;
-X	GPIO_SetMode(((GPIO_T *) (((uint32_t)0x50000000) + 0x04000)), (0x00000020), 0x0UL);;
+N	SPI_DATA_INPUT_MODE
+X	GPIO_SetMode(((GPIO_T *) (((uint32_t)0x50000000) + 0x04000)), (0x00000020), 0x0UL);
+N	;
 N	SCK_LOW;
-X	((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((7)<<2)))) = 0);
+X	(*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((7)<<2)))) = 0;delay_2d4(1);
 N
 N}
 N
@@ -19677,17 +19689,17 @@ N	uint8_t i, dt;
 N	dt = 0;
 N	for (i = 0; i < 8; i++) {
 N		SCK_LOW;
-X		((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((7)<<2)))) = 0);
+X		(*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((7)<<2)))) = 0;delay_2d4(1);
 N		dt = dt << 1;
 N		SCK_HIGH;
-X		((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((7)<<2)))) = 1);
+X		(*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((7)<<2)))) = 1;delay_2d4(1);
 N		if (SPI_DATA_STATUS) {
 X		if (((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((5)<<2)))))) {
 N			dt |= 0x01;
 N		}
 N	}
 N	SCK_LOW;
-X	((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((7)<<2)))) = 0);
+X	(*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((7)<<2)))) = 0;delay_2d4(1);
 N	return dt;
 N}
 N
@@ -19702,10 +19714,11 @@ N	CSN_LOW;
 X	((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((4)<<2)))) = 0);
 N	__NOP;
 X	__nop;
-N	SPI_WR( reg);
+N	SPI_WR(reg);
 N	dt = ucSPI_Read();
-N	SPI_DATA_OUTPUT_MODE;
-X	GPIO_SetMode(((GPIO_T *) (((uint32_t)0x50000000) + 0x04000)), (0x00000020), 0x1UL);;
+N	SPI_DATA_OUTPUT_MODE
+X	GPIO_SetMode(((GPIO_T *) (((uint32_t)0x50000000) + 0x04000)), (0x00000020), 0x1UL);
+N	;
 N	__NOP;
 X	__nop;
 N	CSN_HIGH;
@@ -19726,8 +19739,9 @@ X	((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((
 N	SPI_WR(reg);
 N	for (byte_ctr = 0; byte_ctr < length; byte_ctr++)
 N		pBuf[byte_ctr] = ucSPI_Read();
-N	SPI_DATA_OUTPUT_MODE;
-X	GPIO_SetMode(((GPIO_T *) (((uint32_t)0x50000000) + 0x04000)), (0x00000020), 0x1UL);;
+N	SPI_DATA_OUTPUT_MODE
+X	GPIO_SetMode(((GPIO_T *) (((uint32_t)0x50000000) + 0x04000)), (0x00000020), 0x1UL);
+N	;
 N	CSN_HIGH;
 X	((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((4)<<2)))) = 1);
 N}
@@ -19939,13 +19953,13 @@ N
 N#if(TRANSMIT_TYPE == TRANS_ENHANCE_MODE)
 X#if(2 == 1)
 S	RF_WriteReg(W_REGISTER + SETUP_RETR, 0x03);					//  3 retrans...
-S	RF_WriteReg(W_REGISTER + EN_AA, 0x01);				// Enable Auto.Ack:Pipe0
+S	RF_WriteReg(W_REGISTER + EN_AA, 0x01);// Enable Auto.Ack:Pipe0
 N#elif(TRANSMIT_TYPE == TRANS_BURST_MODE)
 X#elif(2 == 2)
-N			RF_WriteReg(W_REGISTER + SETUP_RETR, 0x00);	// Disable retrans...
-X			RF_WriteReg(0x20 + 0x04, 0x00);	
-N			RF_WriteReg(W_REGISTER + EN_AA, 0x00);// Disable AutoAck
-X			RF_WriteReg(0x20 + 0x01, 0x00);
+N	RF_WriteReg(W_REGISTER + SETUP_RETR, 0x00);	// Disable retrans...
+X	RF_WriteReg(0x20 + 0x04, 0x00);	
+N	RF_WriteReg(W_REGISTER + EN_AA, 0x00);	// Disable AutoAck
+X	RF_WriteReg(0x20 + 0x01, 0x00);	
 N#endif
 N
 N}
@@ -19971,12 +19985,12 @@ N	CE_LOW;
 X	RF_WriteReg(0xFC, 0);
 N//	delay_ms(200);
 N	for (i = 0; i < 220; i++) {
-N		__NOP; 
-X		__nop; 
 N		__NOP;
 X		__nop;
-N		__NOP; 
-X		__nop; 
+N		__NOP;
+X		__nop;
+N		__NOP;
+X		__nop;
 N		__NOP;
 X		__nop;
 N	}

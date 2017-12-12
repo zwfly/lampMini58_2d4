@@ -17635,6 +17635,11 @@ void Relay_set(uint8_t s);
 
 
 
+
+
+
+
+
 void EEPROM_InitHard(void);
 
 void bsp_eeprom_write_int(uint32_t u32addr, uint32_t u32data);
@@ -18086,7 +18091,7 @@ static void InitHardUart(void) {
 	SYS_ResetModule((0x1ul << (17)));
 
 	 
-	UART_Open(((UART_T *) (((uint32_t)0x40100000) + 0x50000)), 115200);
+	UART_Open(((UART_T *) (((uint32_t)0x40100000) + 0x50000)), 19200);
 
 
 

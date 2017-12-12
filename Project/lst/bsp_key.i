@@ -17650,6 +17650,11 @@ void Relay_set(uint8_t s);
 
 
 
+
+
+
+
+
 void EEPROM_InitHard(void);
 
 void bsp_eeprom_write_int(uint32_t u32addr, uint32_t u32data);

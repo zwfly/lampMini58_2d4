@@ -17635,6 +17635,11 @@ void Relay_set(uint8_t s);
 
 
 
+
+
+
+
+
 void EEPROM_InitHard(void);
 
 void bsp_eeprom_write_int(uint32_t u32addr, uint32_t u32data);
@@ -17826,19 +17831,19 @@ void bsp_Init(void);
 
 void bsp_Init(void) {
 
+	bsp_InitUart();
+
+	EEPROM_InitHard();
+
 	Wireless2d4_InitHard();
-	
+
 	Relay_InitHard();
 
 	bsp_InitKey();
 
 	Light_InitHard();
-	
-		bsp_InitUart();
-	
+
 	Timer0_InitHard();
-
-
 
 }
 

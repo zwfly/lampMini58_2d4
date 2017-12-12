@@ -18085,6 +18085,11 @@ void Relay_set(uint8_t s);
 
 
 
+
+
+
+
+
 void EEPROM_InitHard(void);
 
 void bsp_eeprom_write_int(uint32_t u32addr, uint32_t u32data);
@@ -18568,8 +18573,6 @@ void app_dome_interrupter(void);
 
 
  
-
-
 
 
 
@@ -19438,8 +19441,6 @@ int main(void) {
 	 
 	SYS_Init();
 
-	bsp_Init();
-
 
 	LITE_openlog("lamp");
 	LITE_set_loglevel(LOG_DEBUG_LEVEL);
@@ -19447,22 +19448,32 @@ int main(void) {
 
 
 
+	bsp_Init();
+
 	LITE_syslog(__FUNCTION__, 82, LOG_DEBUG_LEVEL, " CPU @ %dHz\r\n", SystemCoreClock);
 
 	LITE_syslog(__FUNCTION__, 84, LOG_DEBUG_LEVEL, "+-------------------------------------+ ");
 #line 94 "..\\App\\src\\main.c"
-
 
 	 
 	app_2d4_init();
 	app_work_Init();
 
 	 
+
+
+
+
+
+
+
+
+
 	while (1) {
 		if (timer0_taskTimer_get()->flag_1ms) {
 			timer0_taskTimer_get()->flag_1ms = 0;
 			
-#line 119 "..\\App\\src\\main.c"
+#line 127 "..\\App\\src\\main.c"
 		}
 
 		if (timer0_taskTimer_get()->flag_10ms) {
@@ -19490,7 +19501,7 @@ int main(void) {
 			
 			static uint32_t cnt = 0;
 			cnt++;
-			LITE_syslog(__FUNCTION__, 146, LOG_DEBUG_LEVEL, "I am alive %d", cnt);
+			LITE_syslog(__FUNCTION__, 154, LOG_DEBUG_LEVEL, "I am alive %d", cnt);
 
 			
 
@@ -19501,26 +19512,26 @@ int main(void) {
 		if (ucKeyCode != KEY_NONE) {
 			switch (ucKeyCode) {
 			case KEY_1_UP:   
-				LITE_syslog(__FUNCTION__, 157, LOG_DEBUG_LEVEL, "ACC KEY up");
+				LITE_syslog(__FUNCTION__, 165, LOG_DEBUG_LEVEL, "ACC KEY up");
 
 				break;
 			case KEY_1_DOWN:
-				LITE_syslog(__FUNCTION__, 161, LOG_DEBUG_LEVEL, "relay %s", Relay_IsOn() ? "on" : "off");
+				LITE_syslog(__FUNCTION__, 169, LOG_DEBUG_LEVEL, "relay %s", Relay_IsOn() ? "on" : "off");
 
 				Relay_toggle();
 				break;
 			case KEY_1_LONG:
-				LITE_syslog(__FUNCTION__, 166, LOG_DEBUG_LEVEL, "ACC KEY down");
+				LITE_syslog(__FUNCTION__, 174, LOG_DEBUG_LEVEL, "ACC KEY down");
 				break;
 			case KEY_2_UP:   
-				LITE_syslog(__FUNCTION__, 169, LOG_DEBUG_LEVEL, "LED KEY up");
+				LITE_syslog(__FUNCTION__, 177, LOG_DEBUG_LEVEL, "LED KEY up");
 				break;
 			case KEY_2_DOWN:
-				LITE_syslog(__FUNCTION__, 172, LOG_DEBUG_LEVEL, "LED KEY down");
+				LITE_syslog(__FUNCTION__, 180, LOG_DEBUG_LEVEL, "LED KEY down");
 
 				break;
 			case KEY_2_LONG:
-				LITE_syslog(__FUNCTION__, 176, LOG_DEBUG_LEVEL, "LED KEY long");
+				LITE_syslog(__FUNCTION__, 184, LOG_DEBUG_LEVEL, "LED KEY long");
 				break;
 			}
 		}

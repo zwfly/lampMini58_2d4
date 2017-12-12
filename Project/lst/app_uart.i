@@ -18081,6 +18081,11 @@ void Relay_set(uint8_t s);
 
 
 
+
+
+
+
+
 void EEPROM_InitHard(void);
 
 void bsp_eeprom_write_int(uint32_t u32addr, uint32_t u32data);
@@ -18564,8 +18569,6 @@ void app_dome_interrupter(void);
 
 
  
-
-
 
 
 
@@ -19442,11 +19445,9 @@ static void app_RC_Receiver_cmd_pro(Uart_ST* st) {
 	switch (st->rxBuf[(st->pRead + 3) % sizeof(st->rxBuf)]) {
 	case 0x12:  
 	{
-
 		break;
 		uint16_t index = 0;
 		index = st->rxBuf[(st->pRead + 12) % sizeof(st->rxBuf)];
-
 		if (index
 				>= ((0x00008000UL - 0x6C00) / sizeof(DOME_DEFAULT_T)
 						- 1)) {
@@ -19462,7 +19463,7 @@ static void app_RC_Receiver_cmd_pro(Uart_ST* st) {
 				app_eeprom_erase(i * 0x200);
 			}
 		}
-#line 92 "..\\App\\src\\app_uart.c"
+#line 90 "..\\App\\src\\app_uart.c"
 		tmp = st->rxBuf[(st->pRead + 13) % sizeof(st->rxBuf)] & 0x0F; 
 
 		uint8_t n = (tmp * sizeof(SUBDOME_T) + sizeof(DOME_HEADER_T));
@@ -19538,7 +19539,7 @@ static void app_RC_Receiver_cmd_pro(Uart_ST* st) {
 		index++;
 		app_2d4_send(buffer, index);
 		break;
-#line 183 "..\\App\\src\\app_uart.c"
+#line 181 "..\\App\\src\\app_uart.c"
 	case 0x33:
 		buffer[index++] = 0xF8;
 		buffer[index++] = len;
@@ -19670,6 +19671,7 @@ static void app_RC_Receiver_cmd_pro(Uart_ST* st) {
 		break;
 	case 0x62:
 
+		g_tWork.status.bits.DEMO = 0;
 		app_dome_rgb(st->rxBuf[(st->pRead + 4) % sizeof(st->rxBuf)],
 				st->rxBuf[(st->pRead + 5) % sizeof(st->rxBuf)],
 				st->rxBuf[(st->pRead + 6) % sizeof(st->rxBuf)]);
@@ -19730,8 +19732,7 @@ void app_uart_pro(void) {
 				if (((uart_st.rxBuf[uart_st.pRead]) == 0x55)
 						&& ((uart_st.rxBuf[(uart_st.pRead + 1)
 								% sizeof(uart_st.rxBuf)]) == 0xAA)) {
-					uint8_t index = 2;
-					uint8_t len = uart_st.rxBuf[(uart_st.pRead + index++)
+					uint8_t len = uart_st.rxBuf[(uart_st.pRead + 2)
 							% sizeof(uart_st.rxBuf)];
 					if ((uart_st.pWrite + sizeof(uart_st.rxBuf) - uart_st.pRead)
 							% sizeof(uart_st.rxBuf) >= (len + 4)) {
@@ -19741,7 +19742,7 @@ void app_uart_pro(void) {
 										uart_st.rxBuf + uart_st.pRead, len + 3,
 										uart_st.pRead, sizeof(uart_st.rxBuf))) {
 							uart_st.pRead++;
-							LITE_syslog(__FUNCTION__, 385, LOG_ERR_LEVEL, "[ERROR]   remote control check error!\r\n");
+							LITE_syslog(__FUNCTION__, 383, LOG_ERR_LEVEL, "[ERROR]   remote control check error!\r\n");
 
 						} else {
 							 
@@ -19761,5 +19762,5 @@ void app_uart_pro(void) {
 		break;
 
 	}
-#line 737 "..\\App\\src\\app_uart.c"
+#line 735 "..\\App\\src\\app_uart.c"
 }

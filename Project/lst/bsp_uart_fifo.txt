@@ -349,37 +349,37 @@
 000020  6050              STR      r0,[r2,#4]
 000022  0290              LSLS     r0,r2,#10
 000024  f7fffffe          BL       SYS_ResetModule
-000028  25e1              MOVS     r5,#0xe1
-00002a  026d              LSLS     r5,r5,#9
-00002c  4629              MOV      r1,r5
-00002e  480f              LDR      r0,|L6.108|
-000030  f7fffffe          BL       UART_Open
-000034  4e0a              LDR      r6,|L6.96|
-000036  1c76              ADDS     r6,r6,#1
-000038  4630              MOV      r0,r6
-00003a  f7fffffe          BL       CLK_EnableModuleClock
-00003e  2200              MOVS     r2,#0
-000040  4621              MOV      r1,r4
-000042  4630              MOV      r0,r6
-000044  f7fffffe          BL       CLK_SetModuleClock
-000048  2030              MOVS     r0,#0x30
-00004a  2105              MOVS     r1,#5
-00004c  0709              LSLS     r1,r1,#28
-00004e  6388              STR      r0,[r1,#0x38]
-000050  1220              ASRS     r0,r4,#8
-000052  f7fffffe          BL       SYS_ResetModule
-000056  4629              MOV      r1,r5
-000058  4805              LDR      r0,|L6.112|
-00005a  f7fffffe          BL       UART_Open
+000028  21e1              MOVS     r1,#0xe1
+00002a  0249              LSLS     r1,r1,#9
+00002c  480f              LDR      r0,|L6.108|
+00002e  f7fffffe          BL       UART_Open
+000032  1c6d              ADDS     r5,r5,#1
+000034  4628              MOV      r0,r5
+000036  f7fffffe          BL       CLK_EnableModuleClock
+00003a  2200              MOVS     r2,#0
+00003c  4621              MOV      r1,r4
+00003e  4628              MOV      r0,r5
+000040  f7fffffe          BL       CLK_SetModuleClock
+000044  2030              MOVS     r0,#0x30
+000046  2105              MOVS     r1,#5
+000048  0709              LSLS     r1,r1,#28
+00004a  6388              STR      r0,[r1,#0x38]
+00004c  1220              ASRS     r0,r4,#8
+00004e  f7fffffe          BL       SYS_ResetModule
+000052  214b              MOVS     r1,#0x4b
+000054  0209              LSLS     r1,r1,#8
+000056  4806              LDR      r0,|L6.112|
+000058  f7fffffe          BL       UART_Open
 ;;;35     
 ;;;36     	InitHardUart(); /* 配置串口的硬件参数(波特率等) */
 ;;;37     
 ;;;38     //	ConfigUartNVIC(); /* 配置串口中断 */
 ;;;39     }
-00005e  bd70              POP      {r4-r6,pc}
+00005c  bd70              POP      {r4-r6,pc}
 ;;;40     
                           ENDP
 
+00005e  0000              DCW      0x0000
                   |L6.96|
                           DCD      0xa7803d10
                   |L6.100|

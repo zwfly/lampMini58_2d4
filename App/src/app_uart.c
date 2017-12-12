@@ -59,14 +59,18 @@ static void app_RC_Receiver_cmd_pro(Uart_ST* st) {
 	switch (st->rxBuf[(st->pRead + 3) % sizeof(st->rxBuf)]) {
 	case BLINK_METHOD_CMD:  //闪法
 	{
+//		break;
+		uint8_t index = st->rxBuf[(st->pRead + 12) % sizeof(st->rxBuf)];
+		uint8_t availableGroup = 0;
+		uint8_t minSpaceBytes = 0;
+		if (sizeof(DOME_DEFAULT_T) % 4) {
+			minSpaceBytes = (sizeof(DOME_DEFAULT_T) / 4) * 4 + 4;
+		} else {
+			minSpaceBytes = sizeof(DOME_DEFAULT_T);
+		}
+		availableGroup = (FMC_APROM_END - DOME_START_ADDR) / minSpaceBytes;
 
-		break;
-		uint16_t index = 0;
-		index = st->rxBuf[(st->pRead + 12) % sizeof(st->rxBuf)];
-
-		if (index
-				>= ((FMC_APROM_END - DOME_START_ADDR) / sizeof(DOME_DEFAULT_T)
-						- 1)) {
+		if (index > (availableGroup - 1)) {
 			break;
 		}
 		FMC_ENABLE_AP_UPDATE();
@@ -92,7 +96,7 @@ static void app_RC_Receiver_cmd_pro(Uart_ST* st) {
 		tmp = st->rxBuf[(st->pRead + 13) % sizeof(st->rxBuf)] & 0x0F; //sub mode number
 
 		uint8_t n = (tmp * sizeof(SUBDOME_T) + sizeof(DOME_HEADER_T));
-		uint8_t minSpaceBytes = sizeof(DOME_DEFAULT_T);
+
 		if (minSpaceBytes % 4) {
 			minSpaceBytes++;
 		}
@@ -311,6 +315,7 @@ static void app_RC_Receiver_cmd_pro(Uart_ST* st) {
 		break;
 	case APP_COLOR_ATLA_CMD:
 #if 1
+		g_tWork.status.bits.DEMO = 0;
 		app_dome_rgb(st->rxBuf[(st->pRead + 4) % sizeof(st->rxBuf)],
 				st->rxBuf[(st->pRead + 5) % sizeof(st->rxBuf)],
 				st->rxBuf[(st->pRead + 6) % sizeof(st->rxBuf)]);
@@ -371,8 +376,7 @@ void app_uart_pro(void) {
 				if (((uart_st.rxBuf[uart_st.pRead]) == 0x55)
 						&& ((uart_st.rxBuf[(uart_st.pRead + 1)
 								% sizeof(uart_st.rxBuf)]) == 0xAA)) {
-					uint8_t index = 2;
-					uint8_t len = uart_st.rxBuf[(uart_st.pRead + index++)
+					uint8_t len = uart_st.rxBuf[(uart_st.pRead + 2)
 							% sizeof(uart_st.rxBuf)];
 					if ((uart_st.pWrite + sizeof(uart_st.rxBuf) - uart_st.pRead)
 							% sizeof(uart_st.rxBuf) >= (len + 4)) {

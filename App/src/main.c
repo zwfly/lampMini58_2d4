@@ -70,14 +70,14 @@ int main(void) {
 	/* Init System */
 	SYS_Init();
 
-	bsp_Init();
-
 #if 1
 	LITE_openlog("lamp");
 	LITE_set_loglevel(LOG_DEBUG_LEVEL);
 #else
 	LITE_closelog();
 #endif
+
+	bsp_Init();
 
 	log_debug(" CPU @ %dHz\r\n", SystemCoreClock);
 
@@ -91,13 +91,21 @@ int main(void) {
 	log_debug("submode size: %d", sizeof(SUBDOME_T));
 	log_debug("color size: %d", sizeof(COLOR_T));
 #endif
-//	int i = 0;
 
 	/**************/
 	app_2d4_init();
 	app_work_Init();
 
 	/**************/
+//	uint32_t aa = 0;
+
+//	SYS_UnlockReg();
+//	FMC_Open();
+//	aa = app_eeprom_read_int(0);
+//	FMC_Close();
+//	SYS_LockReg();
+//	log_debug("test: %X", aa);
+
 	while (1) {
 		if (timer0_taskTimer_get()->flag_1ms) {
 			timer0_taskTimer_get()->flag_1ms = 0;

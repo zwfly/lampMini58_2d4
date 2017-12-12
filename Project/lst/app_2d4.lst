@@ -19698,8 +19698,8 @@ N#define BSP_INC_BSP_2D4_H_
 N
 N#define         CSN_HIGH                (P04 = 1)
 N#define         CSN_LOW                 (P04 = 0)
-N#define         SCK_HIGH                (P07 = 1)
-N#define         SCK_LOW                 (P07 = 0)
+N#define         SCK_HIGH                P07 = 1;delay_2d4(1)
+N#define         SCK_LOW                 P07 = 0;delay_2d4(1)
 N
 N#define         SPI_DATA_HIGH           (P05 = 1)
 N#define         SPI_DATA_LOW            (P05 = 0)
@@ -19916,6 +19916,11 @@ N
 N#ifndef BSP_INC_BSP_EEPROM_H_
 N#define BSP_INC_BSP_EEPROM_H_
 N
+N//#define DOME_START_ADDR   0x3C00  //use 3KB
+N//#define DOME_START_ADDR   0x3E00  //use 2.5KB
+N#define DOME_START_ADDR   0x6C00  //use 5KB
+N
+N
 Nvoid EEPROM_InitHard(void);
 N
 Nvoid bsp_eeprom_write_int(uint32_t u32addr, uint32_t u32data);
@@ -20055,7 +20060,7 @@ N#endif
 N
 N#if UART1_FIFO_EN == 1
 X#if 1 == 1
-N#define UART1_BAUD			115200
+N#define UART1_BAUD			19200
 N#define UART1_TX_BUF_SIZE	1*256
 N#define UART1_RX_BUF_SIZE	1*256
 N#endif
@@ -20439,9 +20444,7 @@ N
 N#ifndef APP_INC_APP_EEPROM_H_
 N#define APP_INC_APP_EEPROM_H_
 N
-N//#define DOME_START_ADDR   0x3C00  //use 3KB
-N//#define DOME_START_ADDR   0x3E00  //use 2.5KB
-N#define DOME_START_ADDR   0x6C00  //use 5KB
+N
 N
 Nvoid app_eeprom_Init(void);
 Nvoid app_eeprom_get_dome_with_index(DOME_DEFAULT_T* dd, uint8_t index);
@@ -21821,7 +21824,7 @@ Xstatic uint8_t rcv_2d4_Buf[16] = { 0 };
 Nstatic uint8_t send_2d4_Buf[PAYLOAD_WIDTH] = { 0 };
 Xstatic uint8_t send_2d4_Buf[16] = { 0 };
 N
-Nuint8_t tmpBuf[8] = { 0 };
+N//uint8_t tmpBuf[8] = { 0 };
 N
 N//static uint8_t test_vol = 0;
 N//static uint8_t test_yinxiang_status = 0;
@@ -21865,13 +21868,14 @@ X	memset(send_2d4_Buf, 0, 16);
 N	memcpy(send_2d4_Buf, d, len);
 N	RF_TxData(send_2d4_Buf, sizeof(send_2d4_Buf));
 N
+N	RF_RxMode();
 N	send_2d4_flag = 0;
 N#endif
 N
 N}
 N#if DEBUG
 X#if 0
-Sidata char sss[32] = {0};
+Schar sss[32] = {0};
 N#endif
 Nstatic void app_2d4_Rcv(uint8_t *buf) {
 N	uint8_t tmp = 0;
@@ -21883,7 +21887,7 @@ X#if 0
 S	sprintf(sss, "rcv %02X %02X %02X %02X %02X %02X\r\n", (uint16_t) buf[0],
 S			(uint16_t) buf[1], (uint16_t) buf[2], (uint16_t) buf[3],
 S			(uint16_t) buf[4], (uint16_t) buf[5]);
-S	printf(sss);
+S	log_debug(sss);
 N#endif
 N	if (buf[0] != LCD2LAMP_HEADER) {
 X	if (buf[0] != 0xF2) {
@@ -22312,7 +22316,7 @@ N	} else {
 N		if (ucRF_DumpRxData(rcv_2d4_Buf, sizeof(rcv_2d4_Buf))) {
 N			app_2d4_Rcv(rcv_2d4_Buf);
 N
-N			Relay_toggle();
+N//			Relay_toggle();
 N		}
 N	}
 N}

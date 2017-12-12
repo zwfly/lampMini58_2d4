@@ -18458,8 +18458,8 @@ void app_uart_pro(void);
 
 
 uint8_t app_CalcCRC8(uint8_t *ptr, uint8_t len);
-uint8_t app_CalcCRC8_cycle(uint8_t *ptr, uint8_t len, uint8_t pos,
-		uint8_t bufLen);
+uint8_t app_CalcCRC8_cycle(uint8_t *ptr, uint16_t len, uint16_t pos,
+		uint16_t bufLen);
 
 #line 23 "..\\App\\inc\\app.h"
 #line 1 "..\\App\\inc\\app_dome.h"
@@ -18548,6 +18548,7 @@ typedef struct _DOME_RUNNING_T {
 } DOME_RUNNING_T;
 #pragma pack()
 
+extern uint8_t blink_number; 
 extern DOME_DEFAULT_T dome_blink;
 extern DOME_RUNNING_T dome_running_param;
 
@@ -18559,7 +18560,7 @@ void app_color_blink_next(void);
 void app_dome_start(uint8_t index, uint8_t dir);
 void app_dome_previous(void);
 void app_dome_next(void);
-void app_dome_get_current_Name(char *name, uint8_t len);
+void app_dome_get_current_Name(uint8_t *name, uint8_t len);
 void app_dome_start_current(void);
 void app_dome_stop_current(void);
 void app_dome_rgb(uint8_t r, uint8_t g, uint8_t b);
@@ -18585,7 +18586,6 @@ void app_eeprom_get_dome_with_index(DOME_DEFAULT_T* dd, uint8_t index);
 void app_eeprom_erase(uint32_t addr);
 void app_eeprom_write_int(uint32_t addr, uint32_t d);
 uint32_t app_eeprom_read_int(uint32_t addr);
-void app_eeprom_write_buf(uint16_t addr, uint8_t *pt, uint8_t len);
 
 #line 25 "..\\App\\inc\\app.h"
 
@@ -19459,27 +19459,35 @@ int main(void) {
 	app_2d4_init();
 	app_work_Init();
 
+	app_uart_Init();
+	app_dome_Init();
 	 
-
-
-
-
-
-
-
-
 
 	while (1) {
 		if (timer0_taskTimer_get()->flag_1ms) {
 			timer0_taskTimer_get()->flag_1ms = 0;
 			
-#line 127 "..\\App\\src\\main.c"
+
+			dome_cnt++;
+			if (dome_running_param.speed >= 50) {
+				if (dome_cnt > (10 + (dome_running_param.speed - 50) / 3)) {
+					dome_cnt = 0;
+					app_dome_interrupter();
+				}
+			} else {
+				if (dome_cnt > (10 - (50 - dome_running_param.speed) / 6)) {
+					dome_cnt = 0;
+					app_dome_interrupter();
+				}
+			}
+
 		}
 
 		if (timer0_taskTimer_get()->flag_10ms) {
 			timer0_taskTimer_get()->flag_10ms = 0;
 			
 			bsp_KeyScan();
+
 
 			app_2d4_pro();
 		}
@@ -19501,37 +19509,73 @@ int main(void) {
 			
 			static uint32_t cnt = 0;
 			cnt++;
-			LITE_syslog(__FUNCTION__, 154, LOG_DEBUG_LEVEL, "I am alive %d", cnt);
 
-			
+
+
 
 		}
+
+		app_uart_pro();
 
 		
 		ucKeyCode = bsp_GetKey();
 		if (ucKeyCode != KEY_NONE) {
+			static uint8_t press_long_lock = 0;
 			switch (ucKeyCode) {
 			case KEY_1_UP:   
-				LITE_syslog(__FUNCTION__, 165, LOG_DEBUG_LEVEL, "ACC KEY up");
+				LITE_syslog(__FUNCTION__, 163, LOG_DEBUG_LEVEL, "ACC KEY up");
 
 				break;
 			case KEY_1_DOWN:
-				LITE_syslog(__FUNCTION__, 169, LOG_DEBUG_LEVEL, "relay %s", Relay_IsOn() ? "on" : "off");
+				LITE_syslog(__FUNCTION__, 167, LOG_DEBUG_LEVEL, "relay %s", Relay_IsOn() ? "on" : "off");
 
 				Relay_toggle();
 				break;
 			case KEY_1_LONG:
-				LITE_syslog(__FUNCTION__, 174, LOG_DEBUG_LEVEL, "ACC KEY down");
+				LITE_syslog(__FUNCTION__, 172, LOG_DEBUG_LEVEL, "ACC KEY down");
 				break;
 			case KEY_2_UP:   
-				LITE_syslog(__FUNCTION__, 177, LOG_DEBUG_LEVEL, "LED KEY up");
+				LITE_syslog(__FUNCTION__, 175, LOG_DEBUG_LEVEL, "LED KEY up");
+
+				if (press_long_lock == 0) {
+					
+					
+					uint8_t buffer[16] = { 0 };
+					if (g_tWork.status.bits.blinkEnable) {
+						uint8_t index = 0, i = 0;
+						app_dome_next();
+						buffer[index++] = 0xF8;
+						buffer[index++] = 9;
+						buffer[index++] = 0x03;
+						app_dome_get_current_Name(buffer + index, 8);
+						index += 8;
+						for (i = 0; i < (buffer[1] + 1); i++) {
+							buffer[index] += buffer[i + 1];
+						}
+						index++;
+						app_2d4_send(buffer, index);
+					}
+
+				}
+				press_long_lock = 0;
 				break;
 			case KEY_2_DOWN:
-				LITE_syslog(__FUNCTION__, 180, LOG_DEBUG_LEVEL, "LED KEY down");
+				LITE_syslog(__FUNCTION__, 200, LOG_DEBUG_LEVEL, "LED KEY down");
 
 				break;
 			case KEY_2_LONG:
-				LITE_syslog(__FUNCTION__, 184, LOG_DEBUG_LEVEL, "LED KEY long");
+				LITE_syslog(__FUNCTION__, 204, LOG_DEBUG_LEVEL, "LED KEY long");
+				press_long_lock = 1;
+				if (g_tWork.status.bits.blinkEnable) {
+					g_tWork.status.bits.blinkEnable = 0;
+					
+					app_dome_stop_current();
+				} else {
+					g_tWork.status.bits.blinkEnable = 1;
+					g_tWork.status.bits.DEMO = 0;
+					
+					app_dome_start_current();
+				}
 				break;
 			}
 		}

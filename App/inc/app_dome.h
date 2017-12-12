@@ -83,6 +83,7 @@ typedef struct _DOME_RUNNING_T {
 } DOME_RUNNING_T;
 #pragma pack()
 
+extern uint8_t blink_number; //闪法的总数量
 extern DOME_DEFAULT_T dome_blink;
 extern DOME_RUNNING_T dome_running_param;
 
@@ -94,7 +95,7 @@ void app_color_blink_next(void);
 void app_dome_start(uint8_t index, uint8_t dir);
 void app_dome_previous(void);
 void app_dome_next(void);
-void app_dome_get_current_Name(char *name, uint8_t len);
+void app_dome_get_current_Name(uint8_t *name, uint8_t len);
 void app_dome_start_current(void);
 void app_dome_stop_current(void);
 void app_dome_rgb(uint8_t r, uint8_t g, uint8_t b);

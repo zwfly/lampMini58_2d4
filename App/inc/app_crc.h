@@ -9,7 +9,7 @@
 #define APP_INC_APP_CRC_H_
 
 uint8_t app_CalcCRC8(uint8_t *ptr, uint8_t len);
-uint8_t app_CalcCRC8_cycle(uint8_t *ptr, uint8_t len, uint8_t pos,
-		uint8_t bufLen);
+uint8_t app_CalcCRC8_cycle(uint8_t *ptr, uint16_t len, uint16_t pos,
+		uint16_t bufLen);
 
 #endif /* APP_INC_APP_CRC_H_ */

@@ -41,7 +41,7 @@ N */
 N
 N#ifndef __stdio_h
 N#define __stdio_h
-N#define __ARMCLIB_VERSION 5060019
+N#define __ARMCLIB_VERSION 5060009
 N
 N/*
 N * Depending on compiler version __int64 or __INT64_TYPE__ should be defined.
@@ -1157,7 +1157,7 @@ N */
 N
 N#ifndef __string_h
 N#define __string_h
-N#define __ARMCLIB_VERSION 5060019
+N#define __ARMCLIB_VERSION 5060009
 N
 N#define _ARMABI __declspec(__nothrow)
 N
@@ -1705,7 +1705,7 @@ N */
 N
 N#ifndef __stdint_h
 N#define __stdint_h
-N#define __ARMCLIB_VERSION 5060019
+N#define __ARMCLIB_VERSION 5060009
 N
 N  #ifdef __INT64_TYPE__
 S    /* armclang predefines '__INT64_TYPE__' and '__INT64_C_SUFFIX__' */
@@ -2198,7 +2198,7 @@ N#if   defined ( __ICCARM__ )
 X#if   0L
 S #pragma system_include         /* treat file as system include file for MISRA check */
 S#elif defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
-X#elif 1L && (5060422 >= 6010050)
+X#elif 1L && (5060183 >= 6010050)
 S  #pragma clang system_header   /* treat file as system include file */
 N#endif
 N
@@ -2368,7 +2368,7 @@ N#if   defined ( __ICCARM__ )
 X#if   0L
 S #pragma system_include         /* treat file as system include file for MISRA check */
 S#elif defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
-X#elif 1L && (5060422 >= 6010050)
+X#elif 1L && (5060183 >= 6010050)
 S  #pragma clang system_header   /* treat file as system include file */
 N#endif
 N
@@ -2426,7 +2426,7 @@ N#define __CMSIS_ARMCC_H
 N
 N
 N#if defined(__ARMCC_VERSION) && (__ARMCC_VERSION < 400677)
-X#if 1L && (5060422 < 400677)
+X#if 1L && (5060183 < 400677)
 S  #error "Please use ARM Compiler Toolchain V4.0.677 or later!"
 N#endif
 N
@@ -3234,7 +3234,7 @@ N#if   defined ( __ICCARM__ )
 X#if   0L
 S #pragma system_include         /* treat file as system include file for MISRA check */
 S#elif defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
-X#elif 1L && (5060422 >= 6010050)
+X#elif 1L && (5060183 >= 6010050)
 S  #pragma clang system_header   /* treat file as system include file */
 N#endif
 N
@@ -20322,8 +20322,8 @@ N#ifndef APP_INC_APP_CRC_H_
 N#define APP_INC_APP_CRC_H_
 N
 Nuint8_t app_CalcCRC8(uint8_t *ptr, uint8_t len);
-Nuint8_t app_CalcCRC8_cycle(uint8_t *ptr, uint8_t len, uint8_t pos,
-N		uint8_t bufLen);
+Nuint8_t app_CalcCRC8_cycle(uint8_t *ptr, uint16_t len, uint16_t pos,
+N		uint16_t bufLen);
 N
 N#endif /* APP_INC_APP_CRC_H_ */
 L 23 "..\App\inc\app.h" 2
@@ -20414,6 +20414,7 @@ N	} color;
 N} DOME_RUNNING_T;
 N#pragma pack()
 N
+Nextern uint8_t blink_number; //闪法的总数量
 Nextern DOME_DEFAULT_T dome_blink;
 Nextern DOME_RUNNING_T dome_running_param;
 N
@@ -20425,7 +20426,7 @@ N
 Nvoid app_dome_start(uint8_t index, uint8_t dir);
 Nvoid app_dome_previous(void);
 Nvoid app_dome_next(void);
-Nvoid app_dome_get_current_Name(char *name, uint8_t len);
+Nvoid app_dome_get_current_Name(uint8_t *name, uint8_t len);
 Nvoid app_dome_start_current(void);
 Nvoid app_dome_stop_current(void);
 Nvoid app_dome_rgb(uint8_t r, uint8_t g, uint8_t b);
@@ -20453,7 +20454,6 @@ N
 Nvoid app_eeprom_erase(uint32_t addr);
 Nvoid app_eeprom_write_int(uint32_t addr, uint32_t d);
 Nuint32_t app_eeprom_read_int(uint32_t addr);
-Nvoid app_eeprom_write_buf(uint16_t addr, uint8_t *pt, uint8_t len);
 N
 N#endif /* APP_INC_APP_EEPROM_H_ */
 L 25 "..\App\inc\app.h" 2
@@ -20505,7 +20505,7 @@ N */
 N
 N#ifndef __stdlib_h
 N#define __stdlib_h
-N#define __ARMCLIB_VERSION 5060019
+N#define __ARMCLIB_VERSION 5060009
 N
 N#if defined(__clang__) || (defined(__ARMCC_VERSION) && !defined(__STRICT_ANSI__))
 X#if 0L || (1L && !0L)
@@ -21586,13 +21586,19 @@ N	switch (st->rxBuf[(st->pRead + 3) % sizeof(st->rxBuf)]) {
 N	case BLINK_METHOD_CMD:  //闂硶
 X	case 0x12:  
 N	{
-N		break;
-N		uint16_t index = 0;
-N		index = st->rxBuf[(st->pRead + 12) % sizeof(st->rxBuf)];
-N		if (index
-N				>= ((FMC_APROM_END - DOME_START_ADDR) / sizeof(DOME_DEFAULT_T)
-X				>= ((0x00008000UL - 0x6C00) / sizeof(DOME_DEFAULT_T)
-N						- 1)) {
+N//		break;
+N		uint8_t index = st->rxBuf[(st->pRead + 12) % sizeof(st->rxBuf)];
+N		uint8_t availableGroup = 0;
+N		uint8_t minSpaceBytes = 0;
+N		if (sizeof(DOME_DEFAULT_T) % 4) {
+N			minSpaceBytes = (sizeof(DOME_DEFAULT_T) / 4) * 4 + 4;
+N		} else {
+N			minSpaceBytes = sizeof(DOME_DEFAULT_T);
+N		}
+N		availableGroup = (FMC_APROM_END - DOME_START_ADDR) / minSpaceBytes;
+X		availableGroup = (0x00008000UL - 0x6C00) / minSpaceBytes;
+N
+N		if (index > (availableGroup - 1)) {
 N			break;
 N		}
 N		FMC_ENABLE_AP_UPDATE();
@@ -21620,13 +21626,13 @@ N#endif
 N#if 1
 N		tmp = st->rxBuf[(st->pRead + 13) % sizeof(st->rxBuf)] & 0x0F; //sub mode number
 N
-N		uint8_t n = (tmp * sizeof(SUBDOME_T) + sizeof(DOME_HEADER_T));
-N		uint8_t minSpaceBytes = sizeof(DOME_DEFAULT_T);
-N		if (minSpaceBytes % 4) {
-N			minSpaceBytes++;
-N		}
+N		uint8_t bytes = tmp * sizeof(SUBDOME_T) + sizeof(DOME_HEADER_T);
 N
-N		for (i = 0; i < (n / 4); i++) {
+N//		if (minSpaceBytes % 4) {
+N//			minSpaceBytes++;
+N//		}
+N
+N		for (i = 0; i < (bytes / 4); i++) {
 N			uint32_t addr = index * minSpaceBytes + i * 4;
 N			uint32_t dt = st->rxBuf[(st->pRead + 4 + i) % sizeof(st->rxBuf)];
 N			dt |= st->rxBuf[(st->pRead + 4 + i + 1) % sizeof(st->rxBuf)] << 8;
@@ -21634,25 +21640,24 @@ N			dt |= st->rxBuf[(st->pRead + 4 + i + 2) % sizeof(st->rxBuf)] << 16;
 N			dt |= st->rxBuf[(st->pRead + 4 + i + 3) % sizeof(st->rxBuf)] << 24;
 N			app_eeprom_write_int(addr, dt);
 N		}
-N		for (i = 0; i < (n % 4); i++) {
-N			uint32_t addr = index * minSpaceBytes + n / 4 + 4;
+N		if (bytes % 4) {
+N			uint32_t addr = index * minSpaceBytes + (bytes / 4) * 4;
 N			uint32_t dt = 0;
-N			switch (i) {
-N			case 0:
-N				dt = st->rxBuf[(st->pRead + 4 + n / 4) % sizeof(st->rxBuf)];
-N				break;
-N			case 1:
-N				dt |= st->rxBuf[(st->pRead + 4 + n / 4 + i) % sizeof(st->rxBuf)]
-N						<< 8;
-N				break;
-N			case 2:
-N				dt |= st->rxBuf[(st->pRead + 4 + n / 4 + i) % sizeof(st->rxBuf)]
-N						<< 16;
-N				break;
-N			case 3:
-N				dt |= st->rxBuf[(st->pRead + 4 + n / 4 + i) % sizeof(st->rxBuf)]
-N						<< 24;
-N				break;
+N			for (i = 0; i < (bytes % 4); i++) {
+N				switch (i) {
+N				case 0:
+N					dt = st->rxBuf[(st->pRead + 4 + (bytes / 4) * 4)
+N							% sizeof(st->rxBuf)];
+N					break;
+N				case 1:
+N					dt |= st->rxBuf[(st->pRead + 4 + (bytes / 4) * 4 + i)
+N							% sizeof(st->rxBuf)] << 8;
+N					break;
+N				case 2:
+N					dt |= st->rxBuf[(st->pRead + 4 + (bytes / 4) * 4 + i)
+N							% sizeof(st->rxBuf)] << 16;
+N					break;
+N				}
 N			}
 N			app_eeprom_write_int(addr, dt);
 N		}
@@ -21948,7 +21953,7 @@ N										uart_st.pRead, sizeof(uart_st.rxBuf))) {
 N							uart_st.pRead++;
 N							log_err(
 N									"[ERROR]   remote control check error!\r\n");
-X							LITE_syslog(__FUNCTION__, 383, LOG_ERR_LEVEL, "[ERROR]   remote control check error!\r\n");
+X							LITE_syslog(__FUNCTION__, 388, LOG_ERR_LEVEL, "[ERROR]   remote control check error!\r\n");
 N						} else {
 N							/* your code */
 N							app_RC_Receiver_cmd_pro(&uart_st);

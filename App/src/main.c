@@ -96,21 +96,15 @@ int main(void) {
 	app_2d4_init();
 	app_work_Init();
 
+	app_uart_Init();
+	app_dome_Init();
 	/**************/
-//	uint32_t aa = 0;
-
-//	SYS_UnlockReg();
-//	FMC_Open();
-//	aa = app_eeprom_read_int(0);
-//	FMC_Close();
-//	SYS_LockReg();
-//	log_debug("test: %X", aa);
 
 	while (1) {
 		if (timer0_taskTimer_get()->flag_1ms) {
 			timer0_taskTimer_get()->flag_1ms = 0;
 			//////////////////
-#if 0
+#if 1
 			dome_cnt++;
 			if (dome_running_param.speed >= 50) {
 				if (dome_cnt > (10 + (dome_running_param.speed - 50) / 3)) {
@@ -130,6 +124,7 @@ int main(void) {
 			timer0_taskTimer_get()->flag_10ms = 0;
 			//////////////////
 			bsp_KeyScan();
+
 //			app_uart_pro();
 			app_2d4_pro();
 		}
@@ -151,15 +146,18 @@ int main(void) {
 			//////////////////
 			static uint32_t cnt = 0;
 			cnt++;
-			log_debug("I am alive %d", cnt);
+//			log_debug("I am alive %d", cnt);
 
-			//			app_work_1s_pro();
+//			app_work_1s_pro();
 
 		}
+
+		app_uart_pro();
 
 		//////
 		ucKeyCode = bsp_GetKey();
 		if (ucKeyCode != KEY_NONE) {
+			static uint8_t press_long_lock = 0;
 			switch (ucKeyCode) {
 			case KEY_UP_K1:   //ACC
 				log_debug("ACC KEY up");
@@ -175,6 +173,28 @@ int main(void) {
 				break;
 			case KEY_UP_K2:   //LED
 				log_debug("LED KEY up");
+
+				if (press_long_lock == 0) {
+					//					g_tWork.status.bits.DEMO = 0;
+					//					app_dome_start_current();
+					uint8_t buffer[16] = { 0 };
+					if (g_tWork.status.bits.blinkEnable) {
+						uint8_t index = 0, i = 0;
+						app_dome_next();
+						buffer[index++] = LAMP2LCD_HEADER;
+						buffer[index++] = 9;
+						buffer[index++] = KEY_DOWN_CMD;
+						app_dome_get_current_Name(buffer + index, 8);
+						index += 8;
+						for (i = 0; i < (buffer[1] + 1); i++) {
+							buffer[index] += buffer[i + 1];
+						}
+						index++;
+						app_2d4_send(buffer, index);
+					}
+
+				}
+				press_long_lock = 0;
 				break;
 			case KEY_DOWN_K2:
 				log_debug("LED KEY down");
@@ -182,6 +202,17 @@ int main(void) {
 				break;
 			case KEY_LONG_K2:
 				log_debug("LED KEY long");
+				press_long_lock = 1;
+				if (g_tWork.status.bits.blinkEnable) {
+					g_tWork.status.bits.blinkEnable = 0;
+					//					g_tWork.status.bits.DEMO = 0;
+					app_dome_stop_current();
+				} else {
+					g_tWork.status.bits.blinkEnable = 1;
+					g_tWork.status.bits.DEMO = 0;
+					//					app_dome_start(0, 0);
+					app_dome_start_current();
+				}
 				break;
 			}
 		}

@@ -18453,8 +18453,8 @@ void app_uart_pro(void);
 
 
 uint8_t app_CalcCRC8(uint8_t *ptr, uint8_t len);
-uint8_t app_CalcCRC8_cycle(uint8_t *ptr, uint8_t len, uint8_t pos,
-		uint8_t bufLen);
+uint8_t app_CalcCRC8_cycle(uint8_t *ptr, uint16_t len, uint16_t pos,
+		uint16_t bufLen);
 
 #line 23 "..\\App\\inc\\app.h"
 #line 1 "..\\App\\inc\\app_dome.h"
@@ -18543,6 +18543,7 @@ typedef struct _DOME_RUNNING_T {
 } DOME_RUNNING_T;
 #pragma pack()
 
+extern uint8_t blink_number; 
 extern DOME_DEFAULT_T dome_blink;
 extern DOME_RUNNING_T dome_running_param;
 
@@ -18554,7 +18555,7 @@ void app_color_blink_next(void);
 void app_dome_start(uint8_t index, uint8_t dir);
 void app_dome_previous(void);
 void app_dome_next(void);
-void app_dome_get_current_Name(char *name, uint8_t len);
+void app_dome_get_current_Name(uint8_t *name, uint8_t len);
 void app_dome_start_current(void);
 void app_dome_stop_current(void);
 void app_dome_rgb(uint8_t r, uint8_t g, uint8_t b);
@@ -18580,7 +18581,6 @@ void app_eeprom_get_dome_with_index(DOME_DEFAULT_T* dd, uint8_t index);
 void app_eeprom_erase(uint32_t addr);
 void app_eeprom_write_int(uint32_t addr, uint32_t d);
 uint32_t app_eeprom_read_int(uint32_t addr);
-void app_eeprom_write_buf(uint16_t addr, uint8_t *pt, uint8_t len);
 
 #line 25 "..\\App\\inc\\app.h"
 
@@ -19403,34 +19403,39 @@ void app_eeprom_Init(void) {
 }
 
 void app_eeprom_get_dome_with_index(DOME_DEFAULT_T *dd, uint8_t index) {
+	uint8_t availableGroup = 0;
+	uint8_t minSpaceBytes = 0;
+	if (sizeof(DOME_DEFAULT_T) % 4) {
+		minSpaceBytes = (sizeof(DOME_DEFAULT_T) / 4) * 4 + 4;
+	} else {
+		minSpaceBytes = sizeof(DOME_DEFAULT_T);
+	}
+	availableGroup = (0x00008000UL - 0x6C00) / minSpaceBytes;
 
-	if (index >= ((0x00008000UL - 0x6C00) / sizeof(DOME_DEFAULT_T))) {
+	if (index >= availableGroup) {
 		index = 0;
 	}
-	uint8_t i = 0;
+	uint16_t i = 0;
 	uint8_t *pt = (uint8_t *) dd;
-	uint8_t n = sizeof(DOME_DEFAULT_T);
-	uint8_t minSpaceBytes = n;
-	if (minSpaceBytes % 4) {
-		minSpaceBytes++;
-	}
-
-	for (i = 0; i < (n / 4); i++) {
+	SYS_UnlockReg();
+	FMC_Open();
+	for (i = 0; i < (sizeof(DOME_DEFAULT_T) / 4); i++) {
 		uint8_t j = 0;
 		uint32_t dt = app_eeprom_read_int(index * minSpaceBytes + i * 4);
-
 		for (j = 0; j < 4; j++) {
-			*(pt + i * 4 + j) = (dt >> (i * 8)) & 0xFF;
+			*(pt + i * 4 + j) = (dt >> (j * 8)) & 0xFF;
 		}
 	}
-	for (i = 0; i < (n % 4); i++) {
-	
+	if (sizeof(DOME_DEFAULT_T) % 4) {
+		uint32_t dt = app_eeprom_read_int(
+				index * minSpaceBytes + (sizeof(DOME_DEFAULT_T) / 4) * 4);
+		for (i = 0; i < (sizeof(DOME_DEFAULT_T) % 4); i++) {
+			*(pt + (sizeof(DOME_DEFAULT_T) / 4) * 4 + i) = (dt >> (i * 8))
+					& 0xFF;
+		}
 	}
-
-}
-
-void app_eeprom_save_dome_with_byte(DOME_DEFAULT_T *dd, uint8_t index) {
-
+	FMC_Close();
+	SYS_LockReg();
 }
 
 void app_eeprom_erase(uint32_t addr) {
@@ -19442,14 +19447,4 @@ void app_eeprom_write_int(uint32_t addr, uint32_t d) {
 uint32_t app_eeprom_read_int(uint32_t addr) {
 	return bsp_eeprom_read_int(0x6C00 + addr);
 }
-void app_eeprom_write_buf(uint16_t addr, uint8_t *pt, uint8_t len) {
 
-
-}
-void app_eeprom_100ms_pro(void) {
-
-}
-
-static void app_eeprom_pro(void) {
-
-}

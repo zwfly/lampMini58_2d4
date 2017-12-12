@@ -34,7 +34,8 @@ void SPI_init(void) {
 static void delay_2d4(uint8_t n) {
 	uint8_t i = 0;
 
-	for (i = 0; i < n; i++);
+	for (i = 0; i < n; i++)
+		;
 
 }
 
@@ -45,17 +46,20 @@ static void delay_2d4(uint8_t n) {
 void SPI_WW(uint8_t R_REG) {
 	uint8_t i;
 	for (i = 0; i < 8; i++) {
-		SCK_LOW;
+		SCK_LOW
+		;
 		if (R_REG & 0x80) {
 			SPI_DATA_HIGH;
 		} else {
 			SPI_DATA_LOW;
 		}
 		R_REG <<= 1;
-		SCK_HIGH;
-		__NOP;
+		SCK_HIGH
+		;
+		delay_2d4(1);
 	}
-	SCK_LOW;
+	SCK_LOW
+	;
 }
 
 /******************************************************************************/
@@ -64,10 +68,10 @@ void SPI_WW(uint8_t R_REG) {
 /******************************************************************************/
 void RF_WriteReg(uint8_t reg, uint8_t wdata) {
 	CSN_LOW;
-	__NOP;
+	delay_2d4(1);
 	SPI_WW(reg);
 	SPI_WW(wdata);
-	__NOP;
+	delay_2d4(1);
 	CSN_HIGH;
 }
 
@@ -94,19 +98,22 @@ void RF_WriteBuf(uint8_t reg, uint8_t *pBuf, uint8_t length) {
 void SPI_WR(uint8_t R_REG) {
 	uint8_t i;
 	for (i = 0; i < 8; i++) {
-		SCK_LOW;
+		SCK_LOW
+		;
 		if (R_REG & 0x80) {
 			SPI_DATA_HIGH;
 		} else {
 			SPI_DATA_LOW;
 		}
 		R_REG <<= 1;
-		SCK_HIGH;
-		__NOP;
+		SCK_HIGH
+		;
+		delay_2d4(1);
 	}
 	SPI_DATA_INPUT_MODE
 	;
-	SCK_LOW;
+	SCK_LOW
+	;
 
 }
 
@@ -118,14 +125,17 @@ uint8_t ucSPI_Read(void) {
 	uint8_t i, dt;
 	dt = 0;
 	for (i = 0; i < 8; i++) {
-		SCK_LOW;
+		SCK_LOW
+		;
 		dt = dt << 1;
-		SCK_HIGH;
+		SCK_HIGH
+		;
 		if (SPI_DATA_STATUS) {
 			dt |= 0x01;
 		}
 	}
-	SCK_LOW;
+	SCK_LOW
+	;
 	return dt;
 }
 
@@ -137,12 +147,12 @@ uint8_t ucRF_ReadReg(uint8_t reg) {
 	uint8_t dt;
 
 	CSN_LOW;
-	__NOP;
+	delay_2d4(1);
 	SPI_WR(reg);
 	dt = ucSPI_Read();
 	SPI_DATA_OUTPUT_MODE
 	;
-	__NOP;
+	delay_2d4(1);
 	CSN_HIGH;
 
 	return dt;
@@ -172,9 +182,7 @@ void RF_TxMode(void) {
 	CE_LOW;
 	RF_WriteReg(W_REGISTER + CONFIG, 0X8E);						// 将RF设置成TX模式
 //	delay_10us(1);
-	__NOP;
-	__NOP;
-	__NOP;
+	delay_2d4(10);
 }
 
 /******************************************************************************/
@@ -182,14 +190,11 @@ void RF_TxMode(void) {
 //            将RF设置成RX模式，准备接收数据
 /******************************************************************************/
 void RF_RxMode(void) {
-	uint16_t i = 0;
 	CE_LOW;
 	RF_WriteReg(W_REGISTER + CONFIG, 0X8F);						// 将RF设置成RX模式
 	CE_HIGH;										// Set CE pin high 开始接收数据
 //	delay_ms(2);
-	for (i = 0; i < 5000; i++) {
-		__NOP;
-	}
+	delay_2d4(200);
 
 }
 
@@ -242,13 +247,10 @@ void RF_SetChannel(uint8_t Channel) {
 /******************************************************************************/
 void RF_TxData(uint8_t *ucPayload, uint8_t length) {
 	if (0 == ucRF_GetStatus()) {                             // rf free status
-		uint16_t i = 0;
 		RF_WriteBuf(W_TX_PAYLOAD, ucPayload, length);
 		CE_HIGH;                             //rf entery tx mode start send data
 //		delay_10us(60);                            //keep ce high at least 600us
-		for (i = 0; i < 200; i++) {
-			__NOP;
-		}
+		delay_2d4(10);
 		CE_LOW;                                                 //rf entery stb3
 	}
 }
@@ -336,7 +338,6 @@ void RF_Init(void) {
 //            		进入载波模式
 /******************************************************************************/
 void RF_Carrier(uint8_t ucChannel_Set) {
-	uint8_t i = 0;
 	uint8_t BB_cal_data[5] = { 0x0A, 0x6D, 0x67, 0x9C, 0x46 };
 	uint8_t RF_cal_data[3] = { 0xF6, 0x37, 0x5D };
 	uint8_t RF_cal2_data[6] = { 0x45, 0x21, 0xEF, 0xAC, 0x5A, 0x50 };
@@ -348,12 +349,7 @@ void RF_Carrier(uint8_t ucChannel_Set) {
 	RF_WriteReg(W_REGISTER + FEATURE, 0x20);
 	CE_LOW;
 //	delay_ms(200);
-	for (i = 0; i < 220; i++) {
-		__NOP;
-		__NOP;
-		__NOP;
-		__NOP;
-	}
+	delay_2d4(220);
 
 	RF_WriteReg(W_REGISTER + RF_CH, ucChannel_Set);						//单载波频点
 	RF_WriteReg(W_REGISTER + RF_SETUP, RF_POWER);      					//13dbm

@@ -45,7 +45,7 @@ N */
 N
 N#ifndef __stdio_h
 N#define __stdio_h
-N#define __ARMCLIB_VERSION 5060019
+N#define __ARMCLIB_VERSION 5060009
 N
 N/*
 N * Depending on compiler version __int64 or __INT64_TYPE__ should be defined.
@@ -1161,7 +1161,7 @@ N */
 N
 N#ifndef __string_h
 N#define __string_h
-N#define __ARMCLIB_VERSION 5060019
+N#define __ARMCLIB_VERSION 5060009
 N
 N#define _ARMABI __declspec(__nothrow)
 N
@@ -1709,7 +1709,7 @@ N */
 N
 N#ifndef __stdint_h
 N#define __stdint_h
-N#define __ARMCLIB_VERSION 5060019
+N#define __ARMCLIB_VERSION 5060009
 N
 N  #ifdef __INT64_TYPE__
 S    /* armclang predefines '__INT64_TYPE__' and '__INT64_C_SUFFIX__' */
@@ -2202,7 +2202,7 @@ N#if   defined ( __ICCARM__ )
 X#if   0L
 S #pragma system_include         /* treat file as system include file for MISRA check */
 S#elif defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
-X#elif 1L && (5060422 >= 6010050)
+X#elif 1L && (5060183 >= 6010050)
 S  #pragma clang system_header   /* treat file as system include file */
 N#endif
 N
@@ -2372,7 +2372,7 @@ N#if   defined ( __ICCARM__ )
 X#if   0L
 S #pragma system_include         /* treat file as system include file for MISRA check */
 S#elif defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
-X#elif 1L && (5060422 >= 6010050)
+X#elif 1L && (5060183 >= 6010050)
 S  #pragma clang system_header   /* treat file as system include file */
 N#endif
 N
@@ -2430,7 +2430,7 @@ N#define __CMSIS_ARMCC_H
 N
 N
 N#if defined(__ARMCC_VERSION) && (__ARMCC_VERSION < 400677)
-X#if 1L && (5060422 < 400677)
+X#if 1L && (5060183 < 400677)
 S  #error "Please use ARM Compiler Toolchain V4.0.677 or later!"
 N#endif
 N
@@ -3238,7 +3238,7 @@ N#if   defined ( __ICCARM__ )
 X#if   0L
 S #pragma system_include         /* treat file as system include file for MISRA check */
 S#elif defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
-X#elif 1L && (5060422 >= 6010050)
+X#elif 1L && (5060183 >= 6010050)
 S  #pragma clang system_header   /* treat file as system include file */
 N#endif
 N
@@ -20326,8 +20326,8 @@ N#ifndef APP_INC_APP_CRC_H_
 N#define APP_INC_APP_CRC_H_
 N
 Nuint8_t app_CalcCRC8(uint8_t *ptr, uint8_t len);
-Nuint8_t app_CalcCRC8_cycle(uint8_t *ptr, uint8_t len, uint8_t pos,
-N		uint8_t bufLen);
+Nuint8_t app_CalcCRC8_cycle(uint8_t *ptr, uint16_t len, uint16_t pos,
+N		uint16_t bufLen);
 N
 N#endif /* APP_INC_APP_CRC_H_ */
 L 23 "..\App\inc\app.h" 2
@@ -20418,6 +20418,7 @@ N	} color;
 N} DOME_RUNNING_T;
 N#pragma pack()
 N
+Nextern uint8_t blink_number; //闪法的总数量
 Nextern DOME_DEFAULT_T dome_blink;
 Nextern DOME_RUNNING_T dome_running_param;
 N
@@ -20429,7 +20430,7 @@ N
 Nvoid app_dome_start(uint8_t index, uint8_t dir);
 Nvoid app_dome_previous(void);
 Nvoid app_dome_next(void);
-Nvoid app_dome_get_current_Name(char *name, uint8_t len);
+Nvoid app_dome_get_current_Name(uint8_t *name, uint8_t len);
 Nvoid app_dome_start_current(void);
 Nvoid app_dome_stop_current(void);
 Nvoid app_dome_rgb(uint8_t r, uint8_t g, uint8_t b);
@@ -20457,7 +20458,6 @@ N
 Nvoid app_eeprom_erase(uint32_t addr);
 Nvoid app_eeprom_write_int(uint32_t addr, uint32_t d);
 Nuint32_t app_eeprom_read_int(uint32_t addr);
-Nvoid app_eeprom_write_buf(uint16_t addr, uint8_t *pt, uint8_t len);
 N
 N#endif /* APP_INC_APP_EEPROM_H_ */
 L 25 "..\App\inc\app.h" 2
@@ -20509,7 +20509,7 @@ N */
 N
 N#ifndef __stdlib_h
 N#define __stdlib_h
-N#define __ARMCLIB_VERSION 5060019
+N#define __ARMCLIB_VERSION 5060009
 N
 N#if defined(__clang__) || (defined(__ARMCC_VERSION) && !defined(__STRICT_ANSI__))
 X#if 0L || (1L && !0L)
@@ -21627,33 +21627,27 @@ N	/**************/
 N	app_2d4_init();
 N	app_work_Init();
 N
+N	app_uart_Init();
+N	app_dome_Init();
 N	/**************/
-N//	uint32_t aa = 0;
-N
-N//	SYS_UnlockReg();
-N//	FMC_Open();
-N//	aa = app_eeprom_read_int(0);
-N//	FMC_Close();
-N//	SYS_LockReg();
-N//	log_debug("test: %X", aa);
 N
 N	while (1) {
 N		if (timer0_taskTimer_get()->flag_1ms) {
 N			timer0_taskTimer_get()->flag_1ms = 0;
 N			//////////////////
-N#if 0
-S			dome_cnt++;
-S			if (dome_running_param.speed >= 50) {
-S				if (dome_cnt > (10 + (dome_running_param.speed - 50) / 3)) {
-S					dome_cnt = 0;
-S					app_dome_interrupter();
-S				}
-S			} else {
-S				if (dome_cnt > (10 - (50 - dome_running_param.speed) / 6)) {
-S					dome_cnt = 0;
-S					app_dome_interrupter();
-S				}
-S			}
+N#if 1
+N			dome_cnt++;
+N			if (dome_running_param.speed >= 50) {
+N				if (dome_cnt > (10 + (dome_running_param.speed - 50) / 3)) {
+N					dome_cnt = 0;
+N					app_dome_interrupter();
+N				}
+N			} else {
+N				if (dome_cnt > (10 - (50 - dome_running_param.speed) / 6)) {
+N					dome_cnt = 0;
+N					app_dome_interrupter();
+N				}
+N			}
 N#endif
 N		}
 N
@@ -21661,6 +21655,7 @@ N		if (timer0_taskTimer_get()->flag_10ms) {
 N			timer0_taskTimer_get()->flag_10ms = 0;
 N			//////////////////
 N			bsp_KeyScan();
+N
 N//			app_uart_pro();
 N			app_2d4_pro();
 N		}
@@ -21682,56 +21677,92 @@ N			timer0_taskTimer_get()->flag_1s = 0;
 N			//////////////////
 N			static uint32_t cnt = 0;
 N			cnt++;
-N			log_debug("I am alive %d", cnt);
-X			LITE_syslog(__FUNCTION__, 154, LOG_DEBUG_LEVEL, "I am alive %d", cnt);
+N//			log_debug("I am alive %d", cnt);
 N
-N			//			app_work_1s_pro();
+N//			app_work_1s_pro();
 N
 N		}
+N
+N		app_uart_pro();
 N
 N		//////
 N		ucKeyCode = bsp_GetKey();
 N		if (ucKeyCode != KEY_NONE) {
+N			static uint8_t press_long_lock = 0;
 N			switch (ucKeyCode) {
 N			case KEY_UP_K1:   //ACC
 X			case KEY_1_UP:   
 N				log_debug("ACC KEY up");
-X				LITE_syslog(__FUNCTION__, 165, LOG_DEBUG_LEVEL, "ACC KEY up");
+X				LITE_syslog(__FUNCTION__, 163, LOG_DEBUG_LEVEL, "ACC KEY up");
 N
 N				break;
 N			case KEY_DOWN_K1:
 X			case KEY_1_DOWN:
 N				log_debug("relay %s", Relay_IsOn() ? "on" : "off");
-X				LITE_syslog(__FUNCTION__, 169, LOG_DEBUG_LEVEL, "relay %s", Relay_IsOn() ? "on" : "off");
+X				LITE_syslog(__FUNCTION__, 167, LOG_DEBUG_LEVEL, "relay %s", Relay_IsOn() ? "on" : "off");
 N
 N				Relay_toggle();
 N				break;
 N			case KEY_LONG_K1:
 X			case KEY_1_LONG:
 N				log_debug("ACC KEY down");
-X				LITE_syslog(__FUNCTION__, 174, LOG_DEBUG_LEVEL, "ACC KEY down");
+X				LITE_syslog(__FUNCTION__, 172, LOG_DEBUG_LEVEL, "ACC KEY down");
 N				break;
 N			case KEY_UP_K2:   //LED
 X			case KEY_2_UP:   
 N				log_debug("LED KEY up");
-X				LITE_syslog(__FUNCTION__, 177, LOG_DEBUG_LEVEL, "LED KEY up");
+X				LITE_syslog(__FUNCTION__, 175, LOG_DEBUG_LEVEL, "LED KEY up");
+N
+N				if (press_long_lock == 0) {
+N					//					g_tWork.status.bits.DEMO = 0;
+N					//					app_dome_start_current();
+N					uint8_t buffer[16] = { 0 };
+N					if (g_tWork.status.bits.blinkEnable) {
+N						uint8_t index = 0, i = 0;
+N						app_dome_next();
+N						buffer[index++] = LAMP2LCD_HEADER;
+X						buffer[index++] = 0xF8;
+N						buffer[index++] = 9;
+N						buffer[index++] = KEY_DOWN_CMD;
+X						buffer[index++] = 0x03;
+N						app_dome_get_current_Name(buffer + index, 8);
+N						index += 8;
+N						for (i = 0; i < (buffer[1] + 1); i++) {
+N							buffer[index] += buffer[i + 1];
+N						}
+N						index++;
+N						app_2d4_send(buffer, index);
+N					}
+N
+N				}
+N				press_long_lock = 0;
 N				break;
 N			case KEY_DOWN_K2:
 X			case KEY_2_DOWN:
 N				log_debug("LED KEY down");
-X				LITE_syslog(__FUNCTION__, 180, LOG_DEBUG_LEVEL, "LED KEY down");
+X				LITE_syslog(__FUNCTION__, 200, LOG_DEBUG_LEVEL, "LED KEY down");
 N
 N				break;
 N			case KEY_LONG_K2:
 X			case KEY_2_LONG:
 N				log_debug("LED KEY long");
-X				LITE_syslog(__FUNCTION__, 184, LOG_DEBUG_LEVEL, "LED KEY long");
+X				LITE_syslog(__FUNCTION__, 204, LOG_DEBUG_LEVEL, "LED KEY long");
+N				press_long_lock = 1;
+N				if (g_tWork.status.bits.blinkEnable) {
+N					g_tWork.status.bits.blinkEnable = 0;
+N					//					g_tWork.status.bits.DEMO = 0;
+N					app_dome_stop_current();
+N				} else {
+N					g_tWork.status.bits.blinkEnable = 1;
+N					g_tWork.status.bits.DEMO = 0;
+N					//					app_dome_start(0, 0);
+N					app_dome_start_current();
+N				}
 N				break;
 N			}
 N		}
 N
 N	}
 N
-W "..\App\src\main.c" 68 10 variable "dome_cnt"  was declared but never referenced
 N}
 N

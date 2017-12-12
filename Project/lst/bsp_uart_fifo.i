@@ -17864,7 +17864,7 @@ void bsp_InitUart(void) {
 
 	InitHardUart();  
 
-
+	ConfigUartNVIC();  
 }
 
 

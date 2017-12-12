@@ -18454,8 +18454,8 @@ void app_uart_pro(void);
 
 
 uint8_t app_CalcCRC8(uint8_t *ptr, uint8_t len);
-uint8_t app_CalcCRC8_cycle(uint8_t *ptr, uint8_t len, uint8_t pos,
-		uint8_t bufLen);
+uint8_t app_CalcCRC8_cycle(uint8_t *ptr, uint16_t len, uint16_t pos,
+		uint16_t bufLen);
 
 #line 23 "..\\App\\inc\\app.h"
 #line 1 "..\\App\\inc\\app_dome.h"
@@ -18544,6 +18544,7 @@ typedef struct _DOME_RUNNING_T {
 } DOME_RUNNING_T;
 #pragma pack()
 
+extern uint8_t blink_number; 
 extern DOME_DEFAULT_T dome_blink;
 extern DOME_RUNNING_T dome_running_param;
 
@@ -18555,7 +18556,7 @@ void app_color_blink_next(void);
 void app_dome_start(uint8_t index, uint8_t dir);
 void app_dome_previous(void);
 void app_dome_next(void);
-void app_dome_get_current_Name(char *name, uint8_t len);
+void app_dome_get_current_Name(uint8_t *name, uint8_t len);
 void app_dome_start_current(void);
 void app_dome_stop_current(void);
 void app_dome_rgb(uint8_t r, uint8_t g, uint8_t b);
@@ -18581,7 +18582,6 @@ void app_eeprom_get_dome_with_index(DOME_DEFAULT_T* dd, uint8_t index);
 void app_eeprom_erase(uint32_t addr);
 void app_eeprom_write_int(uint32_t addr, uint32_t d);
 uint32_t app_eeprom_read_int(uint32_t addr);
-void app_eeprom_write_buf(uint16_t addr, uint8_t *pt, uint8_t len);
 
 #line 25 "..\\App\\inc\\app.h"
 
@@ -19445,12 +19445,18 @@ static void app_RC_Receiver_cmd_pro(Uart_ST* st) {
 	switch (st->rxBuf[(st->pRead + 3) % sizeof(st->rxBuf)]) {
 	case 0x12:  
 	{
-		break;
-		uint16_t index = 0;
-		index = st->rxBuf[(st->pRead + 12) % sizeof(st->rxBuf)];
-		if (index
-				>= ((0x00008000UL - 0x6C00) / sizeof(DOME_DEFAULT_T)
-						- 1)) {
+
+		uint8_t index = st->rxBuf[(st->pRead + 12) % sizeof(st->rxBuf)];
+		uint8_t availableGroup = 0;
+		uint8_t minSpaceBytes = 0;
+		if (sizeof(DOME_DEFAULT_T) % 4) {
+			minSpaceBytes = (sizeof(DOME_DEFAULT_T) / 4) * 4 + 4;
+		} else {
+			minSpaceBytes = sizeof(DOME_DEFAULT_T);
+		}
+		availableGroup = (0x00008000UL - 0x6C00) / minSpaceBytes;
+
+		if (index > (availableGroup - 1)) {
 			break;
 		}
 		(((FMC_T *) (((uint32_t)0x50000000) + 0x0C000))->ISPCTL |= (0x1ul << (3)));
@@ -19463,16 +19469,16 @@ static void app_RC_Receiver_cmd_pro(Uart_ST* st) {
 				app_eeprom_erase(i * 0x200);
 			}
 		}
-#line 90 "..\\App\\src\\app_uart.c"
+#line 96 "..\\App\\src\\app_uart.c"
 		tmp = st->rxBuf[(st->pRead + 13) % sizeof(st->rxBuf)] & 0x0F; 
 
-		uint8_t n = (tmp * sizeof(SUBDOME_T) + sizeof(DOME_HEADER_T));
-		uint8_t minSpaceBytes = sizeof(DOME_DEFAULT_T);
-		if (minSpaceBytes % 4) {
-			minSpaceBytes++;
-		}
+		uint8_t bytes = tmp * sizeof(SUBDOME_T) + sizeof(DOME_HEADER_T);
 
-		for (i = 0; i < (n / 4); i++) {
+
+
+
+
+		for (i = 0; i < (bytes / 4); i++) {
 			uint32_t addr = index * minSpaceBytes + i * 4;
 			uint32_t dt = st->rxBuf[(st->pRead + 4 + i) % sizeof(st->rxBuf)];
 			dt |= st->rxBuf[(st->pRead + 4 + i + 1) % sizeof(st->rxBuf)] << 8;
@@ -19480,25 +19486,24 @@ static void app_RC_Receiver_cmd_pro(Uart_ST* st) {
 			dt |= st->rxBuf[(st->pRead + 4 + i + 3) % sizeof(st->rxBuf)] << 24;
 			app_eeprom_write_int(addr, dt);
 		}
-		for (i = 0; i < (n % 4); i++) {
-			uint32_t addr = index * minSpaceBytes + n / 4 + 4;
+		if (bytes % 4) {
+			uint32_t addr = index * minSpaceBytes + (bytes / 4) * 4;
 			uint32_t dt = 0;
-			switch (i) {
-			case 0:
-				dt = st->rxBuf[(st->pRead + 4 + n / 4) % sizeof(st->rxBuf)];
-				break;
-			case 1:
-				dt |= st->rxBuf[(st->pRead + 4 + n / 4 + i) % sizeof(st->rxBuf)]
-						<< 8;
-				break;
-			case 2:
-				dt |= st->rxBuf[(st->pRead + 4 + n / 4 + i) % sizeof(st->rxBuf)]
-						<< 16;
-				break;
-			case 3:
-				dt |= st->rxBuf[(st->pRead + 4 + n / 4 + i) % sizeof(st->rxBuf)]
-						<< 24;
-				break;
+			for (i = 0; i < (bytes % 4); i++) {
+				switch (i) {
+				case 0:
+					dt = st->rxBuf[(st->pRead + 4 + (bytes / 4) * 4)
+							% sizeof(st->rxBuf)];
+					break;
+				case 1:
+					dt |= st->rxBuf[(st->pRead + 4 + (bytes / 4) * 4 + i)
+							% sizeof(st->rxBuf)] << 8;
+					break;
+				case 2:
+					dt |= st->rxBuf[(st->pRead + 4 + (bytes / 4) * 4 + i)
+							% sizeof(st->rxBuf)] << 16;
+					break;
+				}
 			}
 			app_eeprom_write_int(addr, dt);
 		}
@@ -19539,7 +19544,7 @@ static void app_RC_Receiver_cmd_pro(Uart_ST* st) {
 		index++;
 		app_2d4_send(buffer, index);
 		break;
-#line 181 "..\\App\\src\\app_uart.c"
+#line 186 "..\\App\\src\\app_uart.c"
 	case 0x33:
 		buffer[index++] = 0xF8;
 		buffer[index++] = len;
@@ -19742,7 +19747,7 @@ void app_uart_pro(void) {
 										uart_st.rxBuf + uart_st.pRead, len + 3,
 										uart_st.pRead, sizeof(uart_st.rxBuf))) {
 							uart_st.pRead++;
-							LITE_syslog(__FUNCTION__, 383, LOG_ERR_LEVEL, "[ERROR]   remote control check error!\r\n");
+							LITE_syslog(__FUNCTION__, 388, LOG_ERR_LEVEL, "[ERROR]   remote control check error!\r\n");
 
 						} else {
 							 
@@ -19762,5 +19767,5 @@ void app_uart_pro(void) {
 		break;
 
 	}
-#line 735 "..\\App\\src\\app_uart.c"
+#line 740 "..\\App\\src\\app_uart.c"
 }

@@ -26,7 +26,3 @@ void app_work_100ms_pro(void) {
 
 }
 
-static void app_work_pro(void) {
-
-}
-

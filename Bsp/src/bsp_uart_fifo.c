@@ -35,7 +35,7 @@ void bsp_InitUart(void) {
 
 	InitHardUart(); /* 配置串口的硬件参数(波特率等) */
 
-//	ConfigUartNVIC(); /* 配置串口中断 */
+	ConfigUartNVIC(); /* 配置串口中断 */
 }
 
 /*

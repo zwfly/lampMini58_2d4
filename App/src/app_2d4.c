@@ -66,7 +66,7 @@ void app_2d4_send(uint8_t *d, uint8_t len) {
 char sss[32] = {0};
 #endif
 static void app_2d4_Rcv(uint8_t *buf) {
-	uint8_t tmp = 0;
+//	uint8_t tmp = 0;
 	uint8_t i = 0;
 	uint8_t index = 0;
 	uint8_t check = 0;

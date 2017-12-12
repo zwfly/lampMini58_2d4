@@ -18454,8 +18454,8 @@ void app_uart_pro(void);
 
 
 uint8_t app_CalcCRC8(uint8_t *ptr, uint8_t len);
-uint8_t app_CalcCRC8_cycle(uint8_t *ptr, uint8_t len, uint8_t pos,
-		uint8_t bufLen);
+uint8_t app_CalcCRC8_cycle(uint8_t *ptr, uint16_t len, uint16_t pos,
+		uint16_t bufLen);
 
 #line 23 "..\\App\\inc\\app.h"
 #line 1 "..\\App\\inc\\app_dome.h"
@@ -18544,6 +18544,7 @@ typedef struct _DOME_RUNNING_T {
 } DOME_RUNNING_T;
 #pragma pack()
 
+extern uint8_t blink_number; 
 extern DOME_DEFAULT_T dome_blink;
 extern DOME_RUNNING_T dome_running_param;
 
@@ -18555,7 +18556,7 @@ void app_color_blink_next(void);
 void app_dome_start(uint8_t index, uint8_t dir);
 void app_dome_previous(void);
 void app_dome_next(void);
-void app_dome_get_current_Name(char *name, uint8_t len);
+void app_dome_get_current_Name(uint8_t *name, uint8_t len);
 void app_dome_start_current(void);
 void app_dome_stop_current(void);
 void app_dome_rgb(uint8_t r, uint8_t g, uint8_t b);
@@ -18581,7 +18582,6 @@ void app_eeprom_get_dome_with_index(DOME_DEFAULT_T* dd, uint8_t index);
 void app_eeprom_erase(uint32_t addr);
 void app_eeprom_write_int(uint32_t addr, uint32_t d);
 uint32_t app_eeprom_read_int(uint32_t addr);
-void app_eeprom_write_buf(uint16_t addr, uint8_t *pt, uint8_t len);
 
 #line 25 "..\\App\\inc\\app.h"
 
@@ -19403,6 +19403,8 @@ static SUBDOME_T subDome;
 static DOME_HEADER_T domeHeader;
 static SUBDOME_ASSIST_T subDome_Assist;
 static DOME_PRO_T domePro;
+uint8_t blink_number = 0; 
+
 DOME_DEFAULT_T dome_blink;
 
 DOME_RUNNING_T dome_running_param;
@@ -19423,6 +19425,25 @@ const uint8_t color_blink_buffer[10][3] = { { 255, 255, 255 },
 
 
 void app_dome_Init(void) {
+	uint8_t i = 0;
+	uint8_t availableGroup = 0;
+	uint8_t minSpaceBytes = 0;
+
+	blink_number = 0;
+	if (sizeof(DOME_DEFAULT_T) % 4) {
+		minSpaceBytes = (sizeof(DOME_DEFAULT_T) / 4) * 4 + 4;
+	} else {
+		minSpaceBytes = sizeof(DOME_DEFAULT_T);
+	}
+	availableGroup = (0x00008000UL - 0x6C00) / minSpaceBytes;
+	for (i = 0; i < availableGroup; i++) {
+		if (0xFF != app_eeprom_read_int(i * minSpaceBytes)) {
+			blink_number++;
+		} else {
+			break;
+		}
+	}
+
 	color_blink_index = 10 - 1;
 
 
@@ -19477,12 +19498,12 @@ void app_dome_next(void) {
 	app_dome_start(domePro.currentDomeIndex, 1);
 }
 
-void app_dome_get_current_Name(char *name, uint8_t len) {
+void app_dome_get_current_Name(uint8_t *name, uint8_t len) {
 	if (len > sizeof(dome_blink.header.name)) {
 		name = 0;
 		return;
 	}
-	memcpy((uint8_t *) name, (uint8_t *) dome_blink.header.name, len);
+	memcpy(name, (uint8_t *) dome_blink.header.name, len);
 }
 void app_dome_start_current(void) {
 	color_blink_index = 10 - 1;
@@ -19586,13 +19607,13 @@ void app_dome_start(uint8_t domeIndex, uint8_t dir) {
 			sizeof(domeHeader));
 
 }
-static uint8_t cyc = 0;
+
 static void app_dome_subDome_pro(uint8_t subIndex) {
 
 	subDome_Assist.switch_flag = 0;
 	subDome_Assist.msCnt = 0;
 	subDome_Assist.stopTime = 50;
-#line 218 "..\\App\\src\\app_dome.c"
+#line 239 "..\\App\\src\\app_dome.c"
 }
 
 void app_dome_rgb(uint8_t r, uint8_t g, uint8_t b) {
@@ -19686,7 +19707,7 @@ void app_dome_interrupter(void) {
 
 		if (subDome_Assist.msCnt >= subDome.speed) {
 			subDome_Assist.msCnt = 0;
-#line 335 "..\\App\\src\\app_dome.c"
+#line 356 "..\\App\\src\\app_dome.c"
 
 			if (subDome.repeate) {
 				subDome.repeate--;

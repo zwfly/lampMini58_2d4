@@ -12,6 +12,8 @@ static SUBDOME_T subDome;
 static DOME_HEADER_T domeHeader;
 static SUBDOME_ASSIST_T subDome_Assist;
 static DOME_PRO_T domePro;
+uint8_t blink_number = 0; //闪法的总数量
+
 DOME_DEFAULT_T dome_blink;
 
 DOME_RUNNING_T dome_running_param;
@@ -32,6 +34,25 @@ const uint8_t color_blink_buffer[COLOR_BLINK_NUMBER][3] = { { 255, 255, 255 }, /
 //////////////////
 
 void app_dome_Init(void) {
+	uint8_t i = 0;
+	uint8_t availableGroup = 0;
+	uint8_t minSpaceBytes = 0;
+
+	blink_number = 0;
+	if (sizeof(DOME_DEFAULT_T) % 4) {
+		minSpaceBytes = (sizeof(DOME_DEFAULT_T) / 4) * 4 + 4;
+	} else {
+		minSpaceBytes = sizeof(DOME_DEFAULT_T);
+	}
+	availableGroup = (FMC_APROM_END - DOME_START_ADDR) / minSpaceBytes;
+	for (i = 0; i < availableGroup; i++) {
+		if (0xFF != app_eeprom_read_int(i * minSpaceBytes)) {
+			blink_number++;
+		} else {
+			break;
+		}
+	}
+
 	color_blink_index = COLOR_BLINK_NUMBER - 1;
 //	g_tWork.status.bits.blinkEnable = 1;
 
@@ -86,12 +107,12 @@ void app_dome_next(void) {
 	app_dome_start(domePro.currentDomeIndex, 1);
 }
 
-void app_dome_get_current_Name(char *name, uint8_t len) {
+void app_dome_get_current_Name(uint8_t *name, uint8_t len) {
 	if (len > sizeof(dome_blink.header.name)) {
 		name = 0;
 		return;
 	}
-	memcpy((uint8_t *) name, (uint8_t *) dome_blink.header.name, len);
+	memcpy(name, (uint8_t *) dome_blink.header.name, len);
 }
 void app_dome_start_current(void) {
 	color_blink_index = COLOR_BLINK_NUMBER - 1;
@@ -195,7 +216,7 @@ void app_dome_start(uint8_t domeIndex, uint8_t dir) {
 			sizeof(domeHeader));
 
 }
-static uint8_t cyc = 0;
+//static uint8_t cyc = 0;
 static void app_dome_subDome_pro(uint8_t subIndex) {
 
 	subDome_Assist.switch_flag = 0;

@@ -32,7 +32,7 @@ N */
 N
 N#ifndef __stdio_h
 N#define __stdio_h
-N#define __ARMCLIB_VERSION 5060019
+N#define __ARMCLIB_VERSION 5060009
 N
 N/*
 N * Depending on compiler version __int64 or __INT64_TYPE__ should be defined.
@@ -1137,7 +1137,7 @@ N */
 N
 N#ifndef __stdint_h
 N#define __stdint_h
-N#define __ARMCLIB_VERSION 5060019
+N#define __ARMCLIB_VERSION 5060009
 N
 N  #ifdef __INT64_TYPE__
 S    /* armclang predefines '__INT64_TYPE__' and '__INT64_C_SUFFIX__' */
@@ -1630,7 +1630,7 @@ N#if   defined ( __ICCARM__ )
 X#if   0L
 S #pragma system_include         /* treat file as system include file for MISRA check */
 S#elif defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
-X#elif 1L && (5060422 >= 6010050)
+X#elif 1L && (5060183 >= 6010050)
 S  #pragma clang system_header   /* treat file as system include file */
 N#endif
 N
@@ -1800,7 +1800,7 @@ N#if   defined ( __ICCARM__ )
 X#if   0L
 S #pragma system_include         /* treat file as system include file for MISRA check */
 S#elif defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
-X#elif 1L && (5060422 >= 6010050)
+X#elif 1L && (5060183 >= 6010050)
 S  #pragma clang system_header   /* treat file as system include file */
 N#endif
 N
@@ -1858,7 +1858,7 @@ N#define __CMSIS_ARMCC_H
 N
 N
 N#if defined(__ARMCC_VERSION) && (__ARMCC_VERSION < 400677)
-X#if 1L && (5060422 < 400677)
+X#if 1L && (5060183 < 400677)
 S  #error "Please use ARM Compiler Toolchain V4.0.677 or later!"
 N#endif
 N
@@ -2666,7 +2666,7 @@ N#if   defined ( __ICCARM__ )
 X#if   0L
 S #pragma system_include         /* treat file as system include file for MISRA check */
 S#elif defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
-X#elif 1L && (5060422 >= 6010050)
+X#elif 1L && (5060183 >= 6010050)
 S  #pragma clang system_header   /* treat file as system include file */
 N#endif
 N
@@ -19585,7 +19585,8 @@ N
 Nstatic void delay_2d4(uint8_t n) {
 N	uint8_t i = 0;
 N
-N	for (i = 0; i < n; i++);
+N	for (i = 0; i < n; i++)
+N		;
 N
 N}
 N
@@ -19596,8 +19597,9 @@ N/******************************************************************************
 Nvoid SPI_WW(uint8_t R_REG) {
 N	uint8_t i;
 N	for (i = 0; i < 8; i++) {
-N		SCK_LOW;
-X		(*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((7)<<2)))) = 0;delay_2d4(1);
+N		SCK_LOW
+X		(*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((7)<<2)))) = 0;delay_2d4(1)
+N		;
 N		if (R_REG & 0x80) {
 N			SPI_DATA_HIGH;
 X			((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((5)<<2)))) = 1);
@@ -19606,13 +19608,14 @@ N			SPI_DATA_LOW;
 X			((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((5)<<2)))) = 0);
 N		}
 N		R_REG <<= 1;
-N		SCK_HIGH;
-X		(*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((7)<<2)))) = 1;delay_2d4(1);
-N		__NOP;
-X		__nop;
+N		SCK_HIGH
+X		(*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((7)<<2)))) = 1;delay_2d4(1)
+N		;
+N		delay_2d4(1);
 N	}
-N	SCK_LOW;
-X	(*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((7)<<2)))) = 0;delay_2d4(1);
+N	SCK_LOW
+X	(*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((7)<<2)))) = 0;delay_2d4(1)
+N	;
 N}
 N
 N/******************************************************************************/
@@ -19622,12 +19625,10 @@ N/******************************************************************************
 Nvoid RF_WriteReg(uint8_t reg, uint8_t wdata) {
 N	CSN_LOW;
 X	((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((4)<<2)))) = 0);
-N	__NOP;
-X	__nop;
+N	delay_2d4(1);
 N	SPI_WW(reg);
 N	SPI_WW(wdata);
-N	__NOP;
-X	__nop;
+N	delay_2d4(1);
 N	CSN_HIGH;
 X	((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((4)<<2)))) = 1);
 N}
@@ -19657,8 +19658,9 @@ N/******************************************************************************
 Nvoid SPI_WR(uint8_t R_REG) {
 N	uint8_t i;
 N	for (i = 0; i < 8; i++) {
-N		SCK_LOW;
-X		(*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((7)<<2)))) = 0;delay_2d4(1);
+N		SCK_LOW
+X		(*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((7)<<2)))) = 0;delay_2d4(1)
+N		;
 N		if (R_REG & 0x80) {
 N			SPI_DATA_HIGH;
 X			((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((5)<<2)))) = 1);
@@ -19667,16 +19669,17 @@ N			SPI_DATA_LOW;
 X			((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((5)<<2)))) = 0);
 N		}
 N		R_REG <<= 1;
-N		SCK_HIGH;
-X		(*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((7)<<2)))) = 1;delay_2d4(1);
-N		__NOP;
-X		__nop;
+N		SCK_HIGH
+X		(*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((7)<<2)))) = 1;delay_2d4(1)
+N		;
+N		delay_2d4(1);
 N	}
 N	SPI_DATA_INPUT_MODE
 X	GPIO_SetMode(((GPIO_T *) (((uint32_t)0x50000000) + 0x04000)), (0x00000020), 0x0UL);
 N	;
-N	SCK_LOW;
-X	(*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((7)<<2)))) = 0;delay_2d4(1);
+N	SCK_LOW
+X	(*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((7)<<2)))) = 0;delay_2d4(1)
+N	;
 N
 N}
 N
@@ -19688,18 +19691,21 @@ Nuint8_t ucSPI_Read(void) {
 N	uint8_t i, dt;
 N	dt = 0;
 N	for (i = 0; i < 8; i++) {
-N		SCK_LOW;
-X		(*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((7)<<2)))) = 0;delay_2d4(1);
+N		SCK_LOW
+X		(*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((7)<<2)))) = 0;delay_2d4(1)
+N		;
 N		dt = dt << 1;
-N		SCK_HIGH;
-X		(*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((7)<<2)))) = 1;delay_2d4(1);
+N		SCK_HIGH
+X		(*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((7)<<2)))) = 1;delay_2d4(1)
+N		;
 N		if (SPI_DATA_STATUS) {
 X		if (((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((5)<<2)))))) {
 N			dt |= 0x01;
 N		}
 N	}
-N	SCK_LOW;
-X	(*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((7)<<2)))) = 0;delay_2d4(1);
+N	SCK_LOW
+X	(*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((7)<<2)))) = 0;delay_2d4(1)
+N	;
 N	return dt;
 N}
 N
@@ -19712,15 +19718,13 @@ N	uint8_t dt;
 N
 N	CSN_LOW;
 X	((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((4)<<2)))) = 0);
-N	__NOP;
-X	__nop;
+N	delay_2d4(1);
 N	SPI_WR(reg);
 N	dt = ucSPI_Read();
 N	SPI_DATA_OUTPUT_MODE
 X	GPIO_SetMode(((GPIO_T *) (((uint32_t)0x50000000) + 0x04000)), (0x00000020), 0x1UL);
 N	;
-N	__NOP;
-X	__nop;
+N	delay_2d4(1);
 N	CSN_HIGH;
 X	((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((4)<<2)))) = 1);
 N
@@ -19756,12 +19760,7 @@ X	RF_WriteReg(0xFC, 0);
 N	RF_WriteReg(W_REGISTER + CONFIG, 0X8E);						// 将RF设置成TX模式
 X	RF_WriteReg(0x20 + 0x00, 0X8E);						
 N//	delay_10us(1);
-N	__NOP;
-X	__nop;
-N	__NOP;
-X	__nop;
-N	__NOP;
-X	__nop;
+N	delay_2d4(10);
 N}
 N
 N/******************************************************************************/
@@ -19769,7 +19768,6 @@ N//            RF_RxMode
 N//            将RF设置成RX模式，准备接收数据
 N/******************************************************************************/
 Nvoid RF_RxMode(void) {
-N	uint16_t i = 0;
 N	CE_LOW;
 X	RF_WriteReg(0xFC, 0);
 N	RF_WriteReg(W_REGISTER + CONFIG, 0X8F);						// 将RF设置成RX模式
@@ -19777,10 +19775,7 @@ X	RF_WriteReg(0x20 + 0x00, 0X8F);
 N	CE_HIGH;										// Set CE pin high 开始接收数据
 X	RF_WriteReg(0xFD, 0);										
 N//	delay_ms(2);
-N	for (i = 0; i < 5000; i++) {
-N		__NOP;
-X		__nop;
-N	}
+N	delay_2d4(200);
 N
 N}
 N
@@ -19840,16 +19835,12 @@ N//              length 通常等于 PAYLOAD_WIDTH
 N/******************************************************************************/
 Nvoid RF_TxData(uint8_t *ucPayload, uint8_t length) {
 N	if (0 == ucRF_GetStatus()) {                             // rf free status
-N		uint16_t i = 0;
 N		RF_WriteBuf(W_TX_PAYLOAD, ucPayload, length);
 X		RF_WriteBuf(0xA0, ucPayload, length);
 N		CE_HIGH;                             //rf entery tx mode start send data
 X		RF_WriteReg(0xFD, 0);                             
 N//		delay_10us(60);                            //keep ce high at least 600us
-N		for (i = 0; i < 200; i++) {
-N			__NOP;
-X			__nop;
-N		}
+N		delay_2d4(10);
 N		CE_LOW;                                                 //rf entery stb3
 X		RF_WriteReg(0xFC, 0);                                                 
 N	}
@@ -19968,7 +19959,6 @@ N/******************************************************************************
 N//            		进入载波模式
 N/******************************************************************************/
 Nvoid RF_Carrier(uint8_t ucChannel_Set) {
-N	uint8_t i = 0;
 N	uint8_t BB_cal_data[5] = { 0x0A, 0x6D, 0x67, 0x9C, 0x46 };
 N	uint8_t RF_cal_data[3] = { 0xF6, 0x37, 0x5D };
 N	uint8_t RF_cal2_data[6] = { 0x45, 0x21, 0xEF, 0xAC, 0x5A, 0x50 };
@@ -19984,16 +19974,7 @@ X	RF_WriteReg(0x20 + 0x1D, 0x20);
 N	CE_LOW;
 X	RF_WriteReg(0xFC, 0);
 N//	delay_ms(200);
-N	for (i = 0; i < 220; i++) {
-N		__NOP;
-X		__nop;
-N		__NOP;
-X		__nop;
-N		__NOP;
-X		__nop;
-N		__NOP;
-X		__nop;
-N	}
+N	delay_2d4(220);
 N
 N	RF_WriteReg(W_REGISTER + RF_CH, ucChannel_Set);						//单载波频点
 X	RF_WriteReg(0x20 + 0x05, ucChannel_Set);						

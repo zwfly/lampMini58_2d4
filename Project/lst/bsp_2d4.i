@@ -17863,7 +17863,8 @@ void SPI_init(void) {
 static void delay_2d4(uint8_t n) {
 	uint8_t i = 0;
 
-	for (i = 0; i < n; i++);
+	for (i = 0; i < n; i++)
+		;
 
 }
 
@@ -17874,17 +17875,20 @@ static void delay_2d4(uint8_t n) {
 void SPI_WW(uint8_t R_REG) {
 	uint8_t i;
 	for (i = 0; i < 8; i++) {
-		(*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((7)<<2)))) = 0;delay_2d4(1);
+		(*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((7)<<2)))) = 0;delay_2d4(1)
+		;
 		if (R_REG & 0x80) {
 			((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((5)<<2)))) = 1);
 		} else {
 			((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((5)<<2)))) = 0);
 		}
 		R_REG <<= 1;
-		(*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((7)<<2)))) = 1;delay_2d4(1);
-		__nop;
+		(*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((7)<<2)))) = 1;delay_2d4(1)
+		;
+		delay_2d4(1);
 	}
-	(*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((7)<<2)))) = 0;delay_2d4(1);
+	(*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((7)<<2)))) = 0;delay_2d4(1)
+	;
 }
 
  
@@ -17893,10 +17897,10 @@ void SPI_WW(uint8_t R_REG) {
  
 void RF_WriteReg(uint8_t reg, uint8_t wdata) {
 	((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((4)<<2)))) = 0);
-	__nop;
+	delay_2d4(1);
 	SPI_WW(reg);
 	SPI_WW(wdata);
-	__nop;
+	delay_2d4(1);
 	((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((4)<<2)))) = 1);
 }
 
@@ -17923,19 +17927,22 @@ void RF_WriteBuf(uint8_t reg, uint8_t *pBuf, uint8_t length) {
 void SPI_WR(uint8_t R_REG) {
 	uint8_t i;
 	for (i = 0; i < 8; i++) {
-		(*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((7)<<2)))) = 0;delay_2d4(1);
+		(*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((7)<<2)))) = 0;delay_2d4(1)
+		;
 		if (R_REG & 0x80) {
 			((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((5)<<2)))) = 1);
 		} else {
 			((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((5)<<2)))) = 0);
 		}
 		R_REG <<= 1;
-		(*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((7)<<2)))) = 1;delay_2d4(1);
-		__nop;
+		(*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((7)<<2)))) = 1;delay_2d4(1)
+		;
+		delay_2d4(1);
 	}
 	GPIO_SetMode(((GPIO_T *) (((uint32_t)0x50000000) + 0x04000)), (0x00000020), 0x0UL);
 	;
-	(*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((7)<<2)))) = 0;delay_2d4(1);
+	(*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((7)<<2)))) = 0;delay_2d4(1)
+	;
 
 }
 
@@ -17947,14 +17954,17 @@ uint8_t ucSPI_Read(void) {
 	uint8_t i, dt;
 	dt = 0;
 	for (i = 0; i < 8; i++) {
-		(*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((7)<<2)))) = 0;delay_2d4(1);
+		(*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((7)<<2)))) = 0;delay_2d4(1)
+		;
 		dt = dt << 1;
-		(*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((7)<<2)))) = 1;delay_2d4(1);
+		(*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((7)<<2)))) = 1;delay_2d4(1)
+		;
 		if (((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((5)<<2)))))) {
 			dt |= 0x01;
 		}
 	}
-	(*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((7)<<2)))) = 0;delay_2d4(1);
+	(*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((7)<<2)))) = 0;delay_2d4(1)
+	;
 	return dt;
 }
 
@@ -17966,12 +17976,12 @@ uint8_t ucRF_ReadReg(uint8_t reg) {
 	uint8_t dt;
 
 	((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((4)<<2)))) = 0);
-	__nop;
+	delay_2d4(1);
 	SPI_WR(reg);
 	dt = ucSPI_Read();
 	GPIO_SetMode(((GPIO_T *) (((uint32_t)0x50000000) + 0x04000)), (0x00000020), 0x1UL);
 	;
-	__nop;
+	delay_2d4(1);
 	((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((4)<<2)))) = 1);
 
 	return dt;
@@ -18001,9 +18011,7 @@ void RF_TxMode(void) {
 	RF_WriteReg(0xFC, 0);
 	RF_WriteReg(0x20 + 0x00, 0X8E);						
 
-	__nop;
-	__nop;
-	__nop;
+	delay_2d4(10);
 }
 
  
@@ -18011,14 +18019,11 @@ void RF_TxMode(void) {
 
  
 void RF_RxMode(void) {
-	uint16_t i = 0;
 	RF_WriteReg(0xFC, 0);
 	RF_WriteReg(0x20 + 0x00, 0X8F);						
 	RF_WriteReg(0xFD, 0);										
 
-	for (i = 0; i < 5000; i++) {
-		__nop;
-	}
+	delay_2d4(200);
 
 }
 
@@ -18071,13 +18076,10 @@ void RF_SetChannel(uint8_t Channel) {
  
 void RF_TxData(uint8_t *ucPayload, uint8_t length) {
 	if (0 == ucRF_GetStatus()) {                             
-		uint16_t i = 0;
 		RF_WriteBuf(0xA0, ucPayload, length);
 		RF_WriteReg(0xFD, 0);                             
 
-		for (i = 0; i < 200; i++) {
-			__nop;
-		}
+		delay_2d4(10);
 		RF_WriteReg(0xFC, 0);                                                 
 	}
 }
@@ -18165,7 +18167,6 @@ void RF_Init(void) {
 
  
 void RF_Carrier(uint8_t ucChannel_Set) {
-	uint8_t i = 0;
 	uint8_t BB_cal_data[5] = { 0x0A, 0x6D, 0x67, 0x9C, 0x46 };
 	uint8_t RF_cal_data[3] = { 0xF6, 0x37, 0x5D };
 	uint8_t RF_cal2_data[6] = { 0x45, 0x21, 0xEF, 0xAC, 0x5A, 0x50 };
@@ -18177,12 +18178,7 @@ void RF_Carrier(uint8_t ucChannel_Set) {
 	RF_WriteReg(0x20 + 0x1D, 0x20);
 	RF_WriteReg(0xFC, 0);
 
-	for (i = 0; i < 220; i++) {
-		__nop;
-		__nop;
-		__nop;
-		__nop;
-	}
+	delay_2d4(220);
 
 	RF_WriteReg(0x20 + 0x05, ucChannel_Set);						
 	RF_WriteReg(0x20 + 0x06, (0x3F |0X00));      					

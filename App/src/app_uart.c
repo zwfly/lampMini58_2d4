@@ -95,13 +95,13 @@ static void app_RC_Receiver_cmd_pro(Uart_ST* st) {
 #if 1
 		tmp = st->rxBuf[(st->pRead + 13) % sizeof(st->rxBuf)] & 0x0F; //sub mode number
 
-		uint8_t n = (tmp * sizeof(SUBDOME_T) + sizeof(DOME_HEADER_T));
+		uint8_t bytes = tmp * sizeof(SUBDOME_T) + sizeof(DOME_HEADER_T);
 
-		if (minSpaceBytes % 4) {
-			minSpaceBytes++;
-		}
+//		if (minSpaceBytes % 4) {
+//			minSpaceBytes++;
+//		}
 
-		for (i = 0; i < (n / 4); i++) {
+		for (i = 0; i < (bytes / 4); i++) {
 			uint32_t addr = index * minSpaceBytes + i * 4;
 			uint32_t dt = st->rxBuf[(st->pRead + 4 + i) % sizeof(st->rxBuf)];
 			dt |= st->rxBuf[(st->pRead + 4 + i + 1) % sizeof(st->rxBuf)] << 8;
@@ -109,25 +109,24 @@ static void app_RC_Receiver_cmd_pro(Uart_ST* st) {
 			dt |= st->rxBuf[(st->pRead + 4 + i + 3) % sizeof(st->rxBuf)] << 24;
 			app_eeprom_write_int(addr, dt);
 		}
-		for (i = 0; i < (n % 4); i++) {
-			uint32_t addr = index * minSpaceBytes + n / 4 + 4;
+		if (bytes % 4) {
+			uint32_t addr = index * minSpaceBytes + (bytes / 4) * 4;
 			uint32_t dt = 0;
-			switch (i) {
-			case 0:
-				dt = st->rxBuf[(st->pRead + 4 + n / 4) % sizeof(st->rxBuf)];
-				break;
-			case 1:
-				dt |= st->rxBuf[(st->pRead + 4 + n / 4 + i) % sizeof(st->rxBuf)]
-						<< 8;
-				break;
-			case 2:
-				dt |= st->rxBuf[(st->pRead + 4 + n / 4 + i) % sizeof(st->rxBuf)]
-						<< 16;
-				break;
-			case 3:
-				dt |= st->rxBuf[(st->pRead + 4 + n / 4 + i) % sizeof(st->rxBuf)]
-						<< 24;
-				break;
+			for (i = 0; i < (bytes % 4); i++) {
+				switch (i) {
+				case 0:
+					dt = st->rxBuf[(st->pRead + 4 + (bytes / 4) * 4)
+							% sizeof(st->rxBuf)];
+					break;
+				case 1:
+					dt |= st->rxBuf[(st->pRead + 4 + (bytes / 4) * 4 + i)
+							% sizeof(st->rxBuf)] << 8;
+					break;
+				case 2:
+					dt |= st->rxBuf[(st->pRead + 4 + (bytes / 4) * 4 + i)
+							% sizeof(st->rxBuf)] << 16;
+					break;
+				}
 			}
 			app_eeprom_write_int(addr, dt);
 		}

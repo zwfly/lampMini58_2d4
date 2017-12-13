@@ -19449,6 +19449,7 @@ static void app_RC_Receiver_cmd_pro(Uart_ST* st) {
 		uint8_t index = st->rxBuf[(st->pRead + 12) % sizeof(st->rxBuf)];
 		uint8_t availableGroup = 0;
 		uint8_t minSpaceBytes = 0;
+		uint8_t bytes = 0;
 		if (sizeof(DOME_DEFAULT_T) % 4) {
 			minSpaceBytes = (sizeof(DOME_DEFAULT_T) / 4) * 4 + 4;
 		} else {
@@ -19469,10 +19470,10 @@ static void app_RC_Receiver_cmd_pro(Uart_ST* st) {
 				app_eeprom_erase(i * 0x200);
 			}
 		}
-#line 96 "..\\App\\src\\app_uart.c"
+#line 97 "..\\App\\src\\app_uart.c"
 		tmp = st->rxBuf[(st->pRead + 13) % sizeof(st->rxBuf)] & 0x0F; 
 
-		uint8_t bytes = tmp * sizeof(SUBDOME_T) + sizeof(DOME_HEADER_T);
+		bytes = tmp * sizeof(SUBDOME_T) + sizeof(DOME_HEADER_T);
 
 
 
@@ -19544,7 +19545,7 @@ static void app_RC_Receiver_cmd_pro(Uart_ST* st) {
 		index++;
 		app_2d4_send(buffer, index);
 		break;
-#line 186 "..\\App\\src\\app_uart.c"
+#line 187 "..\\App\\src\\app_uart.c"
 	case 0x33:
 		buffer[index++] = 0xF8;
 		buffer[index++] = len;
@@ -19640,6 +19641,15 @@ static void app_RC_Receiver_cmd_pro(Uart_ST* st) {
 			app_2d4_send(buffer, index);
 		}
 		break;
+	case 0xF0: {
+		uint8_t sta[2] = { 0 };
+		memset(sta, 0, sizeof(sta));
+		sta[0] |= g_tWork.status.bits.blinkEnable ? 0x80 : 0;
+		sta[0] |= g_tWork.status.bits.DEMO ? 0x40 : 0;
+		sta[1] |= Relay_IsOn() ? 0x01 : 0;
+		app_uart_send(0xF0, sta, sizeof(sta));
+	}
+		break;
 		
 	case 0x54:
 		if (g_tWork.status.bits.blinkEnable == 0) {
@@ -19723,6 +19733,7 @@ void app_uart_pro(void) {
 
 
 
+
 			uart_st.rxBuf[uart_st.pWrite++] = ucData;
 			if (uart_st.pWrite >= sizeof(uart_st.rxBuf)) {
 				uart_st.pWrite = 0;
@@ -19747,7 +19758,7 @@ void app_uart_pro(void) {
 										uart_st.rxBuf + uart_st.pRead, len + 3,
 										uart_st.pRead, sizeof(uart_st.rxBuf))) {
 							uart_st.pRead++;
-							LITE_syslog(__FUNCTION__, 388, LOG_ERR_LEVEL, "[ERROR]   remote control check error!\r\n");
+							LITE_syslog(__FUNCTION__, 399, LOG_ERR_LEVEL, "[ERROR]   remote control check error!\r\n");
 
 						} else {
 							 
@@ -19767,5 +19778,5 @@ void app_uart_pro(void) {
 		break;
 
 	}
-#line 740 "..\\App\\src\\app_uart.c"
+#line 751 "..\\App\\src\\app_uart.c"
 }

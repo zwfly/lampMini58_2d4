@@ -31,11 +31,9 @@ static void ConfigUartNVIC(void);
  *********************************************************************************************************
  */
 void bsp_InitUart(void) {
-	UartVarInit(); /* 必须先初始化全局变量,再配置硬件 */
-
-	InitHardUart(); /* 配置串口的硬件参数(波特率等) */
-
-	ConfigUartNVIC(); /* 配置串口中断 */
+	UartVarInit(); 
+	InitHardUart(); 
+	ConfigUartNVIC();
 }
 
 /*
@@ -284,9 +282,11 @@ static void ConfigUartNVIC(void) {
 
 #if UART1_FIFO_EN == 1
 
+//	  UART_SetTimeoutCnt(UART1,0x3E);
+	
 	/* Enable Interrupt and install the call back function */
-//	UART_ENABLE_INT(UART1, (UART_INTEN_RDAIEN_Msk | UART_INTEN_THREIEN_Msk | UART_INTEN_RXTOIEN_Msk));
-	UART_ENABLE_INT(UART1, (UART_INTEN_RDAIEN_Msk | UART_INTEN_THREIEN_Msk));
+	UART_ENABLE_INT(UART1, (UART_INTEN_RDAIEN_Msk | UART_INTEN_THREIEN_Msk | UART_INTEN_RXTOIEN_Msk));
+//	UART_ENABLE_INT(UART1, (UART_INTEN_RDAIEN_Msk | UART_INTEN_RXTOIEN_Msk));
 	NVIC_EnableIRQ(UART1_IRQn);
 
 #endif
@@ -408,8 +408,7 @@ static void UartIRQ(UART_T_M *_pUart) {
 	/* 处理接收中断  */
 	if (_pUart->uart->INTSTS & UART_INTSTS_RDAINT_Msk) {
 		/* 从串口接收数据寄存器读取数据存放到接收FIFO */
-		uint8_t ch;
-
+		uint8_t ch;		
 		/* Get all the input characters */
 		while (UART_IS_RX_READY(_pUart->uart)) {
 			/* Get the character from UART Buffer */
@@ -489,13 +488,13 @@ static void UartIRQ(UART_T_M *_pUart) {
  */
 
 #if UART0_FIFO_EN == 1
-void USART0_IRQHandler(void) {
+void UART0_IRQHandler(void) {
 	UartIRQ(&g_tUart0);
 }
 #endif
 
 #if UART1_FIFO_EN == 1
-void USART1_IRQHandler(void)
+void UART1_IRQHandler(void)
 {
 	UartIRQ(&g_tUart1);
 }

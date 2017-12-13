@@ -41,7 +41,7 @@ N */
 N
 N#ifndef __stdio_h
 N#define __stdio_h
-N#define __ARMCLIB_VERSION 5060009
+N#define __ARMCLIB_VERSION 5060019
 N
 N/*
 N * Depending on compiler version __int64 or __INT64_TYPE__ should be defined.
@@ -1157,7 +1157,7 @@ N */
 N
 N#ifndef __string_h
 N#define __string_h
-N#define __ARMCLIB_VERSION 5060009
+N#define __ARMCLIB_VERSION 5060019
 N
 N#define _ARMABI __declspec(__nothrow)
 N
@@ -1705,7 +1705,7 @@ N */
 N
 N#ifndef __stdint_h
 N#define __stdint_h
-N#define __ARMCLIB_VERSION 5060009
+N#define __ARMCLIB_VERSION 5060019
 N
 N  #ifdef __INT64_TYPE__
 S    /* armclang predefines '__INT64_TYPE__' and '__INT64_C_SUFFIX__' */
@@ -2198,7 +2198,7 @@ N#if   defined ( __ICCARM__ )
 X#if   0L
 S #pragma system_include         /* treat file as system include file for MISRA check */
 S#elif defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
-X#elif 1L && (5060183 >= 6010050)
+X#elif 1L && (5060422 >= 6010050)
 S  #pragma clang system_header   /* treat file as system include file */
 N#endif
 N
@@ -2368,7 +2368,7 @@ N#if   defined ( __ICCARM__ )
 X#if   0L
 S #pragma system_include         /* treat file as system include file for MISRA check */
 S#elif defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
-X#elif 1L && (5060183 >= 6010050)
+X#elif 1L && (5060422 >= 6010050)
 S  #pragma clang system_header   /* treat file as system include file */
 N#endif
 N
@@ -2426,7 +2426,7 @@ N#define __CMSIS_ARMCC_H
 N
 N
 N#if defined(__ARMCC_VERSION) && (__ARMCC_VERSION < 400677)
-X#if 1L && (5060183 < 400677)
+X#if 1L && (5060422 < 400677)
 S  #error "Please use ARM Compiler Toolchain V4.0.677 or later!"
 N#endif
 N
@@ -3234,7 +3234,7 @@ N#if   defined ( __ICCARM__ )
 X#if   0L
 S #pragma system_include         /* treat file as system include file for MISRA check */
 S#elif defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
-X#elif 1L && (5060183 >= 6010050)
+X#elif 1L && (5060422 >= 6010050)
 S  #pragma clang system_header   /* treat file as system include file */
 N#endif
 N
@@ -20254,7 +20254,7 @@ N#define  APP_SPEED_CMD            0x64
 N#define  APP_FLASH_INDEX_CMD      0x65
 N#define  APP_SWITCH_INDEX_CMD      0x66
 N
-N
+N#define  DEVICE_STA_CMD      0xF0
 N//extern uint8_t sendBuf[PAYLOAD_WIDTH];
 N
 Nvoid app_2d4_init(void);
@@ -20505,7 +20505,7 @@ N */
 N
 N#ifndef __stdlib_h
 N#define __stdlib_h
-N#define __ARMCLIB_VERSION 5060009
+N#define __ARMCLIB_VERSION 5060019
 N
 N#if defined(__clang__) || (defined(__ARMCC_VERSION) && !defined(__STRICT_ANSI__))
 X#if 0L || (1L && !0L)
@@ -21590,6 +21590,7 @@ N//		break;
 N		uint8_t index = st->rxBuf[(st->pRead + 12) % sizeof(st->rxBuf)];
 N		uint8_t availableGroup = 0;
 N		uint8_t minSpaceBytes = 0;
+N		uint8_t bytes = 0;
 N		if (sizeof(DOME_DEFAULT_T) % 4) {
 N			minSpaceBytes = (sizeof(DOME_DEFAULT_T) / 4) * 4 + 4;
 N		} else {
@@ -21626,7 +21627,7 @@ N#endif
 N#if 1
 N		tmp = st->rxBuf[(st->pRead + 13) % sizeof(st->rxBuf)] & 0x0F; //sub mode number
 N
-N		uint8_t bytes = tmp * sizeof(SUBDOME_T) + sizeof(DOME_HEADER_T);
+N		bytes = tmp * sizeof(SUBDOME_T) + sizeof(DOME_HEADER_T);
 N
 N//		if (minSpaceBytes % 4) {
 N//			minSpaceBytes++;
@@ -21835,6 +21836,17 @@ N		if (g_tWork.status.bits.DOME == 0) {
 N			app_2d4_send(buffer, index);
 N		}
 N		break;
+N	case DEVICE_STA_CMD: {
+X	case 0xF0: {
+N		uint8_t sta[2] = { 0 };
+N		memset(sta, 0, sizeof(sta));
+N		sta[0] |= g_tWork.status.bits.blinkEnable ? 0x80 : 0;
+N		sta[0] |= g_tWork.status.bits.DEMO ? 0x40 : 0;
+N		sta[1] |= Relay_IsOn() ? 0x01 : 0;
+N		app_uart_send(DEVICE_STA_CMD, sta, sizeof(sta));
+X		app_uart_send(0xF0, sta, sizeof(sta));
+N	}
+N		break;
 N		/// app --start
 N	case KEY_CARD_POWER_CMD:
 X	case 0x54:
@@ -21924,7 +21936,8 @@ N	while (1) {
 N
 N		if (comGetChar(COM1, &ucData)) {
 N#if 0
-S			comSendChar(COM0, ucData);
+S//			comSendChar(COM0, ucData);
+S//			log_debug("rcv %02X", ucData);
 N#endif
 N
 N			uart_st.rxBuf[uart_st.pWrite++] = ucData;
@@ -21953,7 +21966,7 @@ N										uart_st.pRead, sizeof(uart_st.rxBuf))) {
 N							uart_st.pRead++;
 N							log_err(
 N									"[ERROR]   remote control check error!\r\n");
-X							LITE_syslog(__FUNCTION__, 388, LOG_ERR_LEVEL, "[ERROR]   remote control check error!\r\n");
+X							LITE_syslog(__FUNCTION__, 399, LOG_ERR_LEVEL, "[ERROR]   remote control check error!\r\n");
 N						} else {
 N							/* your code */
 N							app_RC_Receiver_cmd_pro(&uart_st);

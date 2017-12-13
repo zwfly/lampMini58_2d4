@@ -18011,24 +18011,14 @@ static void Light_Blue_set(uint16_t duty) {
 void Light_RGB_set(uint16_t r, uint16_t g, uint16_t b) {
 	uint32_t tmp = 0;
 
-	tmp = r;
-	tmp *= dome_running_param.bright;
-	tmp /= 100;
+	tmp = r * dome_running_param.bright / 100;
 	Light_Red_set(tmp & 0xFFFF);
 
-	tmp = g;
-	tmp *= dome_running_param.bright;
-	tmp /= 100;
+	tmp = g * dome_running_param.bright / 100;
 	Light_Green_set(tmp & 0xFFFF);
 
-	tmp = b;
-	tmp *= dome_running_param.bright;
-	tmp /= 100;
+	tmp = b * dome_running_param.bright / 100;
 	Light_Blue_set(tmp & 0xFFFF);
-
-
-
-
 
 }
 void Light_bright_set(uint8_t br) {

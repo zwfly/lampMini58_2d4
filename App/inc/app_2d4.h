@@ -88,7 +88,7 @@
 #define  APP_FLASH_INDEX_CMD      0x65
 #define  APP_SWITCH_INDEX_CMD      0x66
 
-
+#define  DEVICE_STA_CMD      0xF0
 //extern uint8_t sendBuf[PAYLOAD_WIDTH];
 
 void app_2d4_init(void);

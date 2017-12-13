@@ -19067,50 +19067,51 @@ void LITE_rich_hexdump(const char *f, const int l, const int level,
 void EEPROM_InitHard(void) {
 
 	uint32_t u32Data;
-
+	uint8_t i;
+	
 	SYS_UnlockReg();
 
 	 
 	FMC_Open();
 	 
-	LITE_syslog(__FUNCTION__, 19, LOG_DEBUG_LEVEL, "  Boot Mode ............................. ");
+	LITE_syslog(__FUNCTION__, 20, LOG_DEBUG_LEVEL, "  Boot Mode ............................. ");
 	if (FMC_GetBootSource() == 0)
-		LITE_syslog(__FUNCTION__, 21, LOG_DEBUG_LEVEL, "[APROM]");
+		LITE_syslog(__FUNCTION__, 22, LOG_DEBUG_LEVEL, "[APROM]");
 	else {
-		LITE_syslog(__FUNCTION__, 23, LOG_DEBUG_LEVEL, "[LDROM]");
-		LITE_syslog(__FUNCTION__, 24, LOG_DEBUG_LEVEL, "  WARNING: The driver sample code must execute in AP mode!");
+		LITE_syslog(__FUNCTION__, 24, LOG_DEBUG_LEVEL, "[LDROM]");
+		LITE_syslog(__FUNCTION__, 25, LOG_DEBUG_LEVEL, "  WARNING: The driver sample code must execute in AP mode!");
 		
 	}
 
 	u32Data = FMC_ReadCID();
-	LITE_syslog(__FUNCTION__, 29, LOG_DEBUG_LEVEL, "  Company ID ............................ [0x%08x]", u32Data);
+	LITE_syslog(__FUNCTION__, 30, LOG_DEBUG_LEVEL, "  Company ID ............................ [0x%08x]", u32Data);
 
 	u32Data = FMC_ReadPID();
-	LITE_syslog(__FUNCTION__, 32, LOG_DEBUG_LEVEL, "  Product ID ............................ [0x%08x]", u32Data);
+	LITE_syslog(__FUNCTION__, 33, LOG_DEBUG_LEVEL, "  Product ID ............................ [0x%08x]", u32Data);
 
 	 
-	LITE_syslog(__FUNCTION__, 35, LOG_DEBUG_LEVEL, "  User Config 0 ......................... [0x%08x]", FMC_Read(0x00300000UL));
+	LITE_syslog(__FUNCTION__, 36, LOG_DEBUG_LEVEL, "  User Config 0 ......................... [0x%08x]", FMC_Read(0x00300000UL));
 
-	LITE_syslog(__FUNCTION__, 37, LOG_DEBUG_LEVEL, "  User Config 1 ......................... [0x%08x]", FMC_Read(0x00300000UL + 4));
+	LITE_syslog(__FUNCTION__, 38, LOG_DEBUG_LEVEL, "  User Config 1 ......................... [0x%08x]", FMC_Read(0x00300000UL + 4));
 
 
-	uint8_t i;
+
 
 	for (i = 0; i < 3; i++) {
 		u32Data = FMC_ReadUID(i);
-		LITE_syslog(__FUNCTION__, 44, LOG_DEBUG_LEVEL, "  Unique ID %d ........................... [0x%08x]\n", i, u32Data);
+		LITE_syslog(__FUNCTION__, 45, LOG_DEBUG_LEVEL, "  Unique ID %d ........................... [0x%08x]\n", i, u32Data);
 
 	}
 
 	for (i = 0; i < 4; i++) {
 		u32Data = FMC_ReadUCID(i);
-		LITE_syslog(__FUNCTION__, 50, LOG_DEBUG_LEVEL, "  Unique Customer ID %d .................. [0x%08x]\n", i, u32Data);
+		LITE_syslog(__FUNCTION__, 51, LOG_DEBUG_LEVEL, "  Unique Customer ID %d .................. [0x%08x]\n", i, u32Data);
 
 	}
 
 	 
 	u32Data = FMC_ReadDataFlashBaseAddr();
-	LITE_syslog(__FUNCTION__, 56, LOG_DEBUG_LEVEL, "  Data Flash Base Address ............... [0x%08x]\n", u32Data);
+	LITE_syslog(__FUNCTION__, 57, LOG_DEBUG_LEVEL, "  Data Flash Base Address ............... [0x%08x]\n", u32Data);
 	 
 	FMC_Close();
 

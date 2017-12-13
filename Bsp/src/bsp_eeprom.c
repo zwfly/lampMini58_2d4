@@ -10,7 +10,8 @@
 void EEPROM_InitHard(void) {
 
 	uint32_t u32Data;
-
+	uint8_t i;
+	
 	SYS_UnlockReg();
 
 	/* Enable FMC ISP function */
@@ -37,7 +38,7 @@ void EEPROM_InitHard(void) {
 	log_debug("  User Config 1 ......................... [0x%08x]",
 			FMC_Read(FMC_CONFIG_BASE + 4));
 
-	uint8_t i;
+
 
 	for (i = 0; i < 3; i++) {
 		u32Data = FMC_ReadUID(i);

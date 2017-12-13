@@ -19442,10 +19442,10 @@ int main(void) {
 	SYS_Init();
 
 
-	LITE_openlog("lamp");
-	LITE_set_loglevel(LOG_DEBUG_LEVEL);
 
 
+
+	LITE_closelog();
 
 
 	bsp_Init();
@@ -19488,6 +19488,7 @@ int main(void) {
 			
 			bsp_KeyScan();
 
+			app_uart_pro();
 
 			app_2d4_pro();
 		}
@@ -19505,37 +19506,38 @@ int main(void) {
 
 		}
 		if (timer0_taskTimer_get()->flag_1s) {
+			static uint32_t cnt = 0;
 			timer0_taskTimer_get()->flag_1s = 0;
 			
-			static uint32_t cnt = 0;
+			
 			cnt++;
-
+				LITE_syslog(__FUNCTION__, 151, LOG_DEBUG_LEVEL, "I am alive %d", cnt);
 
 
 
 		}
 
-		app_uart_pro();
 
-		
+
+
 		ucKeyCode = bsp_GetKey();
 		if (ucKeyCode != KEY_NONE) {
 			static uint8_t press_long_lock = 0;
 			switch (ucKeyCode) {
 			case KEY_1_UP:   
-				LITE_syslog(__FUNCTION__, 163, LOG_DEBUG_LEVEL, "ACC KEY up");
+				LITE_syslog(__FUNCTION__, 165, LOG_DEBUG_LEVEL, "ACC KEY up");
 
 				break;
 			case KEY_1_DOWN:
-				LITE_syslog(__FUNCTION__, 167, LOG_DEBUG_LEVEL, "relay %s", Relay_IsOn() ? "on" : "off");
+				LITE_syslog(__FUNCTION__, 169, LOG_DEBUG_LEVEL, "relay %s", Relay_IsOn() ? "on" : "off");
 
 				Relay_toggle();
 				break;
 			case KEY_1_LONG:
-				LITE_syslog(__FUNCTION__, 172, LOG_DEBUG_LEVEL, "ACC KEY down");
+				LITE_syslog(__FUNCTION__, 174, LOG_DEBUG_LEVEL, "ACC KEY down");
 				break;
 			case KEY_2_UP:   
-				LITE_syslog(__FUNCTION__, 175, LOG_DEBUG_LEVEL, "LED KEY up");
+				LITE_syslog(__FUNCTION__, 177, LOG_DEBUG_LEVEL, "LED KEY up");
 
 				if (press_long_lock == 0) {
 					
@@ -19560,11 +19562,11 @@ int main(void) {
 				press_long_lock = 0;
 				break;
 			case KEY_2_DOWN:
-				LITE_syslog(__FUNCTION__, 200, LOG_DEBUG_LEVEL, "LED KEY down");
+				LITE_syslog(__FUNCTION__, 202, LOG_DEBUG_LEVEL, "LED KEY down");
 
 				break;
 			case KEY_2_LONG:
-				LITE_syslog(__FUNCTION__, 204, LOG_DEBUG_LEVEL, "LED KEY long");
+				LITE_syslog(__FUNCTION__, 206, LOG_DEBUG_LEVEL, "LED KEY long");
 				press_long_lock = 1;
 				if (g_tWork.status.bits.blinkEnable) {
 					g_tWork.status.bits.blinkEnable = 0;

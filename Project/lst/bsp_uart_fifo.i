@@ -17860,11 +17860,9 @@ static void ConfigUartNVIC(void);
 
  
 void bsp_InitUart(void) {
-	UartVarInit();  
-
-	InitHardUart();  
-
-	ConfigUartNVIC();  
+	UartVarInit(); 
+	InitHardUart(); 
+	ConfigUartNVIC();
 }
 
 
@@ -18113,9 +18111,11 @@ static void ConfigUartNVIC(void) {
 
 
 
-	 
 
-	(((UART_T *) (((uint32_t)0x40100000) + 0x50000))->INTEN |= (((0x1ul << (0)) | (0x1ul << (1)))));
+	
+	 
+	(((UART_T *) (((uint32_t)0x40100000) + 0x50000))->INTEN |= (((0x1ul << (0)) | (0x1ul << (1)) | (0x1ul << (4)))));
+
 	NVIC_EnableIRQ(UART1_IRQn);
 
 
@@ -18213,8 +18213,7 @@ static void UartIRQ(UART_T_M *_pUart) {
 	 
 	if (_pUart->uart->INTSTS & (0x1ul << (8))) {
 		 
-		uint8_t ch;
-
+		uint8_t ch;		
 		 
 		while (((_pUart->uart->INTSTS & (0x1ul << (0)))>>(0))) {
 			 
@@ -18258,7 +18257,7 @@ static void UartIRQ(UART_T_M *_pUart) {
 			_pUart->usTxCount--;
 		}
 	}
-#line 480 "..\\Bsp\\src\\bsp_uart_fifo.c"
+#line 479 "..\\Bsp\\src\\bsp_uart_fifo.c"
 }
 
 
@@ -18271,16 +18270,16 @@ static void UartIRQ(UART_T_M *_pUart) {
  
 
 
-void USART0_IRQHandler(void) {
+void UART0_IRQHandler(void) {
 	UartIRQ(&g_tUart0);
 }
 
 
 
-void USART1_IRQHandler(void)
+void UART1_IRQHandler(void)
 {
 	UartIRQ(&g_tUart1);
 }
-#line 561 "..\\Bsp\\src\\bsp_uart_fifo.c"
+#line 560 "..\\Bsp\\src\\bsp_uart_fifo.c"
 
  

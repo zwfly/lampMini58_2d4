@@ -18075,11 +18075,15 @@ void RF_SetChannel(uint8_t Channel) {
 
  
 void RF_TxData(uint8_t *ucPayload, uint8_t length) {
+	uint8_t i = 0;
 	if (0 == ucRF_GetStatus()) {                             
 		RF_WriteBuf(0xA0, ucPayload, length);
 		RF_WriteReg(0xFD, 0);                             
 
-		delay_2d4(10);
+		for (i = 0; i < 21; i++) {
+			delay_2d4(60);
+		}
+
 		RF_WriteReg(0xFC, 0);                                                 
 	}
 }

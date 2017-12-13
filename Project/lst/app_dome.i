@@ -19453,7 +19453,7 @@ void app_dome_Init(void) {
 	memset((uint8_t *) &dome_blink, 0, sizeof(dome_blink));
 	memset((uint8_t *) &dome_running_param, 0, sizeof(dome_running_param));
 
-	dome_running_param.bright = 100;
+	dome_running_param.bright = 80;
 	dome_running_param.speed = 50;
 
 	app_dome_stop_current();

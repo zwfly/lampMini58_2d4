@@ -25,7 +25,7 @@ N */
 N
 N#ifndef __stdio_h
 N#define __stdio_h
-N#define __ARMCLIB_VERSION 5060009
+N#define __ARMCLIB_VERSION 5060019
 N
 N/*
 N * Depending on compiler version __int64 or __INT64_TYPE__ should be defined.
@@ -1130,7 +1130,7 @@ N */
 N
 N#ifndef __stdint_h
 N#define __stdint_h
-N#define __ARMCLIB_VERSION 5060009
+N#define __ARMCLIB_VERSION 5060019
 N
 N  #ifdef __INT64_TYPE__
 S    /* armclang predefines '__INT64_TYPE__' and '__INT64_C_SUFFIX__' */
@@ -1623,7 +1623,7 @@ N#if   defined ( __ICCARM__ )
 X#if   0L
 S #pragma system_include         /* treat file as system include file for MISRA check */
 S#elif defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
-X#elif 1L && (5060183 >= 6010050)
+X#elif 1L && (5060422 >= 6010050)
 S  #pragma clang system_header   /* treat file as system include file */
 N#endif
 N
@@ -1793,7 +1793,7 @@ N#if   defined ( __ICCARM__ )
 X#if   0L
 S #pragma system_include         /* treat file as system include file for MISRA check */
 S#elif defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
-X#elif 1L && (5060183 >= 6010050)
+X#elif 1L && (5060422 >= 6010050)
 S  #pragma clang system_header   /* treat file as system include file */
 N#endif
 N
@@ -1851,7 +1851,7 @@ N#define __CMSIS_ARMCC_H
 N
 N
 N#if defined(__ARMCC_VERSION) && (__ARMCC_VERSION < 400677)
-X#if 1L && (5060183 < 400677)
+X#if 1L && (5060422 < 400677)
 S  #error "Please use ARM Compiler Toolchain V4.0.677 or later!"
 N#endif
 N
@@ -2659,7 +2659,7 @@ N#if   defined ( __ICCARM__ )
 X#if   0L
 S #pragma system_include         /* treat file as system include file for MISRA check */
 S#elif defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
-X#elif 1L && (5060183 >= 6010050)
+X#elif 1L && (5060422 >= 6010050)
 S  #pragma clang system_header   /* treat file as system include file */
 N#endif
 N
@@ -19585,11 +19585,9 @@ N *	返 回 值: 无
 N *********************************************************************************************************
 N */
 Nvoid bsp_InitUart(void) {
-N	UartVarInit(); /* 必须先初始化全局变量,再配置硬件 */
-N
-N	InitHardUart(); /* 配置串口的硬件参数(波特率等) */
-N
-N	ConfigUartNVIC(); /* 配置串口中断 */
+N	UartVarInit(); 
+N	InitHardUart(); 
+N	ConfigUartNVIC();
 N}
 N
 N/*
@@ -19864,10 +19862,12 @@ N
 N#if UART1_FIFO_EN == 1
 X#if 1 == 1
 N
+N//	  UART_SetTimeoutCnt(UART1,0x3E);
+N	
 N	/* Enable Interrupt and install the call back function */
-N//	UART_ENABLE_INT(UART1, (UART_INTEN_RDAIEN_Msk | UART_INTEN_THREIEN_Msk | UART_INTEN_RXTOIEN_Msk));
-N	UART_ENABLE_INT(UART1, (UART_INTEN_RDAIEN_Msk | UART_INTEN_THREIEN_Msk));
-X	(((UART_T *) (((uint32_t)0x40100000) + 0x50000))->INTEN |= (((0x1ul << (0)) | (0x1ul << (1)))));
+N	UART_ENABLE_INT(UART1, (UART_INTEN_RDAIEN_Msk | UART_INTEN_THREIEN_Msk | UART_INTEN_RXTOIEN_Msk));
+X	(((UART_T *) (((uint32_t)0x40100000) + 0x50000))->INTEN |= (((0x1ul << (0)) | (0x1ul << (1)) | (0x1ul << (4)))));
+N//	UART_ENABLE_INT(UART1, (UART_INTEN_RDAIEN_Msk | UART_INTEN_RXTOIEN_Msk));
 N	NVIC_EnableIRQ(UART1_IRQn);
 N
 N#endif
@@ -20000,8 +20000,7 @@ N	/* 处理接收中断  */
 N	if (_pUart->uart->INTSTS & UART_INTSTS_RDAINT_Msk) {
 X	if (_pUart->uart->INTSTS & (0x1ul << (8))) {
 N		/* 从串口接收数据寄存器读取数据存放到接收FIFO */
-N		uint8_t ch;
-N
+N		uint8_t ch;		
 N		/* Get all the input characters */
 N		while (UART_IS_RX_READY(_pUart->uart)) {
 X		while (((_pUart->uart->INTSTS & (0x1ul << (0)))>>(0))) {
@@ -20087,14 +20086,14 @@ N */
 N
 N#if UART0_FIFO_EN == 1
 X#if 1 == 1
-Nvoid USART0_IRQHandler(void) {
+Nvoid UART0_IRQHandler(void) {
 N	UartIRQ(&g_tUart0);
 N}
 N#endif
 N
 N#if UART1_FIFO_EN == 1
 X#if 1 == 1
-Nvoid USART1_IRQHandler(void)
+Nvoid UART1_IRQHandler(void)
 N{
 N	UartIRQ(&g_tUart1);
 N}

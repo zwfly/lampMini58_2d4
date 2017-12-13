@@ -246,11 +246,15 @@ void RF_SetChannel(uint8_t Channel) {
 //              length 通常等于 PAYLOAD_WIDTH
 /******************************************************************************/
 void RF_TxData(uint8_t *ucPayload, uint8_t length) {
+	uint8_t i = 0;
 	if (0 == ucRF_GetStatus()) {                             // rf free status
 		RF_WriteBuf(W_TX_PAYLOAD, ucPayload, length);
 		CE_HIGH;                             //rf entery tx mode start send data
 //		delay_10us(60);                            //keep ce high at least 600us
-		delay_2d4(10);
+		for (i = 0; i < 21; i++) {
+			delay_2d4(60);
+		}
+
 		CE_LOW;                                                 //rf entery stb3
 	}
 }

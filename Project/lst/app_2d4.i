@@ -19615,18 +19615,14 @@ void app_2d4_init(void) {
 
 void app_2d4_send(uint8_t *d, uint8_t len) {
 
-#line 52 "..\\App\\src\\app_2d4.c"
 
 	RF_TxMode();
 	send_2d4_flag = 1;
 
 	memset(send_2d4_Buf, 0, 16);
 	memcpy(send_2d4_Buf, d, len);
-	RF_TxData(send_2d4_Buf, sizeof(send_2d4_Buf));
 
-	RF_RxMode();
-	send_2d4_flag = 0;
-
+#line 62 "..\\App\\src\\app_2d4.c"
 
 }
 
@@ -19637,7 +19633,7 @@ static void app_2d4_Rcv(uint8_t *buf) {
 	uint8_t i = 0;
 	uint8_t index = 0;
 	uint8_t check = 0;
-#line 79 "..\\App\\src\\app_2d4.c"
+#line 78 "..\\App\\src\\app_2d4.c"
 	if (buf[0] != 0xF2) {
 		return;
 	}
@@ -19679,7 +19675,7 @@ static void app_2d4_Rcv(uint8_t *buf) {
 		app_uart_send(0x01, 0, 0);
 
 		break;
-#line 148 "..\\App\\src\\app_2d4.c"
+#line 147 "..\\App\\src\\app_2d4.c"
 	case 0x09:
 		if (buf[3] == 1) {
 			Relay_on();

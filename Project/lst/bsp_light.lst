@@ -32,7 +32,7 @@ N */
 N
 N#ifndef __stdio_h
 N#define __stdio_h
-N#define __ARMCLIB_VERSION 5060009
+N#define __ARMCLIB_VERSION 5060019
 N
 N/*
 N * Depending on compiler version __int64 or __INT64_TYPE__ should be defined.
@@ -1137,7 +1137,7 @@ N */
 N
 N#ifndef __stdint_h
 N#define __stdint_h
-N#define __ARMCLIB_VERSION 5060009
+N#define __ARMCLIB_VERSION 5060019
 N
 N  #ifdef __INT64_TYPE__
 S    /* armclang predefines '__INT64_TYPE__' and '__INT64_C_SUFFIX__' */
@@ -1630,7 +1630,7 @@ N#if   defined ( __ICCARM__ )
 X#if   0L
 S #pragma system_include         /* treat file as system include file for MISRA check */
 S#elif defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
-X#elif 1L && (5060183 >= 6010050)
+X#elif 1L && (5060422 >= 6010050)
 S  #pragma clang system_header   /* treat file as system include file */
 N#endif
 N
@@ -1800,7 +1800,7 @@ N#if   defined ( __ICCARM__ )
 X#if   0L
 S #pragma system_include         /* treat file as system include file for MISRA check */
 S#elif defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
-X#elif 1L && (5060183 >= 6010050)
+X#elif 1L && (5060422 >= 6010050)
 S  #pragma clang system_header   /* treat file as system include file */
 N#endif
 N
@@ -1858,7 +1858,7 @@ N#define __CMSIS_ARMCC_H
 N
 N
 N#if defined(__ARMCC_VERSION) && (__ARMCC_VERSION < 400677)
-X#if 1L && (5060183 < 400677)
+X#if 1L && (5060422 < 400677)
 S  #error "Please use ARM Compiler Toolchain V4.0.677 or later!"
 N#endif
 N
@@ -2666,7 +2666,7 @@ N#if   defined ( __ICCARM__ )
 X#if   0L
 S #pragma system_include         /* treat file as system include file for MISRA check */
 S#elif defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
-X#elif 1L && (5060183 >= 6010050)
+X#elif 1L && (5060422 >= 6010050)
 S  #pragma clang system_header   /* treat file as system include file */
 N#endif
 N
@@ -19764,26 +19764,16 @@ N}
 N
 Nvoid Light_RGB_set(uint16_t r, uint16_t g, uint16_t b) {
 N	uint32_t tmp = 0;
-N#if 1
-N	tmp = r;
-N	tmp *= dome_running_param.bright;
-N	tmp /= 100;
+N
+N	tmp = r * dome_running_param.bright / 100;
 N	Light_Red_set(tmp & 0xFFFF);
 N
-N	tmp = g;
-N	tmp *= dome_running_param.bright;
-N	tmp /= 100;
+N	tmp = g * dome_running_param.bright / 100;
 N	Light_Green_set(tmp & 0xFFFF);
 N
-N	tmp = b;
-N	tmp *= dome_running_param.bright;
-N	tmp /= 100;
+N	tmp = b * dome_running_param.bright / 100;
 N	Light_Blue_set(tmp & 0xFFFF);
-N#else
-S	Light_Red_set(0xFFFF);
-S	Light_Green_set(0xFFFF);
-S	Light_Blue_set(0xFFFF);
-N#endif
+N
 N}
 Nvoid Light_bright_set(uint8_t br) {
 N//	uint16_t tmp = 0;

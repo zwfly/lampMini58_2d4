@@ -70,7 +70,7 @@ int main(void) {
 	/* Init System */
 	SYS_Init();
 
-#if 1
+#if 0
 	LITE_openlog("lamp");
 	LITE_set_loglevel(LOG_DEBUG_LEVEL);
 #else
@@ -125,7 +125,8 @@ int main(void) {
 			//////////////////
 			bsp_KeyScan();
 
-//			app_uart_pro();
+			app_uart_pro();
+
 			app_2d4_pro();
 		}
 		if (timer0_taskTimer_get()->flag_100ms) {
@@ -142,19 +143,20 @@ int main(void) {
 
 		}
 		if (timer0_taskTimer_get()->flag_1s) {
+			static uint32_t cnt = 0;
 			timer0_taskTimer_get()->flag_1s = 0;
 			//////////////////
-			static uint32_t cnt = 0;
+			
 			cnt++;
-//			log_debug("I am alive %d", cnt);
+				log_debug("I am alive %d", cnt);
 
 //			app_work_1s_pro();
 
 		}
 
-		app_uart_pro();
+//		app_uart_pro();
 
-		//////
+//////
 		ucKeyCode = bsp_GetKey();
 		if (ucKeyCode != KEY_NONE) {
 			static uint8_t press_long_lock = 0;

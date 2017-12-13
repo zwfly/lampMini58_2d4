@@ -14,6 +14,8 @@ void app_eeprom_Init(void) {
 void app_eeprom_get_dome_with_index(DOME_DEFAULT_T *dd, uint8_t index) {
 	uint8_t availableGroup = 0;
 	uint8_t minSpaceBytes = 0;
+	uint16_t i = 0;
+	uint8_t *pt;
 	if (sizeof(DOME_DEFAULT_T) % 4) {
 		minSpaceBytes = (sizeof(DOME_DEFAULT_T) / 4) * 4 + 4;
 	} else {
@@ -24,8 +26,8 @@ void app_eeprom_get_dome_with_index(DOME_DEFAULT_T *dd, uint8_t index) {
 	if (index >= availableGroup) {
 		index = 0;
 	}
-	uint16_t i = 0;
-	uint8_t *pt = (uint8_t *) dd;
+	
+pt	 = (uint8_t *) dd;
 	SYS_UnlockReg();
 	FMC_Open();
 	for (i = 0; i < (sizeof(DOME_DEFAULT_T) / 4); i++) {

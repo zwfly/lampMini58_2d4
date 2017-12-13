@@ -63,6 +63,7 @@ static void app_RC_Receiver_cmd_pro(Uart_ST* st) {
 		uint8_t index = st->rxBuf[(st->pRead + 12) % sizeof(st->rxBuf)];
 		uint8_t availableGroup = 0;
 		uint8_t minSpaceBytes = 0;
+		uint8_t bytes = 0;
 		if (sizeof(DOME_DEFAULT_T) % 4) {
 			minSpaceBytes = (sizeof(DOME_DEFAULT_T) / 4) * 4 + 4;
 		} else {
@@ -95,7 +96,7 @@ static void app_RC_Receiver_cmd_pro(Uart_ST* st) {
 #if 1
 		tmp = st->rxBuf[(st->pRead + 13) % sizeof(st->rxBuf)] & 0x0F; //sub mode number
 
-		uint8_t bytes = tmp * sizeof(SUBDOME_T) + sizeof(DOME_HEADER_T);
+		bytes = tmp * sizeof(SUBDOME_T) + sizeof(DOME_HEADER_T);
 
 //		if (minSpaceBytes % 4) {
 //			minSpaceBytes++;
@@ -278,6 +279,15 @@ static void app_RC_Receiver_cmd_pro(Uart_ST* st) {
 			app_2d4_send(buffer, index);
 		}
 		break;
+	case DEVICE_STA_CMD: {
+		uint8_t sta[2] = { 0 };
+		memset(sta, 0, sizeof(sta));
+		sta[0] |= g_tWork.status.bits.blinkEnable ? 0x80 : 0;
+		sta[0] |= g_tWork.status.bits.DEMO ? 0x40 : 0;
+		sta[1] |= Relay_IsOn() ? 0x01 : 0;
+		app_uart_send(DEVICE_STA_CMD, sta, sizeof(sta));
+	}
+		break;
 		/// app --start
 	case KEY_CARD_POWER_CMD:
 		if (g_tWork.status.bits.blinkEnable == 0) {
@@ -358,7 +368,8 @@ void app_uart_pro(void) {
 
 		if (comGetChar(COM1, &ucData)) {
 #if 0
-			comSendChar(COM0, ucData);
+//			comSendChar(COM0, ucData);
+//			log_debug("rcv %02X", ucData);
 #endif
 
 			uart_st.rxBuf[uart_st.pWrite++] = ucData;

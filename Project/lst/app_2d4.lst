@@ -40,7 +40,7 @@ N */
 N
 N#ifndef __stdio_h
 N#define __stdio_h
-N#define __ARMCLIB_VERSION 5060009
+N#define __ARMCLIB_VERSION 5060019
 N
 N/*
 N * Depending on compiler version __int64 or __INT64_TYPE__ should be defined.
@@ -1156,7 +1156,7 @@ N */
 N
 N#ifndef __string_h
 N#define __string_h
-N#define __ARMCLIB_VERSION 5060009
+N#define __ARMCLIB_VERSION 5060019
 N
 N#define _ARMABI __declspec(__nothrow)
 N
@@ -1704,7 +1704,7 @@ N */
 N
 N#ifndef __stdint_h
 N#define __stdint_h
-N#define __ARMCLIB_VERSION 5060009
+N#define __ARMCLIB_VERSION 5060019
 N
 N  #ifdef __INT64_TYPE__
 S    /* armclang predefines '__INT64_TYPE__' and '__INT64_C_SUFFIX__' */
@@ -2197,7 +2197,7 @@ N#if   defined ( __ICCARM__ )
 X#if   0L
 S #pragma system_include         /* treat file as system include file for MISRA check */
 S#elif defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
-X#elif 1L && (5060183 >= 6010050)
+X#elif 1L && (5060422 >= 6010050)
 S  #pragma clang system_header   /* treat file as system include file */
 N#endif
 N
@@ -2367,7 +2367,7 @@ N#if   defined ( __ICCARM__ )
 X#if   0L
 S #pragma system_include         /* treat file as system include file for MISRA check */
 S#elif defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
-X#elif 1L && (5060183 >= 6010050)
+X#elif 1L && (5060422 >= 6010050)
 S  #pragma clang system_header   /* treat file as system include file */
 N#endif
 N
@@ -2425,7 +2425,7 @@ N#define __CMSIS_ARMCC_H
 N
 N
 N#if defined(__ARMCC_VERSION) && (__ARMCC_VERSION < 400677)
-X#if 1L && (5060183 < 400677)
+X#if 1L && (5060422 < 400677)
 S  #error "Please use ARM Compiler Toolchain V4.0.677 or later!"
 N#endif
 N
@@ -3233,7 +3233,7 @@ N#if   defined ( __ICCARM__ )
 X#if   0L
 S #pragma system_include         /* treat file as system include file for MISRA check */
 S#elif defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
-X#elif 1L && (5060183 >= 6010050)
+X#elif 1L && (5060422 >= 6010050)
 S  #pragma clang system_header   /* treat file as system include file */
 N#endif
 N
@@ -20253,7 +20253,7 @@ N#define  APP_SPEED_CMD            0x64
 N#define  APP_FLASH_INDEX_CMD      0x65
 N#define  APP_SWITCH_INDEX_CMD      0x66
 N
-N
+N#define  DEVICE_STA_CMD      0xF0
 N//extern uint8_t sendBuf[PAYLOAD_WIDTH];
 N
 Nvoid app_2d4_init(void);
@@ -20504,7 +20504,7 @@ N */
 N
 N#ifndef __stdlib_h
 N#define __stdlib_h
-N#define __ARMCLIB_VERSION 5060009
+N#define __ARMCLIB_VERSION 5060019
 N
 N#if defined(__clang__) || (defined(__ARMCC_VERSION) && !defined(__STRICT_ANSI__))
 X#if 0L || (1L && !0L)
@@ -21553,7 +21553,7 @@ N */
 N
 N#ifndef __ctype_h
 N#define __ctype_h
-N#define __ARMCLIB_VERSION 5060009
+N#define __ARMCLIB_VERSION 5060019
 N
 N#define _ARMABI __declspec(__nothrow)
 N#define _ARMABI_PURE __declspec(__nothrow) __attribute__((const))
@@ -21850,26 +21850,25 @@ N}
 N
 Nvoid app_2d4_send(uint8_t *d, uint8_t len) {
 N
-N#if 0
-S	RF_TxMode();
-S	send_2d4_flag = 1;
-S
-S	if (sendBuf != d) {
-S		memset(send_2d4_Buf, 0, PAYLOAD_WIDTH);
-S		memcpy(send_2d4_Buf, d, len);
-S	}
-N#else
-N
+N#if 1
 N	RF_TxMode();
 N	send_2d4_flag = 1;
 N
 N	memset(send_2d4_Buf, 0, PAYLOAD_WIDTH);
 X	memset(send_2d4_Buf, 0, 16);
 N	memcpy(send_2d4_Buf, d, len);
-N	RF_TxData(send_2d4_Buf, sizeof(send_2d4_Buf));
 N
-N	RF_RxMode();
-N	send_2d4_flag = 0;
+N#else
+S
+S	RF_TxMode();
+S	send_2d4_flag = 1;
+S
+S	memset(send_2d4_Buf, 0, PAYLOAD_WIDTH);
+S	memcpy(send_2d4_Buf, d, len);
+S	RF_TxData(send_2d4_Buf, sizeof(send_2d4_Buf));
+S
+S	RF_RxMode();
+S	send_2d4_flag = 0;
 N#endif
 N
 N}

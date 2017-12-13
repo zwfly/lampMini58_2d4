@@ -40,14 +40,13 @@ void app_2d4_init(void) {
 
 void app_2d4_send(uint8_t *d, uint8_t len) {
 
-#if 0
+#if 1
 	RF_TxMode();
 	send_2d4_flag = 1;
 
-	if (sendBuf != d) {
-		memset(send_2d4_Buf, 0, PAYLOAD_WIDTH);
-		memcpy(send_2d4_Buf, d, len);
-	}
+	memset(send_2d4_Buf, 0, PAYLOAD_WIDTH);
+	memcpy(send_2d4_Buf, d, len);
+
 #else
 
 	RF_TxMode();

@@ -19090,8 +19090,8 @@ void SPI_init(void) {
 
 }
 
-static void delay_2d4(uint8_t n) {
-	uint8_t i = 0;
+static void delay_2d4(uint16_t n) {
+	uint16_t i = 0;
 
 	for (i = 0; i < n; i++)
 		;
@@ -19253,7 +19253,7 @@ void RF_RxMode(void) {
 	RF_WriteReg(0x20 + 0x00, 0X8F);						
 	RF_WriteReg(0xFD, 0);										
 
-	delay_2d4(200);
+	delay_2d4(500);
 
 }
 
@@ -19310,7 +19310,7 @@ void RF_TxData(uint8_t *ucPayload, uint8_t length) {
 		RF_WriteBuf(0xA0, ucPayload, length);
 		RF_WriteReg(0xFD, 0);                             
 
-		for (i = 0; i < 21; i++) {
+		for (i = 0; i < 30; i++) {
 			delay_2d4(60);
 		}
 

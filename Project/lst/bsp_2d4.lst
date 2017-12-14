@@ -32,7 +32,7 @@ N */
 N
 N#ifndef __stdio_h
 N#define __stdio_h
-N#define __ARMCLIB_VERSION 5060019
+N#define __ARMCLIB_VERSION 5060009
 N
 N/*
 N * Depending on compiler version __int64 or __INT64_TYPE__ should be defined.
@@ -1137,7 +1137,7 @@ N */
 N
 N#ifndef __stdint_h
 N#define __stdint_h
-N#define __ARMCLIB_VERSION 5060019
+N#define __ARMCLIB_VERSION 5060009
 N
 N  #ifdef __INT64_TYPE__
 S    /* armclang predefines '__INT64_TYPE__' and '__INT64_C_SUFFIX__' */
@@ -1630,7 +1630,7 @@ N#if   defined ( __ICCARM__ )
 X#if   0L
 S #pragma system_include         /* treat file as system include file for MISRA check */
 S#elif defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
-X#elif 1L && (5060422 >= 6010050)
+X#elif 1L && (5060183 >= 6010050)
 S  #pragma clang system_header   /* treat file as system include file */
 N#endif
 N
@@ -1800,7 +1800,7 @@ N#if   defined ( __ICCARM__ )
 X#if   0L
 S #pragma system_include         /* treat file as system include file for MISRA check */
 S#elif defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
-X#elif 1L && (5060422 >= 6010050)
+X#elif 1L && (5060183 >= 6010050)
 S  #pragma clang system_header   /* treat file as system include file */
 N#endif
 N
@@ -1858,7 +1858,7 @@ N#define __CMSIS_ARMCC_H
 N
 N
 N#if defined(__ARMCC_VERSION) && (__ARMCC_VERSION < 400677)
-X#if 1L && (5060422 < 400677)
+X#if 1L && (5060183 < 400677)
 S  #error "Please use ARM Compiler Toolchain V4.0.677 or later!"
 N#endif
 N
@@ -2666,7 +2666,7 @@ N#if   defined ( __ICCARM__ )
 X#if   0L
 S #pragma system_include         /* treat file as system include file for MISRA check */
 S#elif defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
-X#elif 1L && (5060422 >= 6010050)
+X#elif 1L && (5060183 >= 6010050)
 S  #pragma clang system_header   /* treat file as system include file */
 N#endif
 N
@@ -19163,7 +19163,7 @@ N */
 N
 N#ifndef __stdlib_h
 N#define __stdlib_h
-N#define __ARMCLIB_VERSION 5060019
+N#define __ARMCLIB_VERSION 5060009
 N
 N#if defined(__clang__) || (defined(__ARMCC_VERSION) && !defined(__STRICT_ANSI__))
 X#if 0L || (1L && !0L)
@@ -20141,7 +20141,7 @@ N */
 N
 N#ifndef __string_h
 N#define __string_h
-N#define __ARMCLIB_VERSION 5060019
+N#define __ARMCLIB_VERSION 5060009
 N
 N#define _ARMABI __declspec(__nothrow)
 N
@@ -21201,8 +21201,8 @@ N//	GPIO_Init(GPIOB, GPIO_Pin_5, GPIO_Mode_Out_PP_Low_Fast); //SCK PIN output Lo
 N//	GPIO_Init(GPIOB, GPIO_Pin_6, GPIO_Mode_Out_PP_High_Fast); //DATA PIN output  DEFAULT  High pulling push
 N}
 N
-Nstatic void delay_2d4(uint8_t n) {
-N	uint8_t i = 0;
+Nstatic void delay_2d4(uint16_t n) {
+N	uint16_t i = 0;
 N
 N	for (i = 0; i < n; i++)
 N		;
@@ -21394,7 +21394,7 @@ X	RF_WriteReg(0x20 + 0x00, 0X8F);
 N	CE_HIGH;										// Set CE pin high 开始接收数据
 X	RF_WriteReg(0xFD, 0);										
 N//	delay_ms(2);
-N	delay_2d4(200);
+N	delay_2d4(500);
 N
 N}
 N
@@ -21460,7 +21460,7 @@ X		RF_WriteBuf(0xA0, ucPayload, length);
 N		CE_HIGH;                             //rf entery tx mode start send data
 X		RF_WriteReg(0xFD, 0);                             
 N//		delay_10us(60);                            //keep ce high at least 600us
-N		for (i = 0; i < 21; i++) {
+N		for (i = 0; i < 30; i++) {
 N			delay_2d4(60);
 N		}
 N

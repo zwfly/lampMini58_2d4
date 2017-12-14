@@ -1,4 +1,4 @@
-Component: ARM Compiler 5.06 update 4 (build 422) Tool: armlink [4d35d2]
+Component: ARM Compiler 5.06 update 2 (build 183) Tool: armlink [4d35b7]
 
 ==============================================================================
 
@@ -12,9 +12,9 @@ Memory Map of the image
 
   Image Entry point : 0x000000f1
 
-  Load Region LR_1 (Base: 0x00000000, Size: 0x00003e30, Max: 0xffffffff, ABSOLUTE)
+  Load Region LR_1 (Base: 0x00000000, Size: 0x00003e14, Max: 0xffffffff, ABSOLUTE)
 
-    Execution Region ER_RO (Base: 0x00000000, Size: 0x00003dc4, Max: 0xffffffff, ABSOLUTE)
+    Execution Region ER_RO (Base: 0x00000000, Size: 0x00003da8, Max: 0xffffffff, ABSOLUTE)
 
     Base Addr    Size         Type   Attr      Idx    E Section Name        Object
 
@@ -90,10 +90,9 @@ Memory Map of the image
     0x00001224   0x0000000c   Code   RO          724    i.RF_ClearStatus    bsp_2d4.o
     0x00001230   0x00000108   Code   RO          725    i.RF_Init           bsp_2d4.o
     0x00001338   0x0000003c   Code   RO          726    i.RF_ReadBuf        bsp_2d4.o
-    0x00001374   0x00000022   Code   RO          727    i.RF_RxMode         bsp_2d4.o
-    0x00001396   0x0000003a   Code   RO          729    i.RF_TxData         bsp_2d4.o
-    0x000013d0   0x0000001a   Code   RO          730    i.RF_TxMode         bsp_2d4.o
-    0x000013ea   0x00000002   PAD
+    0x00001374   0x00000024   Code   RO          727    i.RF_RxMode         bsp_2d4.o
+    0x00001398   0x0000003a   Code   RO          729    i.RF_TxData         bsp_2d4.o
+    0x000013d2   0x0000001a   Code   RO          730    i.RF_TxMode         bsp_2d4.o
     0x000013ec   0x0000002c   Code   RO          731    i.RF_WriteBuf       bsp_2d4.o
     0x00001418   0x00000030   Code   RO          732    i.RF_WriteReg       bsp_2d4.o
     0x00001448   0x0000001c   Code   RO          560    i.Relay_InitHard    bsp_relay.o
@@ -129,73 +128,73 @@ Memory Map of the image
     0x00001a2a   0x00000002   Code   RO         2623    i.__scatterload_null  mc_p.l(handlers.o)
     0x00001a2c   0x0000000e   Code   RO         2624    i.__scatterload_zeroinit  mc_p.l(handlers.o)
     0x00001a3a   0x00000002   PAD
-    0x00001a3c   0x00000174   Code   RO         2546    i._fp_digits        mc_p.l(printfa.o)
-    0x00001bb0   0x000006ec   Code   RO         2547    i._printf_core      mc_p.l(printfa.o)
-    0x0000229c   0x00000020   Code   RO         2548    i._printf_post_padding  mc_p.l(printfa.o)
-    0x000022bc   0x0000002c   Code   RO         2549    i._printf_pre_padding  mc_p.l(printfa.o)
-    0x000022e8   0x0000000a   Code   RO         2551    i._sputc            mc_p.l(printfa.o)
-    0x000022f2   0x00000002   PAD
-    0x000022f4   0x000003e8   Code   RO          332    i.app_2d4_Rcv       app_2d4.o
-    0x000026dc   0x0000002c   Code   RO          333    i.app_2d4_init      app_2d4.o
-    0x00002708   0x00000060   Code   RO          334    i.app_2d4_pro       app_2d4.o
-    0x00002768   0x0000002c   Code   RO          335    i.app_2d4_send      app_2d4.o
-    0x00002794   0x00000048   Code   RO          158    i.app_CalcCRC8      app_crc.o
-    0x000027dc   0x00000054   Code   RO          159    i.app_CalcCRC8_cycle  app_crc.o
-    0x00002830   0x00000570   Code   RO          413    i.app_RC_Receiver_cmd_pro  app_uart.o
-    0x00002da0   0x00000034   Code   RO          189    i.app_color_blink_next  app_dome.o
-    0x00002dd4   0x00000030   Code   RO          190    i.app_color_blink_previous  app_dome.o
-    0x00002e04   0x00000090   Code   RO          191    i.app_dome_Init     app_dome.o
-    0x00002e94   0x00000014   Code   RO          192    i.app_dome_get_current_Name  app_dome.o
-    0x00002ea8   0x000003a4   Code   RO          193    i.app_dome_interrupter  app_dome.o
-    0x0000324c   0x00000024   Code   RO          194    i.app_dome_next     app_dome.o
-    0x00003270   0x00000028   Code   RO          195    i.app_dome_previous  app_dome.o
-    0x00003298   0x00000028   Code   RO          196    i.app_dome_rgb      app_dome.o
-    0x000032c0   0x0000003c   Code   RO          197    i.app_dome_single_cycle  app_dome.o
-    0x000032fc   0x00000068   Code   RO          198    i.app_dome_start    app_dome.o
-    0x00003364   0x00000028   Code   RO          199    i.app_dome_start_current  app_dome.o
-    0x0000338c   0x00000028   Code   RO          200    i.app_dome_stop_current  app_dome.o
-    0x000033b4   0x0000004c   Code   RO          201    i.app_dome_subDome_pro  app_dome.o
-    0x00003400   0x0000000e   Code   RO          289    i.app_eeprom_erase  app_eeprom.o
-    0x0000340e   0x00000002   PAD
-    0x00003410   0x00000084   Code   RO          290    i.app_eeprom_get_dome_with_index  app_eeprom.o
-    0x00003494   0x0000000e   Code   RO          291    i.app_eeprom_read_int  app_eeprom.o
-    0x000034a2   0x0000000e   Code   RO          292    i.app_eeprom_write_int  app_eeprom.o
-    0x000034b0   0x00000014   Code   RO          414    i.app_uart_Init     app_uart.o
-    0x000034c4   0x000000e4   Code   RO          415    i.app_uart_pro      app_uart.o
-    0x000035a8   0x0000007c   Code   RO          416    i.app_uart_send     app_uart.o
-    0x00003624   0x00000002   Code   RO          377    i.app_work_Init     app_work.o
-    0x00003626   0x00000002   PAD
-    0x00003628   0x000000b8   Code   RO          477    i.bsp_DetectKey     bsp_key.o
-    0x000036e0   0x00000024   Code   RO          478    i.bsp_GetKey        bsp_key.o
-    0x00003704   0x00000020   Code   RO          454    i.bsp_Init          bsp.o
-    0x00003724   0x00000030   Code   RO          481    i.bsp_InitKey       bsp_key.o
-    0x00003754   0x00000044   Code   RO          482    i.bsp_InitKeyVar    bsp_key.o
-    0x00003798   0x00000088   Code   RO          865    i.bsp_InitUart      bsp_uart_fifo.o
-    0x00003820   0x00000014   Code   RO          483    i.bsp_KeyScan       bsp_key.o
-    0x00003834   0x0000001c   Code   RO          484    i.bsp_PutKey        bsp_key.o
-    0x00003850   0x00000008   Code   RO          684    i.bsp_eeprom_erase  bsp_eeprom.o
-    0x00003858   0x00000008   Code   RO          685    i.bsp_eeprom_read_int  bsp_eeprom.o
-    0x00003860   0x00000008   Code   RO          686    i.bsp_eeprom_write_int  bsp_eeprom.o
-    0x00003868   0x0000004c   Code   RO          868    i.comGetChar        bsp_uart_fifo.o
-    0x000038b4   0x00000072   Code   RO          869    i.comSendBuf        bsp_uart_fifo.o
-    0x00003926   0x0000000e   Code   RO          737    i.delay_2d4         bsp_2d4.o
-    0x00003934   0x0000000c   Code   RO         1809    i.fputc             retarget.o
-    0x00003940   0x0000028c   Code   RO            4    i.main              main.o
-    0x00003bcc   0x000000a8   Code   RO         1811    i.stackDump         retarget.o
-    0x00003c74   0x00000008   Code   RO          611    i.timer0_taskTimer_get  bsp_timer0.o
-    0x00003c7c   0x00000038   Code   RO          738    i.ucRF_DumpRxData   bsp_2d4.o
-    0x00003cb4   0x0000000e   Code   RO          740    i.ucRF_GetStatus    bsp_2d4.o
-    0x00003cc2   0x00000002   PAD
-    0x00003cc4   0x0000003c   Code   RO          741    i.ucRF_ReadReg      bsp_2d4.o
-    0x00003d00   0x00000044   Code   RO          742    i.ucSPI_Read        bsp_2d4.o
-    0x00003d44   0x00000005   Data   RO            5    .constdata          main.o
-    0x00003d49   0x0000001e   Data   RO          203    .constdata          app_dome.o
-    0x00003d67   0x0000000d   Data   RO          418    .constdata          app_uart.o
-    0x00003d74   0x00000010   Data   RO          687    .constdata          bsp_eeprom.o
-    0x00003d84   0x00000005   Data   RO          743    .constdata          bsp_2d4.o
-    0x00003d89   0x00000003   PAD
-    0x00003d8c   0x00000018   Data   RO          952    .conststring        lite-log.o
-    0x00003da4   0x00000020   Data   RO         2620    Region$$Table       anon$$obj.o
+    0x00001a3c   0x00000158   Code   RO         2546    i._fp_digits        mc_p.l(printfa.o)
+    0x00001b94   0x000006ec   Code   RO         2547    i._printf_core      mc_p.l(printfa.o)
+    0x00002280   0x00000020   Code   RO         2548    i._printf_post_padding  mc_p.l(printfa.o)
+    0x000022a0   0x0000002c   Code   RO         2549    i._printf_pre_padding  mc_p.l(printfa.o)
+    0x000022cc   0x0000000a   Code   RO         2551    i._sputc            mc_p.l(printfa.o)
+    0x000022d6   0x00000002   PAD
+    0x000022d8   0x000003e8   Code   RO          332    i.app_2d4_Rcv       app_2d4.o
+    0x000026c0   0x0000002c   Code   RO          333    i.app_2d4_init      app_2d4.o
+    0x000026ec   0x00000060   Code   RO          334    i.app_2d4_pro       app_2d4.o
+    0x0000274c   0x0000002c   Code   RO          335    i.app_2d4_send      app_2d4.o
+    0x00002778   0x00000048   Code   RO          158    i.app_CalcCRC8      app_crc.o
+    0x000027c0   0x00000054   Code   RO          159    i.app_CalcCRC8_cycle  app_crc.o
+    0x00002814   0x00000570   Code   RO          413    i.app_RC_Receiver_cmd_pro  app_uart.o
+    0x00002d84   0x00000034   Code   RO          189    i.app_color_blink_next  app_dome.o
+    0x00002db8   0x00000030   Code   RO          190    i.app_color_blink_previous  app_dome.o
+    0x00002de8   0x00000090   Code   RO          191    i.app_dome_Init     app_dome.o
+    0x00002e78   0x00000014   Code   RO          192    i.app_dome_get_current_Name  app_dome.o
+    0x00002e8c   0x000003a4   Code   RO          193    i.app_dome_interrupter  app_dome.o
+    0x00003230   0x00000024   Code   RO          194    i.app_dome_next     app_dome.o
+    0x00003254   0x00000028   Code   RO          195    i.app_dome_previous  app_dome.o
+    0x0000327c   0x00000028   Code   RO          196    i.app_dome_rgb      app_dome.o
+    0x000032a4   0x0000003c   Code   RO          197    i.app_dome_single_cycle  app_dome.o
+    0x000032e0   0x00000068   Code   RO          198    i.app_dome_start    app_dome.o
+    0x00003348   0x00000028   Code   RO          199    i.app_dome_start_current  app_dome.o
+    0x00003370   0x00000028   Code   RO          200    i.app_dome_stop_current  app_dome.o
+    0x00003398   0x0000004c   Code   RO          201    i.app_dome_subDome_pro  app_dome.o
+    0x000033e4   0x0000000e   Code   RO          289    i.app_eeprom_erase  app_eeprom.o
+    0x000033f2   0x00000002   PAD
+    0x000033f4   0x00000084   Code   RO          290    i.app_eeprom_get_dome_with_index  app_eeprom.o
+    0x00003478   0x0000000e   Code   RO          291    i.app_eeprom_read_int  app_eeprom.o
+    0x00003486   0x0000000e   Code   RO          292    i.app_eeprom_write_int  app_eeprom.o
+    0x00003494   0x00000014   Code   RO          414    i.app_uart_Init     app_uart.o
+    0x000034a8   0x000000e4   Code   RO          415    i.app_uart_pro      app_uart.o
+    0x0000358c   0x0000007c   Code   RO          416    i.app_uart_send     app_uart.o
+    0x00003608   0x00000002   Code   RO          377    i.app_work_Init     app_work.o
+    0x0000360a   0x00000002   PAD
+    0x0000360c   0x000000b8   Code   RO          477    i.bsp_DetectKey     bsp_key.o
+    0x000036c4   0x00000024   Code   RO          478    i.bsp_GetKey        bsp_key.o
+    0x000036e8   0x00000020   Code   RO          454    i.bsp_Init          bsp.o
+    0x00003708   0x00000030   Code   RO          481    i.bsp_InitKey       bsp_key.o
+    0x00003738   0x00000044   Code   RO          482    i.bsp_InitKeyVar    bsp_key.o
+    0x0000377c   0x00000088   Code   RO          865    i.bsp_InitUart      bsp_uart_fifo.o
+    0x00003804   0x00000014   Code   RO          483    i.bsp_KeyScan       bsp_key.o
+    0x00003818   0x0000001c   Code   RO          484    i.bsp_PutKey        bsp_key.o
+    0x00003834   0x00000008   Code   RO          684    i.bsp_eeprom_erase  bsp_eeprom.o
+    0x0000383c   0x00000008   Code   RO          685    i.bsp_eeprom_read_int  bsp_eeprom.o
+    0x00003844   0x00000008   Code   RO          686    i.bsp_eeprom_write_int  bsp_eeprom.o
+    0x0000384c   0x0000004c   Code   RO          868    i.comGetChar        bsp_uart_fifo.o
+    0x00003898   0x00000072   Code   RO          869    i.comSendBuf        bsp_uart_fifo.o
+    0x0000390a   0x0000000e   Code   RO          737    i.delay_2d4         bsp_2d4.o
+    0x00003918   0x0000000c   Code   RO         1809    i.fputc             retarget.o
+    0x00003924   0x0000028c   Code   RO            4    i.main              main.o
+    0x00003bb0   0x000000a8   Code   RO         1811    i.stackDump         retarget.o
+    0x00003c58   0x00000008   Code   RO          611    i.timer0_taskTimer_get  bsp_timer0.o
+    0x00003c60   0x00000038   Code   RO          738    i.ucRF_DumpRxData   bsp_2d4.o
+    0x00003c98   0x0000000e   Code   RO          740    i.ucRF_GetStatus    bsp_2d4.o
+    0x00003ca6   0x00000002   PAD
+    0x00003ca8   0x0000003c   Code   RO          741    i.ucRF_ReadReg      bsp_2d4.o
+    0x00003ce4   0x00000044   Code   RO          742    i.ucSPI_Read        bsp_2d4.o
+    0x00003d28   0x00000005   Data   RO            5    .constdata          main.o
+    0x00003d2d   0x0000001e   Data   RO          203    .constdata          app_dome.o
+    0x00003d4b   0x0000000d   Data   RO          418    .constdata          app_uart.o
+    0x00003d58   0x00000010   Data   RO          687    .constdata          bsp_eeprom.o
+    0x00003d68   0x00000005   Data   RO          743    .constdata          bsp_2d4.o
+    0x00003d6d   0x00000003   PAD
+    0x00003d70   0x00000018   Data   RO          952    .conststring        lite-log.o
+    0x00003d88   0x00000020   Data   RO         2620    Region$$Table       anon$$obj.o
 
 
     Execution Region ER_RW (Base: 0x20000000, Size: 0x0000006c, Max: 0xffffffff, ABSOLUTE)
@@ -244,37 +243,37 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   Object Name
 
-      1184         58          0          1         32       3968   app_2d4.o
-       156         10          0          2          0       1716   app_crc.o
-      1632        110         30         30        137       9055   app_dome.o
-       174          4          0          0          0       2841   app_eeprom.o
-      1764         92         13          4        772       5251   app_uart.o
-         2          0          0          4          0       1062   app_work.o
-        32          0          0          0          0        415   bsp.o
-       974         84          5          0          0       9535   bsp_2d4.o
-       776        504         16          0          0       2278   bsp_eeprom.o
-       424         52          0          8         45       4433   bsp_key.o
-       368         42          0          4          0       2268   bsp_light.o
-        96         30          0          0          0       2798   bsp_relay.o
-       200         34          0          0         12      10935   bsp_timer0.o
-       612         54          0          0        720       7375   bsp_uart_fifo.o
-       876         98          0          0          0       6379   clk.o
-       284         54          0          0          0       5601   fmc.o
-        40          0          0          0          0        935   gpio.o
-       216         52         24         24        268       4034   lite-log.o
-       746        200          5          8          0     140047   main.o
-        60         10          0          0          0       1459   pwm.o
-       280        132          0          4          0       4462   retarget.o
-        20          4        192          0        512        684   startup_mini58series.o
-        28          0          0          0          0        470   sys.o
-       168         30          0         16          0     130477   system_mini58series.o
-       168         24          0          0          0       1784   timer.o
-       232         34          0          0          0       2971   uart.o
+      1184         58          0          1         32       4100   app_2d4.o
+       156         10          0          2          0       1808   app_crc.o
+      1632        110         30         30        137       9391   app_dome.o
+       174          4          0          0          0       2941   app_eeprom.o
+      1764         92         13          4        772       5371   app_uart.o
+         2          0          0          4          0       1126   app_work.o
+        32          0          0          0          0        435   bsp.o
+       976         84          5          0          0       9927   bsp_2d4.o
+       776        504         16          0          0       2362   bsp_eeprom.o
+       424         52          0          8         45       4637   bsp_key.o
+       368         42          0          4          0       2372   bsp_light.o
+        96         30          0          0          0       2946   bsp_relay.o
+       200         34          0          0         12      11083   bsp_timer0.o
+       612         54          0          0        720       7607   bsp_uart_fifo.o
+       876         98          0          0          0       6563   clk.o
+       284         54          0          0          0       5853   fmc.o
+        40          0          0          0          0        979   gpio.o
+       216         52         24         24        268       4162   lite-log.o
+       746        200          5          8          0     140243   main.o
+        60         10          0          0          0       1519   pwm.o
+       280        132          0          4          0       4614   retarget.o
+        20          4        192          0        512        704   startup_mini58series.o
+        28          0          0          0          0        490   sys.o
+       168         30          0         16          0     130565   system_mini58series.o
+       168         24          0          0          0       1844   timer.o
+       232         34          0          0          0       3071   uart.o
 
     ----------------------------------------------------------------------
-     11522       1712        320        108       2508     363233   Object Totals
+     11522       1712        320        108       2508     366713   Object Totals
          0          0         32          0          0          0   (incl. Generated)
-        10          0          3          3         10          0   (incl. Padding)
+         8          0          3          3         10          0   (incl. Padding)
 
     ----------------------------------------------------------------------
 
@@ -297,7 +296,7 @@ Image component sizes
         34          0          0          0          0         68   llushr.o
         36          0          0          0          0         60   memcpya.o
         36          0          0          0          0        100   memseta.o
-      2298        104          0          0          0        544   printfa.o
+      2270        104          0          0          0        544   printfa.o
         14          0          0          0          0         60   strlen.o
         26          0          0          0          0         68   strncpy.o
         44          0          0          0          0         72   uidiv.o
@@ -312,18 +311,18 @@ Image component sizes
        208          6          0          0          0         88   dmul.o
 
     ----------------------------------------------------------------------
-      3970        148          0          0          0       2116   Library Totals
+      3942        148          0          0          0       2116   Library Totals
          8          0          0          0          0          0   (incl. Padding)
 
     ----------------------------------------------------------------------
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   Library Name
 
-      2818        120          0          0          0       1452   mc_p.l
+      2790        120          0          0          0       1452   mc_p.l
       1144         28          0          0          0        664   mf_p.l
 
     ----------------------------------------------------------------------
-      3970        148          0          0          0       2116   Library Totals
+      3942        148          0          0          0       2116   Library Totals
 
     ----------------------------------------------------------------------
 
@@ -332,15 +331,15 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   
 
-     15492       1860        320        108       2508     359325   Grand Totals
-     15492       1860        320        108       2508     359325   ELF Image Totals
-     15492       1860        320        108          0          0   ROM Totals
+     15464       1860        320        108       2508     362805   Grand Totals
+     15464       1860        320        108       2508     362805   ELF Image Totals
+     15464       1860        320        108          0          0   ROM Totals
 
 ==============================================================================
 
-    Total RO  Size (Code + RO Data)                15812 (  15.44kB)
+    Total RO  Size (Code + RO Data)                15784 (  15.41kB)
     Total RW  Size (RW Data + ZI Data)              2616 (   2.55kB)
-    Total ROM Size (Code + RO Data + RW Data)      15920 (  15.55kB)
+    Total ROM Size (Code + RO Data + RW Data)      15892 (  15.52kB)
 
 ==============================================================================
 

@@ -31,8 +31,8 @@ void SPI_init(void) {
 //	GPIO_Init(GPIOB, GPIO_Pin_6, GPIO_Mode_Out_PP_High_Fast); //DATA PIN output  DEFAULT  High pulling push
 }
 
-static void delay_2d4(uint8_t n) {
-	uint8_t i = 0;
+static void delay_2d4(uint16_t n) {
+	uint16_t i = 0;
 
 	for (i = 0; i < n; i++)
 		;
@@ -194,7 +194,7 @@ void RF_RxMode(void) {
 	RF_WriteReg(W_REGISTER + CONFIG, 0X8F);						// 将RF设置成RX模式
 	CE_HIGH;										// Set CE pin high 开始接收数据
 //	delay_ms(2);
-	delay_2d4(200);
+	delay_2d4(500);
 
 }
 
@@ -251,7 +251,7 @@ void RF_TxData(uint8_t *ucPayload, uint8_t length) {
 		RF_WriteBuf(W_TX_PAYLOAD, ucPayload, length);
 		CE_HIGH;                             //rf entery tx mode start send data
 //		delay_10us(60);                            //keep ce high at least 600us
-		for (i = 0; i < 21; i++) {
+		for (i = 0; i < 30; i++) {
 			delay_2d4(60);
 		}
 

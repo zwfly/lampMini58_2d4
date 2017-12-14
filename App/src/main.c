@@ -125,9 +125,10 @@ int main(void) {
 			//////////////////
 			bsp_KeyScan();
 
+			app_2d4_pro();
+
 			app_uart_pro();
 
-			app_2d4_pro();
 		}
 		if (timer0_taskTimer_get()->flag_100ms) {
 			timer0_taskTimer_get()->flag_100ms = 0;
@@ -146,7 +147,7 @@ int main(void) {
 			static uint32_t cnt = 0;
 			timer0_taskTimer_get()->flag_1s = 0;
 			//////////////////
-			
+
 			cnt++;
 //				log_debug("I am alive %d", cnt);
 

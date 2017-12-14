@@ -19117,551 +19117,1008 @@ N#include "timer.h"
 N#include "pwm.h"
 N#include "fmc.h"
 N
-N#include "bsp_2d4.h"
-L 1 "..\Bsp\inc\bsp_2d4.h" 1
+N#include "lite-log.h"
+L 1 "..\utils\inc\lite-log.h" 1
 N/*
-N * bsp_bt.h
+N * Copyright (c) 2014-2016 Alibaba Group. All rights reserved.
+N * License-Identifier: Apache-2.0
 N *
-N *  Created on: 2017年6月26日
-N *      Author: fly
-N */
-N
-N#ifndef BSP_INC_BSP_2D4_H_
-N#define BSP_INC_BSP_2D4_H_
-N
-N#define         CSN_HIGH                (P04 = 1)
-N#define         CSN_LOW                 (P04 = 0)
-N#define         SCK_HIGH                P07 = 1;delay_2d4(1)
-N#define         SCK_LOW                 P07 = 0;delay_2d4(1)
-N
-N#define         SPI_DATA_HIGH           (P05 = 1)
-N#define         SPI_DATA_LOW            (P05 = 0)
-N#define         SPI_DATA_STATUS         (P05)
-N#define         SPI_DATA_OUTPUT_MODE     GPIO_SetMode(P0, BIT5, GPIO_MODE_OUTPUT);
-N#define         SPI_DATA_INPUT_MODE      GPIO_SetMode(P0, BIT5, GPIO_MODE_INPUT);
-N#define         CE_HIGH                  RF_WriteReg(CE_FSPI_ON, 0)
-N#define         CE_LOW                   RF_WriteReg(CE_FSPI_OFF, 0)
-N////////////////////////////////////////////////////////////////////////////////
-N//                    以下为声明部分，不建议修改                              //
-N////////////////////////////////////////////////////////////////////////////////
-N
-N/********************SPI  REGISTER  ********************/
-N#define		R_REGISTER			0x00                            //SPI read RF data
-N#define		W_REGISTER			0x20                            //SPI write RF data
-N#define		R_RX_PAYLOAD		0x61                            //Read RX Payload
-N#define		W_TX_PAYLOAD		0xA0                            //Write TX Payload
-N#define		FLUSH_TX			0xE1                            //Flush RX FIFO
-N#define		FLUSH_RX			0xE2                            //Flush TX FIFO
-N#define		REUSE_TX_PL			0xE3                            //Reuse TX Payload
-N#define		ACTIVATE			0x50                            //ACTIVATE
-N#define		DEACTIVATE			0x50                            //DEACTIVATE
-N#define		R_RX_PL_WID			0x60                            //Read width of RX data
-N#define		W_ACK_PAYLOAD		        0xA8                            //Data with ACK
-N#define		W_TX_PAYLOAD_NOACK	        0xB0                            //TX Payload no ACK Request
-N#define		CE_FSPI_ON	                0xFD                            // CE HIGH
-N#define		CE_FSPI_OFF	                0xFC                            // CE LOW
-N#define		RST_FSPI	                0x53                            // RESET
-N#define		NOP_N				0xFF
-N
-N/******************CONTROL  REGISTER*******************/
-N#define		CONFIG              0x00
-N#define		EN_AA				0x01
-N#define		EN_RXADDR			0x02
-N#define		SETUP_AW			0x03
-N#define		SETUP_RETR			0x04
-N#define		RF_CH				0x05
-N#define		RF_SETUP			0x06
-N#define		STATUS				0x07
-N#define		OBSERVE_TX			0x08
-N#define		DATAOUT			    0x09
-N#define		RX_ADDR_P0			0x0A
-N#define		RX_ADDR_P1			0x0B
-N#define		RX_ADDR_P2			0x0C
-N#define		RX_ADDR_P3			0x0D
-N#define		RX_ADDR_P4			0x0E
-N#define		RX_ADDR_P5			0x0F
-N#define		TX_ADDR				0x10
-N#define		RX_PW_P0			0x11
-N#define		RX_PW_P1			0x12
-N#define		RX_PW_P2			0x13
-N#define		RX_PW_P3			0x14
-N#define		RX_PW_P4			0x15
-N#define		RX_PW_P5			0x16
-N#define		FIFO_STATUS			0x17
-N#define		DEMOD_CAL				0x19
-N#define     RF_CAL2				0x1A
-N#define     DEM_CAL2			0x1B
-N#define		DYNPD				0x1C
-N#define		FEATURE				0x1D
-N#define		RF_CAL				0x1E
-N#define		BB_CAL				0x1F
-N
-N/////////////////////////////////////////////////////////////////////////////////////
-N/*************************CONTROL CMD***********************************************/
-N#define         RF13dBm                         0x3F                            // 13dBm  发射档位功率设置
-N#define         RF10dBm                         0X0F                            // 10dBm
-N#define         RF8dBm                          0x15                            // 8dbm
-N#define         RF7dBm                          0x07                            // 7dbm
-N#define         RF5dBm                          0x2c                            // 5dbm
-N#define         RF4dBm                          0x06                            // 4dbm
-N#define         RF2dBm                          0x05                            // 2dbm
-N#define         RF0dBm                          0X0B                            // 0dBm
-N#define         RF_3dBm                         0x04                            // -3dBm
-N#define         RF_6dBm                         0x0A                            // -6dBm
-N#define         RF_10dBm                        0x02                            // -10dBm
-N#define         RF_18dBm                        0x01                            // -18dBm
-N#define         RF_30dBm                        0x00                            // -30dBm
-N
-N#define         DR_1M                           0X00				//通信速率 1Mbps
-N#define         DR_2M                           0X40				//通信速率 2Mbps
-N#define         DR_250K                         0XC0                            //通信速率 250Kbps
-N#define         RX_DR_FLAG                      0X40                            // 接收中断标志位
-N#define         TX_DS_FLAG                      0X20                            // 发送完成中断标志位
-N#define         RX_TX_CMP_FLAG                  0X60                            // 发送接收完成中断标志位，ack_payload 模式下使用
-N#define         MAX_RT_FLAG                     0X10                            // 发送重传超时中断标志位
-N#define         TRANS_ENHANCE_MODE              1                               //传输类型增强型
-N#define         TRANS_BURST_MODE                2                               //传输类型普通型
-N///////////////////////////////////////////////////////////////////////////////
-N//                  根据用户应用，以下部分可能需要修改                       //
-N///////////////////////////////////////////////////////////////////////////////
-N/******************* Function declare *******************/
-Nvoid Wireless2d4_InitHard(void);
-N
-Nvoid SPI_WW(uint8_t R_REG);
-Nvoid RF_WriteReg(uint8_t reg, uint8_t wdata);
-Nvoid RF_WriteBuf(uint8_t reg, uint8_t *pBuf, uint8_t length);
-Nvoid SPI_WR(uint8_t R_REG);
-Nuint8_t ucSPI_Read(void);
-Nuint8_t ucRF_ReadReg(uint8_t reg);
-Nvoid RF_ReadBuf(uint8_t reg, uint8_t *pBuf, uint8_t length);
-Nvoid RF_TxMode(void);
-Nvoid RF_RxMode(void);
-Nuint8_t ucRF_GetStatus(void);
-Nuint8_t ucRF_GetRSSI(void);
-Nvoid RF_ClearStatus(void);
-Nvoid RF_ClearFIFO(void);
-Nvoid RF_SetChannel(uint8_t Channel);
-Nvoid RF_TxData(uint8_t *ucPayload, uint8_t length);
-Nuint8_t ucRF_DumpRxData(uint8_t *ucPayload, uint8_t length);
-Nvoid RF_Carrier(uint8_t ucChannel_Set);
-Nvoid RF_Init(void);
-N
-N/******************Parameter define **********************/
-N
-N#define         DEFAULT_CHANNEL                78				//初始化时的频率： 2478 MHz
-N#define         PAYLOAD_WIDTH                  16				//Payload宽度：    8bytes
-N#define         TRANSMIT_TYPE                  TRANS_BURST_MODE 		//使用普通型模式    TRANS_BURST_MODE    TRANS_ENHANCE_MODE
-N#define         DATA_RATE                      DR_1M                            //通信速率1Mbps       DR_2M    DR_1M  DR_250K
-N#define         RF_POWER                      (RF13dBm |DATA_RATE)		//发射功率13dBm
-N
-N#endif /* BSP_INC_BSP_2D4_H_ */
-L 16 "..\Bsp\bsp.h" 2
-N//#include "bsp_uart.h"
-N#include "bsp_timer0.h"
-L 1 "..\Bsp\inc\bsp_timer0.h" 1
-N/*
-N * bsp_timer0.h
+N * Licensed under the Apache License, Version 2.0 (the "License"); you may
+N * not use this file except in compliance with the License.
+N * You may obtain a copy of the License at
 N *
-N *  Created on: 2017年6月28日
-N *      Author: fly
-N */
-N
-N#ifndef BSP_INC_BSP_TIMER0_H_
-N#define BSP_INC_BSP_TIMER0_H_
-N
-Ntypedef struct {
-N
-N//	uint8_t cnt_1ms;
-N	uint8_t flag_1ms;
-N
-N	uint8_t cnt_10ms;
-N	uint8_t flag_10ms;
-N
-N	uint8_t cnt_100ms;
-N	uint8_t flag_100ms;
-N
-N	uint8_t cnt_500ms;
-N	uint8_t flag_500ms;
-N
-N	uint16_t cnt_1s;
-N	uint8_t flag_1s;
-N
-N} Task_time;
-N
-N//extern _Task_time Task_time;
-N
-Nvoid Timer0_InitHard(void);
-NTask_time* timer0_taskTimer_get(void);
-N
-N#endif /* BSP_INC_BSP_TIMER0_H_ */
-L 18 "..\Bsp\bsp.h" 2
-N#include "bsp_light.h"
-L 1 "..\Bsp\inc\bsp_light.h" 1
-N/*
-N * bsp_light.h
+N *    http://www.apache.org/licenses/LICENSE-2.0
 N *
-N *  Created on: 2017年8月18日
-N *      Author: fly
-N */
-N
-N#ifndef BSP_INC_BSP_LIGHT_H_
-N#define BSP_INC_BSP_LIGHT_H_
-N
-Nvoid Light_InitHard(void);
-N//void Light_Red_set(uint16_t duty);
-N//void Light_Green_set(uint16_t duty);
-N//void Light_Blue_set(uint16_t duty);
-Nvoid Light_RGB_set(uint16_t r, uint16_t g, uint16_t b);
-Nvoid Light_bright_set(uint8_t br);
-N
-N#endif /* BSP_INC_BSP_LIGHT_H_ */
-L 19 "..\Bsp\bsp.h" 2
-N#include "bsp_relay.h"
-L 1 "..\Bsp\inc\bsp_relay.h" 1
-N/*
-N * bsp_relay.h
+N * Unless required by applicable law or agreed to in writing, software
+N * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+N * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+N * See the License for the specific language governing permissions and
+N * limitations under the License.
 N *
-N *  Created on: 2017年8月18日
-N *      Author: fly
 N */
 N
-N#ifndef BSP_INC_BSP_RELAY_H_
-N#define BSP_INC_BSP_RELAY_H_
-N
-Nvoid Relay_InitHard(void);
-Nvoid Relay_on(void);
-Nvoid Relay_off(void);
-Nvoid Relay_toggle(void);
-Nuint8_t Relay_IsOn(void);
-Nvoid Relay_set(uint8_t s);
-N
-N#endif /* BSP_INC_BSP_RELAY_H_ */
-L 20 "..\Bsp\bsp.h" 2
-N#include "bsp_eeprom.h"
-L 1 "..\Bsp\inc\bsp_eeprom.h" 1
-N/*
-N * bsp_eeprom.h
-N *
-N *  Created on: 2017年9月8日
-N *      Author: fly
-N */
-N
-N#ifndef BSP_INC_BSP_EEPROM_H_
-N#define BSP_INC_BSP_EEPROM_H_
-N
-N//#define DOME_START_ADDR   0x3C00  //use 3KB
-N//#define DOME_START_ADDR   0x3E00  //use 2.5KB
-N#define DOME_START_ADDR   0x6C00  //use 5KB
-N
-N
-Nvoid EEPROM_InitHard(void);
-N
-Nvoid bsp_eeprom_write_int(uint32_t u32addr, uint32_t u32data);
-Nint32_t bsp_eeprom_erase(uint32_t u32addr);
-Nuint32_t bsp_eeprom_read_int(uint32_t u32Addr);
-N
-N#endif /* BSP_INC_BSP_EEPROM_H_ */
-L 21 "..\Bsp\bsp.h" 2
-N#include "bsp_key.h"
-L 1 "..\Bsp\inc\bsp_key.h" 1
-N/*
-N *********************************************************************************************************
-N *
-N *	模块名称 : 按键驱动模块
-N *	文件名称 : bsp_key.h
-N *	版    本 : V1.0
-N *	说    明 : 头文件
-N *
-N *********************************************************************************************************
-N */
-N
-N#ifndef __BSP_KEY_H
-N#define __BSP_KEY_H
-N
-N#define KEY_COUNT    2
-N
-N/* 根据应用程序的功能重命名按键宏 */
-N#define KEY_DOWN_K1		KEY_1_DOWN
-N#define KEY_UP_K1		KEY_1_UP
-N#define KEY_LONG_K1		KEY_1_LONG
-N
-N#define KEY_DOWN_K2		KEY_2_DOWN
-N#define KEY_UP_K2		KEY_2_UP
-N#define KEY_LONG_K2		KEY_2_LONG
-N
-N
-N/* 按键ID, 主要用于bsp_KeyState()函数的入口参数 */
-Ntypedef enum {
-N	KID_K1 = 0,
-N	KID_K2,
-N} KEY_ID_E;
-N
-N/*
-N 按键滤波时间50ms, 单位10ms。
-N 只有连续检测到50ms状态不变才认为有效，包括弹起和按下两种事件
-N 即使按键电路不做硬件滤波，该滤波机制也可以保证可靠地检测到按键事件
-N */
-N#define KEY_FILTER_TIME   5
-N#define KEY_LONG_TIME     100			/* 单位10ms， 持续1秒，认为长按事件 */
-N
-N/*
-N 每个按键对应1个全局的结构体变量。
-N */
-Ntypedef struct {
-N	/* 下面是一个函数指针，指向判断按键手否按下的函数 */
-N	uint8_t (*IsKeyDownFunc)(void); /* 按键按下的判断函数,1表示按下 */
-N
-N	uint8_t Count; /* 滤波器计数器 */
-N	uint16_t LongCount; /* 长按计数器 */
-N	uint16_t LongTime; /* 按键按下持续时间, 0表示不检测长按 */
-N	uint8_t State; /* 按键当前状态（按下还是弹起） */
-N	uint8_t RepeatSpeed; /* 连续按键周期 */
-N	uint8_t RepeatCount; /* 连续按键计数器 */
-N} KEY_T;
-N
-N/*
-N 定义键值代码, 必须按如下次序定时每个键的按下、弹起和长按事件
-N
-N 推荐使用enum, 不用#define，原因：
-N (1) 便于新增键值,方便调整顺序，使代码看起来舒服点
-N (2) 编译器可帮我们避免键值重复。
-N */
-Ntypedef enum {
-N	KEY_NONE = 0, /* 0 表示按键事件 */
-N
-N	KEY_1_DOWN, /* 1键按下 */
-N	KEY_1_UP, /* 1键弹起 */
-N	KEY_1_LONG, /* 1键长按 */
-N
-N	KEY_2_DOWN, /* 2键按下 */
-N	KEY_2_UP, /* 2键弹起 */
-N	KEY_2_LONG, /* 2键长按 */
-N} KEY_ENUM;
-N
-N/* 按键FIFO用到变量 */
-N#define KEY_FIFO_SIZE	10
-Ntypedef struct {
-N	uint8_t Buf[KEY_FIFO_SIZE]; /* 键值缓冲区 */
-X	uint8_t Buf[10];  
-N	uint8_t Read; /* 缓冲区读指针1 */
-N	uint8_t Write; /* 缓冲区写指针 */
-N	uint8_t Read2; /* 缓冲区读指针2 */
-N} KEY_FIFO_T;
-N
-N/* 供外部调用的函数声明 */
-Nvoid bsp_InitKey(void);
-Nvoid bsp_KeyScan(void);
-Nvoid bsp_PutKey(uint8_t _KeyCode);
-Nuint8_t bsp_GetKey(void);
-Nuint8_t bsp_GetKey2(void);
-Nuint8_t bsp_GetKeyState(KEY_ID_E _ucKeyID);
-Nvoid bsp_SetKeyParam(uint8_t _ucKeyID, uint16_t _LongTime, uint8_t _RepeatSpeed);
-Nvoid bsp_ClearKey(void);
-N
+N#ifndef __LITE_LOG_H__
+N#define __LITE_LOG_H__
+N#if defined(__cplusplus)
+X#if 0L
+Sextern "C" {
 N#endif
 N
-N/*****************************(END OF FILE) *********************************/
-L 22 "..\Bsp\bsp.h" 2
-N#include "bsp_uart_fifo.h"
-L 1 "..\Bsp\inc\bsp_uart_fifo.h" 1
-N#ifndef _BSP_USART_FIFO_H_
-N#define _BSP_USART_FIFO_H_
-N
-N#define	UART0_FIFO_EN	1
-N#define	UART1_FIFO_EN	1
-N
-N///* RS485芯片发送使能GPIO, PB2 */
-N//#define RCC_RS485_TXEN 	 RCC_APB2Periph_GPIOB
-N//#define PORT_RS485_TXEN  GPIOB
-N//#define PIN_RS485_TXEN	 GPIO_Pin_2
-N
-N//#define RS485_RX_EN()	PORT_RS485_TXEN->BRR = PIN_RS485_TXEN
-N//#define RS485_TX_EN()	PORT_RS485_TXEN->BSRR = PIN_RS485_TXEN
-N
-N/* 定义端口号 */
-Ntypedef enum {
-N	COM0 = 0, COM1 = 1,
-N} COM_PORT_E;
-N
-N
-N#if UART0_FIFO_EN == 1
-X#if 1 == 1
-N#define UART0_BAUD			115200
-N#define UART0_TX_BUF_SIZE	1*64
-N#define UART0_RX_BUF_SIZE	1*64
-N#endif
-N
-N#if UART1_FIFO_EN == 1
-X#if 1 == 1
-N#define UART1_BAUD			19200
-N#define UART1_TX_BUF_SIZE	1*256
-N#define UART1_RX_BUF_SIZE	1*256
-N#endif
-N
-N/* 串口设备结构体 */
-Ntypedef struct {
-N	UART_T *uart; /* STM32内部串口设备指针 */
-N	uint8_t *pTxBuf; /* 发送缓冲区 */
-N	uint8_t *pRxBuf; /* 接收缓冲区 */
-N	uint16_t usTxBufSize; /* 发送缓冲区大小 */
-N	uint16_t usRxBufSize; /* 接收缓冲区大小 */
-N	__IO uint16_t usTxWrite; /* 发送缓冲区写指针 */
-X	volatile uint16_t usTxWrite;  
-N	__IO uint16_t usTxRead; /* 发送缓冲区读指针 */
-X	volatile uint16_t usTxRead;  
-N	__IO uint16_t usTxCount; /* 等待发送的数据个数 */
-X	volatile uint16_t usTxCount;  
-N
-N	__IO uint16_t usRxWrite; /* 接收缓冲区写指针 */
-X	volatile uint16_t usRxWrite;  
-N	__IO uint16_t usRxRead; /* 接收缓冲区读指针 */
-X	volatile uint16_t usRxRead;  
-N	__IO uint16_t usRxCount; /* 还未读取的新数据个数 */
-X	volatile uint16_t usRxCount;  
-N
-N	void (*SendBefor)(void); /* 开始发送之前的回调函数指针（主要用于RS485切换到发送模式） */
-N	void (*SendOver)(void); /* 发送完毕的回调函数指针（主要用于RS485将发送模式切换为接收模式） */
-N	void (*ReciveNew)(uint8_t _byte); /* 串口收到数据的回调函数指针 */
-N} UART_T_M;
-N
-Nvoid bsp_InitUart(void);
-Nvoid comSendBuf(COM_PORT_E _ucPort, uint8_t *_ucaBuf, uint16_t _usLen);
-Nvoid comSendChar(COM_PORT_E _ucPort, uint8_t _ucByte);
-Nuint8_t comGetChar(COM_PORT_E _ucPort, uint8_t *_pByte);
-N
-Nvoid comClearTxFifo(COM_PORT_E _ucPort);
-Nvoid comClearRxFifo(COM_PORT_E _ucPort);
-N
-N//void RS485_SendBuf(uint8_t *_ucaBuf, uint16_t _usLen);
-N//void RS485_SendStr(char *_pBuf);
-N
-N//void bsp_Set485Baud(uint32_t _baud);
-N
-Nvoid bsp_SetUart1Baud(uint32_t _baud);
-Nvoid bsp_SetUart2Baud(uint32_t _baud);
-N
-N#endif
-N
-N/***************************** 安富莱电子 www.armfly.com (END OF FILE) *********************************/
-L 23 "..\Bsp\bsp.h" 2
-N
-N#define ENABLE_INT()	__set_PRIMASK(0)
-N#define DISABLE_INT()	__set_PRIMASK(1)
-N
-Nvoid bsp_Init(void);
-N
-N#endif
-N
-N/***************************** (END OF FILE) *********************************/
-L 9 "..\Bsp\src\bsp_timer0.c" 2
-N#include "app_dome.h"
-L 1 "..\App\inc\app_dome.h" 1
+N#include <stdint.h>
+N#include <stdlib.h>
+L 1 "C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h" 1
+N/* stdlib.h: ANSI draft (X3J11 May 88) library header, section 4.10 */
+N/* Copyright (C) Codemist Ltd., 1988-1993.                          */
+N/* Copyright 1991-1998,2014 ARM Limited. All rights reserved.       */
 N/*
-N * app_dome.h
-N *
-N *  Created on: 2017年9月8日
-N *      Author: fly
+N * RCS $Revision$
+N * Checkin $Date$
+N * Revising $Author: agrant $
+N */
+N 
+N/*
+N * stdlib.h declares four types, several general purpose functions,
+N * and defines several macros.
 N */
 N
-N#ifndef APP_INC_APP_DOME_H_
-N#define APP_INC_APP_DOME_H_
+N#ifndef __stdlib_h
+N#define __stdlib_h
+N#define __ARMCLIB_VERSION 5060019
 N
-N//#define DOME_SPEED_MULTIPLE   2
-N//#define DEFAULT_DOME_NUM   22  //use 2.5KB
-N//#define DEFAULT_DOME_NUM   26  //use 3KB
-N//#define DEFAULT_DOME_NUM   44  //use 5KB
+N#if defined(__clang__) || (defined(__ARMCC_VERSION) && !defined(__STRICT_ANSI__))
+X#if 0L || (1L && !0L)
+N  /* armclang and non-strict armcc allow 'long long' in system headers */
+N  #define __LONGLONG long long
+N#else
+S  /* strict armcc has '__int64' */
+S  #define __LONGLONG __int64
+N#endif
 N
-N#pragma pack(1)
-Ntypedef struct _DOME_PRO_T {
-N	uint8_t currentDomeIndex;
-N//	uint8_t currentSubDomeIndex;
+N#define _ARMABI __declspec(__nothrow)
+N#define _ARMABI_PURE __declspec(__nothrow) __attribute__((const))
+N#define _ARMABI_NORETURN __declspec(__nothrow) __declspec(__noreturn)
+N#define _ARMABI_THROW
 N
-N} DOME_PRO_T;
-N#pragma pack()
+N  #ifndef __STDLIB_DECLS
+N  #define __STDLIB_DECLS
 N
-N#pragma pack(1)
-Ntypedef struct _SUBDOME_ASSIST_T {
-N	uint8_t switch_flag;
-N	uint32_t msCnt;
-N	uint8_t stopTime;
-N} SUBDOME_ASSIST_T;
-N#pragma pack()
-N///////
-N#pragma pack(1)
-Ntypedef struct _COLOR_T {
-N	uint8_t R;
-N	uint8_t G;
-N	uint8_t B;
-N} COLOR_T;
-N#pragma pack()
+N  /*
+N   * Some of these declarations are new in C99.  To access them in C++
+N   * you can use -D__USE_C99_STDLIB (or -D__USE_C99ALL).
+N   */
+N  #ifndef __USE_C99_STDLIB
+N    #if defined(__USE_C99_ALL) || (defined(__STDC_VERSION__) && 199901L <= __STDC_VERSION__) || (defined(__cplusplus) && 201103L <= __cplusplus)
+X    #if 0L || (1L && 199901L <= 199901L) || (0L && 201103L <= __cplusplus)
+N      #define __USE_C99_STDLIB 1
+N    #endif
+N  #endif
 N
-N#pragma pack(1)
-Ntypedef struct _SUBDOME_T {
-N	uint8_t mode;
-N	COLOR_T color1;
-N	COLOR_T color2;
-N	uint8_t repeate;
-N	uint8_t bright;
-N	uint16_t speed;
-N	uint16_t offtime;
-N} SUBDOME_T;
-N#pragma pack()
-N//typedef union _REPEAT_NUMBER_T {
-N//	uint8_t datas;
-N//	struct {
-N//		unsigned repeat :4;
-N//		unsigned number :4;
-N//	} bits;
-N//} REPEAT_NUMBER_T;
+N    #undef __CLIBNS
 N
-N#pragma pack(1)
-Ntypedef struct _DOME_HEADER_T {
-N	char name[8];
-N	uint8_t index;  //刚加的
-N	uint8_t repeat_number;  //闪法重复的次数，单元模式的数量
-N} DOME_HEADER_T;
-N#pragma pack()
+N    #ifdef __cplusplus
+S      namespace std {
+S          #define __CLIBNS ::std::
+S          extern "C" {
+N    #else
+N      #define __CLIBNS
+N    #endif  /* __cplusplus */
 N
-N#pragma pack(1)
-Ntypedef struct _DOME_DEFAULT_T {
-N	DOME_HEADER_T header;
-N	SUBDOME_T subdome[8];
-N} DOME_DEFAULT_T;
-N#pragma pack()
+N#if defined(__cplusplus) || !defined(__STRICT_ANSI__)
+X#if 0L || !0L
+N /* unconditional in C++ and non-strict C for consistency of debug info */
+N  #if __sizeof_ptr == 8
+X  #if 4 == 8
+S    typedef unsigned long size_t;   /* see <stddef.h> */
+N  #else
+N    typedef unsigned int size_t;   /* see <stddef.h> */
+N  #endif
+N#elif !defined(__size_t)
+S  #define __size_t 1
+S  #if __sizeof_ptr == 8
+S    typedef unsigned long size_t;   /* see <stddef.h> */
+S  #else
+S    typedef unsigned int size_t;   /* see <stddef.h> */
+S  #endif
+N#endif
 N
-N#pragma pack(1)
-Ntypedef struct _DOME_RUNNING_T {
-N	uint8_t bright;
-N	uint8_t speed;
-N	struct {
-N		uint16_t R;
-N		uint16_t G;
-N		uint16_t B;
-N	} color;
-N} DOME_RUNNING_T;
-N#pragma pack()
+N#undef NULL
+N#define NULL 0                   /* see <stddef.h> */
 N
-Nextern uint8_t blink_number; //闪法的总数量
-Nextern DOME_DEFAULT_T dome_blink;
-Nextern DOME_RUNNING_T dome_running_param;
+N#ifndef __cplusplus  /* wchar_t is a builtin type for C++ */
+N  #if !defined(__STRICT_ANSI__)
+X  #if !0L
+N   /* unconditional in non-strict C for consistency of debug info */
+N   #if defined(__WCHAR32) || (defined(__ARM_SIZEOF_WCHAR_T) && __ARM_SIZEOF_WCHAR_T == 4)
+X   #if 0L || (0L && __ARM_SIZEOF_WCHAR_T == 4)
+S    typedef unsigned int wchar_t; /* see <stddef.h> */
+N   #else
+N    typedef unsigned short wchar_t; /* see <stddef.h> */
+N   #endif
+N  #elif !defined(__wchar_t)
+S    #define __wchar_t 1
+S   #if defined(__WCHAR32) || (defined(__ARM_SIZEOF_WCHAR_T) && __ARM_SIZEOF_WCHAR_T == 4)
+S    typedef unsigned int wchar_t; /* see <stddef.h> */
+S   #else
+S    typedef unsigned short wchar_t; /* see <stddef.h> */
+S   #endif
+N  #endif
+N#endif
 N
-Nvoid app_dome_Init(void);
+Ntypedef struct div_t { int quot, rem; } div_t;
+N   /* type of the value returned by the div function. */
+Ntypedef struct ldiv_t { long int quot, rem; } ldiv_t;
+N   /* type of the value returned by the ldiv function. */
+N#if !defined(__STRICT_ANSI__) || __USE_C99_STDLIB
+X#if !0L || 1
+Ntypedef struct lldiv_t { __LONGLONG quot, rem; } lldiv_t;
+Xtypedef struct lldiv_t { long long quot, rem; } lldiv_t;
+N   /* type of the value returned by the lldiv function. */
+N#endif
 N
-Nvoid app_color_blink_previous(void);
-Nvoid app_color_blink_next(void);
+N#ifdef __EXIT_FAILURE
+S#  define EXIT_FAILURE __EXIT_FAILURE
+S   /*
+S    * an integral expression which may be used as an argument to the exit
+S    * function to return unsuccessful termination status to the host
+S    * environment.
+S    */
+N#else
+N#  define EXIT_FAILURE 1  /* unixoid */
+N#endif
+N#define EXIT_SUCCESS 0
+N   /*
+N    * an integral expression which may be used as an argument to the exit
+N    * function to return successful termination status to the host
+N    * environment.
+N    */
 N
-Nvoid app_dome_start(uint8_t index, uint8_t dir);
-Nvoid app_dome_previous(void);
-Nvoid app_dome_next(void);
-Nvoid app_dome_get_current_Name(uint8_t *name, uint8_t len);
-Nvoid app_dome_start_current(void);
-Nvoid app_dome_stop_current(void);
-Nvoid app_dome_rgb(uint8_t r, uint8_t g, uint8_t b);
-Nvoid app_dome_interrupter(void);
+N   /*
+N    * Defining __USE_ANSI_EXAMPLE_RAND at compile time switches to
+N    * the example implementation of rand() and srand() provided in
+N    * the ANSI C standard. This implementation is very poor, but is
+N    * provided for completeness.
+N    */
+N#ifdef __USE_ANSI_EXAMPLE_RAND
+S#define srand _ANSI_srand
+S#define rand _ANSI_rand
+S#define RAND_MAX 0x7fff
+N#else
+N#define RAND_MAX 0x7fffffff
+N#endif
+N   /*
+N    * RAND_MAX: an integral constant expression, the value of which
+N    * is the maximum value returned by the rand function.
+N    */
+Nextern _ARMABI int __aeabi_MB_CUR_MAX(void);
+Xextern __declspec(__nothrow) int __aeabi_MB_CUR_MAX(void);
+N#define MB_CUR_MAX ( __aeabi_MB_CUR_MAX() )
+N   /*
+N    * a positive integer expression whose value is the maximum number of bytes
+N    * in a multibyte character for the extended character set specified by the
+N    * current locale (category LC_CTYPE), and whose value is never greater
+N    * than MB_LEN_MAX.
+N    */
 N
-N#endif /* APP_INC_APP_DOME_H_ */
-L 10 "..\Bsp\src\bsp_timer0.c" 2
-N#include "string.h"
+N   /*
+N    * If the compiler supports signalling nans as per N965 then it
+N    * will define __SUPPORT_SNAN__, in which case a user may define
+N    * _WANT_SNAN in order to obtain a compliant version of the strtod
+N    * family of functions.
+N    */
+N#if defined(__SUPPORT_SNAN__) && defined(_WANT_SNAN)
+X#if 0L && 0L
+S#pragma import(__use_snan)
+N#endif
+N
+Nextern _ARMABI double atof(const char * /*nptr*/) __attribute__((__nonnull__(1)));
+Xextern __declspec(__nothrow) double atof(const char *  ) __attribute__((__nonnull__(1)));
+N   /*
+N    * converts the initial part of the string pointed to by nptr to double
+N    * representation.
+N    * Returns: the converted value.
+N    */
+Nextern _ARMABI int atoi(const char * /*nptr*/) __attribute__((__nonnull__(1)));
+Xextern __declspec(__nothrow) int atoi(const char *  ) __attribute__((__nonnull__(1)));
+N   /*
+N    * converts the initial part of the string pointed to by nptr to int
+N    * representation.
+N    * Returns: the converted value.
+N    */
+Nextern _ARMABI long int atol(const char * /*nptr*/) __attribute__((__nonnull__(1)));
+Xextern __declspec(__nothrow) long int atol(const char *  ) __attribute__((__nonnull__(1)));
+N   /*
+N    * converts the initial part of the string pointed to by nptr to long int
+N    * representation.
+N    * Returns: the converted value.
+N    */
+N#if !defined(__STRICT_ANSI__) || __USE_C99_STDLIB
+X#if !0L || 1
+Nextern _ARMABI __LONGLONG atoll(const char * /*nptr*/) __attribute__((__nonnull__(1)));
+Xextern __declspec(__nothrow) long long atoll(const char *  ) __attribute__((__nonnull__(1)));
+N   /*
+N    * converts the initial part of the string pointed to by nptr to
+N    * long long int representation.
+N    * Returns: the converted value.
+N    */
+N#endif
+N
+Nextern _ARMABI double strtod(const char * __restrict /*nptr*/, char ** __restrict /*endptr*/) __attribute__((__nonnull__(1)));
+Xextern __declspec(__nothrow) double strtod(const char * __restrict  , char ** __restrict  ) __attribute__((__nonnull__(1)));
+N   /*
+N    * converts the initial part of the string pointed to by nptr to double
+N    * representation. First it decomposes the input string into three parts:
+N    * an initial, possibly empty, sequence of white-space characters (as
+N    * specified by the isspace function), a subject sequence resembling a
+N    * floating point constant; and a final string of one or more unrecognised
+N    * characters, including the terminating null character of the input string.
+N    * Then it attempts to convert the subject sequence to a floating point
+N    * number, and returns the result. A pointer to the final string is stored
+N    * in the object pointed to by endptr, provided that endptr is not a null
+N    * pointer.
+N    * Returns: the converted value if any. If no conversion could be performed,
+N    *          zero is returned. If the correct value is outside the range of
+N    *          representable values, plus or minus HUGE_VAL is returned
+N    *          (according to the sign of the value), and the value of the macro
+N    *          ERANGE is stored in errno. If the correct value would cause
+N    *          underflow, zero is returned and the value of the macro ERANGE is
+N    *          stored in errno.
+N    */
+N#if !defined(__STRICT_ANSI__) || __USE_C99_STDLIB
+X#if !0L || 1
+Nextern _ARMABI float strtof(const char * __restrict /*nptr*/, char ** __restrict /*endptr*/) __attribute__((__nonnull__(1)));
+Xextern __declspec(__nothrow) float strtof(const char * __restrict  , char ** __restrict  ) __attribute__((__nonnull__(1)));
+Nextern _ARMABI long double strtold(const char * __restrict /*nptr*/, char ** __restrict /*endptr*/) __attribute__((__nonnull__(1)));
+Xextern __declspec(__nothrow) long double strtold(const char * __restrict  , char ** __restrict  ) __attribute__((__nonnull__(1)));
+N   /*
+N    * same as strtod, but return float and long double respectively.
+N    */
+N#endif
+Nextern _ARMABI long int strtol(const char * __restrict /*nptr*/,
+Xextern __declspec(__nothrow) long int strtol(const char * __restrict  ,
+N                        char ** __restrict /*endptr*/, int /*base*/) __attribute__((__nonnull__(1)));
+N   /*
+N    * converts the initial part of the string pointed to by nptr to long int
+N    * representation. First it decomposes the input string into three parts:
+N    * an initial, possibly empty, sequence of white-space characters (as
+N    * specified by the isspace function), a subject sequence resembling an
+N    * integer represented in some radix determined by the value of base, and a
+N    * final string of one or more unrecognised characters, including the
+N    * terminating null character of the input string. Then it attempts to
+N    * convert the subject sequence to an integer, and returns the result.
+N    * If the value of base is 0, the expected form of the subject sequence is
+N    * that of an integer constant (described in ANSI Draft, section 3.1.3.2),
+N    * optionally preceded by a '+' or '-' sign, but not including an integer
+N    * suffix. If the value of base is between 2 and 36, the expected form of
+N    * the subject sequence is a sequence of letters and digits representing an
+N    * integer with the radix specified by base, optionally preceded by a plus
+N    * or minus sign, but not including an integer suffix. The letters from a
+N    * (or A) through z (or Z) are ascribed the values 10 to 35; only letters
+N    * whose ascribed values are less than that of the base are permitted. If
+N    * the value of base is 16, the characters 0x or 0X may optionally precede
+N    * the sequence of letters and digits following the sign if present.
+N    * A pointer to the final string is stored in the object
+N    * pointed to by endptr, provided that endptr is not a null pointer.
+N    * Returns: the converted value if any. If no conversion could be performed,
+N    *          zero is returned and nptr is stored in *endptr.
+N    *          If the correct value is outside the range of
+N    *          representable values, LONG_MAX or LONG_MIN is returned
+N    *          (according to the sign of the value), and the value of the
+N    *          macro ERANGE is stored in errno.
+N    */
+Nextern _ARMABI unsigned long int strtoul(const char * __restrict /*nptr*/,
+Xextern __declspec(__nothrow) unsigned long int strtoul(const char * __restrict  ,
+N                                       char ** __restrict /*endptr*/, int /*base*/) __attribute__((__nonnull__(1)));
+N   /*
+N    * converts the initial part of the string pointed to by nptr to unsigned
+N    * long int representation. First it decomposes the input string into three
+N    * parts: an initial, possibly empty, sequence of white-space characters (as
+N    * determined by the isspace function), a subject sequence resembling an
+N    * unsigned integer represented in some radix determined by the value of
+N    * base, and a final string of one or more unrecognised characters,
+N    * including the terminating null character of the input string. Then it
+N    * attempts to convert the subject sequence to an unsigned integer, and
+N    * returns the result. If the value of base is zero, the expected form of
+N    * the subject sequence is that of an integer constant (described in ANSI
+N    * Draft, section 3.1.3.2), optionally preceded by a '+' or '-' sign, but
+N    * not including an integer suffix. If the value of base is between 2 and
+N    * 36, the expected form of the subject sequence is a sequence of letters
+N    * and digits representing an integer with the radix specified by base,
+N    * optionally preceded by a '+' or '-' sign, but not including an integer
+N    * suffix. The letters from a (or A) through z (or Z) stand for the values
+N    * 10 to 35; only letters whose ascribed values are less than that of the
+N    * base are permitted. If the value of base is 16, the characters 0x or 0X
+N    * may optionally precede the sequence of letters and digits following the
+N    * sign, if present. A pointer to the final string is stored in the object
+N    * pointed to by endptr, provided that endptr is not a null pointer.
+N    * Returns: the converted value if any. If no conversion could be performed,
+N    *          zero is returned and nptr is stored in *endptr.
+N    *          If the correct value is outside the range of
+N    *          representable values, ULONG_MAX is returned, and the value of
+N    *          the macro ERANGE is stored in errno.
+N    */
+N
+N/* C90 reserves all names beginning with 'str' */
+Nextern _ARMABI __LONGLONG strtoll(const char * __restrict /*nptr*/,
+Xextern __declspec(__nothrow) long long strtoll(const char * __restrict  ,
+N                                  char ** __restrict /*endptr*/, int /*base*/)
+N                          __attribute__((__nonnull__(1)));
+N   /*
+N    * as strtol but returns a long long int value.  If the correct value is
+N    * outside the range of representable values,  LLONG_MAX or LLONG_MIN is
+N    * returned (according to the sign of the value), and the value of the
+N    * macro ERANGE is stored in errno.
+N    */
+Nextern _ARMABI unsigned __LONGLONG strtoull(const char * __restrict /*nptr*/,
+Xextern __declspec(__nothrow) unsigned long long strtoull(const char * __restrict  ,
+N                                            char ** __restrict /*endptr*/, int /*base*/)
+N                                   __attribute__((__nonnull__(1)));
+N   /*
+N    * as strtoul but returns an unsigned long long int value.  If the correct
+N    * value is outside the range of representable values, ULLONG_MAX is returned,
+N    * and the value of the macro ERANGE is stored in errno.
+N    */
+N
+Nextern _ARMABI int rand(void);
+Xextern __declspec(__nothrow) int rand(void);
+N   /*
+N    * Computes a sequence of pseudo-random integers in the range 0 to RAND_MAX.
+N    * Uses an additive generator (Mitchell & Moore) of the form:
+N    *   Xn = (X[n-24] + X[n-55]) MOD 2^31
+N    * This is described in section 3.2.2 of Knuth, vol 2. It's period is
+N    * in excess of 2^55 and its randomness properties, though unproven, are
+N    * conjectured to be good. Empirical testing since 1958 has shown no flaws.
+N    * Returns: a pseudo-random integer.
+N    */
+Nextern _ARMABI void srand(unsigned int /*seed*/);
+Xextern __declspec(__nothrow) void srand(unsigned int  );
+N   /*
+N    * uses its argument as a seed for a new sequence of pseudo-random numbers
+N    * to be returned by subsequent calls to rand. If srand is then called with
+N    * the same seed value, the sequence of pseudo-random numbers is repeated.
+N    * If rand is called before any calls to srand have been made, the same
+N    * sequence is generated as when srand is first called with a seed value
+N    * of 1.
+N    */
+N
+Nstruct _rand_state { int __x[57]; };
+Nextern _ARMABI int _rand_r(struct _rand_state *);
+Xextern __declspec(__nothrow) int _rand_r(struct _rand_state *);
+Nextern _ARMABI void _srand_r(struct _rand_state *, unsigned int);
+Xextern __declspec(__nothrow) void _srand_r(struct _rand_state *, unsigned int);
+Nstruct _ANSI_rand_state { int __x[1]; };
+Nextern _ARMABI int _ANSI_rand_r(struct _ANSI_rand_state *);
+Xextern __declspec(__nothrow) int _ANSI_rand_r(struct _ANSI_rand_state *);
+Nextern _ARMABI void _ANSI_srand_r(struct _ANSI_rand_state *, unsigned int);
+Xextern __declspec(__nothrow) void _ANSI_srand_r(struct _ANSI_rand_state *, unsigned int);
+N   /*
+N    * Re-entrant variants of both flavours of rand, which operate on
+N    * an explicitly supplied state buffer.
+N    */
+N
+Nextern _ARMABI void *calloc(size_t /*nmemb*/, size_t /*size*/);
+Xextern __declspec(__nothrow) void *calloc(size_t  , size_t  );
+N   /*
+N    * allocates space for an array of nmemb objects, each of whose size is
+N    * 'size'. The space is initialised to all bits zero.
+N    * Returns: either a null pointer or a pointer to the allocated space.
+N    */
+Nextern _ARMABI void free(void * /*ptr*/);
+Xextern __declspec(__nothrow) void free(void *  );
+N   /*
+N    * causes the space pointed to by ptr to be deallocated (i.e., made
+N    * available for further allocation). If ptr is a null pointer, no action
+N    * occurs. Otherwise, if ptr does not match a pointer earlier returned by
+N    * calloc, malloc or realloc or if the space has been deallocated by a call
+N    * to free or realloc, the behaviour is undefined.
+N    */
+Nextern _ARMABI void *malloc(size_t /*size*/);
+Xextern __declspec(__nothrow) void *malloc(size_t  );
+N   /*
+N    * allocates space for an object whose size is specified by 'size' and whose
+N    * value is indeterminate.
+N    * Returns: either a null pointer or a pointer to the allocated space.
+N    */
+Nextern _ARMABI void *realloc(void * /*ptr*/, size_t /*size*/);
+Xextern __declspec(__nothrow) void *realloc(void *  , size_t  );
+N   /*
+N    * changes the size of the object pointed to by ptr to the size specified by
+N    * size. The contents of the object shall be unchanged up to the lesser of
+N    * the new and old sizes. If the new size is larger, the value of the newly
+N    * allocated portion of the object is indeterminate. If ptr is a null
+N    * pointer, the realloc function behaves like a call to malloc for the
+N    * specified size. Otherwise, if ptr does not match a pointer earlier
+N    * returned by calloc, malloc or realloc, or if the space has been
+N    * deallocated by a call to free or realloc, the behaviour is undefined.
+N    * If the space cannot be allocated, the object pointed to by ptr is
+N    * unchanged. If size is zero and ptr is not a null pointer, the object it
+N    * points to is freed.
+N    * Returns: either a null pointer or a pointer to the possibly moved
+N    *          allocated space.
+N    */
+N#if !defined(__STRICT_ANSI__)
+X#if !0L
+Nextern _ARMABI int posix_memalign(void ** /*ret*/, size_t /*alignment*/, size_t /*size*/);
+Xextern __declspec(__nothrow) int posix_memalign(void **  , size_t  , size_t  );
+N   /*
+N    * allocates space for an object of size 'size', aligned to a
+N    * multiple of 'alignment' (which must be a power of two and at
+N    * least 4).
+N    *
+N    * On success, a pointer to the allocated object is stored in
+N    * *ret, and zero is returned. On failure, the return value is
+N    * either ENOMEM (allocation failed because no suitable piece of
+N    * memory was available) or EINVAL (the 'alignment' parameter was
+N    * invalid).
+N    */
+N#endif
+Ntypedef int (*__heapprt)(void *, char const *, ...);
+Nextern _ARMABI void __heapstats(int (* /*dprint*/)(void * /*param*/,
+Xextern __declspec(__nothrow) void __heapstats(int (*  )(void *  ,
+N                                           char const * /*format*/, ...),
+N                        void * /*param*/) __attribute__((__nonnull__(1)));
+N   /*
+N    * reports current heap statistics (eg. number of free blocks in
+N    * the free-list). Output is as implementation-defined free-form
+N    * text, provided via the dprint function. `param' gives an
+N    * extra data word to pass to dprint. You can call
+N    * __heapstats(fprintf,stdout) by casting fprintf to the above
+N    * function type; the typedef `__heapprt' is provided for this
+N    * purpose.
+N    *
+N    * `dprint' will not be called while the heap is being examined,
+N    * so it can allocate memory itself without trouble.
+N    */
+Nextern _ARMABI int __heapvalid(int (* /*dprint*/)(void * /*param*/,
+Xextern __declspec(__nothrow) int __heapvalid(int (*  )(void *  ,
+N                                           char const * /*format*/, ...),
+N                       void * /*param*/, int /*verbose*/) __attribute__((__nonnull__(1)));
+N   /*
+N    * performs a consistency check on the heap. Errors are reported
+N    * through dprint, like __heapstats. If `verbose' is nonzero,
+N    * full diagnostic information on the heap state is printed out.
+N    *
+N    * This routine probably won't work if the heap isn't a
+N    * contiguous chunk (for example, if __user_heap_extend has been
+N    * overridden).
+N    *
+N    * `dprint' may be called while the heap is being examined or
+N    * even in an invalid state, so it must perform no memory
+N    * allocation. In particular, if `dprint' calls (or is) a stdio
+N    * function, the stream it outputs to must already have either
+N    * been written to or been setvbuf'ed, or else the system will
+N    * allocate buffer space for it on the first call to dprint.
+N    */
+Nextern _ARMABI_NORETURN void abort(void);
+Xextern __declspec(__nothrow) __declspec(__noreturn) void abort(void);
+N   /*
+N    * causes abnormal program termination to occur, unless the signal SIGABRT
+N    * is being caught and the signal handler does not return. Whether open
+N    * output streams are flushed or open streams are closed or temporary
+N    * files removed is implementation-defined.
+N    * An implementation-defined form of the status 'unsuccessful termination'
+N    * is returned to the host environment by means of a call to
+N    * raise(SIGABRT).
+N    */
+N
+Nextern _ARMABI int atexit(void (* /*func*/)(void)) __attribute__((__nonnull__(1)));
+Xextern __declspec(__nothrow) int atexit(void (*  )(void)) __attribute__((__nonnull__(1)));
+N   /*
+N    * registers the function pointed to by func, to be called without its
+N    * arguments at normal program termination. It is possible to register at
+N    * least 32 functions.
+N    * Returns: zero if the registration succeeds, nonzero if it fails.
+N    */
+N#if defined(__EDG__) && !defined(__GNUC__)
+X#if 1L && !0L
+N#define __LANGUAGE_LINKAGE_CHANGES_FUNCTION_TYPE
+N#endif
+N#if defined(__cplusplus) && defined(__LANGUAGE_LINKAGE_CHANGES_FUNCTION_TYPE) 
+X#if 0L && 1L 
+S    /* atexit that takes a ptr to a function with C++ linkage 
+S     * but not in GNU mode  
+S     */
+S    typedef void (* __C_exitfuncptr)();
+S    extern "C++"
+S    inline int atexit(void (* __func)()) {
+S      return atexit((__C_exitfuncptr)__func);
+S    }
+N#endif
+N
+N
+Nextern _ARMABI_NORETURN void exit(int /*status*/);
+Xextern __declspec(__nothrow) __declspec(__noreturn) void exit(int  );
+N   /*
+N    * causes normal program termination to occur. If more than one call to the
+N    * exit function is executed by a program, the behaviour is undefined.
+N    * First, all functions registered by the atexit function are called, in the
+N    * reverse order of their registration.
+N    * Next, all open output streams are flushed, all open streams are closed,
+N    * and all files created by the tmpfile function are removed.
+N    * Finally, control is returned to the host environment. If the value of
+N    * status is zero or EXIT_SUCCESS, an implementation-defined form of the
+N    * status 'successful termination' is returned. If the value of status is
+N    * EXIT_FAILURE, an implementation-defined form of the status
+N    * 'unsuccessful termination' is returned. Otherwise the status returned
+N    * is implementation-defined.
+N    */
+N
+Nextern _ARMABI_NORETURN void _Exit(int /*status*/);
+Xextern __declspec(__nothrow) __declspec(__noreturn) void _Exit(int  );
+N   /*
+N    * causes normal program termination to occur. No functions registered
+N    * by the atexit function are called.
+N    * In this implementation, all open output streams are flushed, all
+N    * open streams are closed, and all files created by the tmpfile function
+N    * are removed.
+N    * Control is returned to the host environment. The status returned to
+N    * the host environment is determined in the same way as for 'exit'.
+N    */     
+N
+Nextern _ARMABI char *getenv(const char * /*name*/) __attribute__((__nonnull__(1)));
+Xextern __declspec(__nothrow) char *getenv(const char *  ) __attribute__((__nonnull__(1)));
+N   /*
+N    * searches the environment list, provided by the host environment, for a
+N    * string that matches the string pointed to by name. The set of environment
+N    * names and the method for altering the environment list are
+N    * implementation-defined.
+N    * Returns: a pointer to a string associated with the matched list member.
+N    *          The array pointed to shall not be modified by the program, but
+N    *          may be overwritten by a subsequent call to the getenv function.
+N    *          If the specified name cannot be found, a null pointer is
+N    *          returned.
+N    */
+N
+Nextern _ARMABI int  system(const char * /*string*/);
+Xextern __declspec(__nothrow) int  system(const char *  );
+N   /*
+N    * passes the string pointed to by string to the host environment to be
+N    * executed by a command processor in an implementation-defined manner.
+N    * A null pointer may be used for string, to inquire whether a command
+N    * processor exists.
+N    *
+N    * Returns: If the argument is a null pointer, the system function returns
+N    *          non-zero only if a command processor is available. If the
+N    *          argument is not a null pointer, the system function returns an
+N    *          implementation-defined value.
+N    */
+N
+Nextern _ARMABI_THROW void *bsearch(const void * /*key*/, const void * /*base*/,
+Xextern  void *bsearch(const void *  , const void *  ,
+N              size_t /*nmemb*/, size_t /*size*/,
+N              int (* /*compar*/)(const void *, const void *)) __attribute__((__nonnull__(1,2,5)));
+N   /*
+N    * searches an array of nmemb objects, the initial member of which is
+N    * pointed to by base, for a member that matches the object pointed to by
+N    * key. The size of each member of the array is specified by size.
+N    * The contents of the array shall be in ascending sorted order according to
+N    * a comparison function pointed to by compar, which is called with two
+N    * arguments that point to the key object and to an array member, in that
+N    * order. The function shall return an integer less than, equal to, or
+N    * greater than zero if the key object is considered, respectively, to be
+N    * less than, to match, or to be greater than the array member.
+N    * Returns: a pointer to a matching member of the array, or a null pointer
+N    *          if no match is found. If two members compare as equal, which
+N    *          member is matched is unspecified.
+N    */
+N#if defined(__cplusplus) && defined(__LANGUAGE_LINKAGE_CHANGES_FUNCTION_TYPE)
+X#if 0L && 1L
+S    /* bsearch that takes a ptr to a function with C++ linkage 
+S     * but not in GNU mode
+S     */
+S    typedef int (* __C_compareprocptr)(const void *, const void *);
+S    extern "C++"
+S    void *bsearch(const void * __key, const void * __base,
+S              size_t __nmemb, size_t __size,
+S              int (* __compar)(const void *, const void *)) __attribute__((__nonnull__(1,2,5)));
+S    extern "C++"
+S    inline void *bsearch(const void * __key, const void * __base,
+S              size_t __nmemb, size_t __size,
+S              int (* __compar)(const void *, const void *)) {
+S      return bsearch(__key, __base, __nmemb, __size, (__C_compareprocptr)__compar);
+S    }
+N#endif
+N
+N
+Nextern _ARMABI_THROW void qsort(void * /*base*/, size_t /*nmemb*/, size_t /*size*/,
+Xextern  void qsort(void *  , size_t  , size_t  ,
+N           int (* /*compar*/)(const void *, const void *)) __attribute__((__nonnull__(1,4)));
+N   /*
+N    * sorts an array of nmemb objects, the initial member of which is pointed
+N    * to by base. The size of each object is specified by size.
+N    * The contents of the array shall be in ascending order according to a
+N    * comparison function pointed to by compar, which is called with two
+N    * arguments that point to the objects being compared. The function shall
+N    * return an integer less than, equal to, or greater than zero if the first
+N    * argument is considered to be respectively less than, equal to, or greater
+N    * than the second. If two members compare as equal, their order in the
+N    * sorted array is unspecified.
+N    */
+N
+N#if defined(__cplusplus) && defined(__LANGUAGE_LINKAGE_CHANGES_FUNCTION_TYPE)
+X#if 0L && 1L
+S    /* qsort that takes a ptr to a function with C++ linkage 
+S     * but not in GNU mode
+S     */    
+S    extern "C++"
+S    void qsort(void * __base, size_t __nmemb, size_t __size,
+S               int (* __compar)(const void *, const void *)) __attribute__((__nonnull__(1,4)));
+S    extern "C++"
+S    inline void qsort(void * __base, size_t __nmemb, size_t __size,
+S                      int (* __compar)(const void *, const void *)) {
+S      qsort(__base, __nmemb, __size, (__C_compareprocptr)__compar);
+S    }
+N#endif
+N
+Nextern _ARMABI_PURE int abs(int /*j*/);
+Xextern __declspec(__nothrow) __attribute__((const)) int abs(int  );
+N   /*
+N    * computes the absolute value of an integer j. If the result cannot be
+N    * represented, the behaviour is undefined.
+N    * Returns: the absolute value.
+N    */
+N
+Nextern _ARMABI_PURE div_t div(int /*numer*/, int /*denom*/);
+Xextern __declspec(__nothrow) __attribute__((const)) div_t div(int  , int  );
+N   /*
+N    * computes the quotient and remainder of the division of the numerator
+N    * numer by the denominator denom. If the division is inexact, the resulting
+N    * quotient is the integer of lesser magnitude that is the nearest to the
+N    * algebraic quotient. If the result cannot be represented, the behaviour is
+N    * undefined; otherwise, quot * denom + rem shall equal numer.
+N    * Returns: a structure of type div_t, comprising both the quotient and the
+N    *          remainder. the structure shall contain the following members,
+N    *          in either order.
+N    *          int quot; int rem;
+N    */
+Nextern _ARMABI_PURE long int labs(long int /*j*/);
+Xextern __declspec(__nothrow) __attribute__((const)) long int labs(long int  );
+N   /*
+N    * computes the absolute value of an long integer j. If the result cannot be
+N    * represented, the behaviour is undefined.
+N    * Returns: the absolute value.
+N    */
+N#ifdef __cplusplus
+S   extern "C++" inline _ARMABI_PURE long abs(long int x) { return labs(x); }
+N#endif
+N
+Nextern _ARMABI_PURE ldiv_t ldiv(long int /*numer*/, long int /*denom*/);
+Xextern __declspec(__nothrow) __attribute__((const)) ldiv_t ldiv(long int  , long int  );
+N   /*
+N    * computes the quotient and remainder of the division of the numerator
+N    * numer by the denominator denom. If the division is inexact, the sign of
+N    * the resulting quotient is that of the algebraic quotient, and the
+N    * magnitude of the resulting quotient is the largest integer less than the
+N    * magnitude of the algebraic quotient. If the result cannot be represented,
+N    * the behaviour is undefined; otherwise, quot * denom + rem shall equal
+N    * numer.
+N    * Returns: a structure of type ldiv_t, comprising both the quotient and the
+N    *          remainder. the structure shall contain the following members,
+N    *          in either order.
+N    *          long int quot; long int rem;
+N    */
+N#ifdef __cplusplus
+S   extern "C++" inline _ARMABI_PURE ldiv_t div(long int __numer, long int __denom) {
+S       return ldiv(__numer, __denom);
+S   }
+N#endif
+N
+N#if !defined(__STRICT_ANSI__) || __USE_C99_STDLIB
+X#if !0L || 1
+Nextern _ARMABI_PURE __LONGLONG llabs(__LONGLONG /*j*/);
+Xextern __declspec(__nothrow) __attribute__((const)) long long llabs(long long  );
+N   /*
+N    * computes the absolute value of a long long integer j. If the
+N    * result cannot be represented, the behaviour is undefined.
+N    * Returns: the absolute value.
+N    */
+N#ifdef __cplusplus
+S   extern "C++" inline _ARMABI_PURE __LONGLONG abs(__LONGLONG x) { return llabs(x); }
+N#endif
+N
+Nextern _ARMABI_PURE lldiv_t lldiv(__LONGLONG /*numer*/, __LONGLONG /*denom*/);
+Xextern __declspec(__nothrow) __attribute__((const)) lldiv_t lldiv(long long  , long long  );
+N   /*
+N    * computes the quotient and remainder of the division of the numerator
+N    * numer by the denominator denom. If the division is inexact, the sign of
+N    * the resulting quotient is that of the algebraic quotient, and the
+N    * magnitude of the resulting quotient is the largest integer less than the
+N    * magnitude of the algebraic quotient. If the result cannot be represented,
+N    * the behaviour is undefined; otherwise, quot * denom + rem shall equal
+N    * numer.
+N    * Returns: a structure of type lldiv_t, comprising both the quotient and the
+N    *          remainder. the structure shall contain the following members,
+N    *          in either order.
+N    *          long long quot; long long rem;
+N    */
+N#ifdef __cplusplus
+S   extern "C++" inline _ARMABI_PURE lldiv_t div(__LONGLONG __numer, __LONGLONG __denom) {
+S       return lldiv(__numer, __denom);
+S   }
+N#endif
+N#endif
+N
+N#if !(__ARM_NO_DEPRECATED_FUNCTIONS)
+N/*
+N * ARM real-time divide functions for guaranteed performance
+N */
+Ntypedef struct __sdiv32by16 { int quot, rem; } __sdiv32by16;
+Ntypedef struct __udiv32by16 { unsigned int quot, rem; } __udiv32by16;
+N   /* used int so that values return in separate regs, although 16-bit */
+Ntypedef struct __sdiv64by32 { int rem, quot; } __sdiv64by32;
+N
+N__value_in_regs extern _ARMABI_PURE __sdiv32by16 __rt_sdiv32by16(
+X__value_in_regs extern __declspec(__nothrow) __attribute__((const)) __sdiv32by16 __rt_sdiv32by16(
+N     int /*numer*/,
+N     short int /*denom*/);
+N   /*
+N    * Signed divide: (16-bit quot), (16-bit rem) = (32-bit) / (16-bit)
+N    */
+N__value_in_regs extern _ARMABI_PURE __udiv32by16 __rt_udiv32by16(
+X__value_in_regs extern __declspec(__nothrow) __attribute__((const)) __udiv32by16 __rt_udiv32by16(
+N     unsigned int /*numer*/,
+N     unsigned short /*denom*/);
+N   /*
+N    * Unsigned divide: (16-bit quot), (16-bit rem) = (32-bit) / (16-bit)
+N    */
+N__value_in_regs extern _ARMABI_PURE __sdiv64by32 __rt_sdiv64by32(
+X__value_in_regs extern __declspec(__nothrow) __attribute__((const)) __sdiv64by32 __rt_sdiv64by32(
+N     int /*numer_h*/, unsigned int /*numer_l*/,
+N     int /*denom*/);
+N   /*
+N    * Signed divide: (32-bit quot), (32-bit rem) = (64-bit) / (32-bit)
+N    */
+N#endif
+N
+N/*
+N * ARM floating-point mask/status function (for both hardfp and softfp)
+N */
+Nextern _ARMABI unsigned int __fp_status(unsigned int /*mask*/, unsigned int /*flags*/);
+Xextern __declspec(__nothrow) unsigned int __fp_status(unsigned int  , unsigned int  );
+N   /*
+N    * mask and flags are bit-fields which correspond directly to the
+N    * floating point status register in the FPE/FPA and fplib.  
+N    * __fp_status returns the current value of the status register,
+N    * and also sets the writable bits of the word
+N    * (the exception control and flag bytes) to:
+N    *
+N    *     new = (old & ~mask) ^ flags;
+N    */
+N#define __fpsr_IXE  0x100000
+N#define __fpsr_UFE  0x80000
+N#define __fpsr_OFE  0x40000
+N#define __fpsr_DZE  0x20000
+N#define __fpsr_IOE  0x10000
+N
+N#define __fpsr_IXC  0x10
+N#define __fpsr_UFC  0x8
+N#define __fpsr_OFC  0x4
+N#define __fpsr_DZC  0x2
+N#define __fpsr_IOC  0x1
+N
+N/*
+N * Multibyte Character Functions.
+N * The behaviour of the multibyte character functions is affected by the
+N * LC_CTYPE category of the current locale. For a state-dependent encoding,
+N * each function is placed into its initial state by a call for which its
+N * character pointer argument, s, is a null pointer. Subsequent calls with s
+N * as other than a null pointer cause the internal state of the function to be
+N * altered as necessary. A call with s as a null pointer causes these functions
+N * to return a nonzero value if encodings have state dependency, and a zero
+N * otherwise. After the LC_CTYPE category is changed, the shift state of these
+N * functions is indeterminate.
+N */
+Nextern _ARMABI int mblen(const char * /*s*/, size_t /*n*/);
+Xextern __declspec(__nothrow) int mblen(const char *  , size_t  );
+N   /*
+N    * If s is not a null pointer, the mblen function determines the number of
+N    * bytes compromising the multibyte character pointed to by s. Except that
+N    * the shift state of the mbtowc function is not affected, it is equivalent
+N    * to   mbtowc((wchar_t *)0, s, n);
+N    * Returns: If s is a null pointer, the mblen function returns a nonzero or
+N    *          zero value, if multibyte character encodings, respectively, do
+N    *          or do not have state-dependent encodings. If s is not a null
+N    *          pointer, the mblen function either returns a 0 (if s points to a
+N    *          null character), or returns the number of bytes that compromise
+N    *          the multibyte character (if the next n of fewer bytes form a
+N    *          valid multibyte character), or returns -1 (they do not form a
+N    *          valid multibyte character).
+N    */
+Nextern _ARMABI int mbtowc(wchar_t * __restrict /*pwc*/,
+Xextern __declspec(__nothrow) int mbtowc(wchar_t * __restrict  ,
+N                   const char * __restrict /*s*/, size_t /*n*/);
+N   /*
+N    * If s is not a null pointer, the mbtowc function determines the number of
+N    * bytes that compromise the multibyte character pointed to by s. It then
+N    * determines the code for value of type wchar_t that corresponds to that
+N    * multibyte character. (The value of the code corresponding to the null
+N    * character is zero). If the multibyte character is valid and pwc is not a
+N    * null pointer, the mbtowc function stores the code in the object pointed
+N    * to by pwc. At most n bytes of the array pointed to by s will be examined.
+N    * Returns: If s is a null pointer, the mbtowc function returns a nonzero or
+N    *          zero value, if multibyte character encodings, respectively, do
+N    *          or do not have state-dependent encodings. If s is not a null
+N    *          pointer, the mbtowc function either returns a 0 (if s points to
+N    *          a null character), or returns the number of bytes that
+N    *          compromise the converted multibyte character (if the next n of
+N    *          fewer bytes form a valid multibyte character), or returns -1
+N    *          (they do not form a valid multibyte character).
+N    */
+Nextern _ARMABI int wctomb(char * /*s*/, wchar_t /*wchar*/);
+Xextern __declspec(__nothrow) int wctomb(char *  , wchar_t  );
+N   /*
+N    * determines the number of bytes need to represent the multibyte character
+N    * corresponding to the code whose value is wchar (including any change in
+N    * shift state). It stores the multibyte character representation in the
+N    * array object pointed to by s (if s is not a null pointer). At most
+N    * MB_CUR_MAX characters are stored. If the value of wchar is zero, the
+N    * wctomb function is left in the initial shift state).
+N    * Returns: If s is a null pointer, the wctomb function returns a nonzero or
+N    *          zero value, if multibyte character encodings, respectively, do
+N    *          or do not have state-dependent encodings. If s is not a null
+N    *          pointer, the wctomb function returns a -1 if the value of wchar
+N    *          does not correspond to a valid multibyte character, or returns
+N    *          the number of bytes that compromise the multibyte character
+N    *          corresponding to the value of wchar.
+N    */
+N
+N/*
+N * Multibyte String Functions.
+N * The behaviour of the multibyte string functions is affected by the LC_CTYPE
+N * category of the current locale.
+N */
+Nextern _ARMABI size_t mbstowcs(wchar_t * __restrict /*pwcs*/,
+Xextern __declspec(__nothrow) size_t mbstowcs(wchar_t * __restrict  ,
+N                      const char * __restrict /*s*/, size_t /*n*/) __attribute__((__nonnull__(2)));
+N   /*
+N    * converts a sequence of multibyte character that begins in the initial
+N    * shift state from the array pointed to by s into a sequence of
+N    * corresponding codes and stores not more than n codes into the array
+N    * pointed to by pwcs. No multibyte character that follow a null character
+N    * (which is converted into a code with value zero) will be examined or
+N    * converted. Each multibyte character is converted as if by a call to
+N    * mbtowc function, except that the shift state of the mbtowc function is
+N    * not affected. No more than n elements will be modified in the array
+N    * pointed to by pwcs. If copying takes place between objects that overlap,
+N    * the behaviour is undefined.
+N    * Returns: If an invalid multibyte character is encountered, the mbstowcs
+N    *          function returns (size_t)-1. Otherwise, the mbstowcs function
+N    *          returns the number of array elements modified, not including
+N    *          a terminating zero code, if any.
+N    */
+Nextern _ARMABI size_t wcstombs(char * __restrict /*s*/,
+Xextern __declspec(__nothrow) size_t wcstombs(char * __restrict  ,
+N                      const wchar_t * __restrict /*pwcs*/, size_t /*n*/) __attribute__((__nonnull__(2)));
+N   /*
+N    * converts a sequence of codes that correspond to multibyte characters
+N    * from the array pointed to by pwcs into a sequence of multibyte
+N    * characters that begins in the initial shift state and stores these
+N    * multibyte characters into the array pointed to by s, stopping if a
+N    * multibyte character would exceed the limit of n total bytes or if a
+N    * null character is stored. Each code is converted as if by a call to the
+N    * wctomb function, except that the shift state of the wctomb function is
+N    * not affected. No more than n elements will be modified in the array
+N    * pointed to by s. If copying takes place between objects that overlap,
+N    * the behaviour is undefined.
+N    * Returns: If a code is encountered that does not correspond to a valid
+N    *          multibyte character, the wcstombs function returns (size_t)-1.
+N    *          Otherwise, the wcstombs function returns the number of bytes
+N    *          modified, not including a terminating null character, if any.
+N    */
+N
+Nextern _ARMABI void __use_realtime_heap(void);
+Xextern __declspec(__nothrow) void __use_realtime_heap(void);
+Nextern _ARMABI void __use_realtime_division(void);
+Xextern __declspec(__nothrow) void __use_realtime_division(void);
+Nextern _ARMABI void __use_two_region_memory(void);
+Xextern __declspec(__nothrow) void __use_two_region_memory(void);
+Nextern _ARMABI void __use_no_heap(void);
+Xextern __declspec(__nothrow) void __use_no_heap(void);
+Nextern _ARMABI void __use_no_heap_region(void);
+Xextern __declspec(__nothrow) void __use_no_heap_region(void);
+N
+Nextern _ARMABI char const *__C_library_version_string(void);
+Xextern __declspec(__nothrow) char const *__C_library_version_string(void);
+Nextern _ARMABI int __C_library_version_number(void);
+Xextern __declspec(__nothrow) int __C_library_version_number(void);
+N
+N    #ifdef __cplusplus
+S         }  /* extern "C" */
+S      }  /* namespace std */
+N    #endif /* __cplusplus */
+N  #endif /* __STDLIB_DECLS */
+N
+N  #if _AEABI_PORTABILITY_LEVEL != 0 && !defined _AEABI_PORTABLE
+X  #if _AEABI_PORTABILITY_LEVEL != 0 && !0L
+S    #define _AEABI_PORTABLE
+N  #endif
+N
+N  #ifdef __cplusplus
+S    #ifndef __STDLIB_NO_EXPORTS
+S      #if !defined(__STRICT_ANSI__) || __USE_C99_STDLIB
+S        using ::std::atoll;
+S        using ::std::lldiv_t;
+S      #endif /* !defined(__STRICT_ANSI__) || __USE_C99_STDLIB */
+S      using ::std::div_t;
+S      using ::std::ldiv_t;
+S      using ::std::atof;
+S      using ::std::atoi;
+S      using ::std::atol;
+S      using ::std::strtod;
+S#if !defined(__STRICT_ANSI__) || __USE_C99_STDLIB
+S      using ::std::strtof;
+S      using ::std::strtold;
+S#endif
+S      using ::std::strtol;
+S      using ::std::strtoul;
+S      using ::std::strtoll;
+S      using ::std::strtoull;
+S      using ::std::rand;
+S      using ::std::srand;
+S      using ::std::_rand_state;
+S      using ::std::_rand_r;
+S      using ::std::_srand_r;
+S      using ::std::_ANSI_rand_state;
+S      using ::std::_ANSI_rand_r;
+S      using ::std::_ANSI_srand_r;
+S      using ::std::calloc;
+S      using ::std::free;
+S      using ::std::malloc;
+S      using ::std::realloc;
+S#if !defined(__STRICT_ANSI__)
+S      using ::std::posix_memalign;
+S#endif
+S      using ::std::__heapprt;
+S      using ::std::__heapstats;
+S      using ::std::__heapvalid;
+S      using ::std::abort;
+S      using ::std::atexit;
+S      using ::std::exit;
+S      using ::std::_Exit;
+S      using ::std::getenv;
+S      using ::std::system;
+S      using ::std::bsearch;
+S      using ::std::qsort;
+S      using ::std::abs;
+S      using ::std::div;
+S      using ::std::labs;
+S      using ::std::ldiv;
+S      #if !defined(__STRICT_ANSI__) || __USE_C99_STDLIB
+S        using ::std::llabs;
+S        using ::std::lldiv;
+S      #endif /* !defined(__STRICT_ANSI__) || __USE_C99_STDLIB */
+S#if !(__ARM_NO_DEPRECATED_FUNCTIONS)
+S      using ::std::__sdiv32by16;
+S      using ::std::__udiv32by16;
+S      using ::std::__sdiv64by32;
+S      using ::std::__rt_sdiv32by16;
+S      using ::std::__rt_udiv32by16;
+S      using ::std::__rt_sdiv64by32;
+S#endif
+S      using ::std::__fp_status;
+S      using ::std::mblen;
+S      using ::std::mbtowc;
+S      using ::std::wctomb;
+S      using ::std::mbstowcs;
+S      using ::std::wcstombs;
+S      using ::std::__use_realtime_heap;
+S      using ::std::__use_realtime_division;
+S      using ::std::__use_two_region_memory;
+S      using ::std::__use_no_heap;
+S      using ::std::__use_no_heap_region;
+S      using ::std::__C_library_version_string;
+S      using ::std::__C_library_version_number;
+S      using ::std::size_t;
+S      using ::std::__aeabi_MB_CUR_MAX;
+S    #endif /* __STDLIB_NO_EXPORTS */
+N  #endif /* __cplusplus */
+N
+N#undef __LONGLONG
+N
+N#endif /* __stdlib_h */
+N
+N/* end of stdlib.h */
+L 27 "..\utils\inc\lite-log.h" 2
+N#include <string.h>
 L 1 "C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h" 1
 N/* string.h: ANSI 'C' (X3J11 Oct 88) library header, section 4.11 */
 N/* Copyright (C) Codemist Ltd., 1988-1993.                        */
@@ -20211,7 +20668,619 @@ N#endif
 N
 N/* end of string.h */
 N
-L 11 "..\Bsp\src\bsp_timer0.c" 2
+L 28 "..\utils\inc\lite-log.h" 2
+N#include <stdio.h>
+N
+N#define LITE_printf                     printf
+N#define LITE_sprintf                    sprintf
+N#define LITE_snprintf                   snprintf
+N
+Ntypedef enum _LOGLEVEL {
+N	LOG_EMERG_LEVEL = 0, /* OS system is unavailable */
+N	LOG_CRIT_LEVEL, /* current application aborting */
+N	LOG_ERR_LEVEL, /* current app-module error */
+N	LOG_WARNING_LEVEL, /* using default parameters */
+N	LOG_INFO_LEVEL, /* running messages */
+N	LOG_DEBUG_LEVEL, /* debugging messages */
+N} LOGLEVEL;
+N
+Nvoid LITE_openlog(const char *ident);
+Nvoid LITE_closelog(void);
+Nint LITE_log_enabled(void);
+Nchar *LITE_get_logname(void);
+Nint LITE_get_loglevel(void);
+Nvoid LITE_set_loglevel(int level);
+Nint LITE_hexdump(const char *title, const void *buf, const int len);
+N
+Nvoid LITE_syslog(const char *f, const int l, const int level, const char *fmt,
+N		...);
+N#define log_emerg(args...)      LITE_syslog(__FUNCTION__, __LINE__, LOG_EMERG_LEVEL, args)
+N#define log_crit(args...)       LITE_syslog(__FUNCTION__, __LINE__, LOG_CRIT_LEVEL, args)
+N#define log_err(args...)        LITE_syslog(__FUNCTION__, __LINE__, LOG_ERR_LEVEL, args)
+N#define log_warning(args...)    LITE_syslog(__FUNCTION__, __LINE__, LOG_WARNING_LEVEL, args)
+N#define log_info(args...)       LITE_syslog(__FUNCTION__, __LINE__, LOG_INFO_LEVEL, args)
+N#define log_debug(args...)      LITE_syslog(__FUNCTION__, __LINE__, LOG_DEBUG_LEVEL, args)
+N
+Nint log_multi_line_internal(const char *f, const int l, const char *title,
+N		int level, char *payload, const char *mark);
+N#define log_multi_line(level, title, fmt, payload, mark) \
+N    log_multi_line_internal(__func__, __LINE__, title, level, payload, mark)
+X#define log_multi_line(level, title, fmt, payload, mark)     log_multi_line_internal(__func__, __LINE__, title, level, payload, mark)
+N
+Nvoid LITE_rich_hexdump(const char *f, const int l, const int level,
+N		const char *buf_str, const void *buf_ptr, const int buf_len);
+N
+N#if defined(__GLIBC__)
+X#if 0L
+S#define HEXDUMP_DEBUG(buf, len) \
+S    LITE_rich_hexdump(__func__, __LINE__, LOG_DEBUG_LEVEL, #buf, (const void *)buf, (const int)len)
+X#define HEXDUMP_DEBUG(buf, len)     LITE_rich_hexdump(__func__, __LINE__, LOG_DEBUG_LEVEL, #buf, (const void *)buf, (const int)len)
+S
+S#define HEXDUMP_INFO(buf, len)      \
+S    LITE_rich_hexdump(__func__, __LINE__, LOG_INFO_LEVEL, #buf, (const void *)buf, (const int)len)
+X#define HEXDUMP_INFO(buf, len)          LITE_rich_hexdump(__func__, __LINE__, LOG_INFO_LEVEL, #buf, (const void *)buf, (const int)len)
+N#else
+N#define HEXDUMP_DEBUG(buf, len) \
+N    LITE_rich_hexdump(__func__, __LINE__, LOG_DEBUG_LEVEL, #buf, buf, len)
+X#define HEXDUMP_DEBUG(buf, len)     LITE_rich_hexdump(__func__, __LINE__, LOG_DEBUG_LEVEL, #buf, buf, len)
+N
+N#define HEXDUMP_INFO(buf, len)      \
+N    LITE_rich_hexdump(__func__, __LINE__, LOG_INFO_LEVEL, #buf, buf, len)
+X#define HEXDUMP_INFO(buf, len)          LITE_rich_hexdump(__func__, __LINE__, LOG_INFO_LEVEL, #buf, buf, len)
+N#endif
+N
+N#if defined(__cplusplus)
+X#if 0L
+S}
+N#endif
+N#endif  /* __LITE_LOG_H__ */
+L 16 "..\Bsp\bsp.h" 2
+N
+N#include "bsp_2d4.h"
+L 1 "..\Bsp\inc\bsp_2d4.h" 1
+N/*
+N * bsp_bt.h
+N *
+N *  Created on: 2017年6月26日
+N *      Author: fly
+N */
+N
+N#ifndef BSP_INC_BSP_2D4_H_
+N#define BSP_INC_BSP_2D4_H_
+N
+N#define         CSN_HIGH                (P04 = 1)
+N#define         CSN_LOW                 (P04 = 0)
+N#define         SCK_HIGH                P07 = 1;delay_2d4(1)
+N#define         SCK_LOW                 P07 = 0;delay_2d4(1)
+N
+N#define         SPI_DATA_HIGH           (P05 = 1)
+N#define         SPI_DATA_LOW            (P05 = 0)
+N#define         SPI_DATA_STATUS         (P05)
+N#define         SPI_DATA_OUTPUT_MODE     GPIO_SetMode(P0, BIT5, GPIO_MODE_OUTPUT);
+N#define         SPI_DATA_INPUT_MODE      GPIO_SetMode(P0, BIT5, GPIO_MODE_INPUT);
+N#define         CE_HIGH                  RF_WriteReg(CE_FSPI_ON, 0)
+N#define         CE_LOW                   RF_WriteReg(CE_FSPI_OFF, 0)
+N////////////////////////////////////////////////////////////////////////////////
+N//                    以下为声明部分，不建议修改                              //
+N////////////////////////////////////////////////////////////////////////////////
+N
+N/********************SPI  REGISTER  ********************/
+N#define		R_REGISTER			0x00                            //SPI read RF data
+N#define		W_REGISTER			0x20                            //SPI write RF data
+N#define		R_RX_PAYLOAD		0x61                            //Read RX Payload
+N#define		W_TX_PAYLOAD		0xA0                            //Write TX Payload
+N#define		FLUSH_TX			0xE1                            //Flush RX FIFO
+N#define		FLUSH_RX			0xE2                            //Flush TX FIFO
+N#define		REUSE_TX_PL			0xE3                            //Reuse TX Payload
+N#define		ACTIVATE			0x50                            //ACTIVATE
+N#define		DEACTIVATE			0x50                            //DEACTIVATE
+N#define		R_RX_PL_WID			0x60                            //Read width of RX data
+N#define		W_ACK_PAYLOAD		        0xA8                            //Data with ACK
+N#define		W_TX_PAYLOAD_NOACK	        0xB0                            //TX Payload no ACK Request
+N#define		CE_FSPI_ON	                0xFD                            // CE HIGH
+N#define		CE_FSPI_OFF	                0xFC                            // CE LOW
+N#define		RST_FSPI	                0x53                            // RESET
+N#define		NOP_N				0xFF
+N
+N/******************CONTROL  REGISTER*******************/
+N#define		CONFIG              0x00
+N#define		EN_AA				0x01
+N#define		EN_RXADDR			0x02
+N#define		SETUP_AW			0x03
+N#define		SETUP_RETR			0x04
+N#define		RF_CH				0x05
+N#define		RF_SETUP			0x06
+N#define		STATUS				0x07
+N#define		OBSERVE_TX			0x08
+N#define		DATAOUT			    0x09
+N#define		RX_ADDR_P0			0x0A
+N#define		RX_ADDR_P1			0x0B
+N#define		RX_ADDR_P2			0x0C
+N#define		RX_ADDR_P3			0x0D
+N#define		RX_ADDR_P4			0x0E
+N#define		RX_ADDR_P5			0x0F
+N#define		TX_ADDR				0x10
+N#define		RX_PW_P0			0x11
+N#define		RX_PW_P1			0x12
+N#define		RX_PW_P2			0x13
+N#define		RX_PW_P3			0x14
+N#define		RX_PW_P4			0x15
+N#define		RX_PW_P5			0x16
+N#define		FIFO_STATUS			0x17
+N#define		DEMOD_CAL				0x19
+N#define     RF_CAL2				0x1A
+N#define     DEM_CAL2			0x1B
+N#define		DYNPD				0x1C
+N#define		FEATURE				0x1D
+N#define		RF_CAL				0x1E
+N#define		BB_CAL				0x1F
+N
+N/////////////////////////////////////////////////////////////////////////////////////
+N/*************************CONTROL CMD***********************************************/
+N#define         RF13dBm                         0x3F                            // 13dBm  发射档位功率设置
+N#define         RF10dBm                         0X0F                            // 10dBm
+N#define         RF8dBm                          0x15                            // 8dbm
+N#define         RF7dBm                          0x07                            // 7dbm
+N#define         RF5dBm                          0x2c                            // 5dbm
+N#define         RF4dBm                          0x06                            // 4dbm
+N#define         RF2dBm                          0x05                            // 2dbm
+N#define         RF0dBm                          0X0B                            // 0dBm
+N#define         RF_3dBm                         0x04                            // -3dBm
+N#define         RF_6dBm                         0x0A                            // -6dBm
+N#define         RF_10dBm                        0x02                            // -10dBm
+N#define         RF_18dBm                        0x01                            // -18dBm
+N#define         RF_30dBm                        0x00                            // -30dBm
+N
+N#define         DR_1M                           0X00				//通信速率 1Mbps
+N#define         DR_2M                           0X40				//通信速率 2Mbps
+N#define         DR_250K                         0XC0                            //通信速率 250Kbps
+N#define         RX_DR_FLAG                      0X40                            // 接收中断标志位
+N#define         TX_DS_FLAG                      0X20                            // 发送完成中断标志位
+N#define         RX_TX_CMP_FLAG                  0X60                            // 发送接收完成中断标志位，ack_payload 模式下使用
+N#define         MAX_RT_FLAG                     0X10                            // 发送重传超时中断标志位
+N#define         TRANS_ENHANCE_MODE              1                               //传输类型增强型
+N#define         TRANS_BURST_MODE                2                               //传输类型普通型
+N///////////////////////////////////////////////////////////////////////////////
+N//                  根据用户应用，以下部分可能需要修改                       //
+N///////////////////////////////////////////////////////////////////////////////
+N/******************* Function declare *******************/
+Nvoid Wireless2d4_InitHard(void);
+N
+Nvoid SPI_WW(uint8_t R_REG);
+Nvoid RF_WriteReg(uint8_t reg, uint8_t wdata);
+Nvoid RF_WriteBuf(uint8_t reg, uint8_t *pBuf, uint8_t length);
+Nvoid SPI_WR(uint8_t R_REG);
+Nuint8_t ucSPI_Read(void);
+Nuint8_t ucRF_ReadReg(uint8_t reg);
+Nvoid RF_ReadBuf(uint8_t reg, uint8_t *pBuf, uint8_t length);
+Nvoid RF_TxMode(void);
+Nvoid RF_RxMode(void);
+Nuint8_t ucRF_GetStatus(void);
+Nuint8_t ucRF_GetRSSI(void);
+Nvoid RF_ClearStatus(void);
+Nvoid RF_ClearFIFO(void);
+Nvoid RF_SetChannel(uint8_t Channel);
+Nvoid RF_TxData(uint8_t *ucPayload, uint8_t length);
+Nuint8_t ucRF_DumpRxData(uint8_t *ucPayload, uint8_t length);
+Nvoid RF_Carrier(uint8_t ucChannel_Set);
+Nvoid RF_Init(void);
+N
+N/******************Parameter define **********************/
+N
+N#define         DEFAULT_CHANNEL                78				//初始化时的频率： 2478 MHz
+N#define         PAYLOAD_WIDTH                  16				//Payload宽度：    8bytes
+N#define         TRANSMIT_TYPE                  TRANS_BURST_MODE 		//使用普通型模式    TRANS_BURST_MODE    TRANS_ENHANCE_MODE
+N#define         DATA_RATE                      DR_1M                            //通信速率1Mbps       DR_2M    DR_1M  DR_250K
+N#define         RF_POWER                      (RF13dBm |DATA_RATE)		//发射功率13dBm
+N
+N#endif /* BSP_INC_BSP_2D4_H_ */
+L 18 "..\Bsp\bsp.h" 2
+N//#include "bsp_uart.h"
+N#include "bsp_timer0.h"
+L 1 "..\Bsp\inc\bsp_timer0.h" 1
+N/*
+N * bsp_timer0.h
+N *
+N *  Created on: 2017年6月28日
+N *      Author: fly
+N */
+N
+N#ifndef BSP_INC_BSP_TIMER0_H_
+N#define BSP_INC_BSP_TIMER0_H_
+N
+Ntypedef struct {
+N
+N//	uint8_t cnt_1ms;
+N	uint8_t flag_1ms;
+N
+N	uint8_t cnt_10ms;
+N	uint8_t flag_10ms;
+N
+N	uint8_t cnt_100ms;
+N	uint8_t flag_100ms;
+N
+N	uint8_t cnt_500ms;
+N	uint8_t flag_500ms;
+N
+N	uint16_t cnt_1s;
+N	uint8_t flag_1s;
+N
+N} Task_time;
+N
+N//extern _Task_time Task_time;
+N
+Nvoid Timer0_InitHard(void);
+NTask_time* timer0_taskTimer_get(void);
+N
+N#endif /* BSP_INC_BSP_TIMER0_H_ */
+L 20 "..\Bsp\bsp.h" 2
+N#include "bsp_light.h"
+L 1 "..\Bsp\inc\bsp_light.h" 1
+N/*
+N * bsp_light.h
+N *
+N *  Created on: 2017年8月18日
+N *      Author: fly
+N */
+N
+N#ifndef BSP_INC_BSP_LIGHT_H_
+N#define BSP_INC_BSP_LIGHT_H_
+N
+Nvoid Light_InitHard(void);
+N//void Light_Red_set(uint16_t duty);
+N//void Light_Green_set(uint16_t duty);
+N//void Light_Blue_set(uint16_t duty);
+Nvoid Light_RGB_set(uint16_t r, uint16_t g, uint16_t b);
+Nvoid Light_bright_set(uint8_t br);
+N
+N#endif /* BSP_INC_BSP_LIGHT_H_ */
+L 21 "..\Bsp\bsp.h" 2
+N#include "bsp_relay.h"
+L 1 "..\Bsp\inc\bsp_relay.h" 1
+N/*
+N * bsp_relay.h
+N *
+N *  Created on: 2017年8月18日
+N *      Author: fly
+N */
+N
+N#ifndef BSP_INC_BSP_RELAY_H_
+N#define BSP_INC_BSP_RELAY_H_
+N
+Nvoid Relay_InitHard(void);
+Nvoid Relay_on(void);
+Nvoid Relay_off(void);
+Nvoid Relay_toggle(void);
+Nuint8_t Relay_IsOn(void);
+Nvoid Relay_set(uint8_t s);
+N
+N#endif /* BSP_INC_BSP_RELAY_H_ */
+L 22 "..\Bsp\bsp.h" 2
+N#include "bsp_eeprom.h"
+L 1 "..\Bsp\inc\bsp_eeprom.h" 1
+N/*
+N * bsp_eeprom.h
+N *
+N *  Created on: 2017年9月8日
+N *      Author: fly
+N */
+N
+N#ifndef BSP_INC_BSP_EEPROM_H_
+N#define BSP_INC_BSP_EEPROM_H_
+N
+N//#define DOME_START_ADDR   0x3C00  //use 3KB
+N//#define DOME_START_ADDR   0x3E00  //use 2.5KB
+N#define DOME_START_ADDR   0x6C00  //use 5KB
+N
+N
+Nvoid EEPROM_InitHard(void);
+N
+Nvoid bsp_eeprom_write_int(uint32_t u32addr, uint32_t u32data);
+Nint32_t bsp_eeprom_erase(uint32_t u32addr);
+Nuint32_t bsp_eeprom_read_int(uint32_t u32Addr);
+N
+N#endif /* BSP_INC_BSP_EEPROM_H_ */
+L 23 "..\Bsp\bsp.h" 2
+N#include "bsp_key.h"
+L 1 "..\Bsp\inc\bsp_key.h" 1
+N/*
+N *********************************************************************************************************
+N *
+N *	模块名称 : 按键驱动模块
+N *	文件名称 : bsp_key.h
+N *	版    本 : V1.0
+N *	说    明 : 头文件
+N *
+N *********************************************************************************************************
+N */
+N
+N#ifndef __BSP_KEY_H
+N#define __BSP_KEY_H
+N
+N#define KEY_COUNT    2
+N
+N/* 根据应用程序的功能重命名按键宏 */
+N#define KEY_DOWN_K1		KEY_1_DOWN
+N#define KEY_UP_K1		KEY_1_UP
+N#define KEY_LONG_K1		KEY_1_LONG
+N
+N#define KEY_DOWN_K2		KEY_2_DOWN
+N#define KEY_UP_K2		KEY_2_UP
+N#define KEY_LONG_K2		KEY_2_LONG
+N
+N
+N/* 按键ID, 主要用于bsp_KeyState()函数的入口参数 */
+Ntypedef enum {
+N	KID_K1 = 0,
+N	KID_K2,
+N} KEY_ID_E;
+N
+N/*
+N 按键滤波时间50ms, 单位10ms。
+N 只有连续检测到50ms状态不变才认为有效，包括弹起和按下两种事件
+N 即使按键电路不做硬件滤波，该滤波机制也可以保证可靠地检测到按键事件
+N */
+N#define KEY_FILTER_TIME   5
+N#define KEY_LONG_TIME     100			/* 单位10ms， 持续1秒，认为长按事件 */
+N
+N/*
+N 每个按键对应1个全局的结构体变量。
+N */
+Ntypedef struct {
+N	/* 下面是一个函数指针，指向判断按键手否按下的函数 */
+N	uint8_t (*IsKeyDownFunc)(void); /* 按键按下的判断函数,1表示按下 */
+N
+N	uint8_t Count; /* 滤波器计数器 */
+N	uint16_t LongCount; /* 长按计数器 */
+N	uint16_t LongTime; /* 按键按下持续时间, 0表示不检测长按 */
+N	uint8_t State; /* 按键当前状态（按下还是弹起） */
+N	uint8_t RepeatSpeed; /* 连续按键周期 */
+N	uint8_t RepeatCount; /* 连续按键计数器 */
+N} KEY_T;
+N
+N/*
+N 定义键值代码, 必须按如下次序定时每个键的按下、弹起和长按事件
+N
+N 推荐使用enum, 不用#define，原因：
+N (1) 便于新增键值,方便调整顺序，使代码看起来舒服点
+N (2) 编译器可帮我们避免键值重复。
+N */
+Ntypedef enum {
+N	KEY_NONE = 0, /* 0 表示按键事件 */
+N
+N	KEY_1_DOWN, /* 1键按下 */
+N	KEY_1_UP, /* 1键弹起 */
+N	KEY_1_LONG, /* 1键长按 */
+N
+N	KEY_2_DOWN, /* 2键按下 */
+N	KEY_2_UP, /* 2键弹起 */
+N	KEY_2_LONG, /* 2键长按 */
+N} KEY_ENUM;
+N
+N/* 按键FIFO用到变量 */
+N#define KEY_FIFO_SIZE	10
+Ntypedef struct {
+N	uint8_t Buf[KEY_FIFO_SIZE]; /* 键值缓冲区 */
+X	uint8_t Buf[10];  
+N	uint8_t Read; /* 缓冲区读指针1 */
+N	uint8_t Write; /* 缓冲区写指针 */
+N	uint8_t Read2; /* 缓冲区读指针2 */
+N} KEY_FIFO_T;
+N
+N/* 供外部调用的函数声明 */
+Nvoid bsp_InitKey(void);
+Nvoid bsp_KeyScan(void);
+Nvoid bsp_PutKey(uint8_t _KeyCode);
+Nuint8_t bsp_GetKey(void);
+Nuint8_t bsp_GetKey2(void);
+Nuint8_t bsp_GetKeyState(KEY_ID_E _ucKeyID);
+Nvoid bsp_SetKeyParam(uint8_t _ucKeyID, uint16_t _LongTime, uint8_t _RepeatSpeed);
+Nvoid bsp_ClearKey(void);
+N
+N#endif
+N
+N/*****************************(END OF FILE) *********************************/
+L 24 "..\Bsp\bsp.h" 2
+N#include "bsp_uart_fifo.h"
+L 1 "..\Bsp\inc\bsp_uart_fifo.h" 1
+N#ifndef _BSP_USART_FIFO_H_
+N#define _BSP_USART_FIFO_H_
+N
+N#define	UART0_FIFO_EN	1
+N#define	UART1_FIFO_EN	1
+N
+N///* RS485芯片发送使能GPIO, PB2 */
+N//#define RCC_RS485_TXEN 	 RCC_APB2Periph_GPIOB
+N//#define PORT_RS485_TXEN  GPIOB
+N//#define PIN_RS485_TXEN	 GPIO_Pin_2
+N
+N//#define RS485_RX_EN()	PORT_RS485_TXEN->BRR = PIN_RS485_TXEN
+N//#define RS485_TX_EN()	PORT_RS485_TXEN->BSRR = PIN_RS485_TXEN
+N
+N/* 定义端口号 */
+Ntypedef enum {
+N	COM0 = 0, COM1 = 1,
+N} COM_PORT_E;
+N
+N
+N#if UART0_FIFO_EN == 1
+X#if 1 == 1
+N#define UART0_BAUD			115200
+N#define UART0_TX_BUF_SIZE	1*64
+N#define UART0_RX_BUF_SIZE	1*64
+N#endif
+N
+N#if UART1_FIFO_EN == 1
+X#if 1 == 1
+N#define UART1_BAUD			19200
+N#define UART1_TX_BUF_SIZE	1*256
+N#define UART1_RX_BUF_SIZE	1*256
+N#endif
+N
+N/* 串口设备结构体 */
+Ntypedef struct {
+N	UART_T *uart; /* STM32内部串口设备指针 */
+N	uint8_t *pTxBuf; /* 发送缓冲区 */
+N	uint8_t *pRxBuf; /* 接收缓冲区 */
+N	uint16_t usTxBufSize; /* 发送缓冲区大小 */
+N	uint16_t usRxBufSize; /* 接收缓冲区大小 */
+N	__IO uint16_t usTxWrite; /* 发送缓冲区写指针 */
+X	volatile uint16_t usTxWrite;  
+N	__IO uint16_t usTxRead; /* 发送缓冲区读指针 */
+X	volatile uint16_t usTxRead;  
+N	__IO uint16_t usTxCount; /* 等待发送的数据个数 */
+X	volatile uint16_t usTxCount;  
+N
+N	__IO uint16_t usRxWrite; /* 接收缓冲区写指针 */
+X	volatile uint16_t usRxWrite;  
+N	__IO uint16_t usRxRead; /* 接收缓冲区读指针 */
+X	volatile uint16_t usRxRead;  
+N	__IO uint16_t usRxCount; /* 还未读取的新数据个数 */
+X	volatile uint16_t usRxCount;  
+N
+N	void (*SendBefor)(void); /* 开始发送之前的回调函数指针（主要用于RS485切换到发送模式） */
+N	void (*SendOver)(void); /* 发送完毕的回调函数指针（主要用于RS485将发送模式切换为接收模式） */
+N	void (*ReciveNew)(uint8_t _byte); /* 串口收到数据的回调函数指针 */
+N} UART_T_M;
+N
+Nvoid bsp_InitUart(void);
+Nvoid comSendBuf(COM_PORT_E _ucPort, uint8_t *_ucaBuf, uint16_t _usLen);
+Nvoid comSendChar(COM_PORT_E _ucPort, uint8_t _ucByte);
+Nuint8_t comGetChar(COM_PORT_E _ucPort, uint8_t *_pByte);
+N
+Nvoid comClearTxFifo(COM_PORT_E _ucPort);
+Nvoid comClearRxFifo(COM_PORT_E _ucPort);
+N
+N//void RS485_SendBuf(uint8_t *_ucaBuf, uint16_t _usLen);
+N//void RS485_SendStr(char *_pBuf);
+N
+N//void bsp_Set485Baud(uint32_t _baud);
+N
+Nvoid bsp_SetUart1Baud(uint32_t _baud);
+Nvoid bsp_SetUart2Baud(uint32_t _baud);
+N
+N#endif
+N
+N/***************************** 安富莱电子 www.armfly.com (END OF FILE) *********************************/
+L 25 "..\Bsp\bsp.h" 2
+N
+N#define ENABLE_INT()	__set_PRIMASK(0)
+N#define DISABLE_INT()	__set_PRIMASK(1)
+N
+Nvoid bsp_Init(void);
+N
+N#endif
+N
+N/***************************** (END OF FILE) *********************************/
+L 9 "..\Bsp\src\bsp_timer0.c" 2
+N#include "app_dome.h"
+L 1 "..\App\inc\app_dome.h" 1
+N/*
+N * app_dome.h
+N *
+N *  Created on: 2017年9月8日
+N *      Author: fly
+N */
+N
+N#ifndef APP_INC_APP_DOME_H_
+N#define APP_INC_APP_DOME_H_
+N
+N//#define DOME_SPEED_MULTIPLE   2
+N//#define DEFAULT_DOME_NUM   22  //use 2.5KB
+N//#define DEFAULT_DOME_NUM   26  //use 3KB
+N//#define DEFAULT_DOME_NUM   44  //use 5KB
+N
+N#pragma pack(1)
+Ntypedef struct _DOME_PRO_T {
+N	uint8_t currentDomeIndex;
+N//	uint8_t currentSubDomeIndex;
+N
+N} DOME_PRO_T;
+N#pragma pack()
+N
+N#pragma pack(1)
+Ntypedef struct _SUBDOME_ASSIST_T {
+N	uint8_t switch_flag;
+N	uint32_t msCnt;
+N	uint8_t stopTime;
+N} SUBDOME_ASSIST_T;
+N#pragma pack()
+N///////
+N#pragma pack(1)
+Ntypedef struct _COLOR_T {
+N	uint8_t R;
+N	uint8_t G;
+N	uint8_t B;
+N} COLOR_T;
+N#pragma pack()
+N
+N#pragma pack(1)
+Ntypedef struct _SUBDOME_T {
+N	uint8_t mode;
+N	COLOR_T color1;
+N	COLOR_T color2;
+N	uint8_t repeate;
+N	uint16_t speed;
+N	uint8_t bright;
+N	uint16_t offtime;
+N} SUBDOME_T;
+N#pragma pack()
+N//typedef union _REPEAT_NUMBER_T {
+N//	uint8_t datas;
+N//	struct {
+N//		unsigned repeat :4;
+N//		unsigned number :4;
+N//	} bits;
+N//} REPEAT_NUMBER_T;
+N
+N#pragma pack(1)
+Ntypedef struct _DOME_HEADER_T {
+N	char name[8];
+N	uint8_t index;  //刚加的
+N	uint8_t repeat_number;  //闪法重复的次数，单元模式的数量
+N} DOME_HEADER_T;
+N#pragma pack()
+N
+N#pragma pack(1)
+Ntypedef struct _DOME_DEFAULT_T {
+N	DOME_HEADER_T header;
+N	SUBDOME_T subdome[8];
+N} DOME_DEFAULT_T;
+N#pragma pack()
+N
+N#pragma pack(1)
+Ntypedef struct _DOME_RUNNING_T {
+N	uint8_t bright;
+N	uint8_t speed;
+N	struct {
+N		uint16_t R;
+N		uint16_t G;
+N		uint16_t B;
+N	} color;
+N} DOME_RUNNING_T;
+N#pragma pack()
+N
+Nextern uint8_t blink_number; //闪法的总数量
+Nextern DOME_DEFAULT_T dome_blink;
+Nextern DOME_RUNNING_T dome_running_param;
+N
+Nvoid app_dome_Init(void);
+N
+Nvoid app_color_blink_previous(void);
+Nvoid app_color_blink_next(void);
+N
+Nvoid app_dome_start(uint8_t index);
+Nvoid app_dome_previous(void);
+Nvoid app_dome_next(void);
+Nvoid app_dome_get_current_Name(uint8_t *name, uint8_t len);
+Nvoid app_dome_start_current(void);
+Nvoid app_dome_stop_current(void);
+Nvoid app_dome_rgb(uint8_t r, uint8_t g, uint8_t b);
+Nvoid app_dome_interrupter(void);
+N
+N#endif /* APP_INC_APP_DOME_H_ */
+L 10 "..\Bsp\src\bsp_timer0.c" 2
+N#include "string.h"
 N
 Nstatic Task_time taskTime;
 N

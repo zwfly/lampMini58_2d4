@@ -70,7 +70,7 @@ int main(void) {
 	/* Init System */
 	SYS_Init();
 
-#if 0
+#if 1
 	LITE_openlog("lamp");
 	LITE_set_loglevel(LOG_DEBUG_LEVEL);
 #else
@@ -148,7 +148,7 @@ int main(void) {
 			//////////////////
 			
 			cnt++;
-				log_debug("I am alive %d", cnt);
+//				log_debug("I am alive %d", cnt);
 
 //			app_work_1s_pro();
 

@@ -43,8 +43,8 @@ typedef struct _SUBDOME_T {
 	COLOR_T color1;
 	COLOR_T color2;
 	uint8_t repeate;
-	uint8_t bright;
 	uint16_t speed;
+	uint8_t bright;
 	uint16_t offtime;
 } SUBDOME_T;
 #pragma pack()
@@ -92,7 +92,7 @@ void app_dome_Init(void);
 void app_color_blink_previous(void);
 void app_color_blink_next(void);
 
-void app_dome_start(uint8_t index, uint8_t dir);
+void app_dome_start(uint8_t index);
 void app_dome_previous(void);
 void app_dome_next(void);
 void app_dome_get_current_Name(uint8_t *name, uint8_t len);

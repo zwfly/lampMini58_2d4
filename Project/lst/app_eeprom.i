@@ -17928,663 +17928,6 @@ void WWDT_Open(uint32_t u32PreScale, uint32_t u32CmpValue, uint32_t u32EnableInt
 #line 13 "..\\Bsp\\bsp.h"
 #line 14 "..\\Bsp\\bsp.h"
 
-#line 1 "..\\Bsp\\inc\\bsp_2d4.h"
-
-
-
-
-
- 
-
-
-
-
-
-
-
-
-
-#line 23 "..\\Bsp\\inc\\bsp_2d4.h"
-
-
-
-
- 
-#line 44 "..\\Bsp\\inc\\bsp_2d4.h"
-
- 
-#line 77 "..\\Bsp\\inc\\bsp_2d4.h"
-
-
- 
-#line 93 "..\\Bsp\\inc\\bsp_2d4.h"
-
-#line 103 "..\\Bsp\\inc\\bsp_2d4.h"
-
-
-
- 
-void Wireless2d4_InitHard(void);
-
-void SPI_WW(uint8_t R_REG);
-void RF_WriteReg(uint8_t reg, uint8_t wdata);
-void RF_WriteBuf(uint8_t reg, uint8_t *pBuf, uint8_t length);
-void SPI_WR(uint8_t R_REG);
-uint8_t ucSPI_Read(void);
-uint8_t ucRF_ReadReg(uint8_t reg);
-void RF_ReadBuf(uint8_t reg, uint8_t *pBuf, uint8_t length);
-void RF_TxMode(void);
-void RF_RxMode(void);
-uint8_t ucRF_GetStatus(void);
-uint8_t ucRF_GetRSSI(void);
-void RF_ClearStatus(void);
-void RF_ClearFIFO(void);
-void RF_SetChannel(uint8_t Channel);
-void RF_TxData(uint8_t *ucPayload, uint8_t length);
-uint8_t ucRF_DumpRxData(uint8_t *ucPayload, uint8_t length);
-void RF_Carrier(uint8_t ucChannel_Set);
-void RF_Init(void);
-
- 
-
-
-
-
-
-
-
-#line 16 "..\\Bsp\\bsp.h"
-
-#line 1 "..\\Bsp\\inc\\bsp_timer0.h"
-
-
-
-
-
- 
-
-
-
-
-typedef struct {
-
-
-	uint8_t flag_1ms;
-
-	uint8_t cnt_10ms;
-	uint8_t flag_10ms;
-
-	uint8_t cnt_100ms;
-	uint8_t flag_100ms;
-
-	uint8_t cnt_500ms;
-	uint8_t flag_500ms;
-
-	uint16_t cnt_1s;
-	uint8_t flag_1s;
-
-} Task_time;
-
-
-
-void Timer0_InitHard(void);
-Task_time* timer0_taskTimer_get(void);
-
-#line 18 "..\\Bsp\\bsp.h"
-#line 1 "..\\Bsp\\inc\\bsp_light.h"
-
-
-
-
-
- 
-
-
-
-
-void Light_InitHard(void);
-
-
-
-void Light_RGB_set(uint16_t r, uint16_t g, uint16_t b);
-void Light_bright_set(uint8_t br);
-
-#line 19 "..\\Bsp\\bsp.h"
-#line 1 "..\\Bsp\\inc\\bsp_relay.h"
-
-
-
-
-
- 
-
-
-
-
-void Relay_InitHard(void);
-void Relay_on(void);
-void Relay_off(void);
-void Relay_toggle(void);
-uint8_t Relay_IsOn(void);
-void Relay_set(uint8_t s);
-
-#line 20 "..\\Bsp\\bsp.h"
-#line 1 "..\\Bsp\\inc\\bsp_eeprom.h"
-
-
-
-
-
- 
-
-
-
-
-
-
-
-
-
-void EEPROM_InitHard(void);
-
-void bsp_eeprom_write_int(uint32_t u32addr, uint32_t u32data);
-int32_t bsp_eeprom_erase(uint32_t u32addr);
-uint32_t bsp_eeprom_read_int(uint32_t u32Addr);
-
-#line 21 "..\\Bsp\\bsp.h"
-#line 1 "..\\Bsp\\inc\\bsp_key.h"
-
-
-
-
-
-
-
-
-
- 
-
-
-
-
-
-
- 
-
-
-
-
-
-
-
-
-
- 
-typedef enum {
-	KID_K1 = 0,
-	KID_K2,
-} KEY_ID_E;
-
-
-
-
-
- 
-
-
-
-
-
- 
-typedef struct {
-	 
-	uint8_t (*IsKeyDownFunc)(void);  
-
-	uint8_t Count;  
-	uint16_t LongCount;  
-	uint16_t LongTime;  
-	uint8_t State;  
-	uint8_t RepeatSpeed;  
-	uint8_t RepeatCount;  
-} KEY_T;
-
-
-
-
-
-
-
- 
-typedef enum {
-	KEY_NONE = 0,  
-
-	KEY_1_DOWN,  
-	KEY_1_UP,  
-	KEY_1_LONG,  
-
-	KEY_2_DOWN,  
-	KEY_2_UP,  
-	KEY_2_LONG,  
-} KEY_ENUM;
-
- 
-
-typedef struct {
-	uint8_t Buf[10];  
-	uint8_t Read;  
-	uint8_t Write;  
-	uint8_t Read2;  
-} KEY_FIFO_T;
-
- 
-void bsp_InitKey(void);
-void bsp_KeyScan(void);
-void bsp_PutKey(uint8_t _KeyCode);
-uint8_t bsp_GetKey(void);
-uint8_t bsp_GetKey2(void);
-uint8_t bsp_GetKeyState(KEY_ID_E _ucKeyID);
-void bsp_SetKeyParam(uint8_t _ucKeyID, uint16_t _LongTime, uint8_t _RepeatSpeed);
-void bsp_ClearKey(void);
-
-
-
- 
-#line 22 "..\\Bsp\\bsp.h"
-#line 1 "..\\Bsp\\inc\\bsp_uart_fifo.h"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
-typedef enum {
-	COM0 = 0, COM1 = 1,
-} COM_PORT_E;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
-typedef struct {
-	UART_T *uart;  
-	uint8_t *pTxBuf;  
-	uint8_t *pRxBuf;  
-	uint16_t usTxBufSize;  
-	uint16_t usRxBufSize;  
-	volatile uint16_t usTxWrite;  
-	volatile uint16_t usTxRead;  
-	volatile uint16_t usTxCount;  
-
-	volatile uint16_t usRxWrite;  
-	volatile uint16_t usRxRead;  
-	volatile uint16_t usRxCount;  
-
-	void (*SendBefor)(void);  
-	void (*SendOver)(void);  
-	void (*ReciveNew)(uint8_t _byte);  
-} UART_T_M;
-
-void bsp_InitUart(void);
-void comSendBuf(COM_PORT_E _ucPort, uint8_t *_ucaBuf, uint16_t _usLen);
-void comSendChar(COM_PORT_E _ucPort, uint8_t _ucByte);
-uint8_t comGetChar(COM_PORT_E _ucPort, uint8_t *_pByte);
-
-void comClearTxFifo(COM_PORT_E _ucPort);
-void comClearRxFifo(COM_PORT_E _ucPort);
-
-
-
-
-
-
-void bsp_SetUart1Baud(uint32_t _baud);
-void bsp_SetUart2Baud(uint32_t _baud);
-
-
-
- 
-#line 23 "..\\Bsp\\bsp.h"
-
-
-
-
-void bsp_Init(void);
-
-
-
- 
-#line 18 "..\\App\\inc\\app.h"
-
-#line 1 "..\\App\\inc\\app_work.h"
-
-
-
-
-
- 
-
-
-
-
-typedef struct _WORK_T {
-
-	union {
-		uint8_t allbits;
-		struct {
-			unsigned DOME :1;
-			unsigned ra2 :1;
-			unsigned DEMO :1;
-			unsigned blinkEnable :1;
-			unsigned ra6 :1;
-			unsigned ra7 :1;
-			unsigned ra8 :1;
-			unsigned ra9 :1;
-		} bits;
-	} status;
-
-
-
-} WORK_T;
-extern WORK_T g_tWork;
-
-void app_work_Init(void);
-void app_work_1s_pro(void);
-void app_work_100ms_pro(void);
-
-#line 20 "..\\App\\inc\\app.h"
-#line 1 "..\\App\\inc\\app_2d4.h"
-
-
-
-
-
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
-
-
-
-
-
-
-
-#line 42 "..\\App\\inc\\app_2d4.h"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#line 64 "..\\App\\inc\\app_2d4.h"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-void app_2d4_init(void);
-void app_2d4_send(uint8_t *d, uint8_t len);
-void app_2d4_pro(void);
-
-#line 21 "..\\App\\inc\\app.h"
-#line 1 "..\\App\\inc\\app_uart.h"
-
-
-
-
-
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
-
-typedef struct _Uart_ST {
-
-	uint8_t rxBuf[512];
-	uint8_t txBuf[256];
-
-	uint16_t pWrite;
-	uint16_t pRead;
-
-} Uart_ST;
-
-void app_uart_Init(void);
-void app_uart_send(uint8_t cmd, uint8_t *ptr, uint8_t len);
-void app_uart_pro(void);
-
-#line 22 "..\\App\\inc\\app.h"
-#line 1 "..\\App\\inc\\app_crc.h"
-
-
-
-
-
- 
-
-
-
-
-uint8_t app_CalcCRC8(uint8_t *ptr, uint8_t len);
-uint8_t app_CalcCRC8_cycle(uint8_t *ptr, uint16_t len, uint16_t pos,
-		uint16_t bufLen);
-
-#line 23 "..\\App\\inc\\app.h"
-#line 1 "..\\App\\inc\\app_dome.h"
-
-
-
-
-
- 
-
-
-
-
-
-
-
-
-
-#pragma pack(1)
-typedef struct _DOME_PRO_T {
-	uint8_t currentDomeIndex;
-
-
-} DOME_PRO_T;
-#pragma pack()
-
-#pragma pack(1)
-typedef struct _SUBDOME_ASSIST_T {
-	uint8_t switch_flag;
-	uint32_t msCnt;
-	uint8_t stopTime;
-} SUBDOME_ASSIST_T;
-#pragma pack()
-
-#pragma pack(1)
-typedef struct _COLOR_T {
-	uint8_t R;
-	uint8_t G;
-	uint8_t B;
-} COLOR_T;
-#pragma pack()
-
-#pragma pack(1)
-typedef struct _SUBDOME_T {
-	uint8_t mode;
-	COLOR_T color1;
-	COLOR_T color2;
-	uint8_t repeate;
-	uint8_t bright;
-	uint16_t speed;
-	uint16_t offtime;
-} SUBDOME_T;
-#pragma pack()
-
-
-
-
-
-
-
-
-#pragma pack(1)
-typedef struct _DOME_HEADER_T {
-	char name[8];
-	uint8_t index;  
-	uint8_t repeat_number;  
-} DOME_HEADER_T;
-#pragma pack()
-
-#pragma pack(1)
-typedef struct _DOME_DEFAULT_T {
-	DOME_HEADER_T header;
-	SUBDOME_T subdome[8];
-} DOME_DEFAULT_T;
-#pragma pack()
-
-#pragma pack(1)
-typedef struct _DOME_RUNNING_T {
-	uint8_t bright;
-	uint8_t speed;
-	struct {
-		uint16_t R;
-		uint16_t G;
-		uint16_t B;
-	} color;
-} DOME_RUNNING_T;
-#pragma pack()
-
-extern uint8_t blink_number; 
-extern DOME_DEFAULT_T dome_blink;
-extern DOME_RUNNING_T dome_running_param;
-
-void app_dome_Init(void);
-
-void app_color_blink_previous(void);
-void app_color_blink_next(void);
-
-void app_dome_start(uint8_t index, uint8_t dir);
-void app_dome_previous(void);
-void app_dome_next(void);
-void app_dome_get_current_Name(uint8_t *name, uint8_t len);
-void app_dome_start_current(void);
-void app_dome_stop_current(void);
-void app_dome_rgb(uint8_t r, uint8_t g, uint8_t b);
-void app_dome_interrupter(void);
-
-#line 24 "..\\App\\inc\\app.h"
-#line 1 "..\\App\\inc\\app_eeprom.h"
-
-
-
-
-
- 
-
-
-
-
-
-
-void app_eeprom_Init(void);
-void app_eeprom_get_dome_with_index(DOME_DEFAULT_T* dd, uint8_t index);
-
-void app_eeprom_erase(uint32_t addr);
-void app_eeprom_write_int(uint32_t addr, uint32_t d);
-uint32_t app_eeprom_read_int(uint32_t addr);
-
-#line 25 "..\\App\\inc\\app.h"
-
-
 #line 1 "..\\utils\\inc\\lite-log.h"
 
 
@@ -19391,7 +18734,665 @@ void LITE_rich_hexdump(const char *f, const int l, const int level,
 
 
 
-#line 28 "..\\App\\inc\\app.h"
+#line 16 "..\\Bsp\\bsp.h"
+
+#line 1 "..\\Bsp\\inc\\bsp_2d4.h"
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+#line 23 "..\\Bsp\\inc\\bsp_2d4.h"
+
+
+
+
+ 
+#line 44 "..\\Bsp\\inc\\bsp_2d4.h"
+
+ 
+#line 77 "..\\Bsp\\inc\\bsp_2d4.h"
+
+
+ 
+#line 93 "..\\Bsp\\inc\\bsp_2d4.h"
+
+#line 103 "..\\Bsp\\inc\\bsp_2d4.h"
+
+
+
+ 
+void Wireless2d4_InitHard(void);
+
+void SPI_WW(uint8_t R_REG);
+void RF_WriteReg(uint8_t reg, uint8_t wdata);
+void RF_WriteBuf(uint8_t reg, uint8_t *pBuf, uint8_t length);
+void SPI_WR(uint8_t R_REG);
+uint8_t ucSPI_Read(void);
+uint8_t ucRF_ReadReg(uint8_t reg);
+void RF_ReadBuf(uint8_t reg, uint8_t *pBuf, uint8_t length);
+void RF_TxMode(void);
+void RF_RxMode(void);
+uint8_t ucRF_GetStatus(void);
+uint8_t ucRF_GetRSSI(void);
+void RF_ClearStatus(void);
+void RF_ClearFIFO(void);
+void RF_SetChannel(uint8_t Channel);
+void RF_TxData(uint8_t *ucPayload, uint8_t length);
+uint8_t ucRF_DumpRxData(uint8_t *ucPayload, uint8_t length);
+void RF_Carrier(uint8_t ucChannel_Set);
+void RF_Init(void);
+
+ 
+
+
+
+
+
+
+
+#line 18 "..\\Bsp\\bsp.h"
+
+#line 1 "..\\Bsp\\inc\\bsp_timer0.h"
+
+
+
+
+
+ 
+
+
+
+
+typedef struct {
+
+
+	uint8_t flag_1ms;
+
+	uint8_t cnt_10ms;
+	uint8_t flag_10ms;
+
+	uint8_t cnt_100ms;
+	uint8_t flag_100ms;
+
+	uint8_t cnt_500ms;
+	uint8_t flag_500ms;
+
+	uint16_t cnt_1s;
+	uint8_t flag_1s;
+
+} Task_time;
+
+
+
+void Timer0_InitHard(void);
+Task_time* timer0_taskTimer_get(void);
+
+#line 20 "..\\Bsp\\bsp.h"
+#line 1 "..\\Bsp\\inc\\bsp_light.h"
+
+
+
+
+
+ 
+
+
+
+
+void Light_InitHard(void);
+
+
+
+void Light_RGB_set(uint16_t r, uint16_t g, uint16_t b);
+void Light_bright_set(uint8_t br);
+
+#line 21 "..\\Bsp\\bsp.h"
+#line 1 "..\\Bsp\\inc\\bsp_relay.h"
+
+
+
+
+
+ 
+
+
+
+
+void Relay_InitHard(void);
+void Relay_on(void);
+void Relay_off(void);
+void Relay_toggle(void);
+uint8_t Relay_IsOn(void);
+void Relay_set(uint8_t s);
+
+#line 22 "..\\Bsp\\bsp.h"
+#line 1 "..\\Bsp\\inc\\bsp_eeprom.h"
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+void EEPROM_InitHard(void);
+
+void bsp_eeprom_write_int(uint32_t u32addr, uint32_t u32data);
+int32_t bsp_eeprom_erase(uint32_t u32addr);
+uint32_t bsp_eeprom_read_int(uint32_t u32Addr);
+
+#line 23 "..\\Bsp\\bsp.h"
+#line 1 "..\\Bsp\\inc\\bsp_key.h"
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+ 
+typedef enum {
+	KID_K1 = 0,
+	KID_K2,
+} KEY_ID_E;
+
+
+
+
+
+ 
+
+
+
+
+
+ 
+typedef struct {
+	 
+	uint8_t (*IsKeyDownFunc)(void);  
+
+	uint8_t Count;  
+	uint16_t LongCount;  
+	uint16_t LongTime;  
+	uint8_t State;  
+	uint8_t RepeatSpeed;  
+	uint8_t RepeatCount;  
+} KEY_T;
+
+
+
+
+
+
+
+ 
+typedef enum {
+	KEY_NONE = 0,  
+
+	KEY_1_DOWN,  
+	KEY_1_UP,  
+	KEY_1_LONG,  
+
+	KEY_2_DOWN,  
+	KEY_2_UP,  
+	KEY_2_LONG,  
+} KEY_ENUM;
+
+ 
+
+typedef struct {
+	uint8_t Buf[10];  
+	uint8_t Read;  
+	uint8_t Write;  
+	uint8_t Read2;  
+} KEY_FIFO_T;
+
+ 
+void bsp_InitKey(void);
+void bsp_KeyScan(void);
+void bsp_PutKey(uint8_t _KeyCode);
+uint8_t bsp_GetKey(void);
+uint8_t bsp_GetKey2(void);
+uint8_t bsp_GetKeyState(KEY_ID_E _ucKeyID);
+void bsp_SetKeyParam(uint8_t _ucKeyID, uint16_t _LongTime, uint8_t _RepeatSpeed);
+void bsp_ClearKey(void);
+
+
+
+ 
+#line 24 "..\\Bsp\\bsp.h"
+#line 1 "..\\Bsp\\inc\\bsp_uart_fifo.h"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+typedef enum {
+	COM0 = 0, COM1 = 1,
+} COM_PORT_E;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+typedef struct {
+	UART_T *uart;  
+	uint8_t *pTxBuf;  
+	uint8_t *pRxBuf;  
+	uint16_t usTxBufSize;  
+	uint16_t usRxBufSize;  
+	volatile uint16_t usTxWrite;  
+	volatile uint16_t usTxRead;  
+	volatile uint16_t usTxCount;  
+
+	volatile uint16_t usRxWrite;  
+	volatile uint16_t usRxRead;  
+	volatile uint16_t usRxCount;  
+
+	void (*SendBefor)(void);  
+	void (*SendOver)(void);  
+	void (*ReciveNew)(uint8_t _byte);  
+} UART_T_M;
+
+void bsp_InitUart(void);
+void comSendBuf(COM_PORT_E _ucPort, uint8_t *_ucaBuf, uint16_t _usLen);
+void comSendChar(COM_PORT_E _ucPort, uint8_t _ucByte);
+uint8_t comGetChar(COM_PORT_E _ucPort, uint8_t *_pByte);
+
+void comClearTxFifo(COM_PORT_E _ucPort);
+void comClearRxFifo(COM_PORT_E _ucPort);
+
+
+
+
+
+
+void bsp_SetUart1Baud(uint32_t _baud);
+void bsp_SetUart2Baud(uint32_t _baud);
+
+
+
+ 
+#line 25 "..\\Bsp\\bsp.h"
+
+
+
+
+void bsp_Init(void);
+
+
+
+ 
+#line 18 "..\\App\\inc\\app.h"
+
+#line 1 "..\\App\\inc\\app_work.h"
+
+
+
+
+
+ 
+
+
+
+
+typedef struct _WORK_T {
+
+	union {
+		uint8_t allbits;
+		struct {
+			unsigned DOME :1;
+			unsigned ra2 :1;
+			unsigned DEMO :1;
+			unsigned blinkEnable :1;
+			unsigned ra6 :1;
+			unsigned ra7 :1;
+			unsigned ra8 :1;
+			unsigned ra9 :1;
+		} bits;
+	} status;
+
+
+
+} WORK_T;
+extern WORK_T g_tWork;
+
+void app_work_Init(void);
+void app_work_1s_pro(void);
+void app_work_100ms_pro(void);
+
+#line 20 "..\\App\\inc\\app.h"
+#line 1 "..\\App\\inc\\app_2d4.h"
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+#line 42 "..\\App\\inc\\app_2d4.h"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#line 64 "..\\App\\inc\\app_2d4.h"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+void app_2d4_init(void);
+void app_2d4_send(uint8_t *d, uint8_t len);
+void app_2d4_pro(void);
+
+#line 21 "..\\App\\inc\\app.h"
+#line 1 "..\\App\\inc\\app_uart.h"
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+typedef struct _Uart_ST {
+
+	uint8_t rxBuf[512];
+	uint8_t txBuf[256];
+
+	uint16_t pWrite;
+	uint16_t pRead;
+
+} Uart_ST;
+
+void app_uart_Init(void);
+void app_uart_send(uint8_t cmd, uint8_t *ptr, uint8_t len);
+void app_uart_pro(void);
+
+#line 22 "..\\App\\inc\\app.h"
+#line 1 "..\\App\\inc\\app_crc.h"
+
+
+
+
+
+ 
+
+
+
+
+uint8_t app_CalcCRC8(uint8_t *ptr, uint8_t len);
+uint8_t app_CalcCRC8_cycle(uint8_t *ptr, uint16_t len, uint16_t pos,
+		uint16_t bufLen);
+
+#line 23 "..\\App\\inc\\app.h"
+#line 1 "..\\App\\inc\\app_dome.h"
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+#pragma pack(1)
+typedef struct _DOME_PRO_T {
+	uint8_t currentDomeIndex;
+
+
+} DOME_PRO_T;
+#pragma pack()
+
+#pragma pack(1)
+typedef struct _SUBDOME_ASSIST_T {
+	uint8_t switch_flag;
+	uint32_t msCnt;
+	uint8_t stopTime;
+} SUBDOME_ASSIST_T;
+#pragma pack()
+
+#pragma pack(1)
+typedef struct _COLOR_T {
+	uint8_t R;
+	uint8_t G;
+	uint8_t B;
+} COLOR_T;
+#pragma pack()
+
+#pragma pack(1)
+typedef struct _SUBDOME_T {
+	uint8_t mode;
+	COLOR_T color1;
+	COLOR_T color2;
+	uint8_t repeate;
+	uint16_t speed;
+	uint8_t bright;
+	uint16_t offtime;
+} SUBDOME_T;
+#pragma pack()
+
+
+
+
+
+
+
+
+#pragma pack(1)
+typedef struct _DOME_HEADER_T {
+	char name[8];
+	uint8_t index;  
+	uint8_t repeat_number;  
+} DOME_HEADER_T;
+#pragma pack()
+
+#pragma pack(1)
+typedef struct _DOME_DEFAULT_T {
+	DOME_HEADER_T header;
+	SUBDOME_T subdome[8];
+} DOME_DEFAULT_T;
+#pragma pack()
+
+#pragma pack(1)
+typedef struct _DOME_RUNNING_T {
+	uint8_t bright;
+	uint8_t speed;
+	struct {
+		uint16_t R;
+		uint16_t G;
+		uint16_t B;
+	} color;
+} DOME_RUNNING_T;
+#pragma pack()
+
+extern uint8_t blink_number; 
+extern DOME_DEFAULT_T dome_blink;
+extern DOME_RUNNING_T dome_running_param;
+
+void app_dome_Init(void);
+
+void app_color_blink_previous(void);
+void app_color_blink_next(void);
+
+void app_dome_start(uint8_t index);
+void app_dome_previous(void);
+void app_dome_next(void);
+void app_dome_get_current_Name(uint8_t *name, uint8_t len);
+void app_dome_start_current(void);
+void app_dome_stop_current(void);
+void app_dome_rgb(uint8_t r, uint8_t g, uint8_t b);
+void app_dome_interrupter(void);
+
+#line 24 "..\\App\\inc\\app.h"
+#line 1 "..\\App\\inc\\app_eeprom.h"
+
+
+
+
+
+ 
+
+
+
+
+
+
+void app_eeprom_Init(void);
+void app_eeprom_get_dome_with_index(DOME_DEFAULT_T* dd, uint8_t index);
+
+void app_eeprom_erase(uint32_t addr);
+void app_eeprom_write_int(uint32_t addr, uint32_t d);
+uint32_t app_eeprom_read_int(uint32_t addr);
+
+#line 25 "..\\App\\inc\\app.h"
+
+
 
 
 

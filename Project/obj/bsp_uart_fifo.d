@@ -21,6 +21,9 @@
 .\obj\bsp_uart_fifo.o: ..\Library\StdDriver\inc\uart.h
 .\obj\bsp_uart_fifo.o: ..\Library\StdDriver\inc\wdt.h
 .\obj\bsp_uart_fifo.o: ..\Library\StdDriver\inc\wwdt.h
+.\obj\bsp_uart_fifo.o: ..\utils\inc\lite-log.h
+.\obj\bsp_uart_fifo.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
+.\obj\bsp_uart_fifo.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
 .\obj\bsp_uart_fifo.o: ..\Bsp\inc\bsp_2d4.h
 .\obj\bsp_uart_fifo.o: ..\Bsp\inc\bsp_timer0.h
 .\obj\bsp_uart_fifo.o: ..\Bsp\inc\bsp_light.h

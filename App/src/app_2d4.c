@@ -283,7 +283,7 @@ static void app_2d4_Rcv(uint8_t *buf) {
 			g_tWork.status.bits.blinkEnable = 1;
 			g_tWork.status.bits.DEMO = 1;
 
-			app_dome_start(0, 0);
+			app_dome_start(0);
 //			app_dome_start_current();
 		} else {
 			g_tWork.status.bits.blinkEnable = 0;
@@ -329,7 +329,7 @@ static void app_2d4_Rcv(uint8_t *buf) {
 //		} else {
 		g_tWork.status.bits.DEMO = 1;
 //		}
-		app_dome_start(0, 0);
+		app_dome_start(0);
 		break;
 	case KEY_CARD_SPEED_MINUS_CMD:
 		if (dome_running_param.speed >= 10) {
@@ -435,6 +435,7 @@ void app_2d4_pro(void) {
 
 	} else {
 		if (ucRF_DumpRxData(rcv_2d4_Buf, sizeof(rcv_2d4_Buf))) {
+
 			app_2d4_Rcv(rcv_2d4_Buf);
 
 //			Relay_toggle();

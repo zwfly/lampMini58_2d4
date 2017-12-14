@@ -104,10 +104,13 @@ static void app_RC_Receiver_cmd_pro(Uart_ST* st) {
 
 		for (i = 0; i < (bytes / 4); i++) {
 			uint32_t addr = index * minSpaceBytes + i * 4;
-			uint32_t dt = st->rxBuf[(st->pRead + 4 + i) % sizeof(st->rxBuf)];
-			dt |= st->rxBuf[(st->pRead + 4 + i + 1) % sizeof(st->rxBuf)] << 8;
-			dt |= st->rxBuf[(st->pRead + 4 + i + 2) % sizeof(st->rxBuf)] << 16;
-			dt |= st->rxBuf[(st->pRead + 4 + i + 3) % sizeof(st->rxBuf)] << 24;
+			uint32_t dt = st->rxBuf[(st->pRead + 4 + i * 4) % sizeof(st->rxBuf)];
+			dt |= st->rxBuf[(st->pRead + 4 + i * 4 + 1) % sizeof(st->rxBuf)]
+					<< 8;
+			dt |= st->rxBuf[(st->pRead + 4 + i * 4 + 2) % sizeof(st->rxBuf)]
+					<< 16;
+			dt |= st->rxBuf[(st->pRead + 4 + i * 4 + 3) % sizeof(st->rxBuf)]
+					<< 24;
 			app_eeprom_write_int(addr, dt);
 		}
 		if (bytes % 4) {
@@ -319,7 +322,7 @@ static void app_RC_Receiver_cmd_pro(Uart_ST* st) {
 		//							} else {
 		g_tWork.status.bits.DEMO = 1;
 		//							}
-		app_dome_start(0, 0);
+		app_dome_start(0);
 
 		break;
 	case APP_COLOR_ATLA_CMD:
@@ -344,7 +347,7 @@ static void app_RC_Receiver_cmd_pro(Uart_ST* st) {
 	case APP_FLASH_INDEX_CMD:
 		g_tWork.status.bits.DEMO = 0;
 		app_dome_start_current();
-		app_dome_start(st->rxBuf[(st->pRead + 4) % sizeof(st->rxBuf)], 0);
+		app_dome_start(st->rxBuf[(st->pRead + 4) % sizeof(st->rxBuf)]);
 		break;
 	case APP_SWITCH_INDEX_CMD: {
 		uint8_t switchData = st->rxBuf[(st->pRead + 4) % sizeof(st->rxBuf)];

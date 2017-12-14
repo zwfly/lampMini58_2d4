@@ -100,33 +100,36 @@
 ;;;71     	SYS_Init();
 000004  f7fffffe          BL       SYS_Init
 ;;;72     
-;;;73     #if 0
+;;;73     #if 1
 ;;;74     	LITE_openlog("lamp");
+000008  a073              ADR      r0,|L2.472|
+00000a  f7fffffe          BL       LITE_openlog
 ;;;75     	LITE_set_loglevel(LOG_DEBUG_LEVEL);
+00000e  2005              MOVS     r0,#5
+000010  f7fffffe          BL       LITE_set_loglevel
 ;;;76     #else
 ;;;77     	LITE_closelog();
-000008  f7fffffe          BL       LITE_closelog
 ;;;78     #endif
 ;;;79     
 ;;;80     	bsp_Init();
-00000c  f7fffffe          BL       bsp_Init
+000014  f7fffffe          BL       bsp_Init
 ;;;81     
 ;;;82     	log_debug(" CPU @ %dHz\r\n", SystemCoreClock);
-000010  4873              LDR      r0,|L2.480|
-000012  a374              ADR      r3,|L2.484|
-000014  6800              LDR      r0,[r0,#0]  ; SystemCoreClock
-000016  9000              STR      r0,[sp,#0]
-000018  2205              MOVS     r2,#5
-00001a  2152              MOVS     r1,#0x52
-00001c  4875              LDR      r0,|L2.500|
-00001e  f7fffffe          BL       LITE_syslog
+000018  4871              LDR      r0,|L2.480|
+00001a  a372              ADR      r3,|L2.484|
+00001c  6800              LDR      r0,[r0,#0]  ; SystemCoreClock
+00001e  9000              STR      r0,[sp,#0]
+000020  2205              MOVS     r2,#5
+000022  2152              MOVS     r1,#0x52
+000024  4873              LDR      r0,|L2.500|
+000026  f7fffffe          BL       LITE_syslog
 ;;;83     
 ;;;84     	log_debug("+-------------------------------------+ ");
-000022  a375              ADR      r3,|L2.504|
-000024  2205              MOVS     r2,#5
-000026  2154              MOVS     r1,#0x54
-000028  4872              LDR      r0,|L2.500|
-00002a  f7fffffe          BL       LITE_syslog
+00002a  a373              ADR      r3,|L2.504|
+00002c  2205              MOVS     r2,#5
+00002e  2154              MOVS     r1,#0x54
+000030  4870              LDR      r0,|L2.500|
+000032  f7fffffe          BL       LITE_syslog
 ;;;85     #if 0
 ;;;86     	log_debug("+-------------------------------------+ ");
 ;;;87     
@@ -139,14 +142,14 @@
 ;;;94     
 ;;;95     	/**************/
 ;;;96     	app_2d4_init();
-00002e  f7fffffe          BL       app_2d4_init
+000036  f7fffffe          BL       app_2d4_init
 ;;;97     	app_work_Init();
-000032  f7fffffe          BL       app_work_Init
+00003a  f7fffffe          BL       app_work_Init
 ;;;98     
 ;;;99     	app_uart_Init();
-000036  f7fffffe          BL       app_uart_Init
+00003e  f7fffffe          BL       app_uart_Init
 ;;;100    	app_dome_Init();
-00003a  f7fffffe          BL       app_dome_Init
+000042  f7fffffe          BL       app_dome_Init
 ;;;101    	/**************/
 ;;;102    
 ;;;103    	while (1) {
@@ -197,7 +200,7 @@
 ;;;148    			//////////////////
 ;;;149    			
 ;;;150    			cnt++;
-;;;151    				log_debug("I am alive %d", cnt);
+;;;151    //				log_debug("I am alive %d", cnt);
 ;;;152    
 ;;;153    //			app_work_1s_pro();
 ;;;154    
@@ -229,231 +232,225 @@
 ;;;180    					//					g_tWork.status.bits.DEMO = 0;
 ;;;181    					//					app_dome_start_current();
 ;;;182    					uint8_t buffer[16] = { 0 };
-00003e  466e              MOV      r6,sp
-000040  2500              MOVS     r5,#0
-                  |L2.66|
-000042  f7fffffe          BL       timer0_taskTimer_get
-000046  7800              LDRB     r0,[r0,#0]            ;104
-000048  2800              CMP      r0,#0                 ;104
-00004a  d01a              BEQ      |L2.130|
-00004c  f7fffffe          BL       timer0_taskTimer_get
-000050  7005              STRB     r5,[r0,#0]            ;105
-000052  4874              LDR      r0,|L2.548|
-000054  1c64              ADDS     r4,r4,#1              ;105
-000056  7840              LDRB     r0,[r0,#1]            ;109  ; dome_running_param
-000058  b2e4              UXTB     r4,r4                 ;108
-00005a  2832              CMP      r0,#0x32              ;109
-00005c  d305              BCC      |L2.106|
-00005e  2103              MOVS     r1,#3                 ;110
-000060  3832              SUBS     r0,r0,#0x32           ;110
-000062  f7fffffe          BL       __aeabi_idivmod
-000066  300a              ADDS     r0,r0,#0xa            ;110
-000068  e006              B        |L2.120|
-                  |L2.106|
-00006a  2132              MOVS     r1,#0x32              ;115
-00006c  1a08              SUBS     r0,r1,r0              ;115
-00006e  2106              MOVS     r1,#6                 ;115
-000070  f7fffffe          BL       __aeabi_idivmod
-000074  210a              MOVS     r1,#0xa               ;115
-000076  1a08              SUBS     r0,r1,r0              ;115
-                  |L2.120|
-000078  42a0              CMP      r0,r4                 ;115
-00007a  da02              BGE      |L2.130|
-00007c  2400              MOVS     r4,#0                 ;116
-00007e  f7fffffe          BL       app_dome_interrupter
-                  |L2.130|
-000082  f7fffffe          BL       timer0_taskTimer_get
-000086  7880              LDRB     r0,[r0,#2]            ;123
-000088  2800              CMP      r0,#0                 ;123
-00008a  d008              BEQ      |L2.158|
-00008c  f7fffffe          BL       timer0_taskTimer_get
-000090  7085              STRB     r5,[r0,#2]            ;124
-000092  f7fffffe          BL       bsp_KeyScan
-000096  f7fffffe          BL       app_uart_pro
-00009a  f7fffffe          BL       app_2d4_pro
-                  |L2.158|
-00009e  f7fffffe          BL       timer0_taskTimer_get
-0000a2  7900              LDRB     r0,[r0,#4]            ;132
-0000a4  2800              CMP      r0,#0                 ;132
-0000a6  d002              BEQ      |L2.174|
-0000a8  f7fffffe          BL       timer0_taskTimer_get
-0000ac  7105              STRB     r5,[r0,#4]            ;133
-                  |L2.174|
-0000ae  f7fffffe          BL       timer0_taskTimer_get
-0000b2  7980              LDRB     r0,[r0,#6]            ;140
-0000b4  2800              CMP      r0,#0                 ;140
-0000b6  d002              BEQ      |L2.190|
-0000b8  f7fffffe          BL       timer0_taskTimer_get
-0000bc  7185              STRB     r5,[r0,#6]            ;141
-                  |L2.190|
-0000be  f7fffffe          BL       timer0_taskTimer_get
-0000c2  7a80              LDRB     r0,[r0,#0xa]          ;145
-0000c4  2800              CMP      r0,#0                 ;145
-0000c6  d00d              BEQ      |L2.228|
-0000c8  f7fffffe          BL       timer0_taskTimer_get
-0000cc  4956              LDR      r1,|L2.552|
-0000ce  7285              STRB     r5,[r0,#0xa]          ;147
-0000d0  6848              LDR      r0,[r1,#4]            ;150  ; cnt
-0000d2  a356              ADR      r3,|L2.556|
-0000d4  1c40              ADDS     r0,r0,#1              ;150
-0000d6  6048              STR      r0,[r1,#4]            ;151  ; cnt
-0000d8  9000              STR      r0,[sp,#0]            ;151
-0000da  2205              MOVS     r2,#5                 ;151
-0000dc  2197              MOVS     r1,#0x97              ;151
-0000de  4845              LDR      r0,|L2.500|
-0000e0  f7fffffe          BL       LITE_syslog
-                  |L2.228|
-0000e4  f7fffffe          BL       bsp_GetKey
-0000e8  2800              CMP      r0,#0                 ;161
-0000ea  d0aa              BEQ      |L2.66|
-0000ec  0003              MOVS     r3,r0                 ;163
-0000ee  f7fffffe          BL       __ARM_common_switch8
-0000f2  0705              DCB      0x07,0x05
-0000f4  0a061b54          DCB      0x0a,0x06,0x1b,0x54
-0000f8  1f5b0500          DCB      0x1f,0x5b,0x05,0x00
-0000fc  e7a1              B        |L2.66|
-0000fe  2205              MOVS     r2,#5                 ;165
-000100  a34e              ADR      r3,|L2.572|
-000102  21a5              MOVS     r1,#0xa5              ;165
-000104  e04c              B        |L2.416|
-000106  f7fffffe          BL       Relay_IsOn
-00010a  2800              CMP      r0,#0                 ;169
-00010c  d001              BEQ      |L2.274|
-00010e  a04e              ADR      r0,|L2.584|
-000110  e000              B        |L2.276|
-                  |L2.274|
-000112  a04e              ADR      r0,|L2.588|
-                  |L2.276|
-000114  9000              STR      r0,[sp,#0]            ;169
-000116  a34e              ADR      r3,|L2.592|
-000118  2205              MOVS     r2,#5                 ;169
-00011a  21a9              MOVS     r1,#0xa9              ;169
-00011c  4835              LDR      r0,|L2.500|
-00011e  f7fffffe          BL       LITE_syslog
-000122  f7fffffe          BL       Relay_toggle
-000126  e78c              B        |L2.66|
-000128  2205              MOVS     r2,#5                 ;174
+000046  466e              MOV      r6,sp
+000048  2500              MOVS     r5,#0
+                  |L2.74|
+00004a  f7fffffe          BL       timer0_taskTimer_get
+00004e  7800              LDRB     r0,[r0,#0]            ;104
+000050  2800              CMP      r0,#0                 ;104
+000052  d01a              BEQ      |L2.138|
+000054  f7fffffe          BL       timer0_taskTimer_get
+000058  7005              STRB     r5,[r0,#0]            ;105
+00005a  4872              LDR      r0,|L2.548|
+00005c  1c64              ADDS     r4,r4,#1              ;105
+00005e  7840              LDRB     r0,[r0,#1]            ;109  ; dome_running_param
+000060  b2e4              UXTB     r4,r4                 ;108
+000062  2832              CMP      r0,#0x32              ;109
+000064  d305              BCC      |L2.114|
+000066  2103              MOVS     r1,#3                 ;110
+000068  3832              SUBS     r0,r0,#0x32           ;110
+00006a  f7fffffe          BL       __aeabi_idivmod
+00006e  300a              ADDS     r0,r0,#0xa            ;110
+000070  e006              B        |L2.128|
+                  |L2.114|
+000072  2132              MOVS     r1,#0x32              ;115
+000074  1a08              SUBS     r0,r1,r0              ;115
+000076  2106              MOVS     r1,#6                 ;115
+000078  f7fffffe          BL       __aeabi_idivmod
+00007c  210a              MOVS     r1,#0xa               ;115
+00007e  1a08              SUBS     r0,r1,r0              ;115
+                  |L2.128|
+000080  42a0              CMP      r0,r4                 ;115
+000082  da02              BGE      |L2.138|
+000084  2400              MOVS     r4,#0                 ;116
+000086  f7fffffe          BL       app_dome_interrupter
+                  |L2.138|
+00008a  f7fffffe          BL       timer0_taskTimer_get
+00008e  7880              LDRB     r0,[r0,#2]            ;123
+000090  2800              CMP      r0,#0                 ;123
+000092  d008              BEQ      |L2.166|
+000094  f7fffffe          BL       timer0_taskTimer_get
+000098  7085              STRB     r5,[r0,#2]            ;124
+00009a  f7fffffe          BL       bsp_KeyScan
+00009e  f7fffffe          BL       app_uart_pro
+0000a2  f7fffffe          BL       app_2d4_pro
+                  |L2.166|
+0000a6  f7fffffe          BL       timer0_taskTimer_get
+0000aa  7900              LDRB     r0,[r0,#4]            ;132
+0000ac  2800              CMP      r0,#0                 ;132
+0000ae  d002              BEQ      |L2.182|
+0000b0  f7fffffe          BL       timer0_taskTimer_get
+0000b4  7105              STRB     r5,[r0,#4]            ;133
+                  |L2.182|
+0000b6  f7fffffe          BL       timer0_taskTimer_get
+0000ba  7980              LDRB     r0,[r0,#6]            ;140
+0000bc  2800              CMP      r0,#0                 ;140
+0000be  d002              BEQ      |L2.198|
+0000c0  f7fffffe          BL       timer0_taskTimer_get
+0000c4  7185              STRB     r5,[r0,#6]            ;141
+                  |L2.198|
+0000c6  f7fffffe          BL       timer0_taskTimer_get
+0000ca  7a80              LDRB     r0,[r0,#0xa]          ;145
+0000cc  2800              CMP      r0,#0                 ;145
+0000ce  d006              BEQ      |L2.222|
+0000d0  f7fffffe          BL       timer0_taskTimer_get
+0000d4  7285              STRB     r5,[r0,#0xa]          ;147
+0000d6  4854              LDR      r0,|L2.552|
+0000d8  6841              LDR      r1,[r0,#4]            ;150  ; cnt
+0000da  1c49              ADDS     r1,r1,#1              ;150
+0000dc  6041              STR      r1,[r0,#4]            ;150  ; cnt
+                  |L2.222|
+0000de  f7fffffe          BL       bsp_GetKey
+0000e2  2800              CMP      r0,#0                 ;161
+0000e4  d0b1              BEQ      |L2.74|
+0000e6  0003              MOVS     r3,r0                 ;163
+0000e8  f7fffffe          BL       __ARM_common_switch8
+0000ec  07050a06          DCB      0x07,0x05,0x0a,0x06
+0000f0  1b541f5b          DCB      0x1b,0x54,0x1f,0x5b
+0000f4  0500              DCB      0x05,0x00
+0000f6  e7a8              B        |L2.74|
+0000f8  2205              MOVS     r2,#5                 ;165
+0000fa  a34c              ADR      r3,|L2.556|
+0000fc  21a5              MOVS     r1,#0xa5              ;165
+0000fe  e04c              B        |L2.410|
+000100  f7fffffe          BL       Relay_IsOn
+000104  2800              CMP      r0,#0                 ;169
+000106  d001              BEQ      |L2.268|
+000108  a04b              ADR      r0,|L2.568|
+00010a  e000              B        |L2.270|
+                  |L2.268|
+00010c  a04b              ADR      r0,|L2.572|
+                  |L2.270|
+00010e  9000              STR      r0,[sp,#0]            ;169
+000110  a34b              ADR      r3,|L2.576|
+000112  2205              MOVS     r2,#5                 ;169
+000114  21a9              MOVS     r1,#0xa9              ;169
+000116  4837              LDR      r0,|L2.500|
+000118  f7fffffe          BL       LITE_syslog
+00011c  f7fffffe          BL       Relay_toggle
+000120  e793              B        |L2.74|
+000122  2205              MOVS     r2,#5                 ;174
+000124  a349              ADR      r3,|L2.588|
+000126  21ae              MOVS     r1,#0xae              ;174
+000128  e037              B        |L2.410|
 00012a  a34c              ADR      r3,|L2.604|
-00012c  21ae              MOVS     r1,#0xae              ;174
-00012e  e037              B        |L2.416|
-000130  a34e              ADR      r3,|L2.620|
-000132  2205              MOVS     r2,#5                 ;177
-000134  21b1              MOVS     r1,#0xb1              ;177
-000136  482f              LDR      r0,|L2.500|
-000138  f7fffffe          BL       LITE_syslog
-00013c  483a              LDR      r0,|L2.552|
-00013e  7800              LDRB     r0,[r0,#0]            ;179  ; press_long_lock
-000140  2800              CMP      r0,#0                 ;179
-000142  d127              BNE      |L2.404|
+00012c  2205              MOVS     r2,#5                 ;177
+00012e  21b1              MOVS     r1,#0xb1              ;177
+000130  4830              LDR      r0,|L2.500|
+000132  f7fffffe          BL       LITE_syslog
+000136  483c              LDR      r0,|L2.552|
+000138  7800              LDRB     r0,[r0,#0]            ;179  ; press_long_lock
+00013a  2800              CMP      r0,#0                 ;179
+00013c  d127              BNE      |L2.398|
 ;;;183    					if (g_tWork.status.bits.blinkEnable) {
-000144  484c              LDR      r0,|L2.632|
-000146  9500              STR      r5,[sp,#0]            ;182
-000148  9501              STR      r5,[sp,#4]            ;182
-00014a  9502              STR      r5,[sp,#8]            ;182
-00014c  9503              STR      r5,[sp,#0xc]
-00014e  7800              LDRB     r0,[r0,#0]  ; g_tWork
-000150  0700              LSLS     r0,r0,#28
-000152  d51f              BPL      |L2.404|
+00013e  484a              LDR      r0,|L2.616|
+000140  9500              STR      r5,[sp,#0]            ;182
+000142  9501              STR      r5,[sp,#4]            ;182
+000144  9502              STR      r5,[sp,#8]            ;182
+000146  9503              STR      r5,[sp,#0xc]
+000148  7800              LDRB     r0,[r0,#0]  ; g_tWork
+00014a  0700              LSLS     r0,r0,#28
+00014c  d51f              BPL      |L2.398|
 ;;;184    						uint8_t index = 0, i = 0;
-000154  2700              MOVS     r7,#0
+00014e  2700              MOVS     r7,#0
 ;;;185    						app_dome_next();
-000156  f7fffffe          BL       app_dome_next
+000150  f7fffffe          BL       app_dome_next
 ;;;186    						buffer[index++] = LAMP2LCD_HEADER;
-00015a  21f8              MOVS     r1,#0xf8
-00015c  466a              MOV      r2,sp
-00015e  7011              STRB     r1,[r2,#0]
+000154  21f8              MOVS     r1,#0xf8
+000156  466a              MOV      r2,sp
+000158  7011              STRB     r1,[r2,#0]
 ;;;187    						buffer[index++] = 9;
-000160  2109              MOVS     r1,#9
-000162  7051              STRB     r1,[r2,#1]
+00015a  2109              MOVS     r1,#9
+00015c  7051              STRB     r1,[r2,#1]
 ;;;188    						buffer[index++] = KEY_DOWN_CMD;
-000164  2103              MOVS     r1,#3
-000166  7091              STRB     r1,[r2,#2]
+00015e  2103              MOVS     r1,#3
+000160  7091              STRB     r1,[r2,#2]
 ;;;189    						app_dome_get_current_Name(buffer + index, 8);
-000168  1cf0              ADDS     r0,r6,#3
-00016a  2108              MOVS     r1,#8
-00016c  f7fffffe          BL       app_dome_get_current_Name
+000162  1cf0              ADDS     r0,r6,#3
+000164  2108              MOVS     r1,#8
+000166  f7fffffe          BL       app_dome_get_current_Name
 ;;;190    						index += 8;
-000170  210b              MOVS     r1,#0xb
+00016a  210b              MOVS     r1,#0xb
 ;;;191    						for (i = 0; i < (buffer[1] + 1); i++) {
-000172  e006              B        |L2.386|
-                  |L2.372|
+00016c  e006              B        |L2.380|
+                  |L2.366|
 ;;;192    							buffer[index] += buffer[i + 1];
-000174  19f2              ADDS     r2,r6,r7
-000176  5c70              LDRB     r0,[r6,r1]
-000178  7852              LDRB     r2,[r2,#1]
-00017a  1880              ADDS     r0,r0,r2
-00017c  1c7f              ADDS     r7,r7,#1
-00017e  5470              STRB     r0,[r6,r1]
-000180  b2ff              UXTB     r7,r7                 ;191
-                  |L2.386|
-000182  4668              MOV      r0,sp                 ;191
-000184  7840              LDRB     r0,[r0,#1]            ;191
-000186  1c40              ADDS     r0,r0,#1              ;191
-000188  42b8              CMP      r0,r7                 ;191
-00018a  d8f3              BHI      |L2.372|
+00016e  19f2              ADDS     r2,r6,r7
+000170  5c70              LDRB     r0,[r6,r1]
+000172  7852              LDRB     r2,[r2,#1]
+000174  1880              ADDS     r0,r0,r2
+000176  1c7f              ADDS     r7,r7,#1
+000178  5470              STRB     r0,[r6,r1]
+00017a  b2ff              UXTB     r7,r7                 ;191
+                  |L2.380|
+00017c  4668              MOV      r0,sp                 ;191
+00017e  7840              LDRB     r0,[r0,#1]            ;191
+000180  1c40              ADDS     r0,r0,#1              ;191
+000182  42b8              CMP      r0,r7                 ;191
+000184  d8f3              BHI      |L2.366|
 ;;;193    						}
 ;;;194    						index++;
 ;;;195    						app_2d4_send(buffer, index);
-00018c  4668              MOV      r0,sp
-00018e  1c49              ADDS     r1,r1,#1
-000190  f7fffffe          BL       app_2d4_send
-                  |L2.404|
+000186  4668              MOV      r0,sp
+000188  1c49              ADDS     r1,r1,#1
+00018a  f7fffffe          BL       app_2d4_send
+                  |L2.398|
 ;;;196    					}
 ;;;197    
 ;;;198    				}
 ;;;199    				press_long_lock = 0;
-000194  4824              LDR      r0,|L2.552|
-000196  7005              STRB     r5,[r0,#0]
+00018e  4826              LDR      r0,|L2.552|
+000190  7005              STRB     r5,[r0,#0]
 ;;;200    				break;
-000198  e753              B        |L2.66|
+000192  e75a              B        |L2.74|
 ;;;201    			case KEY_DOWN_K2:
 ;;;202    				log_debug("LED KEY down");
-00019a  2205              MOVS     r2,#5
-00019c  a337              ADR      r3,|L2.636|
-00019e  21ca              MOVS     r1,#0xca
-                  |L2.416|
-0001a0  4814              LDR      r0,|L2.500|
-0001a2  f7fffffe          BL       LITE_syslog
-0001a6  e74c              B        |L2.66|
+000194  2205              MOVS     r2,#5
+000196  a335              ADR      r3,|L2.620|
+000198  21ca              MOVS     r1,#0xca
+                  |L2.410|
+00019a  4816              LDR      r0,|L2.500|
+00019c  f7fffffe          BL       LITE_syslog
+0001a0  e753              B        |L2.74|
 ;;;203    
 ;;;204    				break;
 ;;;205    			case KEY_LONG_K2:
 ;;;206    				log_debug("LED KEY long");
-0001a8  a338              ADR      r3,|L2.652|
-0001aa  2205              MOVS     r2,#5
-0001ac  21ce              MOVS     r1,#0xce
-0001ae  4811              LDR      r0,|L2.500|
-0001b0  f7fffffe          BL       LITE_syslog
+0001a2  a336              ADR      r3,|L2.636|
+0001a4  2205              MOVS     r2,#5
+0001a6  21ce              MOVS     r1,#0xce
+0001a8  4812              LDR      r0,|L2.500|
+0001aa  f7fffffe          BL       LITE_syslog
 ;;;207    				press_long_lock = 1;
-0001b4  491c              LDR      r1,|L2.552|
-0001b6  2001              MOVS     r0,#1
-0001b8  7008              STRB     r0,[r1,#0]
+0001ae  491e              LDR      r1,|L2.552|
+0001b0  2001              MOVS     r0,#1
+0001b2  7008              STRB     r0,[r1,#0]
 ;;;208    				if (g_tWork.status.bits.blinkEnable) {
-0001ba  492f              LDR      r1,|L2.632|
-0001bc  6808              LDR      r0,[r1,#0]  ; g_tWork
-0001be  0702              LSLS     r2,r0,#28
-0001c0  d505              BPL      |L2.462|
+0001b4  492c              LDR      r1,|L2.616|
+0001b6  6808              LDR      r0,[r1,#0]  ; g_tWork
+0001b8  0702              LSLS     r2,r0,#28
+0001ba  d505              BPL      |L2.456|
 ;;;209    					g_tWork.status.bits.blinkEnable = 0;
-0001c2  2208              MOVS     r2,#8
-0001c4  4390              BICS     r0,r0,r2
+0001bc  2208              MOVS     r2,#8
+0001be  4390              BICS     r0,r0,r2
 ;;;210    					//					g_tWork.status.bits.DEMO = 0;
 ;;;211    					app_dome_stop_current();
-0001c6  6008              STR      r0,[r1,#0]  ; g_tWork
-0001c8  f7fffffe          BL       app_dome_stop_current
-0001cc  e739              B        |L2.66|
-                  |L2.462|
+0001c0  6008              STR      r0,[r1,#0]  ; g_tWork
+0001c2  f7fffffe          BL       app_dome_stop_current
+0001c6  e740              B        |L2.74|
+                  |L2.456|
 ;;;212    				} else {
 ;;;213    					g_tWork.status.bits.blinkEnable = 1;
-0001ce  2208              MOVS     r2,#8
-0001d0  4310              ORRS     r0,r0,r2
+0001c8  2208              MOVS     r2,#8
+0001ca  4310              ORRS     r0,r0,r2
 ;;;214    					g_tWork.status.bits.DEMO = 0;
-0001d2  2204              MOVS     r2,#4
-0001d4  4390              BICS     r0,r0,r2
+0001cc  2204              MOVS     r2,#4
+0001ce  4390              BICS     r0,r0,r2
 ;;;215    					//					app_dome_start(0, 0);
 ;;;216    					app_dome_start_current();
-0001d6  6008              STR      r0,[r1,#0]  ; g_tWork
-0001d8  f7fffffe          BL       app_dome_start_current
-0001dc  e731              B        |L2.66|
+0001d0  6008              STR      r0,[r1,#0]  ; g_tWork
+0001d2  f7fffffe          BL       app_dome_start_current
+0001d6  e738              B        |L2.74|
 ;;;217    				}
 ;;;218    				break;
 ;;;219    			}
@@ -465,7 +462,12 @@
 ;;;225    
                           ENDP
 
-0001de  0000              DCW      0x0000
+                  |L2.472|
+0001d8  6c616d70          DCB      "lamp",0
+0001dc  00      
+0001dd  00                DCB      0
+0001de  00                DCB      0
+0001df  00                DCB      0
                   |L2.480|
                           DCD      SystemCoreClock
                   |L2.484|
@@ -497,60 +499,53 @@
                   |L2.552|
                           DCD      ||.data||
                   |L2.556|
-00022c  4920616d          DCB      "I am alive %d",0
-000230  20616c69
-000234  76652025
-000238  6400    
-00023a  00                DCB      0
+00022c  41434320          DCB      "ACC KEY up",0
+000230  4b455920
+000234  757000  
+000237  00                DCB      0
+                  |L2.568|
+000238  6f6e00            DCB      "on",0
 00023b  00                DCB      0
                   |L2.572|
-00023c  41434320          DCB      "ACC KEY up",0
-000240  4b455920
-000244  757000  
-000247  00                DCB      0
-                  |L2.584|
-000248  6f6e00            DCB      "on",0
+00023c  6f666600          DCB      "off",0
+                  |L2.576|
+000240  72656c61          DCB      "relay %s",0
+000244  79202573
+000248  00      
+000249  00                DCB      0
+00024a  00                DCB      0
 00024b  00                DCB      0
                   |L2.588|
-00024c  6f666600          DCB      "off",0
-                  |L2.592|
-000250  72656c61          DCB      "relay %s",0
-000254  79202573
+00024c  41434320          DCB      "ACC KEY down",0
+000250  4b455920
+000254  646f776e
 000258  00      
 000259  00                DCB      0
 00025a  00                DCB      0
 00025b  00                DCB      0
                   |L2.604|
-00025c  41434320          DCB      "ACC KEY down",0
+00025c  4c454420          DCB      "LED KEY up",0
 000260  4b455920
-000264  646f776e
-000268  00      
-000269  00                DCB      0
-00026a  00                DCB      0
-00026b  00                DCB      0
-                  |L2.620|
-00026c  4c454420          DCB      "LED KEY up",0
-000270  4b455920
-000274  757000  
-000277  00                DCB      0
-                  |L2.632|
+000264  757000  
+000267  00                DCB      0
+                  |L2.616|
                           DCD      g_tWork
+                  |L2.620|
+00026c  4c454420          DCB      "LED KEY down",0
+000270  4b455920
+000274  646f776e
+000278  00      
+000279  00                DCB      0
+00027a  00                DCB      0
+00027b  00                DCB      0
                   |L2.636|
-00027c  4c454420          DCB      "LED KEY down",0
+00027c  4c454420          DCB      "LED KEY long",0
 000280  4b455920
-000284  646f776e
+000284  6c6f6e67
 000288  00      
 000289  00                DCB      0
 00028a  00                DCB      0
 00028b  00                DCB      0
-                  |L2.652|
-00028c  4c454420          DCB      "LED KEY long",0
-000290  4b455920
-000294  6c6f6e67
-000298  00      
-000299  00                DCB      0
-00029a  00                DCB      0
-00029b  00                DCB      0
 
                           AREA ||.constdata||, DATA, READONLY, ALIGN=0
 

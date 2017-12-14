@@ -17490,171 +17490,14 @@ void WWDT_Open(uint32_t u32PreScale, uint32_t u32CmpValue, uint32_t u32EnableInt
 #line 13 "..\\Bsp\\bsp.h"
 #line 14 "..\\Bsp\\bsp.h"
 
-#line 1 "..\\Bsp\\inc\\bsp_2d4.h"
+#line 1 "..\\utils\\inc\\lite-log.h"
 
 
 
 
 
- 
 
 
-
-
-
-
-
-
-
-#line 23 "..\\Bsp\\inc\\bsp_2d4.h"
-
-
-
-
- 
-#line 44 "..\\Bsp\\inc\\bsp_2d4.h"
-
- 
-#line 77 "..\\Bsp\\inc\\bsp_2d4.h"
-
-
- 
-#line 93 "..\\Bsp\\inc\\bsp_2d4.h"
-
-#line 103 "..\\Bsp\\inc\\bsp_2d4.h"
-
-
-
- 
-void Wireless2d4_InitHard(void);
-
-void SPI_WW(uint8_t R_REG);
-void RF_WriteReg(uint8_t reg, uint8_t wdata);
-void RF_WriteBuf(uint8_t reg, uint8_t *pBuf, uint8_t length);
-void SPI_WR(uint8_t R_REG);
-uint8_t ucSPI_Read(void);
-uint8_t ucRF_ReadReg(uint8_t reg);
-void RF_ReadBuf(uint8_t reg, uint8_t *pBuf, uint8_t length);
-void RF_TxMode(void);
-void RF_RxMode(void);
-uint8_t ucRF_GetStatus(void);
-uint8_t ucRF_GetRSSI(void);
-void RF_ClearStatus(void);
-void RF_ClearFIFO(void);
-void RF_SetChannel(uint8_t Channel);
-void RF_TxData(uint8_t *ucPayload, uint8_t length);
-uint8_t ucRF_DumpRxData(uint8_t *ucPayload, uint8_t length);
-void RF_Carrier(uint8_t ucChannel_Set);
-void RF_Init(void);
-
- 
-
-
-
-
-
-
-
-#line 16 "..\\Bsp\\bsp.h"
-
-#line 1 "..\\Bsp\\inc\\bsp_timer0.h"
-
-
-
-
-
- 
-
-
-
-
-typedef struct {
-
-
-	uint8_t flag_1ms;
-
-	uint8_t cnt_10ms;
-	uint8_t flag_10ms;
-
-	uint8_t cnt_100ms;
-	uint8_t flag_100ms;
-
-	uint8_t cnt_500ms;
-	uint8_t flag_500ms;
-
-	uint16_t cnt_1s;
-	uint8_t flag_1s;
-
-} Task_time;
-
-
-
-void Timer0_InitHard(void);
-Task_time* timer0_taskTimer_get(void);
-
-#line 18 "..\\Bsp\\bsp.h"
-#line 1 "..\\Bsp\\inc\\bsp_light.h"
-
-
-
-
-
- 
-
-
-
-
-void Light_InitHard(void);
-
-
-
-void Light_RGB_set(uint16_t r, uint16_t g, uint16_t b);
-void Light_bright_set(uint8_t br);
-
-#line 19 "..\\Bsp\\bsp.h"
-#line 1 "..\\Bsp\\inc\\bsp_relay.h"
-
-
-
-
-
- 
-
-
-
-
-void Relay_InitHard(void);
-void Relay_on(void);
-void Relay_off(void);
-void Relay_toggle(void);
-uint8_t Relay_IsOn(void);
-void Relay_set(uint8_t s);
-
-#line 20 "..\\Bsp\\bsp.h"
-#line 1 "..\\Bsp\\inc\\bsp_eeprom.h"
-
-
-
-
-
- 
-
-
-
-
-
-
-
-
-
-void EEPROM_InitHard(void);
-
-void bsp_eeprom_write_int(uint32_t u32addr, uint32_t u32data);
-int32_t bsp_eeprom_erase(uint32_t u32addr);
-uint32_t bsp_eeprom_read_int(uint32_t u32Addr);
-
-#line 21 "..\\Bsp\\bsp.h"
-#line 1 "..\\Bsp\\inc\\bsp_key.h"
 
 
 
@@ -17671,6 +17514,21 @@ uint32_t bsp_eeprom_read_int(uint32_t u32Addr);
 
 
 
+
+#line 26 "..\\utils\\inc\\lite-log.h"
+#line 1 "C:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\stdlib.h"
+ 
+ 
+ 
+
+
+
+
+ 
+ 
+
+
+
  
 
 
@@ -17678,167 +17536,22 @@ uint32_t bsp_eeprom_read_int(uint32_t u32Addr);
 
 
 
+   
 
 
 
- 
-typedef enum {
-	KID_K1 = 0,
-	KID_K2,
-} KEY_ID_E;
 
 
 
 
 
- 
 
 
 
 
 
- 
-typedef struct {
-	 
-	uint8_t (*IsKeyDownFunc)(void);  
 
-	uint8_t Count;  
-	uint16_t LongCount;  
-	uint16_t LongTime;  
-	uint8_t State;  
-	uint8_t RepeatSpeed;  
-	uint8_t RepeatCount;  
-} KEY_T;
-
-
-
-
-
-
-
- 
-typedef enum {
-	KEY_NONE = 0,  
-
-	KEY_1_DOWN,  
-	KEY_1_UP,  
-	KEY_1_LONG,  
-
-	KEY_2_DOWN,  
-	KEY_2_UP,  
-	KEY_2_LONG,  
-} KEY_ENUM;
-
- 
-
-typedef struct {
-	uint8_t Buf[10];  
-	uint8_t Read;  
-	uint8_t Write;  
-	uint8_t Read2;  
-} KEY_FIFO_T;
-
- 
-void bsp_InitKey(void);
-void bsp_KeyScan(void);
-void bsp_PutKey(uint8_t _KeyCode);
-uint8_t bsp_GetKey(void);
-uint8_t bsp_GetKey2(void);
-uint8_t bsp_GetKeyState(KEY_ID_E _ucKeyID);
-void bsp_SetKeyParam(uint8_t _ucKeyID, uint16_t _LongTime, uint8_t _RepeatSpeed);
-void bsp_ClearKey(void);
-
-
-
- 
-#line 22 "..\\Bsp\\bsp.h"
-#line 1 "..\\Bsp\\inc\\bsp_uart_fifo.h"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
-typedef enum {
-	COM0 = 0, COM1 = 1,
-} COM_PORT_E;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
-typedef struct {
-	UART_T *uart;  
-	uint8_t *pTxBuf;  
-	uint8_t *pRxBuf;  
-	uint16_t usTxBufSize;  
-	uint16_t usRxBufSize;  
-	volatile uint16_t usTxWrite;  
-	volatile uint16_t usTxRead;  
-	volatile uint16_t usTxCount;  
-
-	volatile uint16_t usRxWrite;  
-	volatile uint16_t usRxRead;  
-	volatile uint16_t usRxCount;  
-
-	void (*SendBefor)(void);  
-	void (*SendOver)(void);  
-	void (*ReciveNew)(uint8_t _byte);  
-} UART_T_M;
-
-void bsp_InitUart(void);
-void comSendBuf(COM_PORT_E _ucPort, uint8_t *_ucaBuf, uint16_t _usLen);
-void comSendChar(COM_PORT_E _ucPort, uint8_t _ucByte);
-uint8_t comGetChar(COM_PORT_E _ucPort, uint8_t *_pByte);
-
-void comClearTxFifo(COM_PORT_E _ucPort);
-void comClearRxFifo(COM_PORT_E _ucPort);
-
-
-
-
-
-
-void bsp_SetUart1Baud(uint32_t _baud);
-void bsp_SetUart2Baud(uint32_t _baud);
-
-
-
- 
-#line 23 "..\\Bsp\\bsp.h"
-
-
-
-
-void bsp_Init(void);
-
-
-
- 
-#line 9 "..\\Bsp\\src\\bsp_timer0.c"
-#line 1 "..\\App\\inc\\app_dome.h"
-
-
-
+  
 
 
  
@@ -17850,96 +17563,697 @@ void bsp_Init(void);
 
 
 
-
-#pragma pack(1)
-typedef struct _DOME_PRO_T {
-	uint8_t currentDomeIndex;
+#line 54 "C:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\stdlib.h"
 
 
-} DOME_PRO_T;
-#pragma pack()
+  
 
-#pragma pack(1)
-typedef struct _SUBDOME_ASSIST_T {
-	uint8_t switch_flag;
-	uint32_t msCnt;
-	uint8_t stopTime;
-} SUBDOME_ASSIST_T;
-#pragma pack()
 
-#pragma pack(1)
-typedef struct _COLOR_T {
-	uint8_t R;
-	uint8_t G;
-	uint8_t B;
-} COLOR_T;
-#pragma pack()
 
-#pragma pack(1)
-typedef struct _SUBDOME_T {
-	uint8_t mode;
-	COLOR_T color1;
-	COLOR_T color2;
-	uint8_t repeate;
-	uint8_t bright;
-	uint16_t speed;
-	uint16_t offtime;
-} SUBDOME_T;
-#pragma pack()
+    typedef unsigned int size_t;    
+#line 70 "C:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\stdlib.h"
 
 
 
 
 
 
+    
 
 
-#pragma pack(1)
-typedef struct _DOME_HEADER_T {
-	char name[8];
-	uint8_t index;  
-	uint8_t repeat_number;  
-} DOME_HEADER_T;
-#pragma pack()
 
-#pragma pack(1)
-typedef struct _DOME_DEFAULT_T {
-	DOME_HEADER_T header;
-	SUBDOME_T subdome[8];
-} DOME_DEFAULT_T;
-#pragma pack()
+    typedef unsigned short wchar_t;  
+#line 91 "C:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\stdlib.h"
 
-#pragma pack(1)
-typedef struct _DOME_RUNNING_T {
-	uint8_t bright;
-	uint8_t speed;
-	struct {
-		uint16_t R;
-		uint16_t G;
-		uint16_t B;
-	} color;
-} DOME_RUNNING_T;
-#pragma pack()
+typedef struct div_t { int quot, rem; } div_t;
+    
+typedef struct ldiv_t { long int quot, rem; } ldiv_t;
+    
 
-extern uint8_t blink_number; 
-extern DOME_DEFAULT_T dome_blink;
-extern DOME_RUNNING_T dome_running_param;
+typedef struct lldiv_t { long long quot, rem; } lldiv_t;
+    
 
-void app_dome_Init(void);
 
-void app_color_blink_previous(void);
-void app_color_blink_next(void);
+#line 112 "C:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\stdlib.h"
+   
 
-void app_dome_start(uint8_t index, uint8_t dir);
-void app_dome_previous(void);
-void app_dome_next(void);
-void app_dome_get_current_Name(uint8_t *name, uint8_t len);
-void app_dome_start_current(void);
-void app_dome_stop_current(void);
-void app_dome_rgb(uint8_t r, uint8_t g, uint8_t b);
-void app_dome_interrupter(void);
 
-#line 10 "..\\Bsp\\src\\bsp_timer0.c"
+
+ 
+
+   
+
+
+
+
+ 
+#line 131 "C:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\stdlib.h"
+   
+
+
+ 
+extern __declspec(__nothrow) int __aeabi_MB_CUR_MAX(void);
+
+   
+
+
+
+
+ 
+
+   
+
+
+
+
+ 
+
+
+
+
+extern __declspec(__nothrow) double atof(const char *  ) __attribute__((__nonnull__(1)));
+   
+
+
+
+ 
+extern __declspec(__nothrow) int atoi(const char *  ) __attribute__((__nonnull__(1)));
+   
+
+
+
+ 
+extern __declspec(__nothrow) long int atol(const char *  ) __attribute__((__nonnull__(1)));
+   
+
+
+
+ 
+
+extern __declspec(__nothrow) long long atoll(const char *  ) __attribute__((__nonnull__(1)));
+   
+
+
+
+ 
+
+
+extern __declspec(__nothrow) double strtod(const char * __restrict  , char ** __restrict  ) __attribute__((__nonnull__(1)));
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+extern __declspec(__nothrow) float strtof(const char * __restrict  , char ** __restrict  ) __attribute__((__nonnull__(1)));
+extern __declspec(__nothrow) long double strtold(const char * __restrict  , char ** __restrict  ) __attribute__((__nonnull__(1)));
+   
+
+ 
+
+extern __declspec(__nothrow) long int strtol(const char * __restrict  ,
+                        char ** __restrict  , int  ) __attribute__((__nonnull__(1)));
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+extern __declspec(__nothrow) unsigned long int strtoul(const char * __restrict  ,
+                                       char ** __restrict  , int  ) __attribute__((__nonnull__(1)));
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+ 
+extern __declspec(__nothrow) long long strtoll(const char * __restrict  ,
+                                  char ** __restrict  , int  )
+                          __attribute__((__nonnull__(1)));
+   
+
+
+
+
+ 
+extern __declspec(__nothrow) unsigned long long strtoull(const char * __restrict  ,
+                                            char ** __restrict  , int  )
+                                   __attribute__((__nonnull__(1)));
+   
+
+
+
+ 
+
+extern __declspec(__nothrow) int rand(void);
+   
+
+
+
+
+
+
+
+ 
+extern __declspec(__nothrow) void srand(unsigned int  );
+   
+
+
+
+
+
+
+ 
+
+struct _rand_state { int __x[57]; };
+extern __declspec(__nothrow) int _rand_r(struct _rand_state *);
+extern __declspec(__nothrow) void _srand_r(struct _rand_state *, unsigned int);
+struct _ANSI_rand_state { int __x[1]; };
+extern __declspec(__nothrow) int _ANSI_rand_r(struct _ANSI_rand_state *);
+extern __declspec(__nothrow) void _ANSI_srand_r(struct _ANSI_rand_state *, unsigned int);
+   
+
+
+ 
+
+extern __declspec(__nothrow) void *calloc(size_t  , size_t  );
+   
+
+
+
+ 
+extern __declspec(__nothrow) void free(void *  );
+   
+
+
+
+
+
+ 
+extern __declspec(__nothrow) void *malloc(size_t  );
+   
+
+
+
+ 
+extern __declspec(__nothrow) void *realloc(void *  , size_t  );
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+extern __declspec(__nothrow) int posix_memalign(void **  , size_t  , size_t  );
+   
+
+
+
+
+
+
+
+
+
+ 
+
+typedef int (*__heapprt)(void *, char const *, ...);
+extern __declspec(__nothrow) void __heapstats(int (*  )(void *  ,
+                                           char const *  , ...),
+                        void *  ) __attribute__((__nonnull__(1)));
+   
+
+
+
+
+
+
+
+
+
+
+ 
+extern __declspec(__nothrow) int __heapvalid(int (*  )(void *  ,
+                                           char const *  , ...),
+                       void *  , int  ) __attribute__((__nonnull__(1)));
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+extern __declspec(__nothrow) __declspec(__noreturn) void abort(void);
+   
+
+
+
+
+
+
+
+ 
+
+extern __declspec(__nothrow) int atexit(void (*  )(void)) __attribute__((__nonnull__(1)));
+   
+
+
+
+
+ 
+#line 436 "C:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\stdlib.h"
+
+
+extern __declspec(__nothrow) __declspec(__noreturn) void exit(int  );
+   
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+extern __declspec(__nothrow) __declspec(__noreturn) void _Exit(int  );
+   
+
+
+
+
+
+
+
+      
+
+extern __declspec(__nothrow) char *getenv(const char *  ) __attribute__((__nonnull__(1)));
+   
+
+
+
+
+
+
+
+
+
+ 
+
+extern __declspec(__nothrow) int  system(const char *  );
+   
+
+
+
+
+
+
+
+
+
+ 
+
+extern  void *bsearch(const void *  , const void *  ,
+              size_t  , size_t  ,
+              int (*  )(const void *, const void *)) __attribute__((__nonnull__(1,2,5)));
+   
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+#line 524 "C:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\stdlib.h"
+
+
+extern  void qsort(void *  , size_t  , size_t  ,
+           int (*  )(const void *, const void *)) __attribute__((__nonnull__(1,4)));
+   
+
+
+
+
+
+
+
+
+
+ 
+
+#line 553 "C:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\stdlib.h"
+
+extern __declspec(__nothrow) __attribute__((const)) int abs(int  );
+   
+
+
+
+ 
+
+extern __declspec(__nothrow) __attribute__((const)) div_t div(int  , int  );
+   
+
+
+
+
+
+
+
+
+
+ 
+extern __declspec(__nothrow) __attribute__((const)) long int labs(long int  );
+   
+
+
+
+ 
+
+
+
+
+extern __declspec(__nothrow) __attribute__((const)) ldiv_t ldiv(long int  , long int  );
+   
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+extern __declspec(__nothrow) __attribute__((const)) long long llabs(long long  );
+   
+
+
+
+ 
+
+
+
+
+extern __declspec(__nothrow) __attribute__((const)) lldiv_t lldiv(long long  , long long  );
+   
+
+
+
+
+
+
+
+
+
+
+
+ 
+#line 634 "C:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\stdlib.h"
+
+
+
+
+ 
+typedef struct __sdiv32by16 { int quot, rem; } __sdiv32by16;
+typedef struct __udiv32by16 { unsigned int quot, rem; } __udiv32by16;
+    
+typedef struct __sdiv64by32 { int rem, quot; } __sdiv64by32;
+
+__value_in_regs extern __declspec(__nothrow) __attribute__((const)) __sdiv32by16 __rt_sdiv32by16(
+     int  ,
+     short int  );
+   
+
+ 
+__value_in_regs extern __declspec(__nothrow) __attribute__((const)) __udiv32by16 __rt_udiv32by16(
+     unsigned int  ,
+     unsigned short  );
+   
+
+ 
+__value_in_regs extern __declspec(__nothrow) __attribute__((const)) __sdiv64by32 __rt_sdiv64by32(
+     int  , unsigned int  ,
+     int  );
+   
+
+ 
+
+
+
+
+ 
+extern __declspec(__nothrow) unsigned int __fp_status(unsigned int  , unsigned int  );
+   
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+extern __declspec(__nothrow) int mblen(const char *  , size_t  );
+   
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+extern __declspec(__nothrow) int mbtowc(wchar_t * __restrict  ,
+                   const char * __restrict  , size_t  );
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+extern __declspec(__nothrow) int wctomb(char *  , wchar_t  );
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+ 
+extern __declspec(__nothrow) size_t mbstowcs(wchar_t * __restrict  ,
+                      const char * __restrict  , size_t  ) __attribute__((__nonnull__(2)));
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+extern __declspec(__nothrow) size_t wcstombs(char * __restrict  ,
+                      const wchar_t * __restrict  , size_t  ) __attribute__((__nonnull__(2)));
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+extern __declspec(__nothrow) void __use_realtime_heap(void);
+extern __declspec(__nothrow) void __use_realtime_division(void);
+extern __declspec(__nothrow) void __use_two_region_memory(void);
+extern __declspec(__nothrow) void __use_no_heap(void);
+extern __declspec(__nothrow) void __use_no_heap_region(void);
+
+extern __declspec(__nothrow) char const *__C_library_version_string(void);
+extern __declspec(__nothrow) int __C_library_version_number(void);
+
+
+
+
+
+
+
+
+
+
+
+#line 892 "C:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\stdlib.h"
+
+
+
+
+
+ 
+#line 27 "..\\utils\\inc\\lite-log.h"
 #line 1 "C:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
  
  
@@ -18362,6 +18676,500 @@ extern __declspec(__nothrow) void _membitmovewb(void *  , const void *  , int  ,
 
  
 
+#line 28 "..\\utils\\inc\\lite-log.h"
+#line 29 "..\\utils\\inc\\lite-log.h"
+
+
+
+
+
+typedef enum _LOGLEVEL {
+	LOG_EMERG_LEVEL = 0,  
+	LOG_CRIT_LEVEL,  
+	LOG_ERR_LEVEL,  
+	LOG_WARNING_LEVEL,  
+	LOG_INFO_LEVEL,  
+	LOG_DEBUG_LEVEL,  
+} LOGLEVEL;
+
+void LITE_openlog(const char *ident);
+void LITE_closelog(void);
+int LITE_log_enabled(void);
+char *LITE_get_logname(void);
+int LITE_get_loglevel(void);
+void LITE_set_loglevel(int level);
+int LITE_hexdump(const char *title, const void *buf, const int len);
+
+void LITE_syslog(const char *f, const int l, const int level, const char *fmt,
+		...);
+#line 59 "..\\utils\\inc\\lite-log.h"
+
+int log_multi_line_internal(const char *f, const int l, const char *title,
+		int level, char *payload, const char *mark);
+
+
+
+void LITE_rich_hexdump(const char *f, const int l, const int level,
+		const char *buf_str, const void *buf_ptr, const int buf_len);
+
+#line 77 "..\\utils\\inc\\lite-log.h"
+
+
+
+
+
+#line 16 "..\\Bsp\\bsp.h"
+
+#line 1 "..\\Bsp\\inc\\bsp_2d4.h"
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+#line 23 "..\\Bsp\\inc\\bsp_2d4.h"
+
+
+
+
+ 
+#line 44 "..\\Bsp\\inc\\bsp_2d4.h"
+
+ 
+#line 77 "..\\Bsp\\inc\\bsp_2d4.h"
+
+
+ 
+#line 93 "..\\Bsp\\inc\\bsp_2d4.h"
+
+#line 103 "..\\Bsp\\inc\\bsp_2d4.h"
+
+
+
+ 
+void Wireless2d4_InitHard(void);
+
+void SPI_WW(uint8_t R_REG);
+void RF_WriteReg(uint8_t reg, uint8_t wdata);
+void RF_WriteBuf(uint8_t reg, uint8_t *pBuf, uint8_t length);
+void SPI_WR(uint8_t R_REG);
+uint8_t ucSPI_Read(void);
+uint8_t ucRF_ReadReg(uint8_t reg);
+void RF_ReadBuf(uint8_t reg, uint8_t *pBuf, uint8_t length);
+void RF_TxMode(void);
+void RF_RxMode(void);
+uint8_t ucRF_GetStatus(void);
+uint8_t ucRF_GetRSSI(void);
+void RF_ClearStatus(void);
+void RF_ClearFIFO(void);
+void RF_SetChannel(uint8_t Channel);
+void RF_TxData(uint8_t *ucPayload, uint8_t length);
+uint8_t ucRF_DumpRxData(uint8_t *ucPayload, uint8_t length);
+void RF_Carrier(uint8_t ucChannel_Set);
+void RF_Init(void);
+
+ 
+
+
+
+
+
+
+
+#line 18 "..\\Bsp\\bsp.h"
+
+#line 1 "..\\Bsp\\inc\\bsp_timer0.h"
+
+
+
+
+
+ 
+
+
+
+
+typedef struct {
+
+
+	uint8_t flag_1ms;
+
+	uint8_t cnt_10ms;
+	uint8_t flag_10ms;
+
+	uint8_t cnt_100ms;
+	uint8_t flag_100ms;
+
+	uint8_t cnt_500ms;
+	uint8_t flag_500ms;
+
+	uint16_t cnt_1s;
+	uint8_t flag_1s;
+
+} Task_time;
+
+
+
+void Timer0_InitHard(void);
+Task_time* timer0_taskTimer_get(void);
+
+#line 20 "..\\Bsp\\bsp.h"
+#line 1 "..\\Bsp\\inc\\bsp_light.h"
+
+
+
+
+
+ 
+
+
+
+
+void Light_InitHard(void);
+
+
+
+void Light_RGB_set(uint16_t r, uint16_t g, uint16_t b);
+void Light_bright_set(uint8_t br);
+
+#line 21 "..\\Bsp\\bsp.h"
+#line 1 "..\\Bsp\\inc\\bsp_relay.h"
+
+
+
+
+
+ 
+
+
+
+
+void Relay_InitHard(void);
+void Relay_on(void);
+void Relay_off(void);
+void Relay_toggle(void);
+uint8_t Relay_IsOn(void);
+void Relay_set(uint8_t s);
+
+#line 22 "..\\Bsp\\bsp.h"
+#line 1 "..\\Bsp\\inc\\bsp_eeprom.h"
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+void EEPROM_InitHard(void);
+
+void bsp_eeprom_write_int(uint32_t u32addr, uint32_t u32data);
+int32_t bsp_eeprom_erase(uint32_t u32addr);
+uint32_t bsp_eeprom_read_int(uint32_t u32Addr);
+
+#line 23 "..\\Bsp\\bsp.h"
+#line 1 "..\\Bsp\\inc\\bsp_key.h"
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+ 
+typedef enum {
+	KID_K1 = 0,
+	KID_K2,
+} KEY_ID_E;
+
+
+
+
+
+ 
+
+
+
+
+
+ 
+typedef struct {
+	 
+	uint8_t (*IsKeyDownFunc)(void);  
+
+	uint8_t Count;  
+	uint16_t LongCount;  
+	uint16_t LongTime;  
+	uint8_t State;  
+	uint8_t RepeatSpeed;  
+	uint8_t RepeatCount;  
+} KEY_T;
+
+
+
+
+
+
+
+ 
+typedef enum {
+	KEY_NONE = 0,  
+
+	KEY_1_DOWN,  
+	KEY_1_UP,  
+	KEY_1_LONG,  
+
+	KEY_2_DOWN,  
+	KEY_2_UP,  
+	KEY_2_LONG,  
+} KEY_ENUM;
+
+ 
+
+typedef struct {
+	uint8_t Buf[10];  
+	uint8_t Read;  
+	uint8_t Write;  
+	uint8_t Read2;  
+} KEY_FIFO_T;
+
+ 
+void bsp_InitKey(void);
+void bsp_KeyScan(void);
+void bsp_PutKey(uint8_t _KeyCode);
+uint8_t bsp_GetKey(void);
+uint8_t bsp_GetKey2(void);
+uint8_t bsp_GetKeyState(KEY_ID_E _ucKeyID);
+void bsp_SetKeyParam(uint8_t _ucKeyID, uint16_t _LongTime, uint8_t _RepeatSpeed);
+void bsp_ClearKey(void);
+
+
+
+ 
+#line 24 "..\\Bsp\\bsp.h"
+#line 1 "..\\Bsp\\inc\\bsp_uart_fifo.h"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+typedef enum {
+	COM0 = 0, COM1 = 1,
+} COM_PORT_E;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+typedef struct {
+	UART_T *uart;  
+	uint8_t *pTxBuf;  
+	uint8_t *pRxBuf;  
+	uint16_t usTxBufSize;  
+	uint16_t usRxBufSize;  
+	volatile uint16_t usTxWrite;  
+	volatile uint16_t usTxRead;  
+	volatile uint16_t usTxCount;  
+
+	volatile uint16_t usRxWrite;  
+	volatile uint16_t usRxRead;  
+	volatile uint16_t usRxCount;  
+
+	void (*SendBefor)(void);  
+	void (*SendOver)(void);  
+	void (*ReciveNew)(uint8_t _byte);  
+} UART_T_M;
+
+void bsp_InitUart(void);
+void comSendBuf(COM_PORT_E _ucPort, uint8_t *_ucaBuf, uint16_t _usLen);
+void comSendChar(COM_PORT_E _ucPort, uint8_t _ucByte);
+uint8_t comGetChar(COM_PORT_E _ucPort, uint8_t *_pByte);
+
+void comClearTxFifo(COM_PORT_E _ucPort);
+void comClearRxFifo(COM_PORT_E _ucPort);
+
+
+
+
+
+
+void bsp_SetUart1Baud(uint32_t _baud);
+void bsp_SetUart2Baud(uint32_t _baud);
+
+
+
+ 
+#line 25 "..\\Bsp\\bsp.h"
+
+
+
+
+void bsp_Init(void);
+
+
+
+ 
+#line 9 "..\\Bsp\\src\\bsp_timer0.c"
+#line 1 "..\\App\\inc\\app_dome.h"
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+#pragma pack(1)
+typedef struct _DOME_PRO_T {
+	uint8_t currentDomeIndex;
+
+
+} DOME_PRO_T;
+#pragma pack()
+
+#pragma pack(1)
+typedef struct _SUBDOME_ASSIST_T {
+	uint8_t switch_flag;
+	uint32_t msCnt;
+	uint8_t stopTime;
+} SUBDOME_ASSIST_T;
+#pragma pack()
+
+#pragma pack(1)
+typedef struct _COLOR_T {
+	uint8_t R;
+	uint8_t G;
+	uint8_t B;
+} COLOR_T;
+#pragma pack()
+
+#pragma pack(1)
+typedef struct _SUBDOME_T {
+	uint8_t mode;
+	COLOR_T color1;
+	COLOR_T color2;
+	uint8_t repeate;
+	uint16_t speed;
+	uint8_t bright;
+	uint16_t offtime;
+} SUBDOME_T;
+#pragma pack()
+
+
+
+
+
+
+
+
+#pragma pack(1)
+typedef struct _DOME_HEADER_T {
+	char name[8];
+	uint8_t index;  
+	uint8_t repeat_number;  
+} DOME_HEADER_T;
+#pragma pack()
+
+#pragma pack(1)
+typedef struct _DOME_DEFAULT_T {
+	DOME_HEADER_T header;
+	SUBDOME_T subdome[8];
+} DOME_DEFAULT_T;
+#pragma pack()
+
+#pragma pack(1)
+typedef struct _DOME_RUNNING_T {
+	uint8_t bright;
+	uint8_t speed;
+	struct {
+		uint16_t R;
+		uint16_t G;
+		uint16_t B;
+	} color;
+} DOME_RUNNING_T;
+#pragma pack()
+
+extern uint8_t blink_number; 
+extern DOME_DEFAULT_T dome_blink;
+extern DOME_RUNNING_T dome_running_param;
+
+void app_dome_Init(void);
+
+void app_color_blink_previous(void);
+void app_color_blink_next(void);
+
+void app_dome_start(uint8_t index);
+void app_dome_previous(void);
+void app_dome_next(void);
+void app_dome_get_current_Name(uint8_t *name, uint8_t len);
+void app_dome_start_current(void);
+void app_dome_stop_current(void);
+void app_dome_rgb(uint8_t r, uint8_t g, uint8_t b);
+void app_dome_interrupter(void);
+
+#line 10 "..\\Bsp\\src\\bsp_timer0.c"
 #line 11 "..\\Bsp\\src\\bsp_timer0.c"
 
 static Task_time taskTime;

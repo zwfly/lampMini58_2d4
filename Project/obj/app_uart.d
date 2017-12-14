@@ -23,6 +23,8 @@
 .\obj\app_uart.o: ..\Library\StdDriver\inc\uart.h
 .\obj\app_uart.o: ..\Library\StdDriver\inc\wdt.h
 .\obj\app_uart.o: ..\Library\StdDriver\inc\wwdt.h
+.\obj\app_uart.o: ..\utils\inc\lite-log.h
+.\obj\app_uart.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
 .\obj\app_uart.o: ..\Bsp\inc\bsp_2d4.h
 .\obj\app_uart.o: ..\Bsp\inc\bsp_timer0.h
 .\obj\app_uart.o: ..\Bsp\inc\bsp_light.h
@@ -36,5 +38,3 @@
 .\obj\app_uart.o: ..\App\inc\app_crc.h
 .\obj\app_uart.o: ..\App\inc\app_dome.h
 .\obj\app_uart.o: ..\App\inc\app_eeprom.h
-.\obj\app_uart.o: ..\utils\inc\lite-log.h
-.\obj\app_uart.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h

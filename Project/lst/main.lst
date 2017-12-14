@@ -19689,780 +19689,6 @@ N#include "timer.h"
 N#include "pwm.h"
 N#include "fmc.h"
 N
-N#include "bsp_2d4.h"
-L 1 "..\Bsp\inc\bsp_2d4.h" 1
-N/*
-N * bsp_bt.h
-N *
-N *  Created on: 2017年6月26日
-N *      Author: fly
-N */
-N
-N#ifndef BSP_INC_BSP_2D4_H_
-N#define BSP_INC_BSP_2D4_H_
-N
-N#define         CSN_HIGH                (P04 = 1)
-N#define         CSN_LOW                 (P04 = 0)
-N#define         SCK_HIGH                P07 = 1;delay_2d4(1)
-N#define         SCK_LOW                 P07 = 0;delay_2d4(1)
-N
-N#define         SPI_DATA_HIGH           (P05 = 1)
-N#define         SPI_DATA_LOW            (P05 = 0)
-N#define         SPI_DATA_STATUS         (P05)
-N#define         SPI_DATA_OUTPUT_MODE     GPIO_SetMode(P0, BIT5, GPIO_MODE_OUTPUT);
-N#define         SPI_DATA_INPUT_MODE      GPIO_SetMode(P0, BIT5, GPIO_MODE_INPUT);
-N#define         CE_HIGH                  RF_WriteReg(CE_FSPI_ON, 0)
-N#define         CE_LOW                   RF_WriteReg(CE_FSPI_OFF, 0)
-N////////////////////////////////////////////////////////////////////////////////
-N//                    以下为声明部分，不建议修改                              //
-N////////////////////////////////////////////////////////////////////////////////
-N
-N/********************SPI  REGISTER  ********************/
-N#define		R_REGISTER			0x00                            //SPI read RF data
-N#define		W_REGISTER			0x20                            //SPI write RF data
-N#define		R_RX_PAYLOAD		0x61                            //Read RX Payload
-N#define		W_TX_PAYLOAD		0xA0                            //Write TX Payload
-N#define		FLUSH_TX			0xE1                            //Flush RX FIFO
-N#define		FLUSH_RX			0xE2                            //Flush TX FIFO
-N#define		REUSE_TX_PL			0xE3                            //Reuse TX Payload
-N#define		ACTIVATE			0x50                            //ACTIVATE
-N#define		DEACTIVATE			0x50                            //DEACTIVATE
-N#define		R_RX_PL_WID			0x60                            //Read width of RX data
-N#define		W_ACK_PAYLOAD		        0xA8                            //Data with ACK
-N#define		W_TX_PAYLOAD_NOACK	        0xB0                            //TX Payload no ACK Request
-N#define		CE_FSPI_ON	                0xFD                            // CE HIGH
-N#define		CE_FSPI_OFF	                0xFC                            // CE LOW
-N#define		RST_FSPI	                0x53                            // RESET
-N#define		NOP_N				0xFF
-N
-N/******************CONTROL  REGISTER*******************/
-N#define		CONFIG              0x00
-N#define		EN_AA				0x01
-N#define		EN_RXADDR			0x02
-N#define		SETUP_AW			0x03
-N#define		SETUP_RETR			0x04
-N#define		RF_CH				0x05
-N#define		RF_SETUP			0x06
-N#define		STATUS				0x07
-N#define		OBSERVE_TX			0x08
-N#define		DATAOUT			    0x09
-N#define		RX_ADDR_P0			0x0A
-N#define		RX_ADDR_P1			0x0B
-N#define		RX_ADDR_P2			0x0C
-N#define		RX_ADDR_P3			0x0D
-N#define		RX_ADDR_P4			0x0E
-N#define		RX_ADDR_P5			0x0F
-N#define		TX_ADDR				0x10
-N#define		RX_PW_P0			0x11
-N#define		RX_PW_P1			0x12
-N#define		RX_PW_P2			0x13
-N#define		RX_PW_P3			0x14
-N#define		RX_PW_P4			0x15
-N#define		RX_PW_P5			0x16
-N#define		FIFO_STATUS			0x17
-N#define		DEMOD_CAL				0x19
-N#define     RF_CAL2				0x1A
-N#define     DEM_CAL2			0x1B
-N#define		DYNPD				0x1C
-N#define		FEATURE				0x1D
-N#define		RF_CAL				0x1E
-N#define		BB_CAL				0x1F
-N
-N/////////////////////////////////////////////////////////////////////////////////////
-N/*************************CONTROL CMD***********************************************/
-N#define         RF13dBm                         0x3F                            // 13dBm  发射档位功率设置
-N#define         RF10dBm                         0X0F                            // 10dBm
-N#define         RF8dBm                          0x15                            // 8dbm
-N#define         RF7dBm                          0x07                            // 7dbm
-N#define         RF5dBm                          0x2c                            // 5dbm
-N#define         RF4dBm                          0x06                            // 4dbm
-N#define         RF2dBm                          0x05                            // 2dbm
-N#define         RF0dBm                          0X0B                            // 0dBm
-N#define         RF_3dBm                         0x04                            // -3dBm
-N#define         RF_6dBm                         0x0A                            // -6dBm
-N#define         RF_10dBm                        0x02                            // -10dBm
-N#define         RF_18dBm                        0x01                            // -18dBm
-N#define         RF_30dBm                        0x00                            // -30dBm
-N
-N#define         DR_1M                           0X00				//通信速率 1Mbps
-N#define         DR_2M                           0X40				//通信速率 2Mbps
-N#define         DR_250K                         0XC0                            //通信速率 250Kbps
-N#define         RX_DR_FLAG                      0X40                            // 接收中断标志位
-N#define         TX_DS_FLAG                      0X20                            // 发送完成中断标志位
-N#define         RX_TX_CMP_FLAG                  0X60                            // 发送接收完成中断标志位，ack_payload 模式下使用
-N#define         MAX_RT_FLAG                     0X10                            // 发送重传超时中断标志位
-N#define         TRANS_ENHANCE_MODE              1                               //传输类型增强型
-N#define         TRANS_BURST_MODE                2                               //传输类型普通型
-N///////////////////////////////////////////////////////////////////////////////
-N//                  根据用户应用，以下部分可能需要修改                       //
-N///////////////////////////////////////////////////////////////////////////////
-N/******************* Function declare *******************/
-Nvoid Wireless2d4_InitHard(void);
-N
-Nvoid SPI_WW(uint8_t R_REG);
-Nvoid RF_WriteReg(uint8_t reg, uint8_t wdata);
-Nvoid RF_WriteBuf(uint8_t reg, uint8_t *pBuf, uint8_t length);
-Nvoid SPI_WR(uint8_t R_REG);
-Nuint8_t ucSPI_Read(void);
-Nuint8_t ucRF_ReadReg(uint8_t reg);
-Nvoid RF_ReadBuf(uint8_t reg, uint8_t *pBuf, uint8_t length);
-Nvoid RF_TxMode(void);
-Nvoid RF_RxMode(void);
-Nuint8_t ucRF_GetStatus(void);
-Nuint8_t ucRF_GetRSSI(void);
-Nvoid RF_ClearStatus(void);
-Nvoid RF_ClearFIFO(void);
-Nvoid RF_SetChannel(uint8_t Channel);
-Nvoid RF_TxData(uint8_t *ucPayload, uint8_t length);
-Nuint8_t ucRF_DumpRxData(uint8_t *ucPayload, uint8_t length);
-Nvoid RF_Carrier(uint8_t ucChannel_Set);
-Nvoid RF_Init(void);
-N
-N/******************Parameter define **********************/
-N
-N#define         DEFAULT_CHANNEL                78				//初始化时的频率： 2478 MHz
-N#define         PAYLOAD_WIDTH                  16				//Payload宽度：    8bytes
-N#define         TRANSMIT_TYPE                  TRANS_BURST_MODE 		//使用普通型模式    TRANS_BURST_MODE    TRANS_ENHANCE_MODE
-N#define         DATA_RATE                      DR_1M                            //通信速率1Mbps       DR_2M    DR_1M  DR_250K
-N#define         RF_POWER                      (RF13dBm |DATA_RATE)		//发射功率13dBm
-N
-N#endif /* BSP_INC_BSP_2D4_H_ */
-L 16 "..\Bsp\bsp.h" 2
-N//#include "bsp_uart.h"
-N#include "bsp_timer0.h"
-L 1 "..\Bsp\inc\bsp_timer0.h" 1
-N/*
-N * bsp_timer0.h
-N *
-N *  Created on: 2017年6月28日
-N *      Author: fly
-N */
-N
-N#ifndef BSP_INC_BSP_TIMER0_H_
-N#define BSP_INC_BSP_TIMER0_H_
-N
-Ntypedef struct {
-N
-N//	uint8_t cnt_1ms;
-N	uint8_t flag_1ms;
-N
-N	uint8_t cnt_10ms;
-N	uint8_t flag_10ms;
-N
-N	uint8_t cnt_100ms;
-N	uint8_t flag_100ms;
-N
-N	uint8_t cnt_500ms;
-N	uint8_t flag_500ms;
-N
-N	uint16_t cnt_1s;
-N	uint8_t flag_1s;
-N
-N} Task_time;
-N
-N//extern _Task_time Task_time;
-N
-Nvoid Timer0_InitHard(void);
-NTask_time* timer0_taskTimer_get(void);
-N
-N#endif /* BSP_INC_BSP_TIMER0_H_ */
-L 18 "..\Bsp\bsp.h" 2
-N#include "bsp_light.h"
-L 1 "..\Bsp\inc\bsp_light.h" 1
-N/*
-N * bsp_light.h
-N *
-N *  Created on: 2017年8月18日
-N *      Author: fly
-N */
-N
-N#ifndef BSP_INC_BSP_LIGHT_H_
-N#define BSP_INC_BSP_LIGHT_H_
-N
-Nvoid Light_InitHard(void);
-N//void Light_Red_set(uint16_t duty);
-N//void Light_Green_set(uint16_t duty);
-N//void Light_Blue_set(uint16_t duty);
-Nvoid Light_RGB_set(uint16_t r, uint16_t g, uint16_t b);
-Nvoid Light_bright_set(uint8_t br);
-N
-N#endif /* BSP_INC_BSP_LIGHT_H_ */
-L 19 "..\Bsp\bsp.h" 2
-N#include "bsp_relay.h"
-L 1 "..\Bsp\inc\bsp_relay.h" 1
-N/*
-N * bsp_relay.h
-N *
-N *  Created on: 2017年8月18日
-N *      Author: fly
-N */
-N
-N#ifndef BSP_INC_BSP_RELAY_H_
-N#define BSP_INC_BSP_RELAY_H_
-N
-Nvoid Relay_InitHard(void);
-Nvoid Relay_on(void);
-Nvoid Relay_off(void);
-Nvoid Relay_toggle(void);
-Nuint8_t Relay_IsOn(void);
-Nvoid Relay_set(uint8_t s);
-N
-N#endif /* BSP_INC_BSP_RELAY_H_ */
-L 20 "..\Bsp\bsp.h" 2
-N#include "bsp_eeprom.h"
-L 1 "..\Bsp\inc\bsp_eeprom.h" 1
-N/*
-N * bsp_eeprom.h
-N *
-N *  Created on: 2017年9月8日
-N *      Author: fly
-N */
-N
-N#ifndef BSP_INC_BSP_EEPROM_H_
-N#define BSP_INC_BSP_EEPROM_H_
-N
-N//#define DOME_START_ADDR   0x3C00  //use 3KB
-N//#define DOME_START_ADDR   0x3E00  //use 2.5KB
-N#define DOME_START_ADDR   0x6C00  //use 5KB
-N
-N
-Nvoid EEPROM_InitHard(void);
-N
-Nvoid bsp_eeprom_write_int(uint32_t u32addr, uint32_t u32data);
-Nint32_t bsp_eeprom_erase(uint32_t u32addr);
-Nuint32_t bsp_eeprom_read_int(uint32_t u32Addr);
-N
-N#endif /* BSP_INC_BSP_EEPROM_H_ */
-L 21 "..\Bsp\bsp.h" 2
-N#include "bsp_key.h"
-L 1 "..\Bsp\inc\bsp_key.h" 1
-N/*
-N *********************************************************************************************************
-N *
-N *	模块名称 : 按键驱动模块
-N *	文件名称 : bsp_key.h
-N *	版    本 : V1.0
-N *	说    明 : 头文件
-N *
-N *********************************************************************************************************
-N */
-N
-N#ifndef __BSP_KEY_H
-N#define __BSP_KEY_H
-N
-N#define KEY_COUNT    2
-N
-N/* 根据应用程序的功能重命名按键宏 */
-N#define KEY_DOWN_K1		KEY_1_DOWN
-N#define KEY_UP_K1		KEY_1_UP
-N#define KEY_LONG_K1		KEY_1_LONG
-N
-N#define KEY_DOWN_K2		KEY_2_DOWN
-N#define KEY_UP_K2		KEY_2_UP
-N#define KEY_LONG_K2		KEY_2_LONG
-N
-N
-N/* 按键ID, 主要用于bsp_KeyState()函数的入口参数 */
-Ntypedef enum {
-N	KID_K1 = 0,
-N	KID_K2,
-N} KEY_ID_E;
-N
-N/*
-N 按键滤波时间50ms, 单位10ms。
-N 只有连续检测到50ms状态不变才认为有效，包括弹起和按下两种事件
-N 即使按键电路不做硬件滤波，该滤波机制也可以保证可靠地检测到按键事件
-N */
-N#define KEY_FILTER_TIME   5
-N#define KEY_LONG_TIME     100			/* 单位10ms， 持续1秒，认为长按事件 */
-N
-N/*
-N 每个按键对应1个全局的结构体变量。
-N */
-Ntypedef struct {
-N	/* 下面是一个函数指针，指向判断按键手否按下的函数 */
-N	uint8_t (*IsKeyDownFunc)(void); /* 按键按下的判断函数,1表示按下 */
-N
-N	uint8_t Count; /* 滤波器计数器 */
-N	uint16_t LongCount; /* 长按计数器 */
-N	uint16_t LongTime; /* 按键按下持续时间, 0表示不检测长按 */
-N	uint8_t State; /* 按键当前状态（按下还是弹起） */
-N	uint8_t RepeatSpeed; /* 连续按键周期 */
-N	uint8_t RepeatCount; /* 连续按键计数器 */
-N} KEY_T;
-N
-N/*
-N 定义键值代码, 必须按如下次序定时每个键的按下、弹起和长按事件
-N
-N 推荐使用enum, 不用#define，原因：
-N (1) 便于新增键值,方便调整顺序，使代码看起来舒服点
-N (2) 编译器可帮我们避免键值重复。
-N */
-Ntypedef enum {
-N	KEY_NONE = 0, /* 0 表示按键事件 */
-N
-N	KEY_1_DOWN, /* 1键按下 */
-N	KEY_1_UP, /* 1键弹起 */
-N	KEY_1_LONG, /* 1键长按 */
-N
-N	KEY_2_DOWN, /* 2键按下 */
-N	KEY_2_UP, /* 2键弹起 */
-N	KEY_2_LONG, /* 2键长按 */
-N} KEY_ENUM;
-N
-N/* 按键FIFO用到变量 */
-N#define KEY_FIFO_SIZE	10
-Ntypedef struct {
-N	uint8_t Buf[KEY_FIFO_SIZE]; /* 键值缓冲区 */
-X	uint8_t Buf[10];  
-N	uint8_t Read; /* 缓冲区读指针1 */
-N	uint8_t Write; /* 缓冲区写指针 */
-N	uint8_t Read2; /* 缓冲区读指针2 */
-N} KEY_FIFO_T;
-N
-N/* 供外部调用的函数声明 */
-Nvoid bsp_InitKey(void);
-Nvoid bsp_KeyScan(void);
-Nvoid bsp_PutKey(uint8_t _KeyCode);
-Nuint8_t bsp_GetKey(void);
-Nuint8_t bsp_GetKey2(void);
-Nuint8_t bsp_GetKeyState(KEY_ID_E _ucKeyID);
-Nvoid bsp_SetKeyParam(uint8_t _ucKeyID, uint16_t _LongTime, uint8_t _RepeatSpeed);
-Nvoid bsp_ClearKey(void);
-N
-N#endif
-N
-N/*****************************(END OF FILE) *********************************/
-L 22 "..\Bsp\bsp.h" 2
-N#include "bsp_uart_fifo.h"
-L 1 "..\Bsp\inc\bsp_uart_fifo.h" 1
-N#ifndef _BSP_USART_FIFO_H_
-N#define _BSP_USART_FIFO_H_
-N
-N#define	UART0_FIFO_EN	1
-N#define	UART1_FIFO_EN	1
-N
-N///* RS485芯片发送使能GPIO, PB2 */
-N//#define RCC_RS485_TXEN 	 RCC_APB2Periph_GPIOB
-N//#define PORT_RS485_TXEN  GPIOB
-N//#define PIN_RS485_TXEN	 GPIO_Pin_2
-N
-N//#define RS485_RX_EN()	PORT_RS485_TXEN->BRR = PIN_RS485_TXEN
-N//#define RS485_TX_EN()	PORT_RS485_TXEN->BSRR = PIN_RS485_TXEN
-N
-N/* 定义端口号 */
-Ntypedef enum {
-N	COM0 = 0, COM1 = 1,
-N} COM_PORT_E;
-N
-N
-N#if UART0_FIFO_EN == 1
-X#if 1 == 1
-N#define UART0_BAUD			115200
-N#define UART0_TX_BUF_SIZE	1*64
-N#define UART0_RX_BUF_SIZE	1*64
-N#endif
-N
-N#if UART1_FIFO_EN == 1
-X#if 1 == 1
-N#define UART1_BAUD			19200
-N#define UART1_TX_BUF_SIZE	1*256
-N#define UART1_RX_BUF_SIZE	1*256
-N#endif
-N
-N/* 串口设备结构体 */
-Ntypedef struct {
-N	UART_T *uart; /* STM32内部串口设备指针 */
-N	uint8_t *pTxBuf; /* 发送缓冲区 */
-N	uint8_t *pRxBuf; /* 接收缓冲区 */
-N	uint16_t usTxBufSize; /* 发送缓冲区大小 */
-N	uint16_t usRxBufSize; /* 接收缓冲区大小 */
-N	__IO uint16_t usTxWrite; /* 发送缓冲区写指针 */
-X	volatile uint16_t usTxWrite;  
-N	__IO uint16_t usTxRead; /* 发送缓冲区读指针 */
-X	volatile uint16_t usTxRead;  
-N	__IO uint16_t usTxCount; /* 等待发送的数据个数 */
-X	volatile uint16_t usTxCount;  
-N
-N	__IO uint16_t usRxWrite; /* 接收缓冲区写指针 */
-X	volatile uint16_t usRxWrite;  
-N	__IO uint16_t usRxRead; /* 接收缓冲区读指针 */
-X	volatile uint16_t usRxRead;  
-N	__IO uint16_t usRxCount; /* 还未读取的新数据个数 */
-X	volatile uint16_t usRxCount;  
-N
-N	void (*SendBefor)(void); /* 开始发送之前的回调函数指针（主要用于RS485切换到发送模式） */
-N	void (*SendOver)(void); /* 发送完毕的回调函数指针（主要用于RS485将发送模式切换为接收模式） */
-N	void (*ReciveNew)(uint8_t _byte); /* 串口收到数据的回调函数指针 */
-N} UART_T_M;
-N
-Nvoid bsp_InitUart(void);
-Nvoid comSendBuf(COM_PORT_E _ucPort, uint8_t *_ucaBuf, uint16_t _usLen);
-Nvoid comSendChar(COM_PORT_E _ucPort, uint8_t _ucByte);
-Nuint8_t comGetChar(COM_PORT_E _ucPort, uint8_t *_pByte);
-N
-Nvoid comClearTxFifo(COM_PORT_E _ucPort);
-Nvoid comClearRxFifo(COM_PORT_E _ucPort);
-N
-N//void RS485_SendBuf(uint8_t *_ucaBuf, uint16_t _usLen);
-N//void RS485_SendStr(char *_pBuf);
-N
-N//void bsp_Set485Baud(uint32_t _baud);
-N
-Nvoid bsp_SetUart1Baud(uint32_t _baud);
-Nvoid bsp_SetUart2Baud(uint32_t _baud);
-N
-N#endif
-N
-N/***************************** 安富莱电子 www.armfly.com (END OF FILE) *********************************/
-L 23 "..\Bsp\bsp.h" 2
-N
-N#define ENABLE_INT()	__set_PRIMASK(0)
-N#define DISABLE_INT()	__set_PRIMASK(1)
-N
-Nvoid bsp_Init(void);
-N
-N#endif
-N
-N/***************************** (END OF FILE) *********************************/
-L 18 "..\App\inc\app.h" 2
-N//#include "app_repeat_exe.h"
-N#include "app_work.h"
-L 1 "..\App\inc\app_work.h" 1
-N/*
-N * app_work.h
-N *
-N *  Created on: 2017年7月6日
-N *      Author: admin
-N */
-N
-N#ifndef APP_INC_APP_WORK_H_
-N#define APP_INC_APP_WORK_H_
-N
-Ntypedef struct _WORK_T {
-N
-N	union {
-N		uint8_t allbits;
-N		struct {
-N			unsigned DOME :1;
-N			unsigned ra2 :1;
-N			unsigned DEMO :1;
-N			unsigned blinkEnable :1;
-N			unsigned ra6 :1;
-N			unsigned ra7 :1;
-N			unsigned ra8 :1;
-N			unsigned ra9 :1;
-N		} bits;
-N	} status;
-N
-N//	uint8_t mode;
-N
-N} WORK_T;
-Nextern WORK_T g_tWork;
-N
-Nvoid app_work_Init(void);
-Nvoid app_work_1s_pro(void);
-Nvoid app_work_100ms_pro(void);
-N
-N#endif /* APP_INC_APP_WORK_H_ */
-L 20 "..\App\inc\app.h" 2
-N#include "app_2d4.h"
-L 1 "..\App\inc\app_2d4.h" 1
-N/*
-N * app_2d4.h
-N *
-N *  Created on: 2017年8月18日
-N *      Author: fly
-N */
-N
-N#ifndef APP_INC_APP_2D4_H_
-N#define APP_INC_APP_2D4_H_
-N
-N#define LCD2LAMP_HEADER   0xF2
-N#define LAMP2LCD_HEADER   0xF8
-N/*
-N #define POWER_SHORT_CMD      0xB1
-N #define POWER_LONG_CMD      0xBA
-N
-N #define ACC_CMD        0xB6
-N
-N #define UP_CMD         0xB3
-N #define DOWN_CMD       0xB4
-N #define DOME_CMD       0xB9
-N #define VOL_ADD_CMD    0xB5
-N #define VOL_MINUS_CMD  0xB7
-N
-N #define PLAY_CMD       0xB2
-N #define MODE_CMD       0xB8
-N */
-N/////////
-N#define  KEY_POWER_SHORT_CMD      0x01
-N//#define POWER_LONG_CMD      0xBA
-N
-N#define  KEY_ACC_CMD        0x09
-N#define  KEY_DOME_CMD       0xB9
-N
-N#define  KEY_UP_CMD           0x02
-N#define  KEY_DOWN_CMD         0x03
-N#define  KEY_VOL_ADD_CMD      0x04
-N#define  KEY_VOL_MINUS_CMD    0x05
-N#define  KEY_PLAY_SHORT_CMD   0x06
-N#define  KEY_PLAY_LONG_CMD    0x07
-N#define  KEY_MODE_CMD         0x08
-N///
-N
-N#define  RCV_POWER_STATUS_CMD                0x31
-N#define  RCV_X_BOX_STATUS_CMD                0x32
-N#define  RCV_BT_STATUS_CMD                   0x33
-N#define  RCV_PLAY_PAUSE_STATUS_CMD           0x34
-N#define  RCV_PREV_NEXT_CMD                   0x35
-N
-N#define  RCV_USB_PLAY_TIME_CMD               0x36
-N#define  RCV_FM_HZ_CMD                       0x37
-N#define  RCV_VOL_CMD                         0x38
-N
-N#define  MODE_CHANGE_CMD                     0x41
-N
-N#define  KEY_CARD_MODE_POWER_CMD           0x50
-N#define  KEY_CARD_MODE_POWER_LONG_CMD      0x70
-N#define  KEY_CARD_PREV_VOL_MINUS_CMD       0x51
-N#define  KEY_CARD_PREV_VOL_MINUS_LONG_CMD  0x71
-N#define  KEY_CARD_PLAY_BT_CALL_CMD         0x52
-N#define  KEY_CARD_PLAY_BT_CALL_LONG_CMD    0x72
-N#define  KEY_CARD_NEXT_VOL_ADD_CMD         0x53
-N#define  KEY_CARD_NEXT_VOL_ADD_LONG_CMD    0x73
-N
-N#define  KEY_CARD_POWER_CMD              0x54
-N#define  KEY_CARD_MODE_ADD_CMD           0x55
-N
-N#define  KEY_CARD_SPEED_ADD_CMD          0x56
-N#define  KEY_CARD_DEMO_CMD               0x57
-N#define  KEY_CARD_SPEED_MINUS_CMD        0x58
-N
-N#define  KEY_CARD_COLOR_ADD_CMD          0x59
-N#define  KEY_CARD_MODE_CMD               0x5A
-N#define  KEY_CARD_BRIGHT_ADD_CMD         0x5B
-N
-N#define  KEY_CARD_COLOR_MINUS_CMD        0x5C
-N#define  KEY_CARD_BRIGHT_MINUS_CMD       0x5D
-N
-N#define  KEY_CARD_NUM_1_CMD              0x5E
-N#define  KEY_CARD_NUM_1_LONG_CMD         0x7E
-N#define  KEY_CARD_NUM_2_CMD              0x5F
-N#define  KEY_CARD_NUM_3_CMD              0x60
-N#define  KEY_CARD_NUM_4_CMD              0x61
-N
-N#define  APP_COLOR_ATLA_CMD       0x62
-N#define  APP_BRIGHT_CMD           0x63
-N#define  APP_SPEED_CMD            0x64
-N#define  APP_FLASH_INDEX_CMD      0x65
-N#define  APP_SWITCH_INDEX_CMD      0x66
-N
-N#define  DEVICE_STA_CMD      0xF0
-N//extern uint8_t sendBuf[PAYLOAD_WIDTH];
-N
-Nvoid app_2d4_init(void);
-Nvoid app_2d4_send(uint8_t *d, uint8_t len);
-Nvoid app_2d4_pro(void);
-N
-N#endif /* APP_INC_APP_2D4_H_ */
-L 21 "..\App\inc\app.h" 2
-N#include "app_uart.h"
-L 1 "..\App\inc\app_uart.h" 1
-N/*
-N * app_uart.h
-N *
-N *  Created on: 2017年8月31日
-N *      Author: fly
-N */
-N
-N#ifndef APP_INC_APP_UART_H_
-N#define APP_INC_APP_UART_H_
-N
-N#define BLINK_METHOD_CMD   0x12
-N/*
-N #define POWER_LONG_UART_CMD      0x31
-N //#define POWER_LONG_UART_CMD      0xBA
-N
-N #define DOME_UART_CMD      0x32
-N
-N #define VOL_ADD_UART_CMD      0x36
-N #define VOL_MINUS_UART_CMD    0x37
-N
-N #define UP_UART_CMD    0x34
-N #define DOWN_UART_CMD    0x35
-N
-N #define PLAY_UART_CMD    0x38
-N
-N #define MODE_UART_CMD    0x39
-N */
-N
-Ntypedef struct _Uart_ST {
-N
-N	uint8_t rxBuf[512];
-N	uint8_t txBuf[256];
-N
-N	uint16_t pWrite;
-N	uint16_t pRead;
-N
-N} Uart_ST;
-N
-Nvoid app_uart_Init(void);
-Nvoid app_uart_send(uint8_t cmd, uint8_t *ptr, uint8_t len);
-Nvoid app_uart_pro(void);
-N
-N#endif /* APP_INC_APP_UART_H_ */
-L 22 "..\App\inc\app.h" 2
-N#include "app_crc.h"
-L 1 "..\App\inc\app_crc.h" 1
-N/*
-N * app_crc.h
-N *
-N *  Created on: 2017年8月31日
-N *      Author: fly
-N */
-N
-N#ifndef APP_INC_APP_CRC_H_
-N#define APP_INC_APP_CRC_H_
-N
-Nuint8_t app_CalcCRC8(uint8_t *ptr, uint8_t len);
-Nuint8_t app_CalcCRC8_cycle(uint8_t *ptr, uint16_t len, uint16_t pos,
-N		uint16_t bufLen);
-N
-N#endif /* APP_INC_APP_CRC_H_ */
-L 23 "..\App\inc\app.h" 2
-N#include "app_dome.h"
-L 1 "..\App\inc\app_dome.h" 1
-N/*
-N * app_dome.h
-N *
-N *  Created on: 2017年9月8日
-N *      Author: fly
-N */
-N
-N#ifndef APP_INC_APP_DOME_H_
-N#define APP_INC_APP_DOME_H_
-N
-N//#define DOME_SPEED_MULTIPLE   2
-N//#define DEFAULT_DOME_NUM   22  //use 2.5KB
-N//#define DEFAULT_DOME_NUM   26  //use 3KB
-N//#define DEFAULT_DOME_NUM   44  //use 5KB
-N
-N#pragma pack(1)
-Ntypedef struct _DOME_PRO_T {
-N	uint8_t currentDomeIndex;
-N//	uint8_t currentSubDomeIndex;
-N
-N} DOME_PRO_T;
-N#pragma pack()
-N
-N#pragma pack(1)
-Ntypedef struct _SUBDOME_ASSIST_T {
-N	uint8_t switch_flag;
-N	uint32_t msCnt;
-N	uint8_t stopTime;
-N} SUBDOME_ASSIST_T;
-N#pragma pack()
-N///////
-N#pragma pack(1)
-Ntypedef struct _COLOR_T {
-N	uint8_t R;
-N	uint8_t G;
-N	uint8_t B;
-N} COLOR_T;
-N#pragma pack()
-N
-N#pragma pack(1)
-Ntypedef struct _SUBDOME_T {
-N	uint8_t mode;
-N	COLOR_T color1;
-N	COLOR_T color2;
-N	uint8_t repeate;
-N	uint8_t bright;
-N	uint16_t speed;
-N	uint16_t offtime;
-N} SUBDOME_T;
-N#pragma pack()
-N//typedef union _REPEAT_NUMBER_T {
-N//	uint8_t datas;
-N//	struct {
-N//		unsigned repeat :4;
-N//		unsigned number :4;
-N//	} bits;
-N//} REPEAT_NUMBER_T;
-N
-N#pragma pack(1)
-Ntypedef struct _DOME_HEADER_T {
-N	char name[8];
-N	uint8_t index;  //刚加的
-N	uint8_t repeat_number;  //闪法重复的次数，单元模式的数量
-N} DOME_HEADER_T;
-N#pragma pack()
-N
-N#pragma pack(1)
-Ntypedef struct _DOME_DEFAULT_T {
-N	DOME_HEADER_T header;
-N	SUBDOME_T subdome[8];
-N} DOME_DEFAULT_T;
-N#pragma pack()
-N
-N#pragma pack(1)
-Ntypedef struct _DOME_RUNNING_T {
-N	uint8_t bright;
-N	uint8_t speed;
-N	struct {
-N		uint16_t R;
-N		uint16_t G;
-N		uint16_t B;
-N	} color;
-N} DOME_RUNNING_T;
-N#pragma pack()
-N
-Nextern uint8_t blink_number; //闪法的总数量
-Nextern DOME_DEFAULT_T dome_blink;
-Nextern DOME_RUNNING_T dome_running_param;
-N
-Nvoid app_dome_Init(void);
-N
-Nvoid app_color_blink_previous(void);
-Nvoid app_color_blink_next(void);
-N
-Nvoid app_dome_start(uint8_t index, uint8_t dir);
-Nvoid app_dome_previous(void);
-Nvoid app_dome_next(void);
-Nvoid app_dome_get_current_Name(uint8_t *name, uint8_t len);
-Nvoid app_dome_start_current(void);
-Nvoid app_dome_stop_current(void);
-Nvoid app_dome_rgb(uint8_t r, uint8_t g, uint8_t b);
-Nvoid app_dome_interrupter(void);
-N
-N#endif /* APP_INC_APP_DOME_H_ */
-L 24 "..\App\inc\app.h" 2
-N#include "app_eeprom.h"
-L 1 "..\App\inc\app_eeprom.h" 1
-N/*
-N * app_eeprom.h
-N *
-N *  Created on: 2017年9月8日
-N *      Author: fly
-N */
-N
-N#ifndef APP_INC_APP_EEPROM_H_
-N#define APP_INC_APP_EEPROM_H_
-N
-N
-N
-Nvoid app_eeprom_Init(void);
-Nvoid app_eeprom_get_dome_with_index(DOME_DEFAULT_T* dd, uint8_t index);
-N
-Nvoid app_eeprom_erase(uint32_t addr);
-Nvoid app_eeprom_write_int(uint32_t addr, uint32_t d);
-Nuint32_t app_eeprom_read_int(uint32_t addr);
-N
-N#endif /* APP_INC_APP_EEPROM_H_ */
-L 25 "..\App\inc\app.h" 2
-N
-N
 N#include "lite-log.h"
 L 1 "..\utils\inc\lite-log.h" 1
 N/*
@@ -21530,7 +20756,782 @@ X#if 0L
 S}
 N#endif
 N#endif  /* __LITE_LOG_H__ */
-L 28 "..\App\inc\app.h" 2
+L 16 "..\Bsp\bsp.h" 2
+N
+N#include "bsp_2d4.h"
+L 1 "..\Bsp\inc\bsp_2d4.h" 1
+N/*
+N * bsp_bt.h
+N *
+N *  Created on: 2017年6月26日
+N *      Author: fly
+N */
+N
+N#ifndef BSP_INC_BSP_2D4_H_
+N#define BSP_INC_BSP_2D4_H_
+N
+N#define         CSN_HIGH                (P04 = 1)
+N#define         CSN_LOW                 (P04 = 0)
+N#define         SCK_HIGH                P07 = 1;delay_2d4(1)
+N#define         SCK_LOW                 P07 = 0;delay_2d4(1)
+N
+N#define         SPI_DATA_HIGH           (P05 = 1)
+N#define         SPI_DATA_LOW            (P05 = 0)
+N#define         SPI_DATA_STATUS         (P05)
+N#define         SPI_DATA_OUTPUT_MODE     GPIO_SetMode(P0, BIT5, GPIO_MODE_OUTPUT);
+N#define         SPI_DATA_INPUT_MODE      GPIO_SetMode(P0, BIT5, GPIO_MODE_INPUT);
+N#define         CE_HIGH                  RF_WriteReg(CE_FSPI_ON, 0)
+N#define         CE_LOW                   RF_WriteReg(CE_FSPI_OFF, 0)
+N////////////////////////////////////////////////////////////////////////////////
+N//                    以下为声明部分，不建议修改                              //
+N////////////////////////////////////////////////////////////////////////////////
+N
+N/********************SPI  REGISTER  ********************/
+N#define		R_REGISTER			0x00                            //SPI read RF data
+N#define		W_REGISTER			0x20                            //SPI write RF data
+N#define		R_RX_PAYLOAD		0x61                            //Read RX Payload
+N#define		W_TX_PAYLOAD		0xA0                            //Write TX Payload
+N#define		FLUSH_TX			0xE1                            //Flush RX FIFO
+N#define		FLUSH_RX			0xE2                            //Flush TX FIFO
+N#define		REUSE_TX_PL			0xE3                            //Reuse TX Payload
+N#define		ACTIVATE			0x50                            //ACTIVATE
+N#define		DEACTIVATE			0x50                            //DEACTIVATE
+N#define		R_RX_PL_WID			0x60                            //Read width of RX data
+N#define		W_ACK_PAYLOAD		        0xA8                            //Data with ACK
+N#define		W_TX_PAYLOAD_NOACK	        0xB0                            //TX Payload no ACK Request
+N#define		CE_FSPI_ON	                0xFD                            // CE HIGH
+N#define		CE_FSPI_OFF	                0xFC                            // CE LOW
+N#define		RST_FSPI	                0x53                            // RESET
+N#define		NOP_N				0xFF
+N
+N/******************CONTROL  REGISTER*******************/
+N#define		CONFIG              0x00
+N#define		EN_AA				0x01
+N#define		EN_RXADDR			0x02
+N#define		SETUP_AW			0x03
+N#define		SETUP_RETR			0x04
+N#define		RF_CH				0x05
+N#define		RF_SETUP			0x06
+N#define		STATUS				0x07
+N#define		OBSERVE_TX			0x08
+N#define		DATAOUT			    0x09
+N#define		RX_ADDR_P0			0x0A
+N#define		RX_ADDR_P1			0x0B
+N#define		RX_ADDR_P2			0x0C
+N#define		RX_ADDR_P3			0x0D
+N#define		RX_ADDR_P4			0x0E
+N#define		RX_ADDR_P5			0x0F
+N#define		TX_ADDR				0x10
+N#define		RX_PW_P0			0x11
+N#define		RX_PW_P1			0x12
+N#define		RX_PW_P2			0x13
+N#define		RX_PW_P3			0x14
+N#define		RX_PW_P4			0x15
+N#define		RX_PW_P5			0x16
+N#define		FIFO_STATUS			0x17
+N#define		DEMOD_CAL				0x19
+N#define     RF_CAL2				0x1A
+N#define     DEM_CAL2			0x1B
+N#define		DYNPD				0x1C
+N#define		FEATURE				0x1D
+N#define		RF_CAL				0x1E
+N#define		BB_CAL				0x1F
+N
+N/////////////////////////////////////////////////////////////////////////////////////
+N/*************************CONTROL CMD***********************************************/
+N#define         RF13dBm                         0x3F                            // 13dBm  发射档位功率设置
+N#define         RF10dBm                         0X0F                            // 10dBm
+N#define         RF8dBm                          0x15                            // 8dbm
+N#define         RF7dBm                          0x07                            // 7dbm
+N#define         RF5dBm                          0x2c                            // 5dbm
+N#define         RF4dBm                          0x06                            // 4dbm
+N#define         RF2dBm                          0x05                            // 2dbm
+N#define         RF0dBm                          0X0B                            // 0dBm
+N#define         RF_3dBm                         0x04                            // -3dBm
+N#define         RF_6dBm                         0x0A                            // -6dBm
+N#define         RF_10dBm                        0x02                            // -10dBm
+N#define         RF_18dBm                        0x01                            // -18dBm
+N#define         RF_30dBm                        0x00                            // -30dBm
+N
+N#define         DR_1M                           0X00				//通信速率 1Mbps
+N#define         DR_2M                           0X40				//通信速率 2Mbps
+N#define         DR_250K                         0XC0                            //通信速率 250Kbps
+N#define         RX_DR_FLAG                      0X40                            // 接收中断标志位
+N#define         TX_DS_FLAG                      0X20                            // 发送完成中断标志位
+N#define         RX_TX_CMP_FLAG                  0X60                            // 发送接收完成中断标志位，ack_payload 模式下使用
+N#define         MAX_RT_FLAG                     0X10                            // 发送重传超时中断标志位
+N#define         TRANS_ENHANCE_MODE              1                               //传输类型增强型
+N#define         TRANS_BURST_MODE                2                               //传输类型普通型
+N///////////////////////////////////////////////////////////////////////////////
+N//                  根据用户应用，以下部分可能需要修改                       //
+N///////////////////////////////////////////////////////////////////////////////
+N/******************* Function declare *******************/
+Nvoid Wireless2d4_InitHard(void);
+N
+Nvoid SPI_WW(uint8_t R_REG);
+Nvoid RF_WriteReg(uint8_t reg, uint8_t wdata);
+Nvoid RF_WriteBuf(uint8_t reg, uint8_t *pBuf, uint8_t length);
+Nvoid SPI_WR(uint8_t R_REG);
+Nuint8_t ucSPI_Read(void);
+Nuint8_t ucRF_ReadReg(uint8_t reg);
+Nvoid RF_ReadBuf(uint8_t reg, uint8_t *pBuf, uint8_t length);
+Nvoid RF_TxMode(void);
+Nvoid RF_RxMode(void);
+Nuint8_t ucRF_GetStatus(void);
+Nuint8_t ucRF_GetRSSI(void);
+Nvoid RF_ClearStatus(void);
+Nvoid RF_ClearFIFO(void);
+Nvoid RF_SetChannel(uint8_t Channel);
+Nvoid RF_TxData(uint8_t *ucPayload, uint8_t length);
+Nuint8_t ucRF_DumpRxData(uint8_t *ucPayload, uint8_t length);
+Nvoid RF_Carrier(uint8_t ucChannel_Set);
+Nvoid RF_Init(void);
+N
+N/******************Parameter define **********************/
+N
+N#define         DEFAULT_CHANNEL                78				//初始化时的频率： 2478 MHz
+N#define         PAYLOAD_WIDTH                  16				//Payload宽度：    8bytes
+N#define         TRANSMIT_TYPE                  TRANS_BURST_MODE 		//使用普通型模式    TRANS_BURST_MODE    TRANS_ENHANCE_MODE
+N#define         DATA_RATE                      DR_1M                            //通信速率1Mbps       DR_2M    DR_1M  DR_250K
+N#define         RF_POWER                      (RF13dBm |DATA_RATE)		//发射功率13dBm
+N
+N#endif /* BSP_INC_BSP_2D4_H_ */
+L 18 "..\Bsp\bsp.h" 2
+N//#include "bsp_uart.h"
+N#include "bsp_timer0.h"
+L 1 "..\Bsp\inc\bsp_timer0.h" 1
+N/*
+N * bsp_timer0.h
+N *
+N *  Created on: 2017年6月28日
+N *      Author: fly
+N */
+N
+N#ifndef BSP_INC_BSP_TIMER0_H_
+N#define BSP_INC_BSP_TIMER0_H_
+N
+Ntypedef struct {
+N
+N//	uint8_t cnt_1ms;
+N	uint8_t flag_1ms;
+N
+N	uint8_t cnt_10ms;
+N	uint8_t flag_10ms;
+N
+N	uint8_t cnt_100ms;
+N	uint8_t flag_100ms;
+N
+N	uint8_t cnt_500ms;
+N	uint8_t flag_500ms;
+N
+N	uint16_t cnt_1s;
+N	uint8_t flag_1s;
+N
+N} Task_time;
+N
+N//extern _Task_time Task_time;
+N
+Nvoid Timer0_InitHard(void);
+NTask_time* timer0_taskTimer_get(void);
+N
+N#endif /* BSP_INC_BSP_TIMER0_H_ */
+L 20 "..\Bsp\bsp.h" 2
+N#include "bsp_light.h"
+L 1 "..\Bsp\inc\bsp_light.h" 1
+N/*
+N * bsp_light.h
+N *
+N *  Created on: 2017年8月18日
+N *      Author: fly
+N */
+N
+N#ifndef BSP_INC_BSP_LIGHT_H_
+N#define BSP_INC_BSP_LIGHT_H_
+N
+Nvoid Light_InitHard(void);
+N//void Light_Red_set(uint16_t duty);
+N//void Light_Green_set(uint16_t duty);
+N//void Light_Blue_set(uint16_t duty);
+Nvoid Light_RGB_set(uint16_t r, uint16_t g, uint16_t b);
+Nvoid Light_bright_set(uint8_t br);
+N
+N#endif /* BSP_INC_BSP_LIGHT_H_ */
+L 21 "..\Bsp\bsp.h" 2
+N#include "bsp_relay.h"
+L 1 "..\Bsp\inc\bsp_relay.h" 1
+N/*
+N * bsp_relay.h
+N *
+N *  Created on: 2017年8月18日
+N *      Author: fly
+N */
+N
+N#ifndef BSP_INC_BSP_RELAY_H_
+N#define BSP_INC_BSP_RELAY_H_
+N
+Nvoid Relay_InitHard(void);
+Nvoid Relay_on(void);
+Nvoid Relay_off(void);
+Nvoid Relay_toggle(void);
+Nuint8_t Relay_IsOn(void);
+Nvoid Relay_set(uint8_t s);
+N
+N#endif /* BSP_INC_BSP_RELAY_H_ */
+L 22 "..\Bsp\bsp.h" 2
+N#include "bsp_eeprom.h"
+L 1 "..\Bsp\inc\bsp_eeprom.h" 1
+N/*
+N * bsp_eeprom.h
+N *
+N *  Created on: 2017年9月8日
+N *      Author: fly
+N */
+N
+N#ifndef BSP_INC_BSP_EEPROM_H_
+N#define BSP_INC_BSP_EEPROM_H_
+N
+N//#define DOME_START_ADDR   0x3C00  //use 3KB
+N//#define DOME_START_ADDR   0x3E00  //use 2.5KB
+N#define DOME_START_ADDR   0x6C00  //use 5KB
+N
+N
+Nvoid EEPROM_InitHard(void);
+N
+Nvoid bsp_eeprom_write_int(uint32_t u32addr, uint32_t u32data);
+Nint32_t bsp_eeprom_erase(uint32_t u32addr);
+Nuint32_t bsp_eeprom_read_int(uint32_t u32Addr);
+N
+N#endif /* BSP_INC_BSP_EEPROM_H_ */
+L 23 "..\Bsp\bsp.h" 2
+N#include "bsp_key.h"
+L 1 "..\Bsp\inc\bsp_key.h" 1
+N/*
+N *********************************************************************************************************
+N *
+N *	模块名称 : 按键驱动模块
+N *	文件名称 : bsp_key.h
+N *	版    本 : V1.0
+N *	说    明 : 头文件
+N *
+N *********************************************************************************************************
+N */
+N
+N#ifndef __BSP_KEY_H
+N#define __BSP_KEY_H
+N
+N#define KEY_COUNT    2
+N
+N/* 根据应用程序的功能重命名按键宏 */
+N#define KEY_DOWN_K1		KEY_1_DOWN
+N#define KEY_UP_K1		KEY_1_UP
+N#define KEY_LONG_K1		KEY_1_LONG
+N
+N#define KEY_DOWN_K2		KEY_2_DOWN
+N#define KEY_UP_K2		KEY_2_UP
+N#define KEY_LONG_K2		KEY_2_LONG
+N
+N
+N/* 按键ID, 主要用于bsp_KeyState()函数的入口参数 */
+Ntypedef enum {
+N	KID_K1 = 0,
+N	KID_K2,
+N} KEY_ID_E;
+N
+N/*
+N 按键滤波时间50ms, 单位10ms。
+N 只有连续检测到50ms状态不变才认为有效，包括弹起和按下两种事件
+N 即使按键电路不做硬件滤波，该滤波机制也可以保证可靠地检测到按键事件
+N */
+N#define KEY_FILTER_TIME   5
+N#define KEY_LONG_TIME     100			/* 单位10ms， 持续1秒，认为长按事件 */
+N
+N/*
+N 每个按键对应1个全局的结构体变量。
+N */
+Ntypedef struct {
+N	/* 下面是一个函数指针，指向判断按键手否按下的函数 */
+N	uint8_t (*IsKeyDownFunc)(void); /* 按键按下的判断函数,1表示按下 */
+N
+N	uint8_t Count; /* 滤波器计数器 */
+N	uint16_t LongCount; /* 长按计数器 */
+N	uint16_t LongTime; /* 按键按下持续时间, 0表示不检测长按 */
+N	uint8_t State; /* 按键当前状态（按下还是弹起） */
+N	uint8_t RepeatSpeed; /* 连续按键周期 */
+N	uint8_t RepeatCount; /* 连续按键计数器 */
+N} KEY_T;
+N
+N/*
+N 定义键值代码, 必须按如下次序定时每个键的按下、弹起和长按事件
+N
+N 推荐使用enum, 不用#define，原因：
+N (1) 便于新增键值,方便调整顺序，使代码看起来舒服点
+N (2) 编译器可帮我们避免键值重复。
+N */
+Ntypedef enum {
+N	KEY_NONE = 0, /* 0 表示按键事件 */
+N
+N	KEY_1_DOWN, /* 1键按下 */
+N	KEY_1_UP, /* 1键弹起 */
+N	KEY_1_LONG, /* 1键长按 */
+N
+N	KEY_2_DOWN, /* 2键按下 */
+N	KEY_2_UP, /* 2键弹起 */
+N	KEY_2_LONG, /* 2键长按 */
+N} KEY_ENUM;
+N
+N/* 按键FIFO用到变量 */
+N#define KEY_FIFO_SIZE	10
+Ntypedef struct {
+N	uint8_t Buf[KEY_FIFO_SIZE]; /* 键值缓冲区 */
+X	uint8_t Buf[10];  
+N	uint8_t Read; /* 缓冲区读指针1 */
+N	uint8_t Write; /* 缓冲区写指针 */
+N	uint8_t Read2; /* 缓冲区读指针2 */
+N} KEY_FIFO_T;
+N
+N/* 供外部调用的函数声明 */
+Nvoid bsp_InitKey(void);
+Nvoid bsp_KeyScan(void);
+Nvoid bsp_PutKey(uint8_t _KeyCode);
+Nuint8_t bsp_GetKey(void);
+Nuint8_t bsp_GetKey2(void);
+Nuint8_t bsp_GetKeyState(KEY_ID_E _ucKeyID);
+Nvoid bsp_SetKeyParam(uint8_t _ucKeyID, uint16_t _LongTime, uint8_t _RepeatSpeed);
+Nvoid bsp_ClearKey(void);
+N
+N#endif
+N
+N/*****************************(END OF FILE) *********************************/
+L 24 "..\Bsp\bsp.h" 2
+N#include "bsp_uart_fifo.h"
+L 1 "..\Bsp\inc\bsp_uart_fifo.h" 1
+N#ifndef _BSP_USART_FIFO_H_
+N#define _BSP_USART_FIFO_H_
+N
+N#define	UART0_FIFO_EN	1
+N#define	UART1_FIFO_EN	1
+N
+N///* RS485芯片发送使能GPIO, PB2 */
+N//#define RCC_RS485_TXEN 	 RCC_APB2Periph_GPIOB
+N//#define PORT_RS485_TXEN  GPIOB
+N//#define PIN_RS485_TXEN	 GPIO_Pin_2
+N
+N//#define RS485_RX_EN()	PORT_RS485_TXEN->BRR = PIN_RS485_TXEN
+N//#define RS485_TX_EN()	PORT_RS485_TXEN->BSRR = PIN_RS485_TXEN
+N
+N/* 定义端口号 */
+Ntypedef enum {
+N	COM0 = 0, COM1 = 1,
+N} COM_PORT_E;
+N
+N
+N#if UART0_FIFO_EN == 1
+X#if 1 == 1
+N#define UART0_BAUD			115200
+N#define UART0_TX_BUF_SIZE	1*64
+N#define UART0_RX_BUF_SIZE	1*64
+N#endif
+N
+N#if UART1_FIFO_EN == 1
+X#if 1 == 1
+N#define UART1_BAUD			19200
+N#define UART1_TX_BUF_SIZE	1*256
+N#define UART1_RX_BUF_SIZE	1*256
+N#endif
+N
+N/* 串口设备结构体 */
+Ntypedef struct {
+N	UART_T *uart; /* STM32内部串口设备指针 */
+N	uint8_t *pTxBuf; /* 发送缓冲区 */
+N	uint8_t *pRxBuf; /* 接收缓冲区 */
+N	uint16_t usTxBufSize; /* 发送缓冲区大小 */
+N	uint16_t usRxBufSize; /* 接收缓冲区大小 */
+N	__IO uint16_t usTxWrite; /* 发送缓冲区写指针 */
+X	volatile uint16_t usTxWrite;  
+N	__IO uint16_t usTxRead; /* 发送缓冲区读指针 */
+X	volatile uint16_t usTxRead;  
+N	__IO uint16_t usTxCount; /* 等待发送的数据个数 */
+X	volatile uint16_t usTxCount;  
+N
+N	__IO uint16_t usRxWrite; /* 接收缓冲区写指针 */
+X	volatile uint16_t usRxWrite;  
+N	__IO uint16_t usRxRead; /* 接收缓冲区读指针 */
+X	volatile uint16_t usRxRead;  
+N	__IO uint16_t usRxCount; /* 还未读取的新数据个数 */
+X	volatile uint16_t usRxCount;  
+N
+N	void (*SendBefor)(void); /* 开始发送之前的回调函数指针（主要用于RS485切换到发送模式） */
+N	void (*SendOver)(void); /* 发送完毕的回调函数指针（主要用于RS485将发送模式切换为接收模式） */
+N	void (*ReciveNew)(uint8_t _byte); /* 串口收到数据的回调函数指针 */
+N} UART_T_M;
+N
+Nvoid bsp_InitUart(void);
+Nvoid comSendBuf(COM_PORT_E _ucPort, uint8_t *_ucaBuf, uint16_t _usLen);
+Nvoid comSendChar(COM_PORT_E _ucPort, uint8_t _ucByte);
+Nuint8_t comGetChar(COM_PORT_E _ucPort, uint8_t *_pByte);
+N
+Nvoid comClearTxFifo(COM_PORT_E _ucPort);
+Nvoid comClearRxFifo(COM_PORT_E _ucPort);
+N
+N//void RS485_SendBuf(uint8_t *_ucaBuf, uint16_t _usLen);
+N//void RS485_SendStr(char *_pBuf);
+N
+N//void bsp_Set485Baud(uint32_t _baud);
+N
+Nvoid bsp_SetUart1Baud(uint32_t _baud);
+Nvoid bsp_SetUart2Baud(uint32_t _baud);
+N
+N#endif
+N
+N/***************************** 安富莱电子 www.armfly.com (END OF FILE) *********************************/
+L 25 "..\Bsp\bsp.h" 2
+N
+N#define ENABLE_INT()	__set_PRIMASK(0)
+N#define DISABLE_INT()	__set_PRIMASK(1)
+N
+Nvoid bsp_Init(void);
+N
+N#endif
+N
+N/***************************** (END OF FILE) *********************************/
+L 18 "..\App\inc\app.h" 2
+N//#include "app_repeat_exe.h"
+N#include "app_work.h"
+L 1 "..\App\inc\app_work.h" 1
+N/*
+N * app_work.h
+N *
+N *  Created on: 2017年7月6日
+N *      Author: admin
+N */
+N
+N#ifndef APP_INC_APP_WORK_H_
+N#define APP_INC_APP_WORK_H_
+N
+Ntypedef struct _WORK_T {
+N
+N	union {
+N		uint8_t allbits;
+N		struct {
+N			unsigned DOME :1;
+N			unsigned ra2 :1;
+N			unsigned DEMO :1;
+N			unsigned blinkEnable :1;
+N			unsigned ra6 :1;
+N			unsigned ra7 :1;
+N			unsigned ra8 :1;
+N			unsigned ra9 :1;
+N		} bits;
+N	} status;
+N
+N//	uint8_t mode;
+N
+N} WORK_T;
+Nextern WORK_T g_tWork;
+N
+Nvoid app_work_Init(void);
+Nvoid app_work_1s_pro(void);
+Nvoid app_work_100ms_pro(void);
+N
+N#endif /* APP_INC_APP_WORK_H_ */
+L 20 "..\App\inc\app.h" 2
+N#include "app_2d4.h"
+L 1 "..\App\inc\app_2d4.h" 1
+N/*
+N * app_2d4.h
+N *
+N *  Created on: 2017年8月18日
+N *      Author: fly
+N */
+N
+N#ifndef APP_INC_APP_2D4_H_
+N#define APP_INC_APP_2D4_H_
+N
+N#define LCD2LAMP_HEADER   0xF2
+N#define LAMP2LCD_HEADER   0xF8
+N/*
+N #define POWER_SHORT_CMD      0xB1
+N #define POWER_LONG_CMD      0xBA
+N
+N #define ACC_CMD        0xB6
+N
+N #define UP_CMD         0xB3
+N #define DOWN_CMD       0xB4
+N #define DOME_CMD       0xB9
+N #define VOL_ADD_CMD    0xB5
+N #define VOL_MINUS_CMD  0xB7
+N
+N #define PLAY_CMD       0xB2
+N #define MODE_CMD       0xB8
+N */
+N/////////
+N#define  KEY_POWER_SHORT_CMD      0x01
+N//#define POWER_LONG_CMD      0xBA
+N
+N#define  KEY_ACC_CMD        0x09
+N#define  KEY_DOME_CMD       0xB9
+N
+N#define  KEY_UP_CMD           0x02
+N#define  KEY_DOWN_CMD         0x03
+N#define  KEY_VOL_ADD_CMD      0x04
+N#define  KEY_VOL_MINUS_CMD    0x05
+N#define  KEY_PLAY_SHORT_CMD   0x06
+N#define  KEY_PLAY_LONG_CMD    0x07
+N#define  KEY_MODE_CMD         0x08
+N///
+N
+N#define  RCV_POWER_STATUS_CMD                0x31
+N#define  RCV_X_BOX_STATUS_CMD                0x32
+N#define  RCV_BT_STATUS_CMD                   0x33
+N#define  RCV_PLAY_PAUSE_STATUS_CMD           0x34
+N#define  RCV_PREV_NEXT_CMD                   0x35
+N
+N#define  RCV_USB_PLAY_TIME_CMD               0x36
+N#define  RCV_FM_HZ_CMD                       0x37
+N#define  RCV_VOL_CMD                         0x38
+N
+N#define  MODE_CHANGE_CMD                     0x41
+N
+N#define  KEY_CARD_MODE_POWER_CMD           0x50
+N#define  KEY_CARD_MODE_POWER_LONG_CMD      0x70
+N#define  KEY_CARD_PREV_VOL_MINUS_CMD       0x51
+N#define  KEY_CARD_PREV_VOL_MINUS_LONG_CMD  0x71
+N#define  KEY_CARD_PLAY_BT_CALL_CMD         0x52
+N#define  KEY_CARD_PLAY_BT_CALL_LONG_CMD    0x72
+N#define  KEY_CARD_NEXT_VOL_ADD_CMD         0x53
+N#define  KEY_CARD_NEXT_VOL_ADD_LONG_CMD    0x73
+N
+N#define  KEY_CARD_POWER_CMD              0x54
+N#define  KEY_CARD_MODE_ADD_CMD           0x55
+N
+N#define  KEY_CARD_SPEED_ADD_CMD          0x56
+N#define  KEY_CARD_DEMO_CMD               0x57
+N#define  KEY_CARD_SPEED_MINUS_CMD        0x58
+N
+N#define  KEY_CARD_COLOR_ADD_CMD          0x59
+N#define  KEY_CARD_MODE_CMD               0x5A
+N#define  KEY_CARD_BRIGHT_ADD_CMD         0x5B
+N
+N#define  KEY_CARD_COLOR_MINUS_CMD        0x5C
+N#define  KEY_CARD_BRIGHT_MINUS_CMD       0x5D
+N
+N#define  KEY_CARD_NUM_1_CMD              0x5E
+N#define  KEY_CARD_NUM_1_LONG_CMD         0x7E
+N#define  KEY_CARD_NUM_2_CMD              0x5F
+N#define  KEY_CARD_NUM_3_CMD              0x60
+N#define  KEY_CARD_NUM_4_CMD              0x61
+N
+N#define  APP_COLOR_ATLA_CMD       0x62
+N#define  APP_BRIGHT_CMD           0x63
+N#define  APP_SPEED_CMD            0x64
+N#define  APP_FLASH_INDEX_CMD      0x65
+N#define  APP_SWITCH_INDEX_CMD      0x66
+N
+N#define  DEVICE_STA_CMD      0xF0
+N//extern uint8_t sendBuf[PAYLOAD_WIDTH];
+N
+Nvoid app_2d4_init(void);
+Nvoid app_2d4_send(uint8_t *d, uint8_t len);
+Nvoid app_2d4_pro(void);
+N
+N#endif /* APP_INC_APP_2D4_H_ */
+L 21 "..\App\inc\app.h" 2
+N#include "app_uart.h"
+L 1 "..\App\inc\app_uart.h" 1
+N/*
+N * app_uart.h
+N *
+N *  Created on: 2017年8月31日
+N *      Author: fly
+N */
+N
+N#ifndef APP_INC_APP_UART_H_
+N#define APP_INC_APP_UART_H_
+N
+N#define BLINK_METHOD_CMD   0x12
+N/*
+N #define POWER_LONG_UART_CMD      0x31
+N //#define POWER_LONG_UART_CMD      0xBA
+N
+N #define DOME_UART_CMD      0x32
+N
+N #define VOL_ADD_UART_CMD      0x36
+N #define VOL_MINUS_UART_CMD    0x37
+N
+N #define UP_UART_CMD    0x34
+N #define DOWN_UART_CMD    0x35
+N
+N #define PLAY_UART_CMD    0x38
+N
+N #define MODE_UART_CMD    0x39
+N */
+N
+Ntypedef struct _Uart_ST {
+N
+N	uint8_t rxBuf[512];
+N	uint8_t txBuf[256];
+N
+N	uint16_t pWrite;
+N	uint16_t pRead;
+N
+N} Uart_ST;
+N
+Nvoid app_uart_Init(void);
+Nvoid app_uart_send(uint8_t cmd, uint8_t *ptr, uint8_t len);
+Nvoid app_uart_pro(void);
+N
+N#endif /* APP_INC_APP_UART_H_ */
+L 22 "..\App\inc\app.h" 2
+N#include "app_crc.h"
+L 1 "..\App\inc\app_crc.h" 1
+N/*
+N * app_crc.h
+N *
+N *  Created on: 2017年8月31日
+N *      Author: fly
+N */
+N
+N#ifndef APP_INC_APP_CRC_H_
+N#define APP_INC_APP_CRC_H_
+N
+Nuint8_t app_CalcCRC8(uint8_t *ptr, uint8_t len);
+Nuint8_t app_CalcCRC8_cycle(uint8_t *ptr, uint16_t len, uint16_t pos,
+N		uint16_t bufLen);
+N
+N#endif /* APP_INC_APP_CRC_H_ */
+L 23 "..\App\inc\app.h" 2
+N#include "app_dome.h"
+L 1 "..\App\inc\app_dome.h" 1
+N/*
+N * app_dome.h
+N *
+N *  Created on: 2017年9月8日
+N *      Author: fly
+N */
+N
+N#ifndef APP_INC_APP_DOME_H_
+N#define APP_INC_APP_DOME_H_
+N
+N//#define DOME_SPEED_MULTIPLE   2
+N//#define DEFAULT_DOME_NUM   22  //use 2.5KB
+N//#define DEFAULT_DOME_NUM   26  //use 3KB
+N//#define DEFAULT_DOME_NUM   44  //use 5KB
+N
+N#pragma pack(1)
+Ntypedef struct _DOME_PRO_T {
+N	uint8_t currentDomeIndex;
+N//	uint8_t currentSubDomeIndex;
+N
+N} DOME_PRO_T;
+N#pragma pack()
+N
+N#pragma pack(1)
+Ntypedef struct _SUBDOME_ASSIST_T {
+N	uint8_t switch_flag;
+N	uint32_t msCnt;
+N	uint8_t stopTime;
+N} SUBDOME_ASSIST_T;
+N#pragma pack()
+N///////
+N#pragma pack(1)
+Ntypedef struct _COLOR_T {
+N	uint8_t R;
+N	uint8_t G;
+N	uint8_t B;
+N} COLOR_T;
+N#pragma pack()
+N
+N#pragma pack(1)
+Ntypedef struct _SUBDOME_T {
+N	uint8_t mode;
+N	COLOR_T color1;
+N	COLOR_T color2;
+N	uint8_t repeate;
+N	uint16_t speed;
+N	uint8_t bright;
+N	uint16_t offtime;
+N} SUBDOME_T;
+N#pragma pack()
+N//typedef union _REPEAT_NUMBER_T {
+N//	uint8_t datas;
+N//	struct {
+N//		unsigned repeat :4;
+N//		unsigned number :4;
+N//	} bits;
+N//} REPEAT_NUMBER_T;
+N
+N#pragma pack(1)
+Ntypedef struct _DOME_HEADER_T {
+N	char name[8];
+N	uint8_t index;  //刚加的
+N	uint8_t repeat_number;  //闪法重复的次数，单元模式的数量
+N} DOME_HEADER_T;
+N#pragma pack()
+N
+N#pragma pack(1)
+Ntypedef struct _DOME_DEFAULT_T {
+N	DOME_HEADER_T header;
+N	SUBDOME_T subdome[8];
+N} DOME_DEFAULT_T;
+N#pragma pack()
+N
+N#pragma pack(1)
+Ntypedef struct _DOME_RUNNING_T {
+N	uint8_t bright;
+N	uint8_t speed;
+N	struct {
+N		uint16_t R;
+N		uint16_t G;
+N		uint16_t B;
+N	} color;
+N} DOME_RUNNING_T;
+N#pragma pack()
+N
+Nextern uint8_t blink_number; //闪法的总数量
+Nextern DOME_DEFAULT_T dome_blink;
+Nextern DOME_RUNNING_T dome_running_param;
+N
+Nvoid app_dome_Init(void);
+N
+Nvoid app_color_blink_previous(void);
+Nvoid app_color_blink_next(void);
+N
+Nvoid app_dome_start(uint8_t index);
+Nvoid app_dome_previous(void);
+Nvoid app_dome_next(void);
+Nvoid app_dome_get_current_Name(uint8_t *name, uint8_t len);
+Nvoid app_dome_start_current(void);
+Nvoid app_dome_stop_current(void);
+Nvoid app_dome_rgb(uint8_t r, uint8_t g, uint8_t b);
+Nvoid app_dome_interrupter(void);
+N
+N#endif /* APP_INC_APP_DOME_H_ */
+L 24 "..\App\inc\app.h" 2
+N#include "app_eeprom.h"
+L 1 "..\App\inc\app_eeprom.h" 1
+N/*
+N * app_eeprom.h
+N *
+N *  Created on: 2017年9月8日
+N *      Author: fly
+N */
+N
+N#ifndef APP_INC_APP_EEPROM_H_
+N#define APP_INC_APP_EEPROM_H_
+N
+N
+N
+Nvoid app_eeprom_Init(void);
+Nvoid app_eeprom_get_dome_with_index(DOME_DEFAULT_T* dd, uint8_t index);
+N
+Nvoid app_eeprom_erase(uint32_t addr);
+Nvoid app_eeprom_write_int(uint32_t addr, uint32_t d);
+Nuint32_t app_eeprom_read_int(uint32_t addr);
+N
+N#endif /* APP_INC_APP_EEPROM_H_ */
+L 25 "..\App\inc\app.h" 2
+N
+N
 N
 N#endif /* APP_INC_APP_H_ */
 N
@@ -21599,11 +21600,11 @@ N
 N	/* Init System */
 N	SYS_Init();
 N
-N#if 0
-S	LITE_openlog("lamp");
-S	LITE_set_loglevel(LOG_DEBUG_LEVEL);
+N#if 1
+N	LITE_openlog("lamp");
+N	LITE_set_loglevel(LOG_DEBUG_LEVEL);
 N#else
-N	LITE_closelog();
+S	LITE_closelog();
 N#endif
 N
 N	bsp_Init();
@@ -21679,8 +21680,7 @@ N			timer0_taskTimer_get()->flag_1s = 0;
 N			//////////////////
 N			
 N			cnt++;
-N				log_debug("I am alive %d", cnt);
-X				LITE_syslog(__FUNCTION__, 151, LOG_DEBUG_LEVEL, "I am alive %d", cnt);
+N//				log_debug("I am alive %d", cnt);
 N
 N//			app_work_1s_pro();
 N

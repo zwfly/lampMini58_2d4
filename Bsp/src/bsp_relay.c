@@ -7,10 +7,9 @@
 #include "bsp.h"
 
 void Relay_InitHard(void) {
-
+	Relay_off();
 	GPIO_SetMode(P1, BIT0, GPIO_MODE_OUTPUT);
 
-	Relay_off();
 }
 void Relay_on(void) {
 	P10 = 1;

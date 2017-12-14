@@ -12,6 +12,8 @@
 #include "pwm.h"
 #include "fmc.h"
 
+#include "lite-log.h"
+
 #include "bsp_2d4.h"
 //#include "bsp_uart.h"
 #include "bsp_timer0.h"

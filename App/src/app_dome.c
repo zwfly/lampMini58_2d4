@@ -32,7 +32,8 @@ const uint8_t color_blink_buffer[COLOR_BLINK_NUMBER][3] = { { 255, 255, 255 }, /
 		{ 255, 128, 0 } //red:green = 2:1
 };
 //////////////////
-
+		uint32_t add_tmp = 0;
+		uint32_t add_data=0 ;
 void app_dome_Init(void) {
 	uint8_t i = 0;
 	uint8_t availableGroup = 0;
@@ -45,13 +46,20 @@ void app_dome_Init(void) {
 		minSpaceBytes = sizeof(DOME_DEFAULT_T);
 	}
 	availableGroup = (FMC_APROM_END - DOME_START_ADDR) / minSpaceBytes;
+
+	SYS_UnlockReg();
+	FMC_Open();
 	for (i = 0; i < availableGroup; i++) {
-		if (0xFF != app_eeprom_read_int(i * minSpaceBytes)) {
+		 add_tmp = i * minSpaceBytes;
+		 add_data = app_eeprom_read_int(add_tmp);
+		if (0xFFFFFFFFU != add_data) {
 			blink_number++;
 		} else {
 			break;
 		}
 	}
+	FMC_Close();
+	SYS_LockReg();
 
 	color_blink_index = COLOR_BLINK_NUMBER - 1;
 //	g_tWork.status.bits.blinkEnable = 1;
@@ -92,19 +100,17 @@ void app_dome_previous(void) {
 	if (domePro.currentDomeIndex) {
 		domePro.currentDomeIndex--;
 	} else {
-		domePro.currentDomeIndex = (FMC_APROM_END - DOME_START_ADDR)
-				/ sizeof(DOME_DEFAULT_T) - 1;
+		domePro.currentDomeIndex = blink_number ? blink_number - 1 : 0;
 	}
-	app_dome_start(domePro.currentDomeIndex, 2);
+	app_dome_start(domePro.currentDomeIndex);
 }
 void app_dome_next(void) {
 	domePro.currentDomeIndex++;
-	if (domePro.currentDomeIndex
-			>= ((FMC_APROM_END - DOME_START_ADDR) / sizeof(DOME_DEFAULT_T))) {
+	if (domePro.currentDomeIndex >= blink_number) {
 		domePro.currentDomeIndex = 0;
 	}
 
-	app_dome_start(domePro.currentDomeIndex, 1);
+	app_dome_start(domePro.currentDomeIndex);
 }
 
 void app_dome_get_current_Name(uint8_t *name, uint8_t len) {
@@ -117,11 +123,11 @@ void app_dome_get_current_Name(uint8_t *name, uint8_t len) {
 void app_dome_start_current(void) {
 	color_blink_index = COLOR_BLINK_NUMBER - 1;
 
-//	g_tWork.status.bits.blinkEnable = 1;
-	app_dome_start(domePro.currentDomeIndex, 0);
+	g_tWork.status.bits.blinkEnable = 1;
+	app_dome_start(domePro.currentDomeIndex);
 }
 void app_dome_stop_current(void) {
-//	g_tWork.status.bits.blinkEnable = 0;
+	g_tWork.status.bits.blinkEnable = 0;
 
 	subDome.repeate = 0;
 	subDome.offtime = 0;
@@ -143,21 +149,27 @@ void app_dome_single_cycle(uint8_t subIndex) {
 /*
  dir 方向，0：不变，1：向前next，2：后退prev
  */
-void app_dome_start(uint8_t domeIndex, uint8_t dir) {
+void app_dome_start(uint8_t domeIndex) {
 	subDome_Assist.switch_flag = 0;
 	subDome_Assist.msCnt = 0;
 	subDome_Assist.stopTime = 0;
 
+	if (blink_number == 0) {
+		Light_RGB_set(0, 0, 0);
+		return;
+	}
+
 //	app_dome_single_cycle(domeIndex);
-	if (domeIndex
-			> ((FMC_APROM_END - DOME_START_ADDR) / sizeof(DOME_DEFAULT_T) - 1)) {
-		domePro.currentDomeIndex = (FMC_APROM_END - DOME_START_ADDR)
-				/ sizeof(DOME_DEFAULT_T) - 1;
-		domeIndex = (FMC_APROM_END - DOME_START_ADDR) / sizeof(DOME_DEFAULT_T)
-				- 1;
+	if (domeIndex > (blink_number - 1)) {
+		domePro.currentDomeIndex = blink_number - 1;
+		domeIndex = blink_number - 1;
 	} else {
 		domePro.currentDomeIndex = domeIndex;
 	}
+#if 1
+	app_eeprom_get_dome_with_index(&dome_blink, domeIndex);
+#else
+
 	if (dir == 0) {
 //		app_eeprom_get_dome_with_index(&dome_blink, domeIndex);
 		if (*((uint8_t *) &dome_blink) == 0xFF) {
@@ -203,6 +215,7 @@ void app_dome_start(uint8_t domeIndex, uint8_t dir) {
 			}
 		}
 	}
+#endif
 //	domePro.currentDomeIndex = domeIndex;
 //	if (dome_blink.header.index == 0) {
 //		app_eeprom_get_dome_with_index(&dome_blink, 0);
@@ -216,13 +229,13 @@ void app_dome_start(uint8_t domeIndex, uint8_t dir) {
 			sizeof(domeHeader));
 
 }
-//static uint8_t cyc = 0;
+static uint8_t cyc = 0;
 static void app_dome_subDome_pro(uint8_t subIndex) {
 
 	subDome_Assist.switch_flag = 0;
 	subDome_Assist.msCnt = 0;
 	subDome_Assist.stopTime = 50;
-#if 0
+
 	if (g_tWork.status.bits.DEMO) {
 		cyc++;
 		if (cyc <= 4) {
@@ -235,14 +248,22 @@ static void app_dome_subDome_pro(uint8_t subIndex) {
 		cyc = 0;
 		app_dome_single_cycle(subIndex);
 	}
-#endif
 }
 
 void app_dome_rgb(uint8_t r, uint8_t g, uint8_t b) {
-	app_dome_stop_current();
-	dome_running_param.color.R = r << 8;
-	dome_running_param.color.G = g << 8;
-	dome_running_param.color.B = b << 8;
+//	app_dome_stop_current();
+
+	subDome.repeate = 0;
+	subDome.offtime = 0;
+
+	dome_running_param.color.R = r;
+	dome_running_param.color.G = g;
+	dome_running_param.color.B = b;
+
+	dome_running_param.color.R <<= 8;
+	dome_running_param.color.G <<= 8;
+	dome_running_param.color.B <<= 8;
+
 #if 1
 	Light_RGB_set(dome_running_param.color.R, dome_running_param.color.G,
 			dome_running_param.color.B);
@@ -258,9 +279,9 @@ void app_dome_interrupter(void) {
 
 #if 1
 
-//	if (g_tWork.status.bits.blinkEnable == 0) {
-//		return;
-//	}
+	if (g_tWork.status.bits.blinkEnable == 0) {
+		return;
+	}
 
 	if (subDome_Assist.stopTime) {
 		subDome_Assist.stopTime--;

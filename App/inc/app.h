@@ -24,7 +24,6 @@
 #include "app_eeprom.h"
 
 
-#include "lite-log.h"
 
 #endif /* APP_INC_APP_H_ */
 

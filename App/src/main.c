@@ -59,11 +59,12 @@ void SYS_Init(void) {
 	/* Lock protected registers */
 	SYS_LockReg();
 }
-
+static uint8_t matchCode_flag = 0;
 /*---------------------------------------------------------------------------------------------------------*/
 /* MAIN function                                                                                           */
 /*---------------------------------------------------------------------------------------------------------*/
 int main(void) {
+
 	uint8_t ucKeyCode;
 	uint8_t dome_cnt = 0;
 
@@ -133,7 +134,7 @@ int main(void) {
 
 			app_2d4_pro();
 
-			app_uart_pro();
+			app_uart_pro(matchCode_flag);
 
 		}
 		if (timer0_taskTimer_get()->flag_100ms) {
@@ -148,13 +149,39 @@ int main(void) {
 			timer0_taskTimer_get()->flag_500ms = 0;
 			//////////////////
 
+			if (matchCode_flag == 0) {
+				uint8_t index = 0, i;
+				uint8_t buffer[8] = { 0 };
+				memset(buffer, 0, 8);
+
+				index = 0;
+				buffer[index++] = LAMP2LCD_HEADER;
+				buffer[index++] = 0x02;
+				buffer[index++] = WIRELESS_MATCH_CODE_CMD;
+				app_get_my_address(buffer + index);
+				index += 5;
+				for (i = 0; i < (buffer[1] + 1); i++) {
+					buffer[index] += buffer[i + 1];
+				}
+				index++;
+				app_2d4_send(buffer, index);
+
+			}
+
 		}
 		if (timer0_taskTimer_get()->flag_1s) {
-			static uint32_t cnt = 0;
+			static uint16_t cnt = 0;
 			timer0_taskTimer_get()->flag_1s = 0;
 			//////////////////
 
 			cnt++;
+			if (cnt == 6) {
+				if (matchCode_flag == 0) {
+					matchCode_flag = 1;
+					app_2d4_switch_address();
+				}
+			}
+
 //				log_debug("I am alive %d", cnt);
 
 			app_work_1s_pro();

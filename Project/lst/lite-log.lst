@@ -60,7 +60,7 @@ N */
 N
 N#ifndef __stdio_h
 N#define __stdio_h
-N#define __ARMCLIB_VERSION 5060019
+N#define __ARMCLIB_VERSION 5060009
 N
 N/*
 N * Depending on compiler version __int64 or __INT64_TYPE__ should be defined.
@@ -1175,7 +1175,7 @@ N */
 N
 N#ifndef __string_h
 N#define __string_h
-N#define __ARMCLIB_VERSION 5060019
+N#define __ARMCLIB_VERSION 5060009
 N
 N#define _ARMABI __declspec(__nothrow)
 N
@@ -1717,7 +1717,7 @@ N */
 N
 N#ifndef __stdarg_h
 N#define __stdarg_h
-N#define __ARMCLIB_VERSION 5060019
+N#define __ARMCLIB_VERSION 5060009
 N
 N  #ifndef __STDARG_DECLS
 N  #define __STDARG_DECLS
@@ -1896,7 +1896,7 @@ N */
 N
 N#ifndef __stdint_h
 N#define __stdint_h
-N#define __ARMCLIB_VERSION 5060019
+N#define __ARMCLIB_VERSION 5060009
 N
 N  #ifdef __INT64_TYPE__
 S    /* armclang predefines '__INT64_TYPE__' and '__INT64_C_SUFFIX__' */
@@ -2233,7 +2233,7 @@ N */
 N
 N#ifndef __stdlib_h
 N#define __stdlib_h
-N#define __ARMCLIB_VERSION 5060019
+N#define __ARMCLIB_VERSION 5060009
 N
 N#if defined(__clang__) || (defined(__ARMCC_VERSION) && !defined(__STRICT_ANSI__))
 X#if 0L || (1L && !0L)

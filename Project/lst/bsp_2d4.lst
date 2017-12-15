@@ -32,7 +32,7 @@ N */
 N
 N#ifndef __stdio_h
 N#define __stdio_h
-N#define __ARMCLIB_VERSION 5060019
+N#define __ARMCLIB_VERSION 5060009
 N
 N/*
 N * Depending on compiler version __int64 or __INT64_TYPE__ should be defined.
@@ -1137,7 +1137,7 @@ N */
 N
 N#ifndef __stdint_h
 N#define __stdint_h
-N#define __ARMCLIB_VERSION 5060019
+N#define __ARMCLIB_VERSION 5060009
 N
 N  #ifdef __INT64_TYPE__
 S    /* armclang predefines '__INT64_TYPE__' and '__INT64_C_SUFFIX__' */
@@ -1630,7 +1630,7 @@ N#if   defined ( __ICCARM__ )
 X#if   0L
 S #pragma system_include         /* treat file as system include file for MISRA check */
 S#elif defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
-X#elif 1L && (5060422 >= 6010050)
+X#elif 1L && (5060183 >= 6010050)
 S  #pragma clang system_header   /* treat file as system include file */
 N#endif
 N
@@ -1800,7 +1800,7 @@ N#if   defined ( __ICCARM__ )
 X#if   0L
 S #pragma system_include         /* treat file as system include file for MISRA check */
 S#elif defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
-X#elif 1L && (5060422 >= 6010050)
+X#elif 1L && (5060183 >= 6010050)
 S  #pragma clang system_header   /* treat file as system include file */
 N#endif
 N
@@ -1858,7 +1858,7 @@ N#define __CMSIS_ARMCC_H
 N
 N
 N#if defined(__ARMCC_VERSION) && (__ARMCC_VERSION < 400677)
-X#if 1L && (5060422 < 400677)
+X#if 1L && (5060183 < 400677)
 S  #error "Please use ARM Compiler Toolchain V4.0.677 or later!"
 N#endif
 N
@@ -2666,7 +2666,7 @@ N#if   defined ( __ICCARM__ )
 X#if   0L
 S #pragma system_include         /* treat file as system include file for MISRA check */
 S#elif defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
-X#elif 1L && (5060422 >= 6010050)
+X#elif 1L && (5060183 >= 6010050)
 S  #pragma clang system_header   /* treat file as system include file */
 N#endif
 N
@@ -19163,7 +19163,7 @@ N */
 N
 N#ifndef __stdlib_h
 N#define __stdlib_h
-N#define __ARMCLIB_VERSION 5060019
+N#define __ARMCLIB_VERSION 5060009
 N
 N#if defined(__clang__) || (defined(__ARMCC_VERSION) && !defined(__STRICT_ANSI__))
 X#if 0L || (1L && !0L)
@@ -20141,7 +20141,7 @@ N */
 N
 N#ifndef __string_h
 N#define __string_h
-N#define __ARMCLIB_VERSION 5060019
+N#define __ARMCLIB_VERSION 5060009
 N
 N#define _ARMABI __declspec(__nothrow)
 N
@@ -20844,6 +20844,8 @@ N///////////////////////////////////////////////////////////////////////////////
 N//                  根据用户应用，以下部分可能需要修改                       //
 N///////////////////////////////////////////////////////////////////////////////
 N/******************* Function declare *******************/
+Nextern uint8_t TX_ADDRESS_DEF[5];
+N
 Nvoid Wireless2d4_InitHard(void);
 N
 Nvoid SPI_WW(uint8_t R_REG);
@@ -21174,7 +21176,12 @@ N
 N/***************************** (END OF FILE) *********************************/
 L 9 "..\Bsp\src\bsp_2d4.c" 2
 N
+Nconst uint8_t PUBLIC_ADDRESS_DEF[5] = { 0x12, 0x62, 0xAC, 0xB3, 0x66 }; //RF 公共地址
+Nuint8_t TX_ADDRESS_DEF[5] = { 0xCC, 0xCC, 0xCC, 0xCC, 0xCC }; //RF 地址：接收端和发送端需一致
+N
 Nvoid Wireless2d4_InitHard(void) {
+N
+N	memcpy(TX_ADDRESS_DEF, PUBLIC_ADDRESS_DEF, 5);
 N
 N	//SCK
 N	GPIO_SetMode(P0, BIT7, GPIO_MODE_OUTPUT);
@@ -21188,8 +21195,6 @@ N	//TX
 N	GPIO_SetMode(P0, BIT5, GPIO_MODE_OUTPUT);
 X	GPIO_SetMode(((GPIO_T *) (((uint32_t)0x50000000) + 0x04000)), (0x00000020), 0x1UL);
 N}
-N
-Nconst uint8_t TX_ADDRESS_DEF[5] = { 0xCC, 0xCC, 0xCC, 0xCC, 0xCC }; //RF 地址：接收端和发送端需一致
 N
 N/******************************************************************************/
 N//            SPI_init
@@ -21467,7 +21472,7 @@ N
 N		CE_LOW;                                                 //rf entery stb3
 X		RF_WriteReg(0xFC, 0);                                                 
 N	}
-W "..\Bsp\src\bsp_2d4.c" 250 10 variable "i"  was declared but never referenced
+W "..\Bsp\src\bsp_2d4.c" 253 10 variable "i" was declared but never referenced
 N}
 N
 N/******************************************************************************/
@@ -21507,13 +21512,13 @@ N/******************************************************************************
 N//            PN006_Initial
 N//                Initial RF
 N/******************************************************************************/
-N
+Nstatic uint8_t BB_cal_data[5] = { 0x0A, 0x6D, 0x67, 0x9C, 0x46 };
+Nstatic uint8_t RF_cal_data[3] = { 0xF6, 0x37, 0x5D };
+Nstatic uint8_t RF_cal2_data[6] = { 0x45, 0x21, 0xef, 0xAC, 0x5A, 0x50 };
+Nstatic uint8_t Dem_cal_data[1] = { 0x01 };
+Nstatic uint8_t Dem_cal2_data[3] = { 0x0b, 0xDF, 0x02 };
 Nvoid RF_Init(void) {
-N	uint8_t BB_cal_data[5] = { 0x0A, 0x6D, 0x67, 0x9C, 0x46 };
-N	uint8_t RF_cal_data[3] = { 0xF6, 0x37, 0x5D };
-N	uint8_t RF_cal2_data[6] = { 0x45, 0x21, 0xef, 0xAC, 0x5A, 0x50 };
-N	uint8_t Dem_cal_data[1] = { 0x01 };
-N	uint8_t Dem_cal2_data[3] = { 0x0b, 0xDF, 0x02 };
+N
 N	SPI_init();
 N	RF_WriteReg(RST_FSPI, 0x5A);								//Software Reset
 X	RF_WriteReg(0x53, 0x5A);								

@@ -18773,6 +18773,8 @@ void LITE_rich_hexdump(const char *f, const int l, const int level,
 
 
  
+extern uint8_t TX_ADDRESS_DEF[5];
+
 void Wireless2d4_InitHard(void);
 
 void SPI_WW(uint8_t R_REG);
@@ -19225,7 +19227,11 @@ void app_work_100ms_pro(void);
 
 
 
+
+
 void app_2d4_init(void);
+void app_get_my_address(uint8_t *addr);
+void app_2d4_switch_address(void);
 void app_2d4_send(uint8_t *d, uint8_t len);
 void app_2d4_pro(void);
 
@@ -19274,7 +19280,7 @@ typedef struct _Uart_ST {
 
 void app_uart_Init(void);
 void app_uart_send(uint8_t cmd, uint8_t *ptr, uint8_t len);
-void app_uart_pro(void);
+void app_uart_pro(uint8_t mc);
 
 #line 22 "..\\App\\inc\\app.h"
 #line 1 "..\\App\\inc\\app_crc.h"
@@ -19768,7 +19774,7 @@ static void app_RC_Receiver_cmd_pro(Uart_ST* st) {
 
 }
 
-void app_uart_pro(void) {
+void app_uart_pro(uint8_t mc) {
 	uint8_t ucData = 0;
 
 
@@ -19779,6 +19785,10 @@ void app_uart_pro(void) {
 
 
 
+
+			if (mc == 0) {
+				return;
+			}
 
 			uart_st.rxBuf[uart_st.pWrite++] = ucData;
 			if (uart_st.pWrite >= sizeof(uart_st.rxBuf)) {
@@ -19804,7 +19814,7 @@ void app_uart_pro(void) {
 										uart_st.rxBuf + uart_st.pRead, len + 3,
 										uart_st.pRead, sizeof(uart_st.rxBuf))) {
 							uart_st.pRead++;
-							LITE_syslog(__FUNCTION__, 417, LOG_ERR_LEVEL, "[ERROR]   remote control check error!\r\n");
+							LITE_syslog(__FUNCTION__, 421, LOG_ERR_LEVEL, "[ERROR]   remote control check error!\r\n");
 
 						} else {
 							 
@@ -19824,5 +19834,5 @@ void app_uart_pro(void) {
 		break;
 
 	}
-#line 769 "..\\App\\src\\app_uart.c"
+#line 773 "..\\App\\src\\app_uart.c"
 }

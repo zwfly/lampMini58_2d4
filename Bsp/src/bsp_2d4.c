@@ -7,7 +7,12 @@
 
 #include "bsp.h"
 
+const uint8_t PUBLIC_ADDRESS_DEF[5] = { 0x12, 0x62, 0xAC, 0xB3, 0x66 }; //RF 公共地址
+uint8_t TX_ADDRESS_DEF[5] = { 0xCC, 0xCC, 0xCC, 0xCC, 0xCC }; //RF 地址：接收端和发送端需一致
+
 void Wireless2d4_InitHard(void) {
+
+	memcpy(TX_ADDRESS_DEF, PUBLIC_ADDRESS_DEF, 5);
 
 	//SCK
 	GPIO_SetMode(P0, BIT7, GPIO_MODE_OUTPUT);
@@ -18,8 +23,6 @@ void Wireless2d4_InitHard(void) {
 	//TX
 	GPIO_SetMode(P0, BIT5, GPIO_MODE_OUTPUT);
 }
-
-const uint8_t TX_ADDRESS_DEF[5] = { 0xCC, 0xCC, 0xCC, 0xCC, 0xCC }; //RF 地址：接收端和发送端需一致
 
 /******************************************************************************/
 //            SPI_init
@@ -292,13 +295,13 @@ uint8_t ucRF_DumpRxData(uint8_t *ucPayload, uint8_t length) {
 //            PN006_Initial
 //                Initial RF
 /******************************************************************************/
-
+static uint8_t BB_cal_data[5] = { 0x0A, 0x6D, 0x67, 0x9C, 0x46 };
+static uint8_t RF_cal_data[3] = { 0xF6, 0x37, 0x5D };
+static uint8_t RF_cal2_data[6] = { 0x45, 0x21, 0xef, 0xAC, 0x5A, 0x50 };
+static uint8_t Dem_cal_data[1] = { 0x01 };
+static uint8_t Dem_cal2_data[3] = { 0x0b, 0xDF, 0x02 };
 void RF_Init(void) {
-	uint8_t BB_cal_data[5] = { 0x0A, 0x6D, 0x67, 0x9C, 0x46 };
-	uint8_t RF_cal_data[3] = { 0xF6, 0x37, 0x5D };
-	uint8_t RF_cal2_data[6] = { 0x45, 0x21, 0xef, 0xAC, 0x5A, 0x50 };
-	uint8_t Dem_cal_data[1] = { 0x01 };
-	uint8_t Dem_cal2_data[3] = { 0x0b, 0xDF, 0x02 };
+
 	SPI_init();
 	RF_WriteReg(RST_FSPI, 0x5A);								//Software Reset
 	RF_WriteReg(RST_FSPI, 0XA5);

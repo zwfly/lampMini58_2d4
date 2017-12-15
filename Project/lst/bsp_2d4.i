@@ -18756,6 +18756,8 @@ void LITE_rich_hexdump(const char *f, const int l, const int level,
 
 
  
+extern uint8_t TX_ADDRESS_DEF[5];
+
 void Wireless2d4_InitHard(void);
 
 void SPI_WW(uint8_t R_REG);
@@ -19066,7 +19068,12 @@ void bsp_Init(void);
  
 #line 9 "..\\Bsp\\src\\bsp_2d4.c"
 
+const uint8_t PUBLIC_ADDRESS_DEF[5] = { 0x12, 0x62, 0xAC, 0xB3, 0x66 }; 
+uint8_t TX_ADDRESS_DEF[5] = { 0xCC, 0xCC, 0xCC, 0xCC, 0xCC }; 
+
 void Wireless2d4_InitHard(void) {
+
+	memcpy(TX_ADDRESS_DEF, PUBLIC_ADDRESS_DEF, 5);
 
 	
 	GPIO_SetMode(((GPIO_T *) (((uint32_t)0x50000000) + 0x04000)), (0x00000080), 0x1UL);
@@ -19077,8 +19084,6 @@ void Wireless2d4_InitHard(void) {
 	
 	GPIO_SetMode(((GPIO_T *) (((uint32_t)0x50000000) + 0x04000)), (0x00000020), 0x1UL);
 }
-
-const uint8_t TX_ADDRESS_DEF[5] = { 0xCC, 0xCC, 0xCC, 0xCC, 0xCC }; 
 
  
 
@@ -19351,13 +19356,13 @@ uint8_t ucRF_DumpRxData(uint8_t *ucPayload, uint8_t length) {
 
 
  
-
+static uint8_t BB_cal_data[5] = { 0x0A, 0x6D, 0x67, 0x9C, 0x46 };
+static uint8_t RF_cal_data[3] = { 0xF6, 0x37, 0x5D };
+static uint8_t RF_cal2_data[6] = { 0x45, 0x21, 0xef, 0xAC, 0x5A, 0x50 };
+static uint8_t Dem_cal_data[1] = { 0x01 };
+static uint8_t Dem_cal2_data[3] = { 0x0b, 0xDF, 0x02 };
 void RF_Init(void) {
-	uint8_t BB_cal_data[5] = { 0x0A, 0x6D, 0x67, 0x9C, 0x46 };
-	uint8_t RF_cal_data[3] = { 0xF6, 0x37, 0x5D };
-	uint8_t RF_cal2_data[6] = { 0x45, 0x21, 0xef, 0xAC, 0x5A, 0x50 };
-	uint8_t Dem_cal_data[1] = { 0x01 };
-	uint8_t Dem_cal2_data[3] = { 0x0b, 0xDF, 0x02 };
+
 	SPI_init();
 	RF_WriteReg(0x53, 0x5A);								
 	RF_WriteReg(0x53, 0XA5);

@@ -18772,6 +18772,8 @@ void LITE_rich_hexdump(const char *f, const int l, const int level,
 
 
  
+extern uint8_t TX_ADDRESS_DEF[5];
+
 void Wireless2d4_InitHard(void);
 
 void SPI_WW(uint8_t R_REG);
@@ -19224,7 +19226,11 @@ void app_work_100ms_pro(void);
 
 
 
+
+
 void app_2d4_init(void);
+void app_get_my_address(uint8_t *addr);
+void app_2d4_switch_address(void);
 void app_2d4_send(uint8_t *d, uint8_t len);
 void app_2d4_pro(void);
 
@@ -19273,7 +19279,7 @@ typedef struct _Uart_ST {
 
 void app_uart_Init(void);
 void app_uart_send(uint8_t cmd, uint8_t *ptr, uint8_t len);
-void app_uart_pro(void);
+void app_uart_pro(uint8_t mc);
 
 #line 22 "..\\App\\inc\\app.h"
 #line 1 "..\\App\\inc\\app_crc.h"
@@ -19641,6 +19647,32 @@ void app_2d4_init(void) {
 
 }
 
+void app_get_my_address(uint8_t *addr) {
+	uint32_t u32Data;
+	uint8_t i = 0;
+
+	SYS_UnlockReg();
+	FMC_Open();
+	u32Data = FMC_ReadPID();
+	FMC_Close();
+	SYS_LockReg();
+
+	for (i = 0; i < 4; i++) {
+		*(addr + i) = (u32Data >> (i * 8)) & 0xFF;
+	}
+	*(addr + 4) = 0x5A;
+}
+
+void app_2d4_switch_address(void) {
+	uint8_t address[5] = { 0 };
+
+	memset(address, 0, 5);
+	app_get_my_address(address);
+
+	memcpy(TX_ADDRESS_DEF, address, 5);
+	RF_Init();
+}
+
 void app_2d4_send(uint8_t *d, uint8_t len) {
 
 
@@ -19652,7 +19684,7 @@ void app_2d4_send(uint8_t *d, uint8_t len) {
 		memcpy(send_2d4_Buf, d, len);
 	}
 
-#line 64 "..\\App\\src\\app_2d4.c"
+#line 90 "..\\App\\src\\app_2d4.c"
 
 }
 
@@ -19663,7 +19695,7 @@ static void app_2d4_Rcv(uint8_t *buf) {
 	uint8_t i = 0;
 	uint8_t index = 0;
 	uint8_t check = 0;
-#line 80 "..\\App\\src\\app_2d4.c"
+#line 106 "..\\App\\src\\app_2d4.c"
 	if (buf[0] != 0xF2) {
 		return;
 	}
@@ -19681,31 +19713,9 @@ static void app_2d4_Rcv(uint8_t *buf) {
 
 	switch (buf[2]) {
 	case 0x01:
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 		app_uart_send(0x01, 0, 0);
-
 		break;
-#line 149 "..\\App\\src\\app_2d4.c"
+#line 153 "..\\App\\src\\app_2d4.c"
 	case 0x09:
 		if (buf[3] == 1) {
 			Relay_on();
@@ -19881,11 +19891,8 @@ static void app_2d4_Rcv(uint8_t *buf) {
 		app_dome_next();
 		break;
 	case 0x56:
-		if (dome_running_param.speed <= 100) {
-			dome_running_param.speed += 10;
-			if (dome_running_param.speed >= 100) {
-				dome_running_param.speed = 100;
-			}
+		if (dome_running_param.speed >= 10) {
+			dome_running_param.speed -= 10;
 		}
 		break;
 	case 0x57:
@@ -19893,8 +19900,11 @@ static void app_2d4_Rcv(uint8_t *buf) {
 		app_dome_start(1);
 		break;
 	case 0x58:
-		if (dome_running_param.speed >= 10) {
-			dome_running_param.speed -= 10;
+		if (dome_running_param.speed <= 100) {
+			dome_running_param.speed += 10;
+			if (dome_running_param.speed >= 100) {
+				dome_running_param.speed = 100;
+			}
 		}
 		break;
 	case 0x59:

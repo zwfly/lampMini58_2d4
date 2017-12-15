@@ -274,7 +274,7 @@ Command Line: --16 --debug --xref --diag_suppress=9931 --cpu=Cortex-M0 --apcs=i
 nterwork --depend=.\obj\startup_mini58series.d -o.\obj\startup_mini58series.o -
 IC:\Keil_v5\ARM\RV31\INC -IC:\Keil_v5\ARM\CMSIS\Include -IC:\Keil_v5\ARM\Inc\ST
 \STM32F10x --predefine="__MICROLIB SETA 1" --predefine="__UVISION_VERSION SETA 
-523" --list=.\lst\startup_mini58series.lst ..\Library\Device\Nuvoton\Mini58Seri
+520" --list=.\lst\startup_mini58series.lst ..\Library\Device\Nuvoton\Mini58Seri
 es\Source\ARM\startup_Mini58Series.s
 
 

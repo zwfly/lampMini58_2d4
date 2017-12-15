@@ -46,6 +46,6 @@ typedef struct _Uart_ST {
 
 void app_uart_Init(void);
 void app_uart_send(uint8_t cmd, uint8_t *ptr, uint8_t len);
-void app_uart_pro(void);
+void app_uart_pro(uint8_t mc);
 
 #endif /* APP_INC_APP_UART_H_ */

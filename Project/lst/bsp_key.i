@@ -18764,6 +18764,8 @@ void LITE_rich_hexdump(const char *f, const int l, const int level,
 
 
  
+extern uint8_t TX_ADDRESS_DEF[5];
+
 void Wireless2d4_InitHard(void);
 
 void SPI_WW(uint8_t R_REG);

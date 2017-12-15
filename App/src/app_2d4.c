@@ -38,6 +38,32 @@ void app_2d4_init(void) {
 
 }
 
+void app_get_my_address(uint8_t *addr) {
+	uint32_t u32Data;
+	uint8_t i = 0;
+
+	SYS_UnlockReg();
+	FMC_Open();
+	u32Data = FMC_ReadPID();
+	FMC_Close();
+	SYS_LockReg();
+
+	for (i = 0; i < 4; i++) {
+		*(addr + i) = (u32Data >> (i * 8)) & 0xFF;
+	}
+	*(addr + 4) = 0x5A;
+}
+
+void app_2d4_switch_address(void) {
+	uint8_t address[5] = { 0 };
+
+	memset(address, 0, 5);
+	app_get_my_address(address);
+
+	memcpy(TX_ADDRESS_DEF, address, 5);
+	RF_Init();
+}
+
 void app_2d4_send(uint8_t *d, uint8_t len) {
 
 #if 1
@@ -94,29 +120,7 @@ static void app_2d4_Rcv(uint8_t *buf) {
 #if 1
 	switch (buf[2]) {
 	case KEY_POWER_SHORT_CMD:
-//		if (g_tWork.status.bits.DOME) {
-//			if (g_tWork.status.bits.pause) {
-//				g_tWork.status.bits.pause = 0;
-//				app_dome_start_current();
-//			} else {
-//				g_tWork.status.bits.pause = 1;
-//				app_dome_stop_current();
-//			}
-//			send_2d4_Buf[index++] = LAMP2LCD_HEADER;
-//			send_2d4_Buf[index++] = 10;
-//			send_2d4_Buf[index++] = KEY_POWER_SHORT_CMD;
-//			send_2d4_Buf[index++] = g_tWork.status.bits.pause;
-//			app_dome_get_current_Name(send_2d4_Buf + index, 8);
-//			index += 8;
-//			for (i = 0; i < (send_2d4_Buf[1] + 1); i++) {
-//				send_2d4_Buf[index] += send_2d4_Buf[i + 1];
-//			}
-//			index++;
-//			app_2d4_send(send_2d4_Buf, index);
-//
-//		} else {
 		app_uart_send(KEY_POWER_SHORT_CMD, 0, 0);
-//		}
 		break;
 #if 0
 		case POWER_LONG_CMD:
@@ -321,11 +325,8 @@ static void app_2d4_Rcv(uint8_t *buf) {
 		app_dome_next();
 		break;
 	case KEY_CARD_SPEED_ADD_CMD:
-		if (dome_running_param.speed <= 100) {
-			dome_running_param.speed += 10;
-			if (dome_running_param.speed >= 100) {
-				dome_running_param.speed = 100;
-			}
+		if (dome_running_param.speed >= 10) {
+			dome_running_param.speed -= 10;
 		}
 		break;
 	case KEY_CARD_DEMO_CMD:
@@ -333,8 +334,11 @@ static void app_2d4_Rcv(uint8_t *buf) {
 		app_dome_start(1);
 		break;
 	case KEY_CARD_SPEED_MINUS_CMD:
-		if (dome_running_param.speed >= 10) {
-			dome_running_param.speed -= 10;
+		if (dome_running_param.speed <= 100) {
+			dome_running_param.speed += 10;
+			if (dome_running_param.speed >= 100) {
+				dome_running_param.speed = 100;
+			}
 		}
 		break;
 	case KEY_CARD_COLOR_ADD_CMD:

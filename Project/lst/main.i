@@ -18777,6 +18777,8 @@ void LITE_rich_hexdump(const char *f, const int l, const int level,
 
 
  
+extern uint8_t TX_ADDRESS_DEF[5];
+
 void Wireless2d4_InitHard(void);
 
 void SPI_WW(uint8_t R_REG);
@@ -19229,7 +19231,11 @@ void app_work_100ms_pro(void);
 
 
 
+
+
 void app_2d4_init(void);
+void app_get_my_address(uint8_t *addr);
+void app_2d4_switch_address(void);
 void app_2d4_send(uint8_t *d, uint8_t len);
 void app_2d4_pro(void);
 
@@ -19278,7 +19284,7 @@ typedef struct _Uart_ST {
 
 void app_uart_Init(void);
 void app_uart_send(uint8_t cmd, uint8_t *ptr, uint8_t len);
-void app_uart_pro(void);
+void app_uart_pro(uint8_t mc);
 
 #line 22 "..\\App\\inc\\app.h"
 #line 1 "..\\App\\inc\\app_crc.h"
@@ -19458,11 +19464,12 @@ void SYS_Init(void) {
 	 
 	SYS_LockReg();
 }
-
+static uint8_t matchCode_flag = 0;
  
  
  
 int main(void) {
+
 	uint8_t ucKeyCode;
 	uint8_t dome_cnt = 0;
 
@@ -19478,10 +19485,10 @@ int main(void) {
 
 	bsp_Init();
 
-	LITE_syslog(__FUNCTION__, 82, LOG_DEBUG_LEVEL, " CPU @ %dHz\r\n", SystemCoreClock);
+	LITE_syslog(__FUNCTION__, 83, LOG_DEBUG_LEVEL, " CPU @ %dHz\r\n", SystemCoreClock);
 
-	LITE_syslog(__FUNCTION__, 84, LOG_DEBUG_LEVEL, "+-------------------------------------+ ");
-#line 94 "..\\App\\src\\main.c"
+	LITE_syslog(__FUNCTION__, 85, LOG_DEBUG_LEVEL, "+-------------------------------------+ ");
+#line 95 "..\\App\\src\\main.c"
 
 	 
 
@@ -19524,7 +19531,7 @@ int main(void) {
 
 			app_2d4_pro();
 
-			app_uart_pro();
+			app_uart_pro(matchCode_flag);
 
 		}
 		if (timer0_taskTimer_get()->flag_100ms) {
@@ -19539,13 +19546,39 @@ int main(void) {
 			timer0_taskTimer_get()->flag_500ms = 0;
 			
 
+			if (matchCode_flag == 0) {
+				uint8_t index = 0, i;
+				uint8_t buffer[8] = { 0 };
+				memset(buffer, 0, 8);
+
+				index = 0;
+				buffer[index++] = 0xF8;
+				buffer[index++] = 0x02;
+				buffer[index++] = 0xFE;
+				app_get_my_address(buffer + index);
+				index += 5;
+				for (i = 0; i < (buffer[1] + 1); i++) {
+					buffer[index] += buffer[i + 1];
+				}
+				index++;
+				app_2d4_send(buffer, index);
+
+			}
+
 		}
 		if (timer0_taskTimer_get()->flag_1s) {
-			static uint32_t cnt = 0;
+			static uint16_t cnt = 0;
 			timer0_taskTimer_get()->flag_1s = 0;
 			
 
 			cnt++;
+			if (cnt == 6) {
+				if (matchCode_flag == 0) {
+					matchCode_flag = 1;
+					app_2d4_switch_address();
+				}
+			}
+
 
 
 			app_work_1s_pro();
@@ -19560,19 +19593,19 @@ int main(void) {
 			static uint8_t press_long_lock = 0;
 			switch (ucKeyCode) {
 			case KEY_1_UP:   
-				LITE_syslog(__FUNCTION__, 172, LOG_DEBUG_LEVEL, "ACC KEY up");
+				LITE_syslog(__FUNCTION__, 199, LOG_DEBUG_LEVEL, "ACC KEY up");
 
 				break;
 			case KEY_1_DOWN:
-				LITE_syslog(__FUNCTION__, 176, LOG_DEBUG_LEVEL, "relay %s", Relay_IsOn() ? "on" : "off");
+				LITE_syslog(__FUNCTION__, 203, LOG_DEBUG_LEVEL, "relay %s", Relay_IsOn() ? "on" : "off");
 
 				Relay_toggle();
 				break;
 			case KEY_1_LONG:
-				LITE_syslog(__FUNCTION__, 181, LOG_DEBUG_LEVEL, "ACC KEY down");
+				LITE_syslog(__FUNCTION__, 208, LOG_DEBUG_LEVEL, "ACC KEY down");
 				break;
 			case KEY_2_UP:   
-				LITE_syslog(__FUNCTION__, 184, LOG_DEBUG_LEVEL, "LED KEY up");
+				LITE_syslog(__FUNCTION__, 211, LOG_DEBUG_LEVEL, "LED KEY up");
 
 				if (press_long_lock == 0) {
 					
@@ -19597,11 +19630,11 @@ int main(void) {
 				press_long_lock = 0;
 				break;
 			case KEY_2_DOWN:
-				LITE_syslog(__FUNCTION__, 209, LOG_DEBUG_LEVEL, "LED KEY down");
+				LITE_syslog(__FUNCTION__, 236, LOG_DEBUG_LEVEL, "LED KEY down");
 
 				break;
 			case KEY_2_LONG:
-				LITE_syslog(__FUNCTION__, 213, LOG_DEBUG_LEVEL, "LED KEY long");
+				LITE_syslog(__FUNCTION__, 240, LOG_DEBUG_LEVEL, "LED KEY long");
 				press_long_lock = 1;
 				if (g_tWork.status.bits.blinkEnable) {
 					g_tWork.status.bits.blinkEnable = 0;

@@ -18772,6 +18772,8 @@ void LITE_rich_hexdump(const char *f, const int l, const int level,
 
 
  
+extern uint8_t TX_ADDRESS_DEF[5];
+
 void Wireless2d4_InitHard(void);
 
 void SPI_WW(uint8_t R_REG);
@@ -19224,7 +19226,11 @@ void app_work_100ms_pro(void);
 
 
 
+
+
 void app_2d4_init(void);
+void app_get_my_address(uint8_t *addr);
+void app_2d4_switch_address(void);
 void app_2d4_send(uint8_t *d, uint8_t len);
 void app_2d4_pro(void);
 
@@ -19273,7 +19279,7 @@ typedef struct _Uart_ST {
 
 void app_uart_Init(void);
 void app_uart_send(uint8_t cmd, uint8_t *ptr, uint8_t len);
-void app_uart_pro(void);
+void app_uart_pro(uint8_t mc);
 
 #line 22 "..\\App\\inc\\app.h"
 #line 1 "..\\App\\inc\\app_crc.h"

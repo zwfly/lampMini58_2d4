@@ -93,7 +93,11 @@
 #define  DEVICE_STA_CMD      0xF0
 //extern uint8_t sendBuf[PAYLOAD_WIDTH];
 
+#define WIRELESS_MATCH_CODE_CMD  0xFE
+
 void app_2d4_init(void);
+void app_get_my_address(uint8_t *addr);
+void app_2d4_switch_address(void);
 void app_2d4_send(uint8_t *d, uint8_t len);
 void app_2d4_pro(void);
 

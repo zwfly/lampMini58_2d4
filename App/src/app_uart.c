@@ -378,7 +378,7 @@ static void app_RC_Receiver_cmd_pro(Uart_ST* st) {
 
 }
 
-void app_uart_pro(void) {
+void app_uart_pro(uint8_t mc) {
 	uint8_t ucData = 0;
 
 #if 1
@@ -389,6 +389,10 @@ void app_uart_pro(void) {
 //			comSendChar(COM0, ucData);
 //			log_debug("rcv %02X", ucData);
 #endif
+
+			if (mc == 0) {
+				return;
+			}
 
 			uart_st.rxBuf[uart_st.pWrite++] = ucData;
 			if (uart_st.pWrite >= sizeof(uart_st.rxBuf)) {

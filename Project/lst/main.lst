@@ -45,7 +45,7 @@ N */
 N
 N#ifndef __stdio_h
 N#define __stdio_h
-N#define __ARMCLIB_VERSION 5060019
+N#define __ARMCLIB_VERSION 5060009
 N
 N/*
 N * Depending on compiler version __int64 or __INT64_TYPE__ should be defined.
@@ -1161,7 +1161,7 @@ N */
 N
 N#ifndef __string_h
 N#define __string_h
-N#define __ARMCLIB_VERSION 5060019
+N#define __ARMCLIB_VERSION 5060009
 N
 N#define _ARMABI __declspec(__nothrow)
 N
@@ -1709,7 +1709,7 @@ N */
 N
 N#ifndef __stdint_h
 N#define __stdint_h
-N#define __ARMCLIB_VERSION 5060019
+N#define __ARMCLIB_VERSION 5060009
 N
 N  #ifdef __INT64_TYPE__
 S    /* armclang predefines '__INT64_TYPE__' and '__INT64_C_SUFFIX__' */
@@ -2202,7 +2202,7 @@ N#if   defined ( __ICCARM__ )
 X#if   0L
 S #pragma system_include         /* treat file as system include file for MISRA check */
 S#elif defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
-X#elif 1L && (5060422 >= 6010050)
+X#elif 1L && (5060183 >= 6010050)
 S  #pragma clang system_header   /* treat file as system include file */
 N#endif
 N
@@ -2372,7 +2372,7 @@ N#if   defined ( __ICCARM__ )
 X#if   0L
 S #pragma system_include         /* treat file as system include file for MISRA check */
 S#elif defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
-X#elif 1L && (5060422 >= 6010050)
+X#elif 1L && (5060183 >= 6010050)
 S  #pragma clang system_header   /* treat file as system include file */
 N#endif
 N
@@ -2430,7 +2430,7 @@ N#define __CMSIS_ARMCC_H
 N
 N
 N#if defined(__ARMCC_VERSION) && (__ARMCC_VERSION < 400677)
-X#if 1L && (5060422 < 400677)
+X#if 1L && (5060183 < 400677)
 S  #error "Please use ARM Compiler Toolchain V4.0.677 or later!"
 N#endif
 N
@@ -3238,7 +3238,7 @@ N#if   defined ( __ICCARM__ )
 X#if   0L
 S #pragma system_include         /* treat file as system include file for MISRA check */
 S#elif defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
-X#elif 1L && (5060422 >= 6010050)
+X#elif 1L && (5060183 >= 6010050)
 S  #pragma clang system_header   /* treat file as system include file */
 N#endif
 N
@@ -19735,7 +19735,7 @@ N */
 N
 N#ifndef __stdlib_h
 N#define __stdlib_h
-N#define __ARMCLIB_VERSION 5060019
+N#define __ARMCLIB_VERSION 5060009
 N
 N#if defined(__clang__) || (defined(__ARMCC_VERSION) && !defined(__STRICT_ANSI__))
 X#if 0L || (1L && !0L)
@@ -20866,6 +20866,8 @@ N///////////////////////////////////////////////////////////////////////////////
 N//                  根据用户应用，以下部分可能需要修改                       //
 N///////////////////////////////////////////////////////////////////////////////
 N/******************* Function declare *******************/
+Nextern uint8_t TX_ADDRESS_DEF[5];
+N
 Nvoid Wireless2d4_InitHard(void);
 N
 Nvoid SPI_WW(uint8_t R_REG);
@@ -21354,7 +21356,11 @@ N
 N#define  DEVICE_STA_CMD      0xF0
 N//extern uint8_t sendBuf[PAYLOAD_WIDTH];
 N
+N#define WIRELESS_MATCH_CODE_CMD  0xFE
+N
 Nvoid app_2d4_init(void);
+Nvoid app_get_my_address(uint8_t *addr);
+Nvoid app_2d4_switch_address(void);
 Nvoid app_2d4_send(uint8_t *d, uint8_t len);
 Nvoid app_2d4_pro(void);
 N
@@ -21410,7 +21416,7 @@ N} Uart_ST;
 N
 Nvoid app_uart_Init(void);
 Nvoid app_uart_send(uint8_t cmd, uint8_t *ptr, uint8_t len);
-Nvoid app_uart_pro(void);
+Nvoid app_uart_pro(uint8_t mc);
 N
 N#endif /* APP_INC_APP_UART_H_ */
 L 22 "..\App\inc\app.h" 2
@@ -21621,11 +21627,12 @@ N
 N	/* Lock protected registers */
 N	SYS_LockReg();
 N}
-N
+Nstatic uint8_t matchCode_flag = 0;
 N/*---------------------------------------------------------------------------------------------------------*/
 N/* MAIN function                                                                                           */
 N/*---------------------------------------------------------------------------------------------------------*/
 Nint main(void) {
+N
 N	uint8_t ucKeyCode;
 N	uint8_t dome_cnt = 0;
 N
@@ -21642,10 +21649,10 @@ N
 N	bsp_Init();
 N
 N	log_debug(" CPU @ %dHz\r\n", SystemCoreClock);
-X	LITE_syslog(__FUNCTION__, 82, LOG_DEBUG_LEVEL, " CPU @ %dHz\r\n", SystemCoreClock);
+X	LITE_syslog(__FUNCTION__, 83, LOG_DEBUG_LEVEL, " CPU @ %dHz\r\n", SystemCoreClock);
 N
 N	log_debug("+-------------------------------------+ ");
-X	LITE_syslog(__FUNCTION__, 84, LOG_DEBUG_LEVEL, "+-------------------------------------+ ");
+X	LITE_syslog(__FUNCTION__, 85, LOG_DEBUG_LEVEL, "+-------------------------------------+ ");
 N#if 0
 S	log_debug("+-------------------------------------+ ");
 S
@@ -21697,7 +21704,7 @@ N			bsp_KeyScan();
 N
 N			app_2d4_pro();
 N
-N			app_uart_pro();
+N			app_uart_pro(matchCode_flag);
 N
 N		}
 N		if (timer0_taskTimer_get()->flag_100ms) {
@@ -21712,13 +21719,41 @@ N		if (timer0_taskTimer_get()->flag_500ms) {
 N			timer0_taskTimer_get()->flag_500ms = 0;
 N			//////////////////
 N
+N			if (matchCode_flag == 0) {
+N				uint8_t index = 0, i;
+N				uint8_t buffer[8] = { 0 };
+N				memset(buffer, 0, 8);
+N
+N				index = 0;
+N				buffer[index++] = LAMP2LCD_HEADER;
+X				buffer[index++] = 0xF8;
+N				buffer[index++] = 0x02;
+N				buffer[index++] = WIRELESS_MATCH_CODE_CMD;
+X				buffer[index++] = 0xFE;
+N				app_get_my_address(buffer + index);
+N				index += 5;
+N				for (i = 0; i < (buffer[1] + 1); i++) {
+N					buffer[index] += buffer[i + 1];
+N				}
+N				index++;
+N				app_2d4_send(buffer, index);
+N
+N			}
+N
 N		}
 N		if (timer0_taskTimer_get()->flag_1s) {
-N			static uint32_t cnt = 0;
+N			static uint16_t cnt = 0;
 N			timer0_taskTimer_get()->flag_1s = 0;
 N			//////////////////
 N
 N			cnt++;
+N			if (cnt == 6) {
+N				if (matchCode_flag == 0) {
+N					matchCode_flag = 1;
+N					app_2d4_switch_address();
+N				}
+N			}
+N
 N//				log_debug("I am alive %d", cnt);
 N
 N			app_work_1s_pro();
@@ -21735,25 +21770,25 @@ N			switch (ucKeyCode) {
 N			case KEY_UP_K1:   //ACC
 X			case KEY_1_UP:   
 N				log_debug("ACC KEY up");
-X				LITE_syslog(__FUNCTION__, 172, LOG_DEBUG_LEVEL, "ACC KEY up");
+X				LITE_syslog(__FUNCTION__, 199, LOG_DEBUG_LEVEL, "ACC KEY up");
 N
 N				break;
 N			case KEY_DOWN_K1:
 X			case KEY_1_DOWN:
 N				log_debug("relay %s", Relay_IsOn() ? "on" : "off");
-X				LITE_syslog(__FUNCTION__, 176, LOG_DEBUG_LEVEL, "relay %s", Relay_IsOn() ? "on" : "off");
+X				LITE_syslog(__FUNCTION__, 203, LOG_DEBUG_LEVEL, "relay %s", Relay_IsOn() ? "on" : "off");
 N
 N				Relay_toggle();
 N				break;
 N			case KEY_LONG_K1:
 X			case KEY_1_LONG:
 N				log_debug("ACC KEY down");
-X				LITE_syslog(__FUNCTION__, 181, LOG_DEBUG_LEVEL, "ACC KEY down");
+X				LITE_syslog(__FUNCTION__, 208, LOG_DEBUG_LEVEL, "ACC KEY down");
 N				break;
 N			case KEY_UP_K2:   //LED
 X			case KEY_2_UP:   
 N				log_debug("LED KEY up");
-X				LITE_syslog(__FUNCTION__, 184, LOG_DEBUG_LEVEL, "LED KEY up");
+X				LITE_syslog(__FUNCTION__, 211, LOG_DEBUG_LEVEL, "LED KEY up");
 N
 N				if (press_long_lock == 0) {
 N					//					g_tWork.status.bits.DEMO = 0;
@@ -21782,13 +21817,13 @@ N				break;
 N			case KEY_DOWN_K2:
 X			case KEY_2_DOWN:
 N				log_debug("LED KEY down");
-X				LITE_syslog(__FUNCTION__, 209, LOG_DEBUG_LEVEL, "LED KEY down");
+X				LITE_syslog(__FUNCTION__, 236, LOG_DEBUG_LEVEL, "LED KEY down");
 N
 N				break;
 N			case KEY_LONG_K2:
 X			case KEY_2_LONG:
 N				log_debug("LED KEY long");
-X				LITE_syslog(__FUNCTION__, 213, LOG_DEBUG_LEVEL, "LED KEY long");
+X				LITE_syslog(__FUNCTION__, 240, LOG_DEBUG_LEVEL, "LED KEY long");
 N				press_long_lock = 1;
 N				if (g_tWork.status.bits.blinkEnable) {
 N					g_tWork.status.bits.blinkEnable = 0;

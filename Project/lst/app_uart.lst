@@ -41,7 +41,7 @@ N */
 N
 N#ifndef __stdio_h
 N#define __stdio_h
-N#define __ARMCLIB_VERSION 5060009
+N#define __ARMCLIB_VERSION 5060019
 N
 N/*
 N * Depending on compiler version __int64 or __INT64_TYPE__ should be defined.
@@ -1157,7 +1157,7 @@ N */
 N
 N#ifndef __string_h
 N#define __string_h
-N#define __ARMCLIB_VERSION 5060009
+N#define __ARMCLIB_VERSION 5060019
 N
 N#define _ARMABI __declspec(__nothrow)
 N
@@ -1705,7 +1705,7 @@ N */
 N
 N#ifndef __stdint_h
 N#define __stdint_h
-N#define __ARMCLIB_VERSION 5060009
+N#define __ARMCLIB_VERSION 5060019
 N
 N  #ifdef __INT64_TYPE__
 S    /* armclang predefines '__INT64_TYPE__' and '__INT64_C_SUFFIX__' */
@@ -2198,7 +2198,7 @@ N#if   defined ( __ICCARM__ )
 X#if   0L
 S #pragma system_include         /* treat file as system include file for MISRA check */
 S#elif defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
-X#elif 1L && (5060183 >= 6010050)
+X#elif 1L && (5060422 >= 6010050)
 S  #pragma clang system_header   /* treat file as system include file */
 N#endif
 N
@@ -2368,7 +2368,7 @@ N#if   defined ( __ICCARM__ )
 X#if   0L
 S #pragma system_include         /* treat file as system include file for MISRA check */
 S#elif defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
-X#elif 1L && (5060183 >= 6010050)
+X#elif 1L && (5060422 >= 6010050)
 S  #pragma clang system_header   /* treat file as system include file */
 N#endif
 N
@@ -2426,7 +2426,7 @@ N#define __CMSIS_ARMCC_H
 N
 N
 N#if defined(__ARMCC_VERSION) && (__ARMCC_VERSION < 400677)
-X#if 1L && (5060183 < 400677)
+X#if 1L && (5060422 < 400677)
 S  #error "Please use ARM Compiler Toolchain V4.0.677 or later!"
 N#endif
 N
@@ -3234,7 +3234,7 @@ N#if   defined ( __ICCARM__ )
 X#if   0L
 S #pragma system_include         /* treat file as system include file for MISRA check */
 S#elif defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
-X#elif 1L && (5060183 >= 6010050)
+X#elif 1L && (5060422 >= 6010050)
 S  #pragma clang system_header   /* treat file as system include file */
 N#endif
 N
@@ -19731,7 +19731,7 @@ N */
 N
 N#ifndef __stdlib_h
 N#define __stdlib_h
-N#define __ARMCLIB_VERSION 5060009
+N#define __ARMCLIB_VERSION 5060019
 N
 N#if defined(__clang__) || (defined(__ARMCC_VERSION) && !defined(__STRICT_ANSI__))
 X#if 0L || (1L && !0L)
@@ -21206,6 +21206,7 @@ N#define APP_INC_APP_WORK_H_
 N
 Ntypedef struct _WORK_T {
 N
+N	uint8_t device_mode;
 N	union {
 N		uint8_t allbits;
 N		struct {
@@ -21223,6 +21224,27 @@ N
 N//	uint8_t mode;
 N
 N} WORK_T;
+N
+Ntypedef struct _LED_MODE_MSG_ST {
+N
+N	union {
+N		uint8_t allbits;
+N		struct {
+N			unsigned pp :1;  //闪法关闭/开启。0：闪法正常工作，1：闪法暂停
+N			unsigned ra2 :1;
+N			unsigned ra3 :1;
+N			unsigned ra5 :1;
+N			unsigned ra6 :1;
+N			unsigned ra7 :1;
+N			unsigned ra8 :1;
+N			unsigned ra9 :1;
+N		} bits;
+N	} status;
+N
+N//	uint8_t mode;
+N
+N} LED_MODE_MSG_ST;
+N
 Nextern WORK_T g_tWork;
 N
 Nvoid app_work_Init(void);
@@ -21323,6 +21345,8 @@ N#define  APP_SPEED_CMD            0x64
 N#define  APP_FLASH_INDEX_CMD      0x65
 N#define  APP_SWITCH_INDEX_CMD      0x66
 N
+N#define  LED_MODE_MSG_CMD      0xE0
+N
 N#define  DEVICE_STA_CMD      0xF0
 N//extern uint8_t sendBuf[PAYLOAD_WIDTH];
 N
@@ -21343,6 +21367,14 @@ N */
 N
 N#ifndef APP_INC_APP_UART_H_
 N#define APP_INC_APP_UART_H_
+N
+N#define BT_MODE     0x01
+N#define FM_MODE     0x02
+N#define USB_MODE    0x03
+N#define AUX_MODE    0x04
+N#define DOME_MODE   0x05
+N#define CALL_MODE   0x06
+N
 N
 N#define BLINK_METHOD_CMD   0x12
 N/*
@@ -21729,6 +21761,11 @@ S		break;
 N#endif
 N	case RCV_BT_STATUS_CMD:
 X	case 0x33:
+N		g_tWork.device_mode = BT_MODE;
+X		g_tWork.device_mode = 0x01;
+N		if (g_tWork.status.bits.DOME) {
+N			break;
+N		}
 N		buffer[index++] = LAMP2LCD_HEADER;
 X		buffer[index++] = 0xF8;
 N		buffer[index++] = len;
@@ -21742,12 +21779,13 @@ N		for (i = 0; i < (buffer[1] + 1); i++) {
 N			buffer[index] += buffer[i + 1];
 N		}
 N		index++;
-N		if (g_tWork.status.bits.DOME == 0) {
-N			app_2d4_send(buffer, index);
-N		}
+N		app_2d4_send(buffer, index);
 N		break;
 N	case RCV_PREV_NEXT_CMD:
 X	case 0x35:
+N		if (g_tWork.status.bits.DOME) {
+N			break;
+N		}
 N		buffer[index++] = LAMP2LCD_HEADER;
 X		buffer[index++] = 0xF8;
 N		buffer[index++] = len;
@@ -21761,12 +21799,15 @@ N		for (i = 0; i < (buffer[1] + 1); i++) {
 N			buffer[index] += buffer[i + 1];
 N		}
 N		index++;
-N		if (g_tWork.status.bits.DOME == 0) {
-N			app_2d4_send(buffer, index);
-N		}
+N		app_2d4_send(buffer, index);
 N		break;
 N	case RCV_USB_PLAY_TIME_CMD:
 X	case 0x36:
+N		g_tWork.device_mode = USB_MODE;
+X		g_tWork.device_mode = 0x03;
+N		if (g_tWork.status.bits.DOME) {
+N			break;
+N		}
 N		buffer[index++] = LAMP2LCD_HEADER;
 X		buffer[index++] = 0xF8;
 N		buffer[index++] = len;
@@ -21780,12 +21821,15 @@ N		for (i = 0; i < (buffer[1] + 1); i++) {
 N			buffer[index] += buffer[i + 1];
 N		}
 N		index++;
-N		if (g_tWork.status.bits.DOME == 0) {
-N			app_2d4_send(buffer, index);
-N		}
+N		app_2d4_send(buffer, index);
 N		break;
 N	case RCV_FM_HZ_CMD:
 X	case 0x37:
+N		g_tWork.device_mode = FM_MODE;
+X		g_tWork.device_mode = 0x02;
+N		if (g_tWork.status.bits.DOME) {
+N			break;
+N		}
 N		buffer[index++] = LAMP2LCD_HEADER;
 X		buffer[index++] = 0xF8;
 N		buffer[index++] = len;
@@ -21799,10 +21843,7 @@ N		for (i = 0; i < (buffer[1] + 1); i++) {
 N			buffer[index] += buffer[i + 1];
 N		}
 N		index++;
-N
-N		if (g_tWork.status.bits.DOME == 0) {
-N			app_2d4_send(buffer, index);
-N		}
+N		app_2d4_send(buffer, index);
 N		break;
 N	case MODE_CHANGE_CMD:   //MODE
 X	case 0x41:   
@@ -21823,6 +21864,10 @@ N		app_2d4_send(buffer, index);
 N		break;
 N	case RCV_PLAY_PAUSE_STATUS_CMD:
 X	case 0x34:
+N		g_tWork.device_mode = st->rxBuf[(st->pRead + 4) % sizeof(st->rxBuf)];
+N		if (g_tWork.status.bits.DOME) {
+N			break;
+N		}
 N		buffer[index++] = LAMP2LCD_HEADER;
 X		buffer[index++] = 0xF8;
 N		buffer[index++] = len;
@@ -21836,9 +21881,7 @@ N		for (i = 0; i < (buffer[1] + 1); i++) {
 N			buffer[index] += buffer[i + 1];
 N		}
 N		index++;
-N		if (g_tWork.status.bits.DOME == 0) {
-N			app_2d4_send(buffer, index);
-N		}
+N		app_2d4_send(buffer, index);
 N		break;
 N	case DEVICE_STA_CMD: {
 X	case 0xF0: {
@@ -21870,7 +21913,12 @@ X		buffer[index++] = 0xF8;
 N		buffer[index++] = 10;
 N		buffer[index++] = KEY_POWER_SHORT_CMD;
 X		buffer[index++] = 0x01;
-N		buffer[index++] = g_tWork.status.bits.blinkEnable;
+N		if (g_tWork.status.bits.blinkEnable) {
+N			buffer[index++] = 0;
+N		} else {
+N			buffer[index++] = 1;
+N		}
+N
 N		app_dome_get_current_Name(buffer + index, 8);
 N		index += 8;
 N		for (i = 0; i < (buffer[1] + 1); i++) {
@@ -21886,7 +21934,7 @@ N		//								g_tWork.status.bits.DEMO = 0;
 N		//							} else {
 N		g_tWork.status.bits.DEMO = 1;
 N		//							}
-N		app_dome_start(0);
+N		app_dome_start(1);
 N
 N		break;
 N	case APP_COLOR_ATLA_CMD:
@@ -21914,8 +21962,10 @@ N		break;
 N	case APP_FLASH_INDEX_CMD:
 X	case 0x65:
 N		g_tWork.status.bits.DEMO = 0;
-N		app_dome_start_current();
+N		g_tWork.status.bits.blinkEnable = 1;
+N//		app_dome_start_current();
 N		app_dome_start(st->rxBuf[(st->pRead + 4) % sizeof(st->rxBuf)]);
+N
 N		break;
 N	case APP_SWITCH_INDEX_CMD: {
 X	case 0x66: {
@@ -21958,7 +22008,7 @@ N					% sizeof(uart_st.rxBuf) > 5) {
 N				if (((uart_st.rxBuf[uart_st.pRead]) == 0x55)
 N						&& ((uart_st.rxBuf[(uart_st.pRead + 1)
 N								% sizeof(uart_st.rxBuf)]) == 0xAA)) {
-N					uint8_t len = uart_st.rxBuf[(uart_st.pRead + 2)
+N					len = uart_st.rxBuf[(uart_st.pRead + 2)
 N							% sizeof(uart_st.rxBuf)];
 N					if ((uart_st.pWrite + sizeof(uart_st.rxBuf) - uart_st.pRead)
 N							% sizeof(uart_st.rxBuf) >= (len + 4)) {
@@ -21970,7 +22020,7 @@ N										uart_st.pRead, sizeof(uart_st.rxBuf))) {
 N							uart_st.pRead++;
 N							log_err(
 N									"[ERROR]   remote control check error!\r\n");
-X							LITE_syslog(__FUNCTION__, 402, LOG_ERR_LEVEL, "[ERROR]   remote control check error!\r\n");
+X							LITE_syslog(__FUNCTION__, 417, LOG_ERR_LEVEL, "[ERROR]   remote control check error!\r\n");
 N						} else {
 N							/* your code */
 N							app_RC_Receiver_cmd_pro(&uart_st);

@@ -19100,6 +19100,7 @@ void bsp_Init(void);
 
 typedef struct _WORK_T {
 
+	uint8_t device_mode;
 	union {
 		uint8_t allbits;
 		struct {
@@ -19117,6 +19118,27 @@ typedef struct _WORK_T {
 
 
 } WORK_T;
+
+typedef struct _LED_MODE_MSG_ST {
+
+	union {
+		uint8_t allbits;
+		struct {
+			unsigned pp :1;  
+			unsigned ra2 :1;
+			unsigned ra3 :1;
+			unsigned ra5 :1;
+			unsigned ra6 :1;
+			unsigned ra7 :1;
+			unsigned ra8 :1;
+			unsigned ra9 :1;
+		} bits;
+	} status;
+
+
+
+} LED_MODE_MSG_ST;
+
 extern WORK_T g_tWork;
 
 void app_work_Init(void);
@@ -19205,6 +19227,8 @@ void app_work_100ms_pro(void);
 
 
 
+
+
 void app_2d4_init(void);
 void app_2d4_send(uint8_t *d, uint8_t len);
 void app_2d4_pro(void);
@@ -19219,6 +19243,9 @@ void app_2d4_pro(void);
  
 
 
+
+
+#line 17 "..\\App\\inc\\app_uart.h"
 
 
 
@@ -19457,11 +19484,12 @@ int main(void) {
 #line 94 "..\\App\\src\\main.c"
 
 	 
-	app_2d4_init();
+
 	app_work_Init();
 
 	app_uart_Init();
 	app_dome_Init();
+
 	 
 
 	while (1) {
@@ -19487,6 +19515,11 @@ int main(void) {
 		if (timer0_taskTimer_get()->flag_10ms) {
 			timer0_taskTimer_get()->flag_10ms = 0;
 			
+			static uint8_t flag_2d4 = 0;
+			if (flag_2d4 == 0) {
+				flag_2d4 = 1;
+				app_2d4_init();
+			}
 			bsp_KeyScan();
 
 			app_2d4_pro();
@@ -19515,7 +19548,7 @@ int main(void) {
 			cnt++;
 
 
-
+			app_work_1s_pro();
 
 		}
 
@@ -19527,19 +19560,19 @@ int main(void) {
 			static uint8_t press_long_lock = 0;
 			switch (ucKeyCode) {
 			case KEY_1_UP:   
-				LITE_syslog(__FUNCTION__, 166, LOG_DEBUG_LEVEL, "ACC KEY up");
+				LITE_syslog(__FUNCTION__, 172, LOG_DEBUG_LEVEL, "ACC KEY up");
 
 				break;
 			case KEY_1_DOWN:
-				LITE_syslog(__FUNCTION__, 170, LOG_DEBUG_LEVEL, "relay %s", Relay_IsOn() ? "on" : "off");
+				LITE_syslog(__FUNCTION__, 176, LOG_DEBUG_LEVEL, "relay %s", Relay_IsOn() ? "on" : "off");
 
 				Relay_toggle();
 				break;
 			case KEY_1_LONG:
-				LITE_syslog(__FUNCTION__, 175, LOG_DEBUG_LEVEL, "ACC KEY down");
+				LITE_syslog(__FUNCTION__, 181, LOG_DEBUG_LEVEL, "ACC KEY down");
 				break;
 			case KEY_2_UP:   
-				LITE_syslog(__FUNCTION__, 178, LOG_DEBUG_LEVEL, "LED KEY up");
+				LITE_syslog(__FUNCTION__, 184, LOG_DEBUG_LEVEL, "LED KEY up");
 
 				if (press_long_lock == 0) {
 					
@@ -19564,11 +19597,11 @@ int main(void) {
 				press_long_lock = 0;
 				break;
 			case KEY_2_DOWN:
-				LITE_syslog(__FUNCTION__, 203, LOG_DEBUG_LEVEL, "LED KEY down");
+				LITE_syslog(__FUNCTION__, 209, LOG_DEBUG_LEVEL, "LED KEY down");
 
 				break;
 			case KEY_2_LONG:
-				LITE_syslog(__FUNCTION__, 207, LOG_DEBUG_LEVEL, "LED KEY long");
+				LITE_syslog(__FUNCTION__, 213, LOG_DEBUG_LEVEL, "LED KEY long");
 				press_long_lock = 1;
 				if (g_tWork.status.bits.blinkEnable) {
 					g_tWork.status.bits.blinkEnable = 0;

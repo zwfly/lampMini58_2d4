@@ -188,6 +188,10 @@ static void app_RC_Receiver_cmd_pro(Uart_ST* st) {
 		break;
 #endif
 	case RCV_BT_STATUS_CMD:
+		g_tWork.device_mode = BT_MODE;
+		if (g_tWork.status.bits.DOME) {
+			break;
+		}
 		buffer[index++] = LAMP2LCD_HEADER;
 		buffer[index++] = len;
 		buffer[index++] = RCV_BT_STATUS_CMD;
@@ -199,11 +203,12 @@ static void app_RC_Receiver_cmd_pro(Uart_ST* st) {
 			buffer[index] += buffer[i + 1];
 		}
 		index++;
-		if (g_tWork.status.bits.DOME == 0) {
-			app_2d4_send(buffer, index);
-		}
+		app_2d4_send(buffer, index);
 		break;
 	case RCV_PREV_NEXT_CMD:
+		if (g_tWork.status.bits.DOME) {
+			break;
+		}
 		buffer[index++] = LAMP2LCD_HEADER;
 		buffer[index++] = len;
 		buffer[index++] = RCV_PREV_NEXT_CMD;
@@ -215,11 +220,13 @@ static void app_RC_Receiver_cmd_pro(Uart_ST* st) {
 			buffer[index] += buffer[i + 1];
 		}
 		index++;
-		if (g_tWork.status.bits.DOME == 0) {
-			app_2d4_send(buffer, index);
-		}
+		app_2d4_send(buffer, index);
 		break;
 	case RCV_USB_PLAY_TIME_CMD:
+		g_tWork.device_mode = USB_MODE;
+		if (g_tWork.status.bits.DOME) {
+			break;
+		}
 		buffer[index++] = LAMP2LCD_HEADER;
 		buffer[index++] = len;
 		buffer[index++] = RCV_USB_PLAY_TIME_CMD;
@@ -231,11 +238,13 @@ static void app_RC_Receiver_cmd_pro(Uart_ST* st) {
 			buffer[index] += buffer[i + 1];
 		}
 		index++;
-		if (g_tWork.status.bits.DOME == 0) {
-			app_2d4_send(buffer, index);
-		}
+		app_2d4_send(buffer, index);
 		break;
 	case RCV_FM_HZ_CMD:
+		g_tWork.device_mode = FM_MODE;
+		if (g_tWork.status.bits.DOME) {
+			break;
+		}
 		buffer[index++] = LAMP2LCD_HEADER;
 		buffer[index++] = len;
 		buffer[index++] = RCV_FM_HZ_CMD;
@@ -247,10 +256,7 @@ static void app_RC_Receiver_cmd_pro(Uart_ST* st) {
 			buffer[index] += buffer[i + 1];
 		}
 		index++;
-
-		if (g_tWork.status.bits.DOME == 0) {
-			app_2d4_send(buffer, index);
-		}
+		app_2d4_send(buffer, index);
 		break;
 	case MODE_CHANGE_CMD:   //MODE
 		buffer[index++] = LAMP2LCD_HEADER;
@@ -267,6 +273,10 @@ static void app_RC_Receiver_cmd_pro(Uart_ST* st) {
 		app_2d4_send(buffer, index);
 		break;
 	case RCV_PLAY_PAUSE_STATUS_CMD:
+		g_tWork.device_mode = st->rxBuf[(st->pRead + 4) % sizeof(st->rxBuf)];
+		if (g_tWork.status.bits.DOME) {
+			break;
+		}
 		buffer[index++] = LAMP2LCD_HEADER;
 		buffer[index++] = len;
 		buffer[index++] = RCV_PLAY_PAUSE_STATUS_CMD;
@@ -278,9 +288,7 @@ static void app_RC_Receiver_cmd_pro(Uart_ST* st) {
 			buffer[index] += buffer[i + 1];
 		}
 		index++;
-		if (g_tWork.status.bits.DOME == 0) {
-			app_2d4_send(buffer, index);
-		}
+		app_2d4_send(buffer, index);
 		break;
 	case DEVICE_STA_CMD: {
 		uint8_t sta[2] = { 0 };
@@ -307,7 +315,12 @@ static void app_RC_Receiver_cmd_pro(Uart_ST* st) {
 		buffer[index++] = LAMP2LCD_HEADER;
 		buffer[index++] = 10;
 		buffer[index++] = KEY_POWER_SHORT_CMD;
-		buffer[index++] = g_tWork.status.bits.blinkEnable;
+		if (g_tWork.status.bits.blinkEnable) {
+			buffer[index++] = 0;
+		} else {
+			buffer[index++] = 1;
+		}
+
 		app_dome_get_current_Name(buffer + index, 8);
 		index += 8;
 		for (i = 0; i < (buffer[1] + 1); i++) {
@@ -322,7 +335,7 @@ static void app_RC_Receiver_cmd_pro(Uart_ST* st) {
 		//							} else {
 		g_tWork.status.bits.DEMO = 1;
 		//							}
-		app_dome_start(0);
+		app_dome_start(1);
 
 		break;
 	case APP_COLOR_ATLA_CMD:
@@ -346,8 +359,10 @@ static void app_RC_Receiver_cmd_pro(Uart_ST* st) {
 		break;
 	case APP_FLASH_INDEX_CMD:
 		g_tWork.status.bits.DEMO = 0;
-		app_dome_start_current();
+		g_tWork.status.bits.blinkEnable = 1;
+//		app_dome_start_current();
 		app_dome_start(st->rxBuf[(st->pRead + 4) % sizeof(st->rxBuf)]);
+
 		break;
 	case APP_SWITCH_INDEX_CMD: {
 		uint8_t switchData = st->rxBuf[(st->pRead + 4) % sizeof(st->rxBuf)];
@@ -389,7 +404,7 @@ void app_uart_pro(void) {
 				if (((uart_st.rxBuf[uart_st.pRead]) == 0x55)
 						&& ((uart_st.rxBuf[(uart_st.pRead + 1)
 								% sizeof(uart_st.rxBuf)]) == 0xAA)) {
-					uint8_t len = uart_st.rxBuf[(uart_st.pRead + 2)
+					len = uart_st.rxBuf[(uart_st.pRead + 2)
 							% sizeof(uart_st.rxBuf)];
 					if ((uart_st.pWrite + sizeof(uart_st.rxBuf) - uart_st.pRead)
 							% sizeof(uart_st.rxBuf) >= (len + 4)) {

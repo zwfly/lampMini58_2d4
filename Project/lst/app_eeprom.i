@@ -19095,6 +19095,7 @@ void bsp_Init(void);
 
 typedef struct _WORK_T {
 
+	uint8_t device_mode;
 	union {
 		uint8_t allbits;
 		struct {
@@ -19112,6 +19113,27 @@ typedef struct _WORK_T {
 
 
 } WORK_T;
+
+typedef struct _LED_MODE_MSG_ST {
+
+	union {
+		uint8_t allbits;
+		struct {
+			unsigned pp :1;  
+			unsigned ra2 :1;
+			unsigned ra3 :1;
+			unsigned ra5 :1;
+			unsigned ra6 :1;
+			unsigned ra7 :1;
+			unsigned ra8 :1;
+			unsigned ra9 :1;
+		} bits;
+	} status;
+
+
+
+} LED_MODE_MSG_ST;
+
 extern WORK_T g_tWork;
 
 void app_work_Init(void);
@@ -19200,6 +19222,8 @@ void app_work_100ms_pro(void);
 
 
 
+
+
 void app_2d4_init(void);
 void app_2d4_send(uint8_t *d, uint8_t len);
 void app_2d4_pro(void);
@@ -19214,6 +19238,9 @@ void app_2d4_pro(void);
  
 
 
+
+
+#line 17 "..\\App\\inc\\app_uart.h"
 
 
 
@@ -19418,8 +19445,8 @@ void app_eeprom_get_dome_with_index(DOME_DEFAULT_T *dd, uint8_t index) {
 	if (index >= availableGroup) {
 		index = 0;
 	}
-	
-pt	 = (uint8_t *) dd;
+
+	pt = (uint8_t *) dd;
 	SYS_UnlockReg();
 	FMC_Open();
 	for (i = 0; i < (sizeof(DOME_DEFAULT_T) / 4); i++) {

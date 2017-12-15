@@ -88,6 +88,8 @@
 #define  APP_FLASH_INDEX_CMD      0x65
 #define  APP_SWITCH_INDEX_CMD      0x66
 
+#define  LED_MODE_MSG_CMD      0xE0
+
 #define  DEVICE_STA_CMD      0xF0
 //extern uint8_t sendBuf[PAYLOAD_WIDTH];
 

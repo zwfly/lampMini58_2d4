@@ -19096,6 +19096,7 @@ void bsp_Init(void);
 
 typedef struct _WORK_T {
 
+	uint8_t device_mode;
 	union {
 		uint8_t allbits;
 		struct {
@@ -19113,6 +19114,27 @@ typedef struct _WORK_T {
 
 
 } WORK_T;
+
+typedef struct _LED_MODE_MSG_ST {
+
+	union {
+		uint8_t allbits;
+		struct {
+			unsigned pp :1;  
+			unsigned ra2 :1;
+			unsigned ra3 :1;
+			unsigned ra5 :1;
+			unsigned ra6 :1;
+			unsigned ra7 :1;
+			unsigned ra8 :1;
+			unsigned ra9 :1;
+		} bits;
+	} status;
+
+
+
+} LED_MODE_MSG_ST;
+
 extern WORK_T g_tWork;
 
 void app_work_Init(void);
@@ -19201,6 +19223,8 @@ void app_work_100ms_pro(void);
 
 
 
+
+
 void app_2d4_init(void);
 void app_2d4_send(uint8_t *d, uint8_t len);
 void app_2d4_pro(void);
@@ -19215,6 +19239,9 @@ void app_2d4_pro(void);
  
 
 
+
+
+#line 17 "..\\App\\inc\\app_uart.h"
 
 
 
@@ -19400,18 +19427,41 @@ uint32_t app_eeprom_read_int(uint32_t addr);
 #line 9 "..\\App\\src\\app_work.c"
 
 WORK_T g_tWork;
+static uint8_t i = 0;
 
+static LED_MODE_MSG_ST led_mode_msg;
 
 void app_work_Init(void) {
 
-
-
-
-
-
+	memset((uint8_t *) &g_tWork, 0, sizeof(WORK_T));
+	memset((uint8_t *) &led_mode_msg, 0, sizeof(LED_MODE_MSG_ST));
 }
 
 void app_work_1s_pro(void) {
+
+	if (g_tWork.status.bits.DOME) {
+		uint8_t index = 0;
+		uint8_t buffer[16] = { 0 };
+
+		index = 0;
+		buffer[index++] = 0xF8;
+		buffer[index++] = 11;
+		buffer[index++] = 0xE0;
+		buffer[index++] = g_tWork.device_mode;  
+		app_dome_get_current_Name(buffer + index, 8);
+		index += 8;
+		if (g_tWork.status.bits.blinkEnable) {
+			led_mode_msg.status.bits.pp = 0;
+		} else {
+			led_mode_msg.status.bits.pp = 1;
+		}
+		buffer[index++] = led_mode_msg.status.allbits;
+		for (i = 0; i < (buffer[1] + 1); i++) {
+			buffer[index] += buffer[i + 1];
+		}
+		index++;
+		app_2d4_send(buffer, index);
+	}
 
 }
 void app_work_100ms_pro(void) {

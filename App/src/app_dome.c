@@ -32,8 +32,8 @@ const uint8_t color_blink_buffer[COLOR_BLINK_NUMBER][3] = { { 255, 255, 255 }, /
 		{ 255, 128, 0 } //red:green = 2:1
 };
 //////////////////
-		uint32_t add_tmp = 0;
-		uint32_t add_data=0 ;
+uint32_t add_tmp = 0;
+uint32_t add_data = 0;
 void app_dome_Init(void) {
 	uint8_t i = 0;
 	uint8_t availableGroup = 0;
@@ -50,9 +50,9 @@ void app_dome_Init(void) {
 	SYS_UnlockReg();
 	FMC_Open();
 	for (i = 0; i < availableGroup; i++) {
-		 add_tmp = i * minSpaceBytes;
-		 add_data = app_eeprom_read_int(add_tmp);
-		if (0xFFFFFFFFU != add_data) {
+		add_tmp = i * minSpaceBytes;
+		add_data = app_eeprom_read_int(add_tmp);
+		if (0xFFFFFFFF != add_data) {
 			blink_number++;
 		} else {
 			break;
@@ -242,7 +242,11 @@ static void app_dome_subDome_pro(uint8_t subIndex) {
 			app_dome_single_cycle(subIndex);
 		} else {
 			cyc = 0;
-			app_dome_next();
+			domePro.currentDomeIndex++;
+			if (domePro.currentDomeIndex >= blink_number) {
+				domePro.currentDomeIndex = 1;
+			}
+			app_dome_start(domePro.currentDomeIndex);
 		}
 	} else {
 		cyc = 0;

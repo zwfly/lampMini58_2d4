@@ -19096,6 +19096,7 @@ void bsp_Init(void);
 
 typedef struct _WORK_T {
 
+	uint8_t device_mode;
 	union {
 		uint8_t allbits;
 		struct {
@@ -19113,6 +19114,27 @@ typedef struct _WORK_T {
 
 
 } WORK_T;
+
+typedef struct _LED_MODE_MSG_ST {
+
+	union {
+		uint8_t allbits;
+		struct {
+			unsigned pp :1;  
+			unsigned ra2 :1;
+			unsigned ra3 :1;
+			unsigned ra5 :1;
+			unsigned ra6 :1;
+			unsigned ra7 :1;
+			unsigned ra8 :1;
+			unsigned ra9 :1;
+		} bits;
+	} status;
+
+
+
+} LED_MODE_MSG_ST;
+
 extern WORK_T g_tWork;
 
 void app_work_Init(void);
@@ -19201,6 +19223,8 @@ void app_work_100ms_pro(void);
 
 
 
+
+
 void app_2d4_init(void);
 void app_2d4_send(uint8_t *d, uint8_t len);
 void app_2d4_pro(void);
@@ -19215,6 +19239,9 @@ void app_2d4_pro(void);
  
 
 
+
+
+#line 17 "..\\App\\inc\\app_uart.h"
 
 
 
@@ -19551,6 +19578,10 @@ static void app_RC_Receiver_cmd_pro(Uart_ST* st) {
 		break;
 #line 190 "..\\App\\src\\app_uart.c"
 	case 0x33:
+		g_tWork.device_mode = 0x01;
+		if (g_tWork.status.bits.DOME) {
+			break;
+		}
 		buffer[index++] = 0xF8;
 		buffer[index++] = len;
 		buffer[index++] = 0x33;
@@ -19562,11 +19593,12 @@ static void app_RC_Receiver_cmd_pro(Uart_ST* st) {
 			buffer[index] += buffer[i + 1];
 		}
 		index++;
-		if (g_tWork.status.bits.DOME == 0) {
-			app_2d4_send(buffer, index);
-		}
+		app_2d4_send(buffer, index);
 		break;
 	case 0x35:
+		if (g_tWork.status.bits.DOME) {
+			break;
+		}
 		buffer[index++] = 0xF8;
 		buffer[index++] = len;
 		buffer[index++] = 0x35;
@@ -19578,11 +19610,13 @@ static void app_RC_Receiver_cmd_pro(Uart_ST* st) {
 			buffer[index] += buffer[i + 1];
 		}
 		index++;
-		if (g_tWork.status.bits.DOME == 0) {
-			app_2d4_send(buffer, index);
-		}
+		app_2d4_send(buffer, index);
 		break;
 	case 0x36:
+		g_tWork.device_mode = 0x03;
+		if (g_tWork.status.bits.DOME) {
+			break;
+		}
 		buffer[index++] = 0xF8;
 		buffer[index++] = len;
 		buffer[index++] = 0x36;
@@ -19594,11 +19628,13 @@ static void app_RC_Receiver_cmd_pro(Uart_ST* st) {
 			buffer[index] += buffer[i + 1];
 		}
 		index++;
-		if (g_tWork.status.bits.DOME == 0) {
-			app_2d4_send(buffer, index);
-		}
+		app_2d4_send(buffer, index);
 		break;
 	case 0x37:
+		g_tWork.device_mode = 0x02;
+		if (g_tWork.status.bits.DOME) {
+			break;
+		}
 		buffer[index++] = 0xF8;
 		buffer[index++] = len;
 		buffer[index++] = 0x37;
@@ -19610,10 +19646,7 @@ static void app_RC_Receiver_cmd_pro(Uart_ST* st) {
 			buffer[index] += buffer[i + 1];
 		}
 		index++;
-
-		if (g_tWork.status.bits.DOME == 0) {
-			app_2d4_send(buffer, index);
-		}
+		app_2d4_send(buffer, index);
 		break;
 	case 0x41:   
 		buffer[index++] = 0xF8;
@@ -19630,6 +19663,10 @@ static void app_RC_Receiver_cmd_pro(Uart_ST* st) {
 		app_2d4_send(buffer, index);
 		break;
 	case 0x34:
+		g_tWork.device_mode = st->rxBuf[(st->pRead + 4) % sizeof(st->rxBuf)];
+		if (g_tWork.status.bits.DOME) {
+			break;
+		}
 		buffer[index++] = 0xF8;
 		buffer[index++] = len;
 		buffer[index++] = 0x34;
@@ -19641,9 +19678,7 @@ static void app_RC_Receiver_cmd_pro(Uart_ST* st) {
 			buffer[index] += buffer[i + 1];
 		}
 		index++;
-		if (g_tWork.status.bits.DOME == 0) {
-			app_2d4_send(buffer, index);
-		}
+		app_2d4_send(buffer, index);
 		break;
 	case 0xF0: {
 		uint8_t sta[2] = { 0 };
@@ -19670,7 +19705,12 @@ static void app_RC_Receiver_cmd_pro(Uart_ST* st) {
 		buffer[index++] = 0xF8;
 		buffer[index++] = 10;
 		buffer[index++] = 0x01;
-		buffer[index++] = g_tWork.status.bits.blinkEnable;
+		if (g_tWork.status.bits.blinkEnable) {
+			buffer[index++] = 0;
+		} else {
+			buffer[index++] = 1;
+		}
+
 		app_dome_get_current_Name(buffer + index, 8);
 		index += 8;
 		for (i = 0; i < (buffer[1] + 1); i++) {
@@ -19685,7 +19725,7 @@ static void app_RC_Receiver_cmd_pro(Uart_ST* st) {
 		
 		g_tWork.status.bits.DEMO = 1;
 		
-		app_dome_start(0);
+		app_dome_start(1);
 
 		break;
 	case 0x62:
@@ -19709,8 +19749,10 @@ static void app_RC_Receiver_cmd_pro(Uart_ST* st) {
 		break;
 	case 0x65:
 		g_tWork.status.bits.DEMO = 0;
-		app_dome_start_current();
+		g_tWork.status.bits.blinkEnable = 1;
+
 		app_dome_start(st->rxBuf[(st->pRead + 4) % sizeof(st->rxBuf)]);
+
 		break;
 	case 0x66: {
 		uint8_t switchData = st->rxBuf[(st->pRead + 4) % sizeof(st->rxBuf)];
@@ -19752,7 +19794,7 @@ void app_uart_pro(void) {
 				if (((uart_st.rxBuf[uart_st.pRead]) == 0x55)
 						&& ((uart_st.rxBuf[(uart_st.pRead + 1)
 								% sizeof(uart_st.rxBuf)]) == 0xAA)) {
-					uint8_t len = uart_st.rxBuf[(uart_st.pRead + 2)
+					len = uart_st.rxBuf[(uart_st.pRead + 2)
 							% sizeof(uart_st.rxBuf)];
 					if ((uart_st.pWrite + sizeof(uart_st.rxBuf) - uart_st.pRead)
 							% sizeof(uart_st.rxBuf) >= (len + 4)) {
@@ -19762,7 +19804,7 @@ void app_uart_pro(void) {
 										uart_st.rxBuf + uart_st.pRead, len + 3,
 										uart_st.pRead, sizeof(uart_st.rxBuf))) {
 							uart_st.pRead++;
-							LITE_syslog(__FUNCTION__, 402, LOG_ERR_LEVEL, "[ERROR]   remote control check error!\r\n");
+							LITE_syslog(__FUNCTION__, 417, LOG_ERR_LEVEL, "[ERROR]   remote control check error!\r\n");
 
 						} else {
 							 
@@ -19782,5 +19824,5 @@ void app_uart_pro(void) {
 		break;
 
 	}
-#line 754 "..\\App\\src\\app_uart.c"
+#line 769 "..\\App\\src\\app_uart.c"
 }

@@ -8,6 +8,14 @@
 #ifndef APP_INC_APP_UART_H_
 #define APP_INC_APP_UART_H_
 
+#define BT_MODE     0x01
+#define FM_MODE     0x02
+#define USB_MODE    0x03
+#define AUX_MODE    0x04
+#define DOME_MODE   0x05
+#define CALL_MODE   0x06
+
+
 #define BLINK_METHOD_CMD   0x12
 /*
  #define POWER_LONG_UART_CMD      0x31

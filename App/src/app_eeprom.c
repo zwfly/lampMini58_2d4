@@ -26,8 +26,8 @@ void app_eeprom_get_dome_with_index(DOME_DEFAULT_T *dd, uint8_t index) {
 	if (index >= availableGroup) {
 		index = 0;
 	}
-	
-pt	 = (uint8_t *) dd;
+
+	pt = (uint8_t *) dd;
 	SYS_UnlockReg();
 	FMC_Open();
 	for (i = 0; i < (sizeof(DOME_DEFAULT_T) / 4); i++) {

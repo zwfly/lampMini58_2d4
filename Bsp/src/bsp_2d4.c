@@ -32,11 +32,12 @@ void SPI_init(void) {
 }
 
 static void delay_2d4(uint16_t n) {
-	uint16_t i = 0;
+	uint16_t i = 0, j = 0;
 
-	for (i = 0; i < n; i++)
-		;
-
+	for (i = 0; i < n; i++) {
+		for (j = 0; j < 7; j++)
+			;
+	}
 }
 
 /******************************************************************************/
@@ -182,7 +183,7 @@ void RF_TxMode(void) {
 	CE_LOW;
 	RF_WriteReg(W_REGISTER + CONFIG, 0X8E);						// 将RF设置成TX模式
 //	delay_10us(1);
-	delay_2d4(10);
+	delay_2d4(12);
 }
 
 /******************************************************************************/
@@ -194,7 +195,7 @@ void RF_RxMode(void) {
 	RF_WriteReg(W_REGISTER + CONFIG, 0X8F);						// 将RF设置成RX模式
 	CE_HIGH;										// Set CE pin high 开始接收数据
 //	delay_ms(2);
-	delay_2d4(500);
+	delay_2d4(1000);
 
 }
 
@@ -251,9 +252,8 @@ void RF_TxData(uint8_t *ucPayload, uint8_t length) {
 		RF_WriteBuf(W_TX_PAYLOAD, ucPayload, length);
 		CE_HIGH;                             //rf entery tx mode start send data
 //		delay_10us(60);                            //keep ce high at least 600us
-		for (i = 0; i < 30; i++) {
-			delay_2d4(60);
-		}
+
+		delay_2d4(650);
 
 		CE_LOW;                                                 //rf entery stb3
 	}

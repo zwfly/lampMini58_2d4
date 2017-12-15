@@ -44,8 +44,10 @@ void app_2d4_send(uint8_t *d, uint8_t len) {
 	RF_TxMode();
 	send_2d4_flag = 1;
 
-	memset(send_2d4_Buf, 0, PAYLOAD_WIDTH);
-	memcpy(send_2d4_Buf, d, len);
+	if (d != send_2d4_Buf) {
+		memset(send_2d4_Buf, 0, PAYLOAD_WIDTH);
+		memcpy(send_2d4_Buf, d, len);
+	}
 
 #else
 
@@ -166,8 +168,8 @@ static void app_2d4_Rcv(uint8_t *buf) {
 		break;
 	case KEY_UP_CMD:
 		if (g_tWork.status.bits.DOME) {
-			app_dome_start_current();
 			g_tWork.status.bits.DEMO = 0;
+			app_dome_start_current();
 			if (g_tWork.status.bits.blinkEnable) {
 				app_dome_previous();
 				send_2d4_Buf[index++] = LAMP2LCD_HEADER;
@@ -187,8 +189,8 @@ static void app_2d4_Rcv(uint8_t *buf) {
 		break;
 	case KEY_DOWN_CMD:
 		if (g_tWork.status.bits.DOME) {
-			app_dome_start_current();
 			g_tWork.status.bits.DEMO = 0;
+			app_dome_start_current();
 			if (g_tWork.status.bits.blinkEnable) {
 				app_dome_next();
 				send_2d4_Buf[index++] = LAMP2LCD_HEADER;
@@ -210,20 +212,22 @@ static void app_2d4_Rcv(uint8_t *buf) {
 
 		break;
 	case KEY_DOME_CMD:
-
-//		tmp = 0x03;
-//		app_uart_send(DOME_UART_CMD, &tmp, 1);
-
 		if (g_tWork.status.bits.DOME) {
 			g_tWork.status.bits.DOME = 0;
 		} else {
 			g_tWork.status.bits.DOME = 1;
+			g_tWork.status.bits.blinkEnable = 1;
+			app_dome_start(0);
 		}
 		send_2d4_Buf[index++] = LAMP2LCD_HEADER;
 		send_2d4_Buf[index++] = 11;
 		send_2d4_Buf[index++] = KEY_DOME_CMD;
 		send_2d4_Buf[index++] = g_tWork.status.bits.DOME;
-		send_2d4_Buf[index++] = g_tWork.status.bits.blinkEnable;
+		if (g_tWork.status.bits.blinkEnable) {
+			send_2d4_Buf[index++] = 0;
+		} else {
+			send_2d4_Buf[index++] = 1;
+		}
 		app_dome_get_current_Name(send_2d4_Buf + index, 8);
 		for (i = 0; i < 8; i++) {
 			if ((*(send_2d4_Buf + index + i) == 0)
@@ -281,21 +285,22 @@ static void app_2d4_Rcv(uint8_t *buf) {
 	case KEY_CARD_POWER_CMD:
 		if (g_tWork.status.bits.blinkEnable == 0) {
 			g_tWork.status.bits.blinkEnable = 1;
-			g_tWork.status.bits.DEMO = 1;
-
-			app_dome_start(0);
-//			app_dome_start_current();
+			app_dome_start_current();
 		} else {
 			g_tWork.status.bits.blinkEnable = 0;
-			g_tWork.status.bits.DEMO = 0;
-
-			g_tWork.status.bits.blinkEnable = 1;
 			app_dome_stop_current();
+		}
+		if (g_tWork.status.bits.DOME == 0) {
+			break;
 		}
 		send_2d4_Buf[index++] = LAMP2LCD_HEADER;
 		send_2d4_Buf[index++] = 10;
 		send_2d4_Buf[index++] = KEY_POWER_SHORT_CMD;
-		send_2d4_Buf[index++] = g_tWork.status.bits.blinkEnable;
+		if (g_tWork.status.bits.blinkEnable) {
+			send_2d4_Buf[index++] = 0;
+		} else {
+			send_2d4_Buf[index++] = 1;
+		}
 		app_dome_get_current_Name(send_2d4_Buf + index, 8);
 		for (i = 0; i < 8; i++) {
 			if ((*(send_2d4_Buf + index + i) == 0)
@@ -324,12 +329,8 @@ static void app_2d4_Rcv(uint8_t *buf) {
 		}
 		break;
 	case KEY_CARD_DEMO_CMD:
-//		if (g_tWork.status.bits.DEMO) {
-//			g_tWork.status.bits.DEMO = 0;
-//		} else {
 		g_tWork.status.bits.DEMO = 1;
-//		}
-		app_dome_start(0);
+		app_dome_start(1);
 		break;
 	case KEY_CARD_SPEED_MINUS_CMD:
 		if (dome_running_param.speed >= 10) {
@@ -340,7 +341,6 @@ static void app_2d4_Rcv(uint8_t *buf) {
 		app_color_blink_next();
 		break;
 	case KEY_CARD_MODE_CMD:
-
 		g_tWork.status.bits.DEMO = 0;
 		app_dome_start_current();
 		app_dome_previous();
@@ -362,7 +362,6 @@ static void app_2d4_Rcv(uint8_t *buf) {
 			dome_running_param.bright -= 10;
 		}
 		Light_bright_set(dome_running_param.bright);
-
 		break;
 	case KEY_CARD_NUM_1_CMD:
 		Relay_toggle();

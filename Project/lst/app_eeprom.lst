@@ -40,7 +40,7 @@ N */
 N
 N#ifndef __stdio_h
 N#define __stdio_h
-N#define __ARMCLIB_VERSION 5060009
+N#define __ARMCLIB_VERSION 5060019
 N
 N/*
 N * Depending on compiler version __int64 or __INT64_TYPE__ should be defined.
@@ -1156,7 +1156,7 @@ N */
 N
 N#ifndef __string_h
 N#define __string_h
-N#define __ARMCLIB_VERSION 5060009
+N#define __ARMCLIB_VERSION 5060019
 N
 N#define _ARMABI __declspec(__nothrow)
 N
@@ -1704,7 +1704,7 @@ N */
 N
 N#ifndef __stdint_h
 N#define __stdint_h
-N#define __ARMCLIB_VERSION 5060009
+N#define __ARMCLIB_VERSION 5060019
 N
 N  #ifdef __INT64_TYPE__
 S    /* armclang predefines '__INT64_TYPE__' and '__INT64_C_SUFFIX__' */
@@ -2197,7 +2197,7 @@ N#if   defined ( __ICCARM__ )
 X#if   0L
 S #pragma system_include         /* treat file as system include file for MISRA check */
 S#elif defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
-X#elif 1L && (5060183 >= 6010050)
+X#elif 1L && (5060422 >= 6010050)
 S  #pragma clang system_header   /* treat file as system include file */
 N#endif
 N
@@ -2367,7 +2367,7 @@ N#if   defined ( __ICCARM__ )
 X#if   0L
 S #pragma system_include         /* treat file as system include file for MISRA check */
 S#elif defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
-X#elif 1L && (5060183 >= 6010050)
+X#elif 1L && (5060422 >= 6010050)
 S  #pragma clang system_header   /* treat file as system include file */
 N#endif
 N
@@ -2425,7 +2425,7 @@ N#define __CMSIS_ARMCC_H
 N
 N
 N#if defined(__ARMCC_VERSION) && (__ARMCC_VERSION < 400677)
-X#if 1L && (5060183 < 400677)
+X#if 1L && (5060422 < 400677)
 S  #error "Please use ARM Compiler Toolchain V4.0.677 or later!"
 N#endif
 N
@@ -3233,7 +3233,7 @@ N#if   defined ( __ICCARM__ )
 X#if   0L
 S #pragma system_include         /* treat file as system include file for MISRA check */
 S#elif defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
-X#elif 1L && (5060183 >= 6010050)
+X#elif 1L && (5060422 >= 6010050)
 S  #pragma clang system_header   /* treat file as system include file */
 N#endif
 N
@@ -19730,7 +19730,7 @@ N */
 N
 N#ifndef __stdlib_h
 N#define __stdlib_h
-N#define __ARMCLIB_VERSION 5060009
+N#define __ARMCLIB_VERSION 5060019
 N
 N#if defined(__clang__) || (defined(__ARMCC_VERSION) && !defined(__STRICT_ANSI__))
 X#if 0L || (1L && !0L)
@@ -21205,6 +21205,7 @@ N#define APP_INC_APP_WORK_H_
 N
 Ntypedef struct _WORK_T {
 N
+N	uint8_t device_mode;
 N	union {
 N		uint8_t allbits;
 N		struct {
@@ -21222,6 +21223,27 @@ N
 N//	uint8_t mode;
 N
 N} WORK_T;
+N
+Ntypedef struct _LED_MODE_MSG_ST {
+N
+N	union {
+N		uint8_t allbits;
+N		struct {
+N			unsigned pp :1;  //闪法关闭/开启。0：闪法正常工作，1：闪法暂停
+N			unsigned ra2 :1;
+N			unsigned ra3 :1;
+N			unsigned ra5 :1;
+N			unsigned ra6 :1;
+N			unsigned ra7 :1;
+N			unsigned ra8 :1;
+N			unsigned ra9 :1;
+N		} bits;
+N	} status;
+N
+N//	uint8_t mode;
+N
+N} LED_MODE_MSG_ST;
+N
 Nextern WORK_T g_tWork;
 N
 Nvoid app_work_Init(void);
@@ -21322,6 +21344,8 @@ N#define  APP_SPEED_CMD            0x64
 N#define  APP_FLASH_INDEX_CMD      0x65
 N#define  APP_SWITCH_INDEX_CMD      0x66
 N
+N#define  LED_MODE_MSG_CMD      0xE0
+N
 N#define  DEVICE_STA_CMD      0xF0
 N//extern uint8_t sendBuf[PAYLOAD_WIDTH];
 N
@@ -21342,6 +21366,14 @@ N */
 N
 N#ifndef APP_INC_APP_UART_H_
 N#define APP_INC_APP_UART_H_
+N
+N#define BT_MODE     0x01
+N#define FM_MODE     0x02
+N#define USB_MODE    0x03
+N#define AUX_MODE    0x04
+N#define DOME_MODE   0x05
+N#define CALL_MODE   0x06
+N
 N
 N#define BLINK_METHOD_CMD   0x12
 N/*
@@ -21553,8 +21585,8 @@ N
 N	if (index >= availableGroup) {
 N		index = 0;
 N	}
-N	
-Npt	 = (uint8_t *) dd;
+N
+N	pt = (uint8_t *) dd;
 N	SYS_UnlockReg();
 N	FMC_Open();
 N	for (i = 0; i < (sizeof(DOME_DEFAULT_T) / 4); i++) {

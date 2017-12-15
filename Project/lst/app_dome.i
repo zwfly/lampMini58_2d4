@@ -19096,6 +19096,7 @@ void bsp_Init(void);
 
 typedef struct _WORK_T {
 
+	uint8_t device_mode;
 	union {
 		uint8_t allbits;
 		struct {
@@ -19113,6 +19114,27 @@ typedef struct _WORK_T {
 
 
 } WORK_T;
+
+typedef struct _LED_MODE_MSG_ST {
+
+	union {
+		uint8_t allbits;
+		struct {
+			unsigned pp :1;  
+			unsigned ra2 :1;
+			unsigned ra3 :1;
+			unsigned ra5 :1;
+			unsigned ra6 :1;
+			unsigned ra7 :1;
+			unsigned ra8 :1;
+			unsigned ra9 :1;
+		} bits;
+	} status;
+
+
+
+} LED_MODE_MSG_ST;
+
 extern WORK_T g_tWork;
 
 void app_work_Init(void);
@@ -19201,6 +19223,8 @@ void app_work_100ms_pro(void);
 
 
 
+
+
 void app_2d4_init(void);
 void app_2d4_send(uint8_t *d, uint8_t len);
 void app_2d4_pro(void);
@@ -19215,6 +19239,9 @@ void app_2d4_pro(void);
  
 
 
+
+
+#line 17 "..\\App\\inc\\app_uart.h"
 
 
 
@@ -19424,8 +19451,8 @@ const uint8_t color_blink_buffer[10][3] = { { 255, 255, 255 },
 		{ 255, 128, 0 } 
 };
 
-		uint32_t add_tmp = 0;
-		uint32_t add_data=0 ;
+uint32_t add_tmp = 0;
+uint32_t add_data = 0;
 void app_dome_Init(void) {
 	uint8_t i = 0;
 	uint8_t availableGroup = 0;
@@ -19442,9 +19469,9 @@ void app_dome_Init(void) {
 	SYS_UnlockReg();
 	FMC_Open();
 	for (i = 0; i < availableGroup; i++) {
-		 add_tmp = i * minSpaceBytes;
-		 add_data = app_eeprom_read_int(add_tmp);
-		if (0xFFFFFFFFU != add_data) {
+		add_tmp = i * minSpaceBytes;
+		add_data = app_eeprom_read_int(add_tmp);
+		if (0xFFFFFFFF != add_data) {
 			blink_number++;
 		} else {
 			break;
@@ -19587,7 +19614,11 @@ static void app_dome_subDome_pro(uint8_t subIndex) {
 			app_dome_single_cycle(subIndex);
 		} else {
 			cyc = 0;
-			app_dome_next();
+			domePro.currentDomeIndex++;
+			if (domePro.currentDomeIndex >= blink_number) {
+				domePro.currentDomeIndex = 1;
+			}
+			app_dome_start(domePro.currentDomeIndex);
 		}
 	} else {
 		cyc = 0;
@@ -19695,7 +19726,7 @@ void app_dome_interrupter(void) {
 
 		if (subDome_Assist.msCnt >= subDome.speed) {
 			subDome_Assist.msCnt = 0;
-#line 377 "..\\App\\src\\app_dome.c"
+#line 381 "..\\App\\src\\app_dome.c"
 
 			if (subDome.repeate) {
 				subDome.repeate--;

@@ -93,11 +93,12 @@ int main(void) {
 #endif
 
 	/**************/
-	app_2d4_init();
+
 	app_work_Init();
 
 	app_uart_Init();
 	app_dome_Init();
+
 	/**************/
 
 	while (1) {
@@ -123,6 +124,11 @@ int main(void) {
 		if (timer0_taskTimer_get()->flag_10ms) {
 			timer0_taskTimer_get()->flag_10ms = 0;
 			//////////////////
+			static uint8_t flag_2d4 = 0;
+			if (flag_2d4 == 0) {
+				flag_2d4 = 1;
+				app_2d4_init();
+			}
 			bsp_KeyScan();
 
 			app_2d4_pro();
@@ -151,7 +157,7 @@ int main(void) {
 			cnt++;
 //				log_debug("I am alive %d", cnt);
 
-//			app_work_1s_pro();
+			app_work_1s_pro();
 
 		}
 

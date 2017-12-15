@@ -19095,6 +19095,7 @@ void bsp_Init(void);
 
 typedef struct _WORK_T {
 
+	uint8_t device_mode;
 	union {
 		uint8_t allbits;
 		struct {
@@ -19112,6 +19113,27 @@ typedef struct _WORK_T {
 
 
 } WORK_T;
+
+typedef struct _LED_MODE_MSG_ST {
+
+	union {
+		uint8_t allbits;
+		struct {
+			unsigned pp :1;  
+			unsigned ra2 :1;
+			unsigned ra3 :1;
+			unsigned ra5 :1;
+			unsigned ra6 :1;
+			unsigned ra7 :1;
+			unsigned ra8 :1;
+			unsigned ra9 :1;
+		} bits;
+	} status;
+
+
+
+} LED_MODE_MSG_ST;
+
 extern WORK_T g_tWork;
 
 void app_work_Init(void);
@@ -19200,6 +19222,8 @@ void app_work_100ms_pro(void);
 
 
 
+
+
 void app_2d4_init(void);
 void app_2d4_send(uint8_t *d, uint8_t len);
 void app_2d4_pro(void);
@@ -19214,6 +19238,9 @@ void app_2d4_pro(void);
  
 
 
+
+
+#line 17 "..\\App\\inc\\app_uart.h"
 
 
 
@@ -19620,10 +19647,12 @@ void app_2d4_send(uint8_t *d, uint8_t len) {
 	RF_TxMode();
 	send_2d4_flag = 1;
 
-	memset(send_2d4_Buf, 0, 16);
-	memcpy(send_2d4_Buf, d, len);
+	if (d != send_2d4_Buf) {
+		memset(send_2d4_Buf, 0, 16);
+		memcpy(send_2d4_Buf, d, len);
+	}
 
-#line 62 "..\\App\\src\\app_2d4.c"
+#line 64 "..\\App\\src\\app_2d4.c"
 
 }
 
@@ -19634,7 +19663,7 @@ static void app_2d4_Rcv(uint8_t *buf) {
 	uint8_t i = 0;
 	uint8_t index = 0;
 	uint8_t check = 0;
-#line 78 "..\\App\\src\\app_2d4.c"
+#line 80 "..\\App\\src\\app_2d4.c"
 	if (buf[0] != 0xF2) {
 		return;
 	}
@@ -19676,7 +19705,7 @@ static void app_2d4_Rcv(uint8_t *buf) {
 		app_uart_send(0x01, 0, 0);
 
 		break;
-#line 147 "..\\App\\src\\app_2d4.c"
+#line 149 "..\\App\\src\\app_2d4.c"
 	case 0x09:
 		if (buf[3] == 1) {
 			Relay_on();
@@ -19699,8 +19728,8 @@ static void app_2d4_Rcv(uint8_t *buf) {
 		break;
 	case 0x02:
 		if (g_tWork.status.bits.DOME) {
-			app_dome_start_current();
 			g_tWork.status.bits.DEMO = 0;
+			app_dome_start_current();
 			if (g_tWork.status.bits.blinkEnable) {
 				app_dome_previous();
 				send_2d4_Buf[index++] = 0xF8;
@@ -19720,8 +19749,8 @@ static void app_2d4_Rcv(uint8_t *buf) {
 		break;
 	case 0x03:
 		if (g_tWork.status.bits.DOME) {
-			app_dome_start_current();
 			g_tWork.status.bits.DEMO = 0;
+			app_dome_start_current();
 			if (g_tWork.status.bits.blinkEnable) {
 				app_dome_next();
 				send_2d4_Buf[index++] = 0xF8;
@@ -19743,20 +19772,22 @@ static void app_2d4_Rcv(uint8_t *buf) {
 
 		break;
 	case 0xB9:
-
-
-
-
 		if (g_tWork.status.bits.DOME) {
 			g_tWork.status.bits.DOME = 0;
 		} else {
 			g_tWork.status.bits.DOME = 1;
+			g_tWork.status.bits.blinkEnable = 1;
+			app_dome_start(0);
 		}
 		send_2d4_Buf[index++] = 0xF8;
 		send_2d4_Buf[index++] = 11;
 		send_2d4_Buf[index++] = 0xB9;
 		send_2d4_Buf[index++] = g_tWork.status.bits.DOME;
-		send_2d4_Buf[index++] = g_tWork.status.bits.blinkEnable;
+		if (g_tWork.status.bits.blinkEnable) {
+			send_2d4_Buf[index++] = 0;
+		} else {
+			send_2d4_Buf[index++] = 1;
+		}
 		app_dome_get_current_Name(send_2d4_Buf + index, 8);
 		for (i = 0; i < 8; i++) {
 			if ((*(send_2d4_Buf + index + i) == 0)
@@ -19814,21 +19845,22 @@ static void app_2d4_Rcv(uint8_t *buf) {
 	case 0x54:
 		if (g_tWork.status.bits.blinkEnable == 0) {
 			g_tWork.status.bits.blinkEnable = 1;
-			g_tWork.status.bits.DEMO = 1;
-
-			app_dome_start(0);
-
+			app_dome_start_current();
 		} else {
 			g_tWork.status.bits.blinkEnable = 0;
-			g_tWork.status.bits.DEMO = 0;
-
-			g_tWork.status.bits.blinkEnable = 1;
 			app_dome_stop_current();
+		}
+		if (g_tWork.status.bits.DOME == 0) {
+			break;
 		}
 		send_2d4_Buf[index++] = 0xF8;
 		send_2d4_Buf[index++] = 10;
 		send_2d4_Buf[index++] = 0x01;
-		send_2d4_Buf[index++] = g_tWork.status.bits.blinkEnable;
+		if (g_tWork.status.bits.blinkEnable) {
+			send_2d4_Buf[index++] = 0;
+		} else {
+			send_2d4_Buf[index++] = 1;
+		}
 		app_dome_get_current_Name(send_2d4_Buf + index, 8);
 		for (i = 0; i < 8; i++) {
 			if ((*(send_2d4_Buf + index + i) == 0)
@@ -19857,12 +19889,8 @@ static void app_2d4_Rcv(uint8_t *buf) {
 		}
 		break;
 	case 0x57:
-
-
-
 		g_tWork.status.bits.DEMO = 1;
-
-		app_dome_start(0);
+		app_dome_start(1);
 		break;
 	case 0x58:
 		if (dome_running_param.speed >= 10) {
@@ -19873,7 +19901,6 @@ static void app_2d4_Rcv(uint8_t *buf) {
 		app_color_blink_next();
 		break;
 	case 0x5A:
-
 		g_tWork.status.bits.DEMO = 0;
 		app_dome_start_current();
 		app_dome_previous();
@@ -19895,7 +19922,6 @@ static void app_2d4_Rcv(uint8_t *buf) {
 			dome_running_param.bright -= 10;
 		}
 		Light_bright_set(dome_running_param.bright);
-
 		break;
 	case 0x5E:
 		Relay_toggle();

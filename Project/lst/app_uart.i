@@ -18828,7 +18828,7 @@ typedef struct {
 	uint8_t cnt_100ms;
 	uint8_t flag_100ms;
 
-	uint8_t cnt_500ms;
+	uint16_t cnt_500ms;
 	uint8_t flag_500ms;
 
 	uint16_t cnt_1s;
@@ -19546,6 +19546,19 @@ static void app_RC_Receiver_cmd_pro(Uart_ST* st) {
 			app_eeprom_write_int(addr, dt);
 		}
 
+
+		blink_number = 0;
+		for (i = 0; i < availableGroup; i++) {
+			uint32_t add_tmp = i * minSpaceBytes;
+			uint32_t add_data = app_eeprom_read_int(add_tmp);
+			if (0xFFFFFFFF != add_data) {
+				blink_number++;
+			} else {
+				break;
+			}
+		}
+
+
 		FMC_Close();
 		SYS_LockReg();
 		(((FMC_T *) (((uint32_t)0x50000000) + 0x0C000))->ISPCTL &= ~(0x1ul << (3)));
@@ -19582,7 +19595,7 @@ static void app_RC_Receiver_cmd_pro(Uart_ST* st) {
 		index++;
 		app_2d4_send(buffer, index);
 		break;
-#line 190 "..\\App\\src\\app_uart.c"
+#line 203 "..\\App\\src\\app_uart.c"
 	case 0x33:
 		g_tWork.device_mode = 0x01;
 		if (g_tWork.status.bits.DOME) {
@@ -19708,6 +19721,9 @@ static void app_RC_Receiver_cmd_pro(Uart_ST* st) {
 			g_tWork.status.bits.DEMO = 0;
 			app_dome_stop_current();
 		}
+		if (g_tWork.status.bits.DOME == 0) {
+			break;
+		}
 		buffer[index++] = 0xF8;
 		buffer[index++] = 10;
 		buffer[index++] = 0x01;
@@ -19726,11 +19742,8 @@ static void app_RC_Receiver_cmd_pro(Uart_ST* st) {
 		app_2d4_send(buffer, index);
 		break;
 	case 0x57:
-		
-		
-		
 		g_tWork.status.bits.DEMO = 1;
-		
+		g_tWork.status.bits.blinkEnable = 1;
 		app_dome_start(1);
 
 		break;
@@ -19814,7 +19827,7 @@ void app_uart_pro(uint8_t mc) {
 										uart_st.rxBuf + uart_st.pRead, len + 3,
 										uart_st.pRead, sizeof(uart_st.rxBuf))) {
 							uart_st.pRead++;
-							LITE_syslog(__FUNCTION__, 421, LOG_ERR_LEVEL, "[ERROR]   remote control check error!\r\n");
+							LITE_syslog(__FUNCTION__, 434, LOG_ERR_LEVEL, "[ERROR]   remote control check error!\r\n");
 
 						} else {
 							 
@@ -19834,5 +19847,5 @@ void app_uart_pro(uint8_t mc) {
 		break;
 
 	}
-#line 773 "..\\App\\src\\app_uart.c"
+#line 786 "..\\App\\src\\app_uart.c"
 }

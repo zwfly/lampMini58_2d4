@@ -18804,7 +18804,7 @@ typedef struct {
 	uint8_t cnt_100ms;
 	uint8_t flag_100ms;
 
-	uint8_t cnt_500ms;
+	uint16_t cnt_500ms;
 	uint8_t flag_500ms;
 
 	uint16_t cnt_1s;

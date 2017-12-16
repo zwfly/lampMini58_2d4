@@ -18827,7 +18827,7 @@ typedef struct {
 	uint8_t cnt_100ms;
 	uint8_t flag_100ms;
 
-	uint8_t cnt_500ms;
+	uint16_t cnt_500ms;
 	uint8_t flag_500ms;
 
 	uint16_t cnt_1s;
@@ -19670,7 +19670,8 @@ void app_2d4_switch_address(void) {
 	app_get_my_address(address);
 
 	memcpy(TX_ADDRESS_DEF, address, 5);
-	RF_Init();
+
+	app_2d4_init();
 }
 
 void app_2d4_send(uint8_t *d, uint8_t len) {
@@ -19684,7 +19685,7 @@ void app_2d4_send(uint8_t *d, uint8_t len) {
 		memcpy(send_2d4_Buf, d, len);
 	}
 
-#line 90 "..\\App\\src\\app_2d4.c"
+#line 91 "..\\App\\src\\app_2d4.c"
 
 }
 
@@ -19695,7 +19696,7 @@ static void app_2d4_Rcv(uint8_t *buf) {
 	uint8_t i = 0;
 	uint8_t index = 0;
 	uint8_t check = 0;
-#line 106 "..\\App\\src\\app_2d4.c"
+#line 107 "..\\App\\src\\app_2d4.c"
 	if (buf[0] != 0xF2) {
 		return;
 	}
@@ -19715,7 +19716,7 @@ static void app_2d4_Rcv(uint8_t *buf) {
 	case 0x01:
 		app_uart_send(0x01, 0, 0);
 		break;
-#line 153 "..\\App\\src\\app_2d4.c"
+#line 154 "..\\App\\src\\app_2d4.c"
 	case 0x09:
 		if (buf[3] == 1) {
 			Relay_on();

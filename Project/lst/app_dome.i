@@ -18828,7 +18828,7 @@ typedef struct {
 	uint8_t cnt_100ms;
 	uint8_t flag_100ms;
 
-	uint8_t cnt_500ms;
+	uint16_t cnt_500ms;
 	uint8_t flag_500ms;
 
 	uint16_t cnt_1s;
@@ -19616,15 +19616,17 @@ static void app_dome_subDome_pro(uint8_t subIndex) {
 
 	if (g_tWork.status.bits.DEMO) {
 		cyc++;
-		if (cyc <= 4) {
+		if (cyc <= 3) {
 			app_dome_single_cycle(subIndex);
 		} else {
 			cyc = 0;
 			domePro.currentDomeIndex++;
 			if (domePro.currentDomeIndex >= blink_number) {
+
 				domePro.currentDomeIndex = 1;
 			}
 			app_dome_start(domePro.currentDomeIndex);
+
 		}
 	} else {
 		cyc = 0;
@@ -19732,7 +19734,7 @@ void app_dome_interrupter(void) {
 
 		if (subDome_Assist.msCnt >= subDome.speed) {
 			subDome_Assist.msCnt = 0;
-#line 381 "..\\App\\src\\app_dome.c"
+#line 383 "..\\App\\src\\app_dome.c"
 
 			if (subDome.repeate) {
 				subDome.repeate--;

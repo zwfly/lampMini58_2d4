@@ -151,12 +151,12 @@ int main(void) {
 
 			if (matchCode_flag == 0) {
 				uint8_t index = 0, i;
-				uint8_t buffer[8] = { 0 };
-				memset(buffer, 0, 8);
+				uint8_t buffer[16] = { 0 };
+				memset(buffer, 0, 16);
 
 				index = 0;
 				buffer[index++] = LAMP2LCD_HEADER;
-				buffer[index++] = 0x02;
+				buffer[index++] = 0x06;
 				buffer[index++] = WIRELESS_MATCH_CODE_CMD;
 				app_get_my_address(buffer + index);
 				index += 5;
@@ -166,6 +166,7 @@ int main(void) {
 				index++;
 				app_2d4_send(buffer, index);
 
+				log_debug("send match code");
 			}
 
 		}

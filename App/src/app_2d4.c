@@ -61,7 +61,8 @@ void app_2d4_switch_address(void) {
 	app_get_my_address(address);
 
 	memcpy(TX_ADDRESS_DEF, address, 5);
-	RF_Init();
+//	RF_Init();
+	app_2d4_init();
 }
 
 void app_2d4_send(uint8_t *d, uint8_t len) {

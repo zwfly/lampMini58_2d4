@@ -238,15 +238,17 @@ static void app_dome_subDome_pro(uint8_t subIndex) {
 
 	if (g_tWork.status.bits.DEMO) {
 		cyc++;
-		if (cyc <= 4) {
+		if (cyc <= 3) {
 			app_dome_single_cycle(subIndex);
 		} else {
 			cyc = 0;
 			domePro.currentDomeIndex++;
 			if (domePro.currentDomeIndex >= blink_number) {
+
 				domePro.currentDomeIndex = 1;
 			}
 			app_dome_start(domePro.currentDomeIndex);
+
 		}
 	} else {
 		cyc = 0;

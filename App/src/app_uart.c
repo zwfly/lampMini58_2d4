@@ -135,6 +135,19 @@ static void app_RC_Receiver_cmd_pro(Uart_ST* st) {
 			app_eeprom_write_int(addr, dt);
 		}
 
+#if 1
+		blink_number = 0;
+		for (i = 0; i < availableGroup; i++) {
+			uint32_t add_tmp = i * minSpaceBytes;
+			uint32_t add_data = app_eeprom_read_int(add_tmp);
+			if (0xFFFFFFFF != add_data) {
+				blink_number++;
+			} else {
+				break;
+			}
+		}
+#endif
+
 		FMC_Close();
 		SYS_LockReg();
 		FMC_DISABLE_AP_UPDATE();
@@ -312,6 +325,9 @@ static void app_RC_Receiver_cmd_pro(Uart_ST* st) {
 			g_tWork.status.bits.DEMO = 0;
 			app_dome_stop_current();
 		}
+		if (g_tWork.status.bits.DOME == 0) {
+			break;
+		}
 		buffer[index++] = LAMP2LCD_HEADER;
 		buffer[index++] = 10;
 		buffer[index++] = KEY_POWER_SHORT_CMD;
@@ -330,11 +346,8 @@ static void app_RC_Receiver_cmd_pro(Uart_ST* st) {
 		app_2d4_send(buffer, index);
 		break;
 	case KEY_CARD_DEMO_CMD:
-		//							if (g_tWork.status.bits.DEMO) {
-		//								g_tWork.status.bits.DEMO = 0;
-		//							} else {
 		g_tWork.status.bits.DEMO = 1;
-		//							}
+		g_tWork.status.bits.blinkEnable = 1;
 		app_dome_start(1);
 
 		break;

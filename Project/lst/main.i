@@ -18832,7 +18832,7 @@ typedef struct {
 	uint8_t cnt_100ms;
 	uint8_t flag_100ms;
 
-	uint8_t cnt_500ms;
+	uint16_t cnt_500ms;
 	uint8_t flag_500ms;
 
 	uint16_t cnt_1s;
@@ -19548,12 +19548,12 @@ int main(void) {
 
 			if (matchCode_flag == 0) {
 				uint8_t index = 0, i;
-				uint8_t buffer[8] = { 0 };
-				memset(buffer, 0, 8);
+				uint8_t buffer[16] = { 0 };
+				memset(buffer, 0, 16);
 
 				index = 0;
 				buffer[index++] = 0xF8;
-				buffer[index++] = 0x02;
+				buffer[index++] = 0x06;
 				buffer[index++] = 0xFE;
 				app_get_my_address(buffer + index);
 				index += 5;
@@ -19563,6 +19563,7 @@ int main(void) {
 				index++;
 				app_2d4_send(buffer, index);
 
+				LITE_syslog(__FUNCTION__, 169, LOG_DEBUG_LEVEL, "send match code");
 			}
 
 		}
@@ -19593,19 +19594,19 @@ int main(void) {
 			static uint8_t press_long_lock = 0;
 			switch (ucKeyCode) {
 			case KEY_1_UP:   
-				LITE_syslog(__FUNCTION__, 199, LOG_DEBUG_LEVEL, "ACC KEY up");
+				LITE_syslog(__FUNCTION__, 200, LOG_DEBUG_LEVEL, "ACC KEY up");
 
 				break;
 			case KEY_1_DOWN:
-				LITE_syslog(__FUNCTION__, 203, LOG_DEBUG_LEVEL, "relay %s", Relay_IsOn() ? "on" : "off");
+				LITE_syslog(__FUNCTION__, 204, LOG_DEBUG_LEVEL, "relay %s", Relay_IsOn() ? "on" : "off");
 
 				Relay_toggle();
 				break;
 			case KEY_1_LONG:
-				LITE_syslog(__FUNCTION__, 208, LOG_DEBUG_LEVEL, "ACC KEY down");
+				LITE_syslog(__FUNCTION__, 209, LOG_DEBUG_LEVEL, "ACC KEY down");
 				break;
 			case KEY_2_UP:   
-				LITE_syslog(__FUNCTION__, 211, LOG_DEBUG_LEVEL, "LED KEY up");
+				LITE_syslog(__FUNCTION__, 212, LOG_DEBUG_LEVEL, "LED KEY up");
 
 				if (press_long_lock == 0) {
 					
@@ -19630,11 +19631,11 @@ int main(void) {
 				press_long_lock = 0;
 				break;
 			case KEY_2_DOWN:
-				LITE_syslog(__FUNCTION__, 236, LOG_DEBUG_LEVEL, "LED KEY down");
+				LITE_syslog(__FUNCTION__, 237, LOG_DEBUG_LEVEL, "LED KEY down");
 
 				break;
 			case KEY_2_LONG:
-				LITE_syslog(__FUNCTION__, 240, LOG_DEBUG_LEVEL, "LED KEY long");
+				LITE_syslog(__FUNCTION__, 241, LOG_DEBUG_LEVEL, "LED KEY long");
 				press_long_lock = 1;
 				if (g_tWork.status.bits.blinkEnable) {
 					g_tWork.status.bits.blinkEnable = 0;
